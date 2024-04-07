@@ -15,72 +15,52 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.Iterator;
-import java.util.List;
 
-public class JsonArray extends JsonObject {
+public class JsonParser {
 
-	private final List<JsonObject> m_items = new ArrayList<>();
-
-	public JsonArray() {
-		super(null);
+	public static JsonMap parseMap(String json) {
+		final JSONObject object = new JSONObject(json);
+		return toMap(object);
 	}
 
-	public void add(JsonObject item) {
-		m_items.add(item);
-	}
+	private static JsonMap toMap(JSONObject object) {
+		final String type = object.has(JsonObject.KEY_TYPE) ? object.getString(JsonObject.KEY_TYPE) : null;
+		final JsonMap result = new JsonMap(type);
 
-	public void add(String value) {
-		add(new JsonString(value));
-	}
-
-	public JsonArray createArray() {
-		final JsonArray result = new JsonArray();
-		m_items.add(result);
-		result.setPrettyPrintDepth(m_prettyPrintDepth + 1);
+		final Iterator<String> keyIterator = object.keys();
+		while(keyIterator.hasNext()) {
+			final String key = keyIterator.next();
+			final Object _object = object.get(key);
+			if(_object instanceof String jsonString) {
+				result.setAttribute(key, jsonString);
+			} else if(_object instanceof JSONArray jsonArray) {
+				final JsonArray array = toArray(jsonArray);
+				result.setArray(key, array);
+			}
+		}
 		return result;
 	}
 
-	public JsonObject get(int i) {
-		return m_items.get(i);
-	}
-
-	public Iterator<JsonObject> iterator() {
-		return m_items.iterator();
-	}
-
-	@Override
-	public void setPrettyPrintDepth(int depth) {
-		m_prettyPrintDepth = depth;
-		for(Object item : m_items) {
-			if(item instanceof JsonObject jsonObject) {
-				jsonObject.setPrettyPrintDepth(m_prettyPrintDepth + 1);
-			}
+	private static JsonArray toArray(JSONArray object) {
+		final JsonArray result = new JsonArray();
+		for(Object _object : object) {
+			result.add(convert(_object));
 		}
+		return result;
 	}
 
-	@Override
-	public String toJson() {
-		final StringBuilder result = new StringBuilder();
-		result.append("[");
-		endOfTag(result);
-		final Iterator<JsonObject> iterator = m_items.iterator();
-		while(iterator.hasNext()) {
-			prettyPrintTab(result, 1);
-			final JsonObject value = iterator.next();
-			if(value == null) {
-				result.append("\"\"");
-			} else {
-				result.append(String.format("%s", value.toJson()));
-			}
-			if(iterator.hasNext()) {
-				result.append(",");
-			}
-			endOfTag(result);
+	private static JsonObject convert(Object object) {
+		if(object instanceof String jsonString) {
+			return new JsonString(jsonString);
+		} else if(object instanceof JSONArray jsonArray) {
+			return toArray(jsonArray);
+		} else if(object instanceof JSONObject jsonObject) {
+			return toMap(jsonObject);
 		}
-		prettyPrintTab(result, 0).append("]");
-		return result.toString();
+		throw new JsonException("Unsupported type: %s", object.getClass().getCanonicalName());
 	}
-
 }

@@ -17,7 +17,12 @@ package tui.json;
 
 import tui.ui.Table;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JsonTable extends JsonMap {
 
@@ -30,6 +35,8 @@ public class JsonTable extends JsonMap {
 	public static JsonObject toJson(Table table) {
 		JsonTable result = new JsonTable();
 
+		result.setAttribute("title", table.getTitle());
+
 		final JsonArray thead = result.createArray("thead");
 		for(String column : table.getColumns()) {
 			thead.add(column);
@@ -38,7 +45,55 @@ public class JsonTable extends JsonMap {
 		for(List<Object> _row : table.getRows()) {
 			final JsonArray row = tbody.createArray();
 			for(Object _cell : _row) {
-				row.add(_cell);
+				if(_cell == null) {
+					row.add("");
+				} else if(_cell instanceof String cellString) {
+					row.add(cellString);
+				} else {
+					throw new JsonException("Unsupported type: %s", _cell.getClass().getCanonicalName());
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public static Table parseJson(String json) {
+		final JsonMap map = JsonParser.parseMap(json);
+
+		final String title = map.getAttribute("title");
+
+		final JsonArray thead = map.getArray("thead");
+		final Collection<String> columns = new ArrayList<>();
+		final Iterator<JsonObject> theadIterator = thead.iterator();
+		while(theadIterator.hasNext()) {
+			final JsonObject columnObject = theadIterator.next();
+			if(columnObject instanceof JsonString columnString) {
+				columns.add(columnString.getValue());
+			} else {
+				throw new JsonException("Unexpected json type: %s", columnObject.getClass().getCanonicalName());
+			}
+		}
+		final Table result = new Table(title, columns);
+
+		final JsonArray array = map.getArray("tbody");
+		final Iterator<JsonObject> rowIterator = array.iterator();
+		while(rowIterator.hasNext()) {
+			final JsonObject rowObject = rowIterator.next();
+			if(rowObject instanceof JsonArray rowArray) {
+				Map<String, Object> row = new LinkedHashMap<>();
+				int c = 0;
+				for(String column : columns) {
+					final JsonObject cellObject = rowArray.get(c++);
+					if(cellObject instanceof JsonString cellString) {
+						row.put(column, cellString.getValue());
+					} else {
+						throw new JsonException("Unexpected json type: %s", cellObject.getClass().getCanonicalName());
+					}
+				}
+				result.append(row);
+			} else {
+				throw new JsonException("Unexpected json type: %s", rowObject.getClass().getCanonicalName());
 			}
 		}
 

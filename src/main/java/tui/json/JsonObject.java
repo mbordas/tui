@@ -19,6 +19,8 @@ public abstract class JsonObject {
 
 	public static boolean PRETTY_PRINT = false;
 
+	public static final String KEY_TYPE = "type";
+
 	protected final String m_type;
 	protected int m_prettyPrintDepth = 0;
 

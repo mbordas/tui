@@ -32,11 +32,30 @@ public class JsonMap extends JsonObject {
 		return this;
 	}
 
+	public String getAttribute(String key) {
+		if(!m_children.containsKey(key)) {
+			throw new JsonException("Attribute '%s' not found", key);
+		}
+		final JsonObject jsonObject = m_children.get(key);
+		if(jsonObject instanceof JsonString jsonString) {
+			return jsonString.getValue();
+		}
+		throw new JsonException("Child '%s' is not a string", key);
+	}
+
 	public JsonArray createArray(String name) {
 		final JsonArray result = new JsonArray();
-		m_children.put(name, result);
-		result.setPrettyPrintDepth(m_prettyPrintDepth + 1);
+		setArray(name, result);
 		return result;
+	}
+
+	public void setArray(String name, JsonArray array) {
+		m_children.put(name, array);
+		array.setPrettyPrintDepth(m_prettyPrintDepth + 1);
+	}
+
+	public JsonArray getArray(String name) {
+		return (JsonArray) m_children.get(name);
 	}
 
 	public void setPrettyPrintDepth(int depth) {
@@ -72,5 +91,4 @@ public class JsonMap extends JsonObject {
 		result.append("}");
 		return result.toString();
 	}
-
 }

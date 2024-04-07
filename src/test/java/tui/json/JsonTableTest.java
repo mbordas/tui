@@ -15,72 +15,55 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tui.ui.Table;
+
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-public class JsonArray extends JsonObject {
+import static org.junit.Assert.assertEquals;
 
-	private final List<JsonObject> m_items = new ArrayList<>();
+public class JsonTableTest {
 
-	public JsonArray() {
-		super(null);
+	private static final Logger LOG = LoggerFactory.getLogger(JsonTableTest.class);
+
+	@Test
+	public void serialization() {
+		final String columnA = "Col A";
+		final String columnB = "Col B";
+		final Table table = new Table("Table Test Title", List.of(columnA, columnB));
+		table.append(row(columnA, "value 1A", columnB, "value 1B"));
+		table.append(row(columnA, "value 2A", columnB, "value 2B"));
+
+		final String json = table.toJsonObject().toJson();
+		LOG.debug("Table:\n" + json);
+
+		//
+		final Table result = JsonTable.parseJson(json);
+		//
+
+		assertEquals("Table Test Title", result.getTitle());
+		// Checking columns
+		assertEquals(columnA, result.getColumns().get(0));
+		assertEquals(columnB, result.getColumns().get(1));
+		// Checking rows
+		assertEquals(2, result.size());
+		final List<List<Object>> rows = result.getRows();
+		assertEquals("value 1A", rows.get(0).get(0));
+		assertEquals("value 1B", rows.get(0).get(1));
+		assertEquals("value 2A", rows.get(1).get(0));
+		assertEquals("value 2B", rows.get(1).get(1));
+
 	}
 
-	public void add(JsonObject item) {
-		m_items.add(item);
-	}
-
-	public void add(String value) {
-		add(new JsonString(value));
-	}
-
-	public JsonArray createArray() {
-		final JsonArray result = new JsonArray();
-		m_items.add(result);
-		result.setPrettyPrintDepth(m_prettyPrintDepth + 1);
+	private static Map<String, Object> row(String colA, String valA, String colB, String valB) {
+		final Map<String, Object> result = new LinkedHashMap<>();
+		result.put(colA, valA);
+		result.put(colB, valB);
 		return result;
-	}
-
-	public JsonObject get(int i) {
-		return m_items.get(i);
-	}
-
-	public Iterator<JsonObject> iterator() {
-		return m_items.iterator();
-	}
-
-	@Override
-	public void setPrettyPrintDepth(int depth) {
-		m_prettyPrintDepth = depth;
-		for(Object item : m_items) {
-			if(item instanceof JsonObject jsonObject) {
-				jsonObject.setPrettyPrintDepth(m_prettyPrintDepth + 1);
-			}
-		}
-	}
-
-	@Override
-	public String toJson() {
-		final StringBuilder result = new StringBuilder();
-		result.append("[");
-		endOfTag(result);
-		final Iterator<JsonObject> iterator = m_items.iterator();
-		while(iterator.hasNext()) {
-			prettyPrintTab(result, 1);
-			final JsonObject value = iterator.next();
-			if(value == null) {
-				result.append("\"\"");
-			} else {
-				result.append(String.format("%s", value.toJson()));
-			}
-			if(iterator.hasNext()) {
-				result.append(",");
-			}
-			endOfTag(result);
-		}
-		prettyPrintTab(result, 0).append("]");
-		return result.toString();
 	}
 
 }

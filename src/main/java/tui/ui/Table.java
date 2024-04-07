@@ -39,6 +39,10 @@ public class Table extends TUIComponent {
 		m_columns.addAll(columns);
 	}
 
+	public String getTitle() {
+		return m_title;
+	}
+
 	public void setSource(String path) {
 		m_sourcePath = path;
 	}

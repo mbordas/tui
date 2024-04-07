@@ -26,6 +26,10 @@ public class JsonString extends JsonObject {
 		m_value = value;
 	}
 
+	public String getValue() {
+		return m_value;
+	}
+
 	@Override
 	public String toJson() {
 		return String.format("\"%s\"", m_value);
@@ -34,4 +38,5 @@ public class JsonString extends JsonObject {
 	@Override
 	public void setPrettyPrintDepth(int depth) {
 	}
+
 }

@@ -15,72 +15,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.junit.Test;
 
-public class JsonArray extends JsonObject {
+import static org.junit.Assert.assertEquals;
 
-	private final List<JsonObject> m_items = new ArrayList<>();
+public class JsonMapTest {
 
-	public JsonArray() {
-		super(null);
-	}
+	@Test
+	public void serialization() {
+		final JsonMap map = new JsonMap(null);
+		map.setAttribute("key", "value");
 
-	public void add(JsonObject item) {
-		m_items.add(item);
-	}
+		//
+		final JsonMap result = JsonParser.parseMap(map.toJson());
+		//
 
-	public void add(String value) {
-		add(new JsonString(value));
-	}
-
-	public JsonArray createArray() {
-		final JsonArray result = new JsonArray();
-		m_items.add(result);
-		result.setPrettyPrintDepth(m_prettyPrintDepth + 1);
-		return result;
-	}
-
-	public JsonObject get(int i) {
-		return m_items.get(i);
-	}
-
-	public Iterator<JsonObject> iterator() {
-		return m_items.iterator();
-	}
-
-	@Override
-	public void setPrettyPrintDepth(int depth) {
-		m_prettyPrintDepth = depth;
-		for(Object item : m_items) {
-			if(item instanceof JsonObject jsonObject) {
-				jsonObject.setPrettyPrintDepth(m_prettyPrintDepth + 1);
-			}
-		}
-	}
-
-	@Override
-	public String toJson() {
-		final StringBuilder result = new StringBuilder();
-		result.append("[");
-		endOfTag(result);
-		final Iterator<JsonObject> iterator = m_items.iterator();
-		while(iterator.hasNext()) {
-			prettyPrintTab(result, 1);
-			final JsonObject value = iterator.next();
-			if(value == null) {
-				result.append("\"\"");
-			} else {
-				result.append(String.format("%s", value.toJson()));
-			}
-			if(iterator.hasNext()) {
-				result.append(",");
-			}
-			endOfTag(result);
-		}
-		prettyPrintTab(result, 0).append("]");
-		return result.toString();
+		assertEquals("value", result.getAttribute("key"));
 	}
 
 }

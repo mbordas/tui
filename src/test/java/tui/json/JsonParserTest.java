@@ -15,72 +15,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.junit.Test;
 
-public class JsonArray extends JsonObject {
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-	private final List<JsonObject> m_items = new ArrayList<>();
+public class JsonParserTest {
 
-	public JsonArray() {
-		super(null);
+	@Test
+	public void parseSimpleMap() {
+		final JsonMap map = JsonParser.parseMap("{\"key\": \"value\"}");
+
+		assertEquals("value", map.getAttribute("key"));
 	}
 
-	public void add(JsonObject item) {
-		m_items.add(item);
-	}
+	@Test
+	public void parseMapWithArray() {
+		final JsonMap map = JsonParser.parseMap("{\"keys\": [\"v1\",\"v2\"]}");
 
-	public void add(String value) {
-		add(new JsonString(value));
-	}
+		final JsonArray array = map.getArray("keys");
+		final JsonObject str1 = array.get(0);
 
-	public JsonArray createArray() {
-		final JsonArray result = new JsonArray();
-		m_items.add(result);
-		result.setPrettyPrintDepth(m_prettyPrintDepth + 1);
-		return result;
-	}
-
-	public JsonObject get(int i) {
-		return m_items.get(i);
-	}
-
-	public Iterator<JsonObject> iterator() {
-		return m_items.iterator();
-	}
-
-	@Override
-	public void setPrettyPrintDepth(int depth) {
-		m_prettyPrintDepth = depth;
-		for(Object item : m_items) {
-			if(item instanceof JsonObject jsonObject) {
-				jsonObject.setPrettyPrintDepth(m_prettyPrintDepth + 1);
-			}
-		}
-	}
-
-	@Override
-	public String toJson() {
-		final StringBuilder result = new StringBuilder();
-		result.append("[");
-		endOfTag(result);
-		final Iterator<JsonObject> iterator = m_items.iterator();
-		while(iterator.hasNext()) {
-			prettyPrintTab(result, 1);
-			final JsonObject value = iterator.next();
-			if(value == null) {
-				result.append("\"\"");
-			} else {
-				result.append(String.format("%s", value.toJson()));
-			}
-			if(iterator.hasNext()) {
-				result.append(",");
-			}
-			endOfTag(result);
-		}
-		prettyPrintTab(result, 0).append("]");
-		return result.toString();
+		assertTrue(str1 instanceof JsonString);
+		assertEquals("v1", ((JsonString) str1).getValue());
 	}
 
 }

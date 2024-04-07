@@ -15,72 +15,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+public class JsonException extends RuntimeException {
 
-public class JsonArray extends JsonObject {
-
-	private final List<JsonObject> m_items = new ArrayList<>();
-
-	public JsonArray() {
-		super(null);
+	public JsonException(String format, Object... args) {
+		super(String.format(format, args));
 	}
-
-	public void add(JsonObject item) {
-		m_items.add(item);
-	}
-
-	public void add(String value) {
-		add(new JsonString(value));
-	}
-
-	public JsonArray createArray() {
-		final JsonArray result = new JsonArray();
-		m_items.add(result);
-		result.setPrettyPrintDepth(m_prettyPrintDepth + 1);
-		return result;
-	}
-
-	public JsonObject get(int i) {
-		return m_items.get(i);
-	}
-
-	public Iterator<JsonObject> iterator() {
-		return m_items.iterator();
-	}
-
-	@Override
-	public void setPrettyPrintDepth(int depth) {
-		m_prettyPrintDepth = depth;
-		for(Object item : m_items) {
-			if(item instanceof JsonObject jsonObject) {
-				jsonObject.setPrettyPrintDepth(m_prettyPrintDepth + 1);
-			}
-		}
-	}
-
-	@Override
-	public String toJson() {
-		final StringBuilder result = new StringBuilder();
-		result.append("[");
-		endOfTag(result);
-		final Iterator<JsonObject> iterator = m_items.iterator();
-		while(iterator.hasNext()) {
-			prettyPrintTab(result, 1);
-			final JsonObject value = iterator.next();
-			if(value == null) {
-				result.append("\"\"");
-			} else {
-				result.append(String.format("%s", value.toJson()));
-			}
-			if(iterator.hasNext()) {
-				result.append(",");
-			}
-			endOfTag(result);
-		}
-		prettyPrintTab(result, 0).append("]");
-		return result.toString();
-	}
-
 }
