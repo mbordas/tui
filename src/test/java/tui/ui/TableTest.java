@@ -35,6 +35,7 @@ public class TableTest {
 		assertEquals("""
 				{
 				  "type": "table",
+				  "title": "Test table",
 				  "thead": [
 				    "A",
 				    "B"
