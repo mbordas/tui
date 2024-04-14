@@ -17,8 +17,7 @@ package tui.demo;
 
 import tui.html.HTMLNode;
 import tui.http.FormRequest;
-import tui.http.TUIServer;
-import tui.json.JsonMap;
+import tui.http.TUIBackend;
 import tui.json.JsonObject;
 import tui.ui.Page;
 import tui.ui.TUI;
@@ -37,6 +36,7 @@ public class DemoServer {
 		// Building UI
 
 		final TUI ui = new TUI();
+		ui.setHTTPBackend("localhost", 80);
 
 		Page page = new Page("Demo");
 		page.createSection("Demo page")
@@ -57,7 +57,7 @@ public class DemoServer {
 
 		// Building server with backend web services
 
-		final TUIServer server = new TUIServer(ui);
+		final TUIBackend server = new TUIBackend(ui);
 
 		// Called when form is submitted
 		server.registerWebService(form.getTarget(), (uri, request, response) -> {
@@ -67,8 +67,7 @@ public class DemoServer {
 			row.put(columnVendor, vendor);
 			row.put(columnSerialNumber, serialNumber);
 			table.append(row);
-			return new JsonMap("message").
-					setAttribute("value", "form submitted");
+			return Form.getSuccessfulSubmissionResponse();
 		});
 
 		// Called when table is refreshed
@@ -76,6 +75,6 @@ public class DemoServer {
 
 		HTMLNode.PRETTY_PRINT = true;
 		JsonObject.PRETTY_PRINT = true;
-		server.start(80);
+		server.start();
 	}
 }

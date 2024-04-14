@@ -13,62 +13,46 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.test;
 
-import tui.html.HTMLNode;
-import tui.html.HTMLPage;
+import tui.ui.Table;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-public class Page extends TUIComponent {
+public class TTable {
 
-	private final String m_title;
-	private final List<TUIComponent> m_content = new ArrayList<>();
+	private final Table m_table;
 
-	public Page(String title) {
-		m_title = title;
+	public TTable(Table table) {
+		m_table = table;
 	}
 
 	public String getTitle() {
-		return m_title;
+		return m_table.getTitle();
 	}
 
-	public void append(TUIComponent component) {
-		m_content.add(component);
+	public boolean isEmpty() {
+		return m_table.size() == 0;
 	}
 
-	public List<TUIComponent> getContent() {
-		return m_content;
-	}
+	public boolean anyCellMatch(String columnName, Object valueEquals) {
+		int columnIndex = 0;
+		for(String column : m_table.getColumns()) {
+			if(column.equals(columnName)) {
+				break;
+			}
+			columnIndex++;
+		}
 
-	public Section createSection(String title) {
-		final Section result = new Section(title);
-		m_content.add(result);
-		return result;
-	}
-
-	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
-		return HTMLPage.toHTML(this, pathToCSS, pathToScript, onLoadFunctionCall);
-	}
-
-	@Override
-	public Collection<TUIComponent> getSubComponents() {
-		final Collection<TUIComponent> result = new ArrayList<>();
-		for(TUIComponent component : m_content) {
-			result.add(component);
-			final Collection<TUIComponent> subComponents = component.getSubComponents();
-			if(subComponents != null) {
-				result.addAll(subComponents);
+		for(List<Object> row : m_table.getRows()) {
+			final Object testedValue = row.get(columnIndex);
+			if(valueEquals == null && testedValue == null) {
+				return true;
+			} else if(valueEquals != null && valueEquals.equals(testedValue)) {
+				return true;
 			}
 		}
-		return result;
-	}
-
-	@Override
-	public HTMLNode toHTMLNode() {
-		return toHTMLNode(null, null, null);
+		return false;
 	}
 
 }

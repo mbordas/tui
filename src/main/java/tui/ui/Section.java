@@ -19,6 +19,7 @@ import tui.html.HTMLNode;
 import tui.html.HTMLSection;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Section extends TUIComponent {
@@ -51,6 +52,19 @@ public class Section extends TUIComponent {
 		return m_content;
 	}
 
+	@Override
+	public Collection<TUIComponent> getSubComponents() {
+		final Collection<TUIComponent> result = new ArrayList<>();
+		for(TUIComponent component : m_content) {
+			result.add(component);
+			final Collection<TUIComponent> subComponents = component.getSubComponents();
+			if(subComponents != null) {
+				result.addAll(subComponents);
+			}
+		}
+		return result;
+	}
+	
 	@Override
 	public HTMLNode toHTMLNode() {
 		return HTMLSection.toHTML(this, 1);

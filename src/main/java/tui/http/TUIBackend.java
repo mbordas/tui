@@ -33,9 +33,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TUIServer {
+public class TUIBackend {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TUIServer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TUIBackend.class);
 
 	public static final String PATH_TO_CSS = "/css/tui.css";
 	public static final String PATH_TO_SCRIPT = "/js/tui.js";
@@ -46,11 +46,12 @@ public class TUIServer {
 
 	private final Map<String, TUIWebService> m_webServices = new HashMap<>();
 
-	public TUIServer(TUI ui) {
+	public TUIBackend(TUI ui) {
 		m_ui = ui;
 	}
 
-	public void start(int port) throws Exception {
+	public void start() throws Exception {
+		int port = m_ui.getHTTPPort();
 		m_server = new Server(port);
 		m_server.setHandler(new AbstractHandler() {
 			@Override

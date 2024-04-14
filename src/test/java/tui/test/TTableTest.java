@@ -13,33 +13,30 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.http;
+package tui.test;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import tui.html.HTMLNode;
-import tui.ui.Page;
-import tui.ui.Section;
-import tui.ui.TUI;
+import tui.ui.Table;
 
-public class TUIServerTest {
+import java.util.List;
+import java.util.Map;
 
-	@Ignore
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class TTableTest {
+
 	@Test
-	public void defaultPage() throws Exception {
-		HTMLNode.PRETTY_PRINT = true;
-		final TUI ui = new TUI();
-		final Page page = new Page("Server default page");
-		final Section subSection = page.createSection("Title 1").createSubSection("Title 2");
-		subSection.createParagraph("Lorem ipsum");
+	public void anyMatch() {
+		final Table table = new Table("table", List.of("Name"));
+		table.append(Map.of("Name", "Alice"));
+		table.append(Map.of("Name", "Bob"));
 
-		ui.add(page);
+		final TTable tTable = new TTable(table);
 
-		final TUIServer server = new TUIServer(ui);
-
-		server.start(8080);
-
-		Thread.sleep(60_000);
+		assertTrue(tTable.anyCellMatch("Name", "Alice"));
+		assertTrue(tTable.anyCellMatch("Name", "Bob"));
+		assertFalse(tTable.anyCellMatch("Name", "Carl"));
 	}
 
 }

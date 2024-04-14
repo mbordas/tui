@@ -15,10 +15,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui;
 
+import org.apache.http.HttpException;
 import tui.html.HTMLNode;
 import tui.html.HTMLTable;
 import tui.json.JsonObject;
 import tui.json.JsonTable;
+import tui.test.TestHTTPClient;
 import tui.ui.form.Form;
 
 import java.util.ArrayList;
@@ -79,6 +81,9 @@ public class Table extends TUIComponent {
 	 * This table will automatically refresh each time the form is successfully submitted.
 	 */
 	public void connectForRefresh(Form form) {
+		if(m_sourcePath == null) {
+			throw new TUIConfigurationException("Cannot connect table for refresh because its source is not set.");
+		}
 		form.registerRefreshListener(this);
 		m_isConnectedForRefresh = true;
 	}
@@ -96,4 +101,10 @@ public class Table extends TUIComponent {
 		return JsonTable.toJson(this);
 	}
 
+	public void refresh(TestHTTPClient httpClient) throws HttpException {
+		final String json = httpClient.callBackend(m_sourcePath, null);
+		final Table freshTable = JsonTable.parseJson(json);
+		m_rows.clear();
+		m_rows.addAll(freshTable.m_rows);
+	}
 }

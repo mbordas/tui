@@ -13,22 +13,49 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui;
+package tui.test;
 
-import tui.ui.Page;
-import tui.ui.TUI;
+import org.apache.http.HttpException;
+import tui.ui.TUIComponent;
+import tui.ui.Table;
+import tui.ui.form.Form;
+import tui.ui.form.FormInputString;
 
-public class UIClient {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-	private final TUI m_ui;
-	private Page m_currentPage;
+public class TForm {
 
-	public UIClient(TUI ui) {
-		m_ui = ui;
-		m_currentPage = m_ui.getDefaultPage();
+	private final TestHTTPClient m_httpClient;
+	private final Form m_form;
+
+	private final Map<String, Object> m_enteredValues = new HashMap<>();
+
+	public TForm(Form form, TestHTTPClient httpClient) {
+		m_form = form;
+		m_httpClient = httpClient;
 	}
 
-	public String getTitle() {
-		return m_currentPage.getTitle();
+	public void enterInput(String fieldName, String value) {
+		final Optional<FormInputString> anyField = m_form.getInputs().stream().filter(
+				(field) -> field.getName().equals(fieldName)).findAny();
+		if(anyField.isEmpty()) {
+			throw new TestExecutionException("No string input found in form '%s' with name: %s", m_form.getTitle(), fieldName);
+		}
+		m_enteredValues.put(fieldName, value);
+	}
+
+	public void submit() throws HttpException {
+		final String jsonResponse = m_httpClient.callBackend(m_form.getTarget(), m_enteredValues);
+		if(!Form.isSuccessfulSubmissionResponse(jsonResponse)) {
+			throw new HttpException("Unexpected web service response");
+		}
+		for(TUIComponent refreshListener : m_form.getRefreshListeners()) {
+			if(refreshListener instanceof Table table) {
+				table.refresh(m_httpClient);
+			}
+		}
+
 	}
 }

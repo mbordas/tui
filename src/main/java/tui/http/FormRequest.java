@@ -15,13 +15,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.http.HttpServletRequest;
 
 public class FormRequest {
 
+	private static final Logger LOG = LoggerFactory.getLogger(FormRequest.class);
+
 	public static final String ENCTYPE = "multipart/form-data";
 
 	public static String getStringField(HttpServletRequest request, String key) {
-		return request.getParameterMap().containsKey(key) ? String.valueOf(request.getParameter(key)) : null;
+		final String result = request.getParameterMap().containsKey(key) ? String.valueOf(request.getParameter(key)) : null;
+		LOG.debug("Parameter '{}': {}", key, result);
+		return result;
 	}
 }

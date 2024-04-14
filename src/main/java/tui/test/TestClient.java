@@ -13,62 +13,54 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.test;
 
-import tui.html.HTMLNode;
-import tui.html.HTMLPage;
+import tui.ui.Page;
+import tui.ui.TUI;
+import tui.ui.TUIComponent;
+import tui.ui.Table;
+import tui.ui.form.Form;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-public class Page extends TUIComponent {
+public class TestClient {
 
-	private final String m_title;
-	private final List<TUIComponent> m_content = new ArrayList<>();
+	private final TUI m_ui;
+	private Page m_currentPage;
+	private TestHTTPClient m_httpClient;
 
-	public Page(String title) {
-		m_title = title;
+	public TestClient(TUI ui) {
+		m_ui = ui;
+		m_currentPage = m_ui.getDefaultPage();
+		m_httpClient = new TestHTTPClient(ui.getHTTPHost(), ui.getHTTPPort());
 	}
 
 	public String getTitle() {
-		return m_title;
+		return m_currentPage.getTitle();
 	}
 
-	public void append(TUIComponent component) {
-		m_content.add(component);
-	}
-
-	public List<TUIComponent> getContent() {
-		return m_content;
-	}
-
-	public Section createSection(String title) {
-		final Section result = new Section(title);
-		m_content.add(result);
-		return result;
-	}
-
-	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
-		return HTMLPage.toHTML(this, pathToCSS, pathToScript, onLoadFunctionCall);
-	}
-
-	@Override
-	public Collection<TUIComponent> getSubComponents() {
-		final Collection<TUIComponent> result = new ArrayList<>();
-		for(TUIComponent component : m_content) {
-			result.add(component);
-			final Collection<TUIComponent> subComponents = component.getSubComponents();
-			if(subComponents != null) {
-				result.addAll(subComponents);
-			}
+	public TTable getTable(String title) {
+		final List<TUIComponent> tables = m_currentPage.getSubComponents().stream()
+				.filter((component) -> component instanceof Table table && title.equals(table.getTitle()))
+				.toList();
+		if(tables.isEmpty()) {
+			throw new TestExecutionException("No table found in current page with title: %s", title);
+		} else if(tables.size() > 1) {
+			throw new TestExecutionException("Multiple tables found in current page with title: %s", title);
 		}
-		return result;
+		return new TTable((Table) tables.get(0));
 	}
 
-	@Override
-	public HTMLNode toHTMLNode() {
-		return toHTMLNode(null, null, null);
+	public TForm getForm(String title) {
+		final List<TUIComponent> forms = m_currentPage.getSubComponents().stream()
+				.filter((component) -> component instanceof Form form && title.equals(form.getTitle()))
+				.toList();
+		if(forms.isEmpty()) {
+			throw new TestExecutionException("No form found in current page with title: %s", title);
+		} else if(forms.size() > 1) {
+			throw new TestExecutionException("Multiple forms found in current page with title: %s", title);
+		}
+		return new TForm((Form) forms.get(0), m_httpClient);
 	}
 
 }

@@ -20,7 +20,14 @@ import java.util.List;
 
 public class TUI {
 
+	private String m_httpHost;
+	private int m_httpPort;
 	final private List<Page> m_pages = new ArrayList<>();
+
+	public void setHTTPBackend(String host, int port) {
+		m_httpHost = host;
+		m_httpPort = port;
+	}
 
 	public void add(Page page) {
 		m_pages.add(page);
@@ -28,5 +35,13 @@ public class TUI {
 
 	public Page getDefaultPage() {
 		return m_pages.isEmpty() ? null : m_pages.get(0);
+	}
+
+	public String getHTTPHost() {
+		return m_httpHost;
+	}
+
+	public int getHTTPPort() {
+		return m_httpPort;
 	}
 }

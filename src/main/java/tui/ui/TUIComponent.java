@@ -17,6 +17,7 @@ package tui.ui;
 
 import tui.html.HTMLNode;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class TUIComponent {
@@ -24,6 +25,10 @@ public abstract class TUIComponent {
 	private static final AtomicLong m_counter = new AtomicLong(0L);
 
 	private final long m_tuid = m_counter.incrementAndGet();
+
+	public Collection<TUIComponent> getSubComponents() {
+		return null;
+	}
 
 	public abstract HTMLNode toHTMLNode();
 

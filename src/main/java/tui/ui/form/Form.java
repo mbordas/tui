@@ -17,6 +17,9 @@ package tui.ui.form;
 
 import tui.html.HTMLForm;
 import tui.html.HTMLNode;
+import tui.json.JsonMap;
+import tui.json.JsonObject;
+import tui.json.JsonParser;
 import tui.ui.TUIComponent;
 
 import java.util.ArrayList;
@@ -69,5 +72,19 @@ public class Form extends TUIComponent {
 	@Override
 	public HTMLNode toHTMLNode() {
 		return HTMLForm.toHTML(this);
+	}
+
+	public static boolean isSuccessfulSubmissionResponse(String json) {
+		final JsonMap jsonMap = JsonParser.parseMap(json);
+		if(!"message".equals(jsonMap.getAttribute("type"))) {
+			return false;
+		} else if(!"form submitted".equals(jsonMap.getAttribute("value"))) {
+			return false;
+		}
+		return true;
+	}
+
+	public static JsonObject getSuccessfulSubmissionResponse() {
+		return new JsonMap("message").setAttribute("value", "form submitted");
 	}
 }

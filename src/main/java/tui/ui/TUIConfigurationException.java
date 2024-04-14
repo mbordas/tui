@@ -15,60 +15,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui;
 
-import tui.html.HTMLNode;
-import tui.html.HTMLPage;
+public class TUIConfigurationException extends RuntimeException {
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-public class Page extends TUIComponent {
-
-	private final String m_title;
-	private final List<TUIComponent> m_content = new ArrayList<>();
-
-	public Page(String title) {
-		m_title = title;
+	public TUIConfigurationException(String format, Object... args) {
+		super(String.format(format, args));
 	}
-
-	public String getTitle() {
-		return m_title;
-	}
-
-	public void append(TUIComponent component) {
-		m_content.add(component);
-	}
-
-	public List<TUIComponent> getContent() {
-		return m_content;
-	}
-
-	public Section createSection(String title) {
-		final Section result = new Section(title);
-		m_content.add(result);
-		return result;
-	}
-
-	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
-		return HTMLPage.toHTML(this, pathToCSS, pathToScript, onLoadFunctionCall);
-	}
-
-	@Override
-	public Collection<TUIComponent> getSubComponents() {
-		final Collection<TUIComponent> result = new ArrayList<>();
-		for(TUIComponent component : m_content) {
-			result.add(component);
-			final Collection<TUIComponent> subComponents = component.getSubComponents();
-			if(subComponents != null) {
-				result.addAll(subComponents);
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public HTMLNode toHTMLNode() {
-		return toHTMLNode(null, null, null);
-	}
-
 }

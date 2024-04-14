@@ -13,62 +13,34 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.http;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import tui.html.HTMLNode;
-import tui.html.HTMLPage;
+import tui.ui.Page;
+import tui.ui.Section;
+import tui.ui.TUI;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+public class TUIBackendTest {
 
-public class Page extends TUIComponent {
+	@Ignore
+	@Test
+	public void defaultPage() throws Exception {
+		HTMLNode.PRETTY_PRINT = true;
+		final TUI ui = new TUI();
+		final Page page = new Page("Server default page");
+		final Section subSection = page.createSection("Title 1").createSubSection("Title 2");
+		subSection.createParagraph("Lorem ipsum");
 
-	private final String m_title;
-	private final List<TUIComponent> m_content = new ArrayList<>();
+		ui.add(page);
+		ui.setHTTPBackend("localhost", 8080);
 
-	public Page(String title) {
-		m_title = title;
-	}
+		final TUIBackend server = new TUIBackend(ui);
 
-	public String getTitle() {
-		return m_title;
-	}
+		server.start();
 
-	public void append(TUIComponent component) {
-		m_content.add(component);
-	}
-
-	public List<TUIComponent> getContent() {
-		return m_content;
-	}
-
-	public Section createSection(String title) {
-		final Section result = new Section(title);
-		m_content.add(result);
-		return result;
-	}
-
-	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
-		return HTMLPage.toHTML(this, pathToCSS, pathToScript, onLoadFunctionCall);
-	}
-
-	@Override
-	public Collection<TUIComponent> getSubComponents() {
-		final Collection<TUIComponent> result = new ArrayList<>();
-		for(TUIComponent component : m_content) {
-			result.add(component);
-			final Collection<TUIComponent> subComponents = component.getSubComponents();
-			if(subComponents != null) {
-				result.addAll(subComponents);
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public HTMLNode toHTMLNode() {
-		return toHTMLNode(null, null, null);
+		Thread.sleep(60_000);
 	}
 
 }

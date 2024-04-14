@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui;
 
 import org.junit.Test;
+import tui.test.TestClient;
 import tui.ui.Page;
 import tui.ui.TUI;
 
@@ -28,7 +29,7 @@ public class TUISimpleTest {
 		final TUI ui = new TUI();
 		ui.add(new Page("home"));
 
-		final UIClient client = new UIClient(ui);
+		final TestClient client = new TestClient(ui);
 
 		assertEquals("home", client.getTitle());
 	}
