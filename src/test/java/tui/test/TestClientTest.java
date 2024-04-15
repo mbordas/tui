@@ -94,7 +94,7 @@ public class TestClientTest {
 
 			assertTrue(myTable.isEmpty());
 			myForm.enterInput(parameterName, "My Name");
-			myForm.submit();
+			myForm.submit(); // Sends form data then refreshes table
 
 			assertFalse(myTable.isEmpty());
 			assertTrue(myTable.anyCellMatch(columnName, "John Doe")); // initial row

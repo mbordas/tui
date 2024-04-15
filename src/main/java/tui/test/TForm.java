@@ -46,6 +46,9 @@ public class TForm {
 		m_enteredValues.put(fieldName, value);
 	}
 
+	/**
+	 * Sends form data to the backend. When successful, it refreshes listeners too.
+	 */
 	public void submit() throws HttpException {
 		final String jsonResponse = m_httpClient.callBackend(m_form.getTarget(), m_enteredValues);
 		if(!Form.isSuccessfulSubmissionResponse(jsonResponse)) {
