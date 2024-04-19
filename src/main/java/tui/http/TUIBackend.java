@@ -20,6 +20,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tui.html.CSSBuilder;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
 import tui.ui.Page;
@@ -71,7 +72,10 @@ public class TUIBackend {
 				} else if(PATH_TO_SCRIPT.equals(uri)) {
 					respondWithResource(request, response, "js/tui.js", HTMLConstants.JAVASCRIPT_CONTENT_TYPE);
 				} else if(PATH_TO_CSS.equals(uri)) {
-					respondWithResource(request, response, "css/tui.css", HTMLConstants.CSS_CONTENT_TYPE);
+					response.setContentType(HTMLConstants.CSS_CONTENT_TYPE);
+					response.getWriter().write(CSSBuilder.toCSS(m_ui.getStyle()));
+					response.setStatus(200);
+					request.setHandled(true);
 				} else {
 					final Page defaultPage = m_ui.getDefaultPage();
 					final String html = defaultPage.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();

@@ -1,63 +1,13 @@
 
-fieldset {
-    border: 0;
-}
-
-input {
-    padding: 5px 12px;
-    font-size: 14px;
-    line-height: 20px;
-    color: #24292e;
-    vertical-align: middle;
-    background-color: #ffffff;
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
-    outline: none;
-    box-shadow: rgba(225, 228, 232, 0.2) 0px 1px 0px 0px inset;
-    :focus{
-        border-color: #0366d6;
-        outline: none;
-        box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
-    }
-}
-
 button {
-    display: inline-block;
-    outline: 0;
     text-align: center;
     cursor: pointer;
-    padding: 0px 16px;
+    background-color: var(--button-cancel-color);
     border-radius: 2px;
-    min-width: 80px;
-    height: 32px;
-    background-color: #006600;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 400;
-    box-sizing: border-box;
-    border: 1px solid #000000;
+    border: 1px solid var(--button-border-color);
 }
-button:hover {
-    background-color: #00b300;
-}
-
-table {
-    border: solid 1px #000000;
-    border-collapse: collapse;
-    border-spacing: 0;
-    font: normal 13px Arial, sans-serif;
-}
-table thead th {
-    background-color: #F0F0F0;
-    border: solid 1px #000000;
-    padding: 10px;
-    text-align: center;
-}
-table tbody td {
-    border: solid 1px  	#000000;
-    padding: 10px;
+button[type=submit] {
+    background-color: var(--button-action-color);
 }
 
 

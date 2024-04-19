@@ -42,7 +42,7 @@ public class TestClientTest {
 	}
 
 	/**
-	 * The tested page is composed with a table and a form. The form is used to add a row to the table.
+	 * The tested page is composed of a table and a form. The form is used to add a row to the table.
 	 */
 	@Test
 	public void addANewRowWithForm() throws Exception {
@@ -63,7 +63,7 @@ public class TestClientTest {
 			uiTable.setSource(endPointGetTable);
 			page.append(uiTable);
 
-			final Form form = new Form("My form", "/table/append");
+			final Form form = new Form("My form", endPointAppendTable);
 			form.createInputString(columnName, parameterName);
 			page.append(form);
 			uiTable.connectForRefresh(form);

@@ -15,49 +15,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.html;
 
-import tui.http.FormRequest;
-import tui.ui.TUIComponent;
-import tui.ui.form.Form;
-import tui.ui.form.FormInputString;
+import org.junit.Test;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.awt.*;
 
-public class HTMLForm {
+import static org.junit.Assert.assertEquals;
 
-	public static HTMLNode toHTML(Form form) {
-		final HTMLNode result = new HTMLNode("form")
-				.setAttribute("action", form.getTarget())
-				.setAttribute("method", "post")
-				.setAttribute("enctype", FormRequest.ENCTYPE);
+public class CSSBuilderTest {
 
-		final Collection<TUIComponent> refreshListeners = form.getRefreshListeners();
-		if(!refreshListeners.isEmpty()) {
-			final Iterator<TUIComponent> iterator = refreshListeners.iterator();
-			final StringBuilder tuids = new StringBuilder();
-			while(iterator.hasNext()) {
-				tuids.append(iterator.next().getTUID());
-				if(iterator.hasNext()) {
-					tuids.append(",");
-				}
-			}
-			result.setAttribute("refresh-listeners", tuids.toString());
-		}
-
-		final HTMLNode fieldset = result.createChild("fieldset");
-		fieldset.createChild("legend").setText(form.getTitle());
-		for(FormInputString input : form.getInputs()) {
-			final HTMLNode label = fieldset.createChild("label")
-					.setText(input.getLabel());
-			label.createChild("input")
-					.setAttribute("placeholder", "Text input")
-					.setAttribute("name", input.getName());
-		}
-
-		result.createChild("button")
-				.setAttribute("type", "submit")
-				.setText("Submit");
-
-		return result;
+	@Test
+	public void toCSS() {
+		assertEquals("#1db0e0", CSSBuilder.toCSS(new Color(29, 176, 224)));
+		assertEquals("#00afe0", CSSBuilder.toCSS(new Color(0, 175, 224)));
 	}
+
 }

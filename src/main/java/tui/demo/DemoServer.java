@@ -57,10 +57,10 @@ public class DemoServer {
 
 		// Building server with backend web services
 
-		final TUIBackend server = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(ui);
 
 		// Called when form is submitted
-		server.registerWebService(form.getTarget(), (uri, request, response) -> {
+		backend.registerWebService(form.getTarget(), (uri, request, response) -> {
 			final String serialNumber = FormRequest.getStringField(request, inputSerialNumber.getName());
 			final String vendor = FormRequest.getStringField(request, inputVendor.getName());
 			Map<String, Object> row = new LinkedHashMap<>();
@@ -71,10 +71,10 @@ public class DemoServer {
 		});
 
 		// Called when table is refreshed
-		server.registerWebService(table.getSource(), (uri, request, response) -> table.toJsonObject());
+		backend.registerWebService(table.getSource(), (uri, request, response) -> table.toJsonObject());
 
 		HTMLNode.PRETTY_PRINT = true;
 		JsonObject.PRETTY_PRINT = true;
-		server.start();
+		backend.start();
 	}
 }

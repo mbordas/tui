@@ -13,51 +13,27 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.html;
+package tui.ui;
 
-import tui.http.FormRequest;
-import tui.ui.TUIComponent;
-import tui.ui.form.Form;
-import tui.ui.form.FormInputString;
+import java.awt.*;
 
-import java.util.Collection;
-import java.util.Iterator;
+public class Style {
 
-public class HTMLForm {
-
-	public static HTMLNode toHTML(Form form) {
-		final HTMLNode result = new HTMLNode("form")
-				.setAttribute("action", form.getTarget())
-				.setAttribute("method", "post")
-				.setAttribute("enctype", FormRequest.ENCTYPE);
-
-		final Collection<TUIComponent> refreshListeners = form.getRefreshListeners();
-		if(!refreshListeners.isEmpty()) {
-			final Iterator<TUIComponent> iterator = refreshListeners.iterator();
-			final StringBuilder tuids = new StringBuilder();
-			while(iterator.hasNext()) {
-				tuids.append(iterator.next().getTUID());
-				if(iterator.hasNext()) {
-					tuids.append(",");
-				}
-			}
-			result.setAttribute("refresh-listeners", tuids.toString());
-		}
-
-		final HTMLNode fieldset = result.createChild("fieldset");
-		fieldset.createChild("legend").setText(form.getTitle());
-		for(FormInputString input : form.getInputs()) {
-			final HTMLNode label = fieldset.createChild("label")
-					.setText(input.getLabel());
-			label.createChild("input")
-					.setAttribute("placeholder", "Text input")
-					.setAttribute("name", input.getName());
-		}
-
-		result.createChild("button")
-				.setAttribute("type", "submit")
-				.setText("Submit");
-
-		return result;
+	public record ButtonStyle(Color border, Color action, Color cancel, Color hover) {
 	}
+
+	private ButtonStyle m_buttonStyle = new ButtonStyle(
+			new Color(138, 136, 134),
+			new Color(16, 110, 190),
+			new Color(243, 242, 241),
+			new Color(16, 110, 190));
+
+	public Style() {
+
+	}
+
+	public ButtonStyle getButtonActionColor() {
+		return m_buttonStyle;
+	}
+
 }

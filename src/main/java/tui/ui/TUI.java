@@ -20,6 +20,7 @@ import java.util.List;
 
 public class TUI {
 
+	private Style m_style = new Style();
 	private String m_httpHost;
 	private int m_httpPort;
 	final private List<Page> m_pages = new ArrayList<>();
@@ -43,5 +44,9 @@ public class TUI {
 
 	public int getHTTPPort() {
 		return m_httpPort;
+	}
+
+	public Style getStyle() {
+		return m_style;
 	}
 }
