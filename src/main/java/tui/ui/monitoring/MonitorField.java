@@ -13,44 +13,37 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.monitoring;
 
-import java.awt.*;
+import tui.html.HTMLNode;
 
-public class Style {
+public abstract class MonitorField {
 
-	public record GlobalColors(Color text, Color borders, Color action, Color cancel, Color delete,
-							   Color neutralState, Color greenState, Color redState) {
+	private final String m_name;
+	private final String m_label;
+	private String m_text = null;
+
+	public abstract HTMLNode toHTMLNode();
+
+	public MonitorField(String name, String label) {
+		m_name = name;
+		m_label = label;
 	}
 
-	private GlobalColors m_globalColors = new GlobalColors(
-			new Color(46, 46, 46), // text
-			new Color(180, 180, 180), // borders
-			new Color(0, 198, 252), // action
-			new Color(222, 222, 222), // cancel
-			new Color(252, 40, 3), // delete / rollback
-			new Color(230, 230, 230), // neutral state
-			new Color(115, 250, 70), // green state
-			new Color(252, 40, 3) // red state
-	);
-
-	public record TableColors(Color rowHover) {
-
+	public String getName() {
+		return m_name;
 	}
 
-	private TableColors m_tableStyle = new TableColors(
-			new Color(192, 240, 252)
-	);
-
-	public Style() {
+	public String getLabel() {
+		return m_label;
 	}
 
-	public GlobalColors getGlobalColors() {
-		return m_globalColors;
+	public void setText(String text) {
+		m_text = text;
 	}
 
-	public TableColors getTableStyle() {
-		return m_tableStyle;
+	public String getText() {
+		return m_text;
 	}
 
 }

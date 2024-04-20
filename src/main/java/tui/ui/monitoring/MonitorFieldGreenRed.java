@@ -13,44 +13,34 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.monitoring;
 
-import java.awt.*;
+import tui.html.HTMLNode;
+import tui.html.monitoring.HTMLMonitorFieldGreenRed;
 
-public class Style {
+public class MonitorFieldGreenRed extends MonitorField {
 
-	public record GlobalColors(Color text, Color borders, Color action, Color cancel, Color delete,
-							   Color neutralState, Color greenState, Color redState) {
+	public enum Value {
+		GREEN, RED, NEUTRAL
 	}
 
-	private GlobalColors m_globalColors = new GlobalColors(
-			new Color(46, 46, 46), // text
-			new Color(180, 180, 180), // borders
-			new Color(0, 198, 252), // action
-			new Color(222, 222, 222), // cancel
-			new Color(252, 40, 3), // delete / rollback
-			new Color(230, 230, 230), // neutral state
-			new Color(115, 250, 70), // green state
-			new Color(252, 40, 3) // red state
-	);
+	private Value m_value = Value.NEUTRAL;
 
-	public record TableColors(Color rowHover) {
-
+	public MonitorFieldGreenRed(String name, String label) {
+		super(name, label);
 	}
 
-	private TableColors m_tableStyle = new TableColors(
-			new Color(192, 240, 252)
-	);
-
-	public Style() {
+	public void set(Value value, String text) {
+		m_value = value;
+		setText(text);
 	}
 
-	public GlobalColors getGlobalColors() {
-		return m_globalColors;
+	public Value getValue() {
+		return m_value;
 	}
 
-	public TableColors getTableStyle() {
-		return m_tableStyle;
+	@Override
+	public HTMLNode toHTMLNode() {
+		return HTMLMonitorFieldGreenRed.toHTML(this);
 	}
-
 }

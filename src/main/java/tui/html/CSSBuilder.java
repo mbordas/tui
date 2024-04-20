@@ -33,11 +33,20 @@ public class CSSBuilder {
 
 		result.append(":root{\n");
 
-		final Style.ButtonStyle buttonStyle = style.getButtonActionColor();
-		appendGlobalColor(result, "button-border-color", buttonStyle.border());
-		appendGlobalColor(result, "button-action-color", buttonStyle.action());
-		appendGlobalColor(result, "button-cancel-color", buttonStyle.cancel());
-		appendGlobalColor(result, "button-hover-color", buttonStyle.hover());
+		final Style.GlobalColors globalStyle = style.getGlobalColors();
+		appendGlobalColor(result, "global-color-text", globalStyle.text());
+		appendGlobalColor(result, "global-color-border", globalStyle.borders());
+		appendGlobalColor(result, "global-color-action", globalStyle.action());
+		appendGlobalColor(result, "global-color-cancel", globalStyle.cancel());
+		appendGlobalColor(result, "global-color-delete", globalStyle.delete());
+		appendGlobalColor(result, "global-color-neutral-state", globalStyle.neutralState());
+		appendGlobalColor(result, "global-color-green-state", globalStyle.greenState());
+		appendGlobalColor(result, "global-color-red-state", globalStyle.redState());
+
+		result.append("\n");
+		final Style.TableColors tableStyle = style.getTableStyle();
+		appendGlobalColor(result, "table-color-row-hover", tableStyle.rowHover());
+
 		result.append("}\n");
 
 		try {

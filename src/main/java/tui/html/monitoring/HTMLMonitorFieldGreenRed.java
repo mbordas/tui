@@ -13,44 +13,25 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.html.monitoring;
 
-import java.awt.*;
+import tui.html.HTMLNode;
+import tui.ui.monitoring.MonitorFieldGreenRed;
 
-public class Style {
+public class HTMLMonitorFieldGreenRed {
 
-	public record GlobalColors(Color text, Color borders, Color action, Color cancel, Color delete,
-							   Color neutralState, Color greenState, Color redState) {
+	public static final String CLASS = "tui-monitor-field tui-monitor-field-greenred";
+	public static final String CLASS_LABEL = "tui-monitor-field-label";
+	public static final String CLASS_VALUE = "tui-monitor-field-value";
+
+	public static HTMLNode toHTML(MonitorFieldGreenRed field) {
+		final HTMLNode result = new HTMLNode("div")
+				.setAttribute("class", CLASS)
+				.setAttribute("monitor-field-name", field.getName())
+				.setAttribute("value", field.getValue().name());
+		result.createChild("span").setAttribute("class", CLASS_LABEL).setText(field.getLabel());
+		result.createChild("span").setAttribute("class", CLASS_VALUE).setText(field.getText());
+
+		return result;
 	}
-
-	private GlobalColors m_globalColors = new GlobalColors(
-			new Color(46, 46, 46), // text
-			new Color(180, 180, 180), // borders
-			new Color(0, 198, 252), // action
-			new Color(222, 222, 222), // cancel
-			new Color(252, 40, 3), // delete / rollback
-			new Color(230, 230, 230), // neutral state
-			new Color(115, 250, 70), // green state
-			new Color(252, 40, 3) // red state
-	);
-
-	public record TableColors(Color rowHover) {
-
-	}
-
-	private TableColors m_tableStyle = new TableColors(
-			new Color(192, 240, 252)
-	);
-
-	public Style() {
-	}
-
-	public GlobalColors getGlobalColors() {
-		return m_globalColors;
-	}
-
-	public TableColors getTableStyle() {
-		return m_tableStyle;
-	}
-
 }

@@ -24,6 +24,8 @@ import tui.ui.TUI;
 import tui.ui.Table;
 import tui.ui.form.Form;
 import tui.ui.form.FormInputString;
+import tui.ui.monitoring.MonitorFieldGreenRed;
+import tui.ui.monitoring.MonitorFieldSet;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +34,11 @@ import java.util.Map;
 public class DemoServer {
 
 	public static void main(String[] args) throws Exception {
+
+		final Map<String, String> initialRows = new LinkedHashMap<>();
+		for(int i = 0; i < 10; i++) {
+			initialRows.put("Vendor #" + i, "SN_" + (i * 1010));
+		}
 
 		// Building UI
 
@@ -46,6 +53,9 @@ public class DemoServer {
 		final String columnVendor = "Vendor";
 		final String columnSerialNumber = "Serial number";
 		final Table table = new Table("Refreshable table", List.of(columnVendor, columnSerialNumber));
+		for(Map.Entry<String, String> row : initialRows.entrySet()) {
+			table.append(Map.of("Vendor", row.getKey(), "Serial number", row.getValue()));
+		}
 		table.setSource("/demo/table/1");
 		page.append(table);
 
@@ -54,6 +64,12 @@ public class DemoServer {
 		final FormInputString inputSerialNumber = form.createInputString("Serial number", "serial_number");
 		table.connectForRefresh(form);
 		page.append(form);
+
+		final MonitorFieldSet monitorFieldSet = new MonitorFieldSet("Live fields");
+		monitorFieldSet.createFieldGreenRed("check-1", "Alpha").set(MonitorFieldGreenRed.Value.GREEN, "Good");
+		monitorFieldSet.createFieldGreenRed("check-2", "Beta").set(MonitorFieldGreenRed.Value.RED, "Bad");
+		monitorFieldSet.createFieldGreenRed("check-3", "Gamma").set(MonitorFieldGreenRed.Value.NEUTRAL, "Regular");
+		page.append(monitorFieldSet);
 
 		// Building server with backend web services
 

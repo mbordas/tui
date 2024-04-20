@@ -13,44 +13,25 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.html.monitoring;
 
-import java.awt.*;
+import tui.html.HTMLNode;
+import tui.ui.monitoring.MonitorField;
+import tui.ui.monitoring.MonitorFieldSet;
 
-public class Style {
+public class HTMLMonitorFieldSet {
 
-	public record GlobalColors(Color text, Color borders, Color action, Color cancel, Color delete,
-							   Color neutralState, Color greenState, Color redState) {
+	public static final String CLASS = "tui-monitor-fieldset";
+
+	public static HTMLNode toHTML(MonitorFieldSet fieldSet) {
+		final HTMLNode result = new HTMLNode("div")
+				.setAttribute("class", CLASS);
+		if(fieldSet.getTitle() != null) {
+			result.setAttribute("title", fieldSet.getTitle());
+		}
+		for(MonitorField field : fieldSet.getFields()) {
+			result.addChild(field.toHTMLNode());
+		}
+		return result;
 	}
-
-	private GlobalColors m_globalColors = new GlobalColors(
-			new Color(46, 46, 46), // text
-			new Color(180, 180, 180), // borders
-			new Color(0, 198, 252), // action
-			new Color(222, 222, 222), // cancel
-			new Color(252, 40, 3), // delete / rollback
-			new Color(230, 230, 230), // neutral state
-			new Color(115, 250, 70), // green state
-			new Color(252, 40, 3) // red state
-	);
-
-	public record TableColors(Color rowHover) {
-
-	}
-
-	private TableColors m_tableStyle = new TableColors(
-			new Color(192, 240, 252)
-	);
-
-	public Style() {
-	}
-
-	public GlobalColors getGlobalColors() {
-		return m_globalColors;
-	}
-
-	public TableColors getTableStyle() {
-		return m_tableStyle;
-	}
-
 }

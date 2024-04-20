@@ -13,44 +13,40 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.monitoring;
 
-import java.awt.*;
+import tui.html.HTMLNode;
+import tui.html.monitoring.HTMLMonitorFieldSet;
+import tui.ui.TUIComponent;
 
-public class Style {
+import java.util.ArrayList;
+import java.util.List;
 
-	public record GlobalColors(Color text, Color borders, Color action, Color cancel, Color delete,
-							   Color neutralState, Color greenState, Color redState) {
+public class MonitorFieldSet extends TUIComponent {
+
+	private final String m_title;
+	private final List<MonitorField> m_fields = new ArrayList<>();
+
+	public MonitorFieldSet(String title) {
+		m_title = title;
 	}
 
-	private GlobalColors m_globalColors = new GlobalColors(
-			new Color(46, 46, 46), // text
-			new Color(180, 180, 180), // borders
-			new Color(0, 198, 252), // action
-			new Color(222, 222, 222), // cancel
-			new Color(252, 40, 3), // delete / rollback
-			new Color(230, 230, 230), // neutral state
-			new Color(115, 250, 70), // green state
-			new Color(252, 40, 3) // red state
-	);
-
-	public record TableColors(Color rowHover) {
-
+	public String getTitle() {
+		return m_title;
 	}
 
-	private TableColors m_tableStyle = new TableColors(
-			new Color(192, 240, 252)
-	);
-
-	public Style() {
+	public List<MonitorField> getFields() {
+		return m_fields;
 	}
 
-	public GlobalColors getGlobalColors() {
-		return m_globalColors;
+	public MonitorFieldGreenRed createFieldGreenRed(String name, String label) {
+		final MonitorFieldGreenRed result = new MonitorFieldGreenRed(name, label);
+		m_fields.add(result);
+		return result;
 	}
 
-	public TableColors getTableStyle() {
-		return m_tableStyle;
+	@Override
+	public HTMLNode toHTMLNode() {
+		return HTMLMonitorFieldSet.toHTML(this);
 	}
-
 }

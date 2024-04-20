@@ -16,6 +16,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function onload() {
     instrumentForms();
     instrumentTables();
+
+    updateDisplayMonitorFields();
 }
 
 // FORMS
@@ -101,4 +103,29 @@ async function refreshTable(id) {
     }
 
     table.getElementsByTagName("tbody")[0].replaceWith(freshBody);
+}
+
+// MONITORING
+
+function updateDisplayMonitorFields() {
+    const fields = document.querySelectorAll('.tui-monitor-field');
+    fields.forEach(function(field, i) {
+        const value = field.getAttribute('value');
+        const valueSpans = field.querySelectorAll('.tui-monitor-field-value');
+        valueSpans.forEach(function(valueSpan, i) {
+            switch(value) {
+                case 'GREEN':
+                    valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-green');
+                    break;
+                case 'RED':
+                    valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-red');
+                    break;
+                case 'NEUTRAL':
+                    valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-neutral');
+                    break;
+                default:
+                    error('Unsupported value: ' + value);
+            }
+        });
+    });
 }
