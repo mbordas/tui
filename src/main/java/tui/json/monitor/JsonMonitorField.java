@@ -13,41 +13,25 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.monitoring;
+package tui.json.monitor;
 
-import tui.html.HTMLNode;
-import tui.json.JsonObject;
-import tui.ui.TUIComponent;
+import tui.json.JsonArray;
+import tui.json.JsonMap;
+import tui.ui.monitoring.MonitorField;
 
-public abstract class MonitorField extends TUIComponent {
+import java.util.Collection;
 
-	private final String m_name;
-	private final String m_label;
-	private String m_text = null;
+public class JsonMonitorField {
 
-	public abstract HTMLNode toHTMLNode();
+	public static final String JSON_TYPE = "monitor-fields";
 
-	public abstract JsonObject toJsonObject();
+	public static JsonMap toJson(Collection<? extends MonitorField> fields) {
+		JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonArray array = result.createArray("fields");
 
-	public MonitorField(String name, String label) {
-		m_name = name;
-		m_label = label;
+		for(MonitorField field : fields) {
+			array.add(field.toJsonObject());
+		}
+		return result;
 	}
-
-	public String getName() {
-		return m_name;
-	}
-
-	public String getLabel() {
-		return m_label;
-	}
-
-	public void setText(String text) {
-		m_text = text;
-	}
-
-	public String getText() {
-		return m_text;
-	}
-
 }

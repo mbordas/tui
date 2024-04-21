@@ -26,9 +26,27 @@ public class MonitorFieldSet extends TUIComponent {
 
 	private final String m_title;
 	private final List<MonitorField> m_fields = new ArrayList<>();
+	private String m_source = null;
+	private int m_autoRefreshPeriod_s = 5;
 
 	public MonitorFieldSet(String title) {
 		m_title = title;
+	}
+
+	public void setSource(String source) {
+		m_source = source;
+	}
+
+	public String getSource() {
+		return m_source;
+	}
+
+	public void setAutoRefreshPeriod_s(int period_s) {
+		m_autoRefreshPeriod_s = period_s;
+	}
+
+	public int getAutoRefreshPeriod_s() {
+		return m_autoRefreshPeriod_s;
 	}
 
 	public String getTitle() {
@@ -49,4 +67,5 @@ public class MonitorFieldSet extends TUIComponent {
 	public HTMLNode toHTMLNode() {
 		return HTMLMonitorFieldSet.toHTML(this);
 	}
+
 }

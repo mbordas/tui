@@ -17,6 +17,8 @@ package tui.ui.monitoring;
 
 import tui.html.HTMLNode;
 import tui.html.monitoring.HTMLMonitorFieldGreenRed;
+import tui.json.JsonObject;
+import tui.json.monitor.JsonMonitorFieldGreenRed;
 
 public class MonitorFieldGreenRed extends MonitorField {
 
@@ -30,9 +32,10 @@ public class MonitorFieldGreenRed extends MonitorField {
 		super(name, label);
 	}
 
-	public void set(Value value, String text) {
+	public MonitorFieldGreenRed set(Value value, String text) {
 		m_value = value;
 		setText(text);
+		return this;
 	}
 
 	public Value getValue() {
@@ -42,5 +45,10 @@ public class MonitorFieldGreenRed extends MonitorField {
 	@Override
 	public HTMLNode toHTMLNode() {
 		return HTMLMonitorFieldGreenRed.toHTML(this);
+	}
+
+	@Override
+	public JsonObject toJsonObject() {
+		return JsonMonitorFieldGreenRed.toJson(this);
 	}
 }

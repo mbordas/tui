@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function onload() {
     instrumentForms();
     instrumentTables();
+    instrumentMonitorFields();
 
     updateDisplayMonitorFields();
 }
@@ -127,5 +128,34 @@ function updateDisplayMonitorFields() {
                     error('Unsupported value: ' + value);
             }
         });
+    });
+}
+
+async function refreshMonitorFields(sourcePath) {
+    console.log('refreshing ' + sourcePath);
+    const response = await fetch(sourcePath);
+    const json = await response.json();
+    for(const field of json.fields) {
+        switch(field.type) {
+            case 'monitor-field-greenred':
+                const fieldDiv = document.getElementById(field.tuid);
+                fieldDiv.setAttribute('value', field.value);
+                const valueSpan = fieldDiv.querySelector('.tui-monitor-field-value');
+                valueSpan.innerText = field.text;
+            break;
+        }
+    }
+    updateDisplayMonitorFields();
+}
+
+function instrumentMonitorFields() {
+    const fieldsets = document.querySelectorAll('.tui-monitor-fieldset');
+    fieldsets.forEach(function(fieldset, i) {
+        const sourcePath = fieldset.getAttribute('tui-source');
+        const period_s = parseInt(fieldset.getAttribute('auto-refresh-period_s'));
+        function refresh() {
+            refreshMonitorFields(sourcePath);
+        }
+        const intervalId = setInterval(refresh, 1000 * period_s);
     });
 }

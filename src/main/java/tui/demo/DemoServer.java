@@ -19,6 +19,7 @@ import tui.html.HTMLNode;
 import tui.http.FormRequest;
 import tui.http.TUIBackend;
 import tui.json.JsonObject;
+import tui.json.monitor.JsonMonitorField;
 import tui.ui.Page;
 import tui.ui.TUI;
 import tui.ui.Table;
@@ -27,9 +28,11 @@ import tui.ui.form.FormInputString;
 import tui.ui.monitoring.MonitorFieldGreenRed;
 import tui.ui.monitoring.MonitorFieldSet;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class DemoServer {
 
@@ -66,9 +69,17 @@ public class DemoServer {
 		page.append(form);
 
 		final MonitorFieldSet monitorFieldSet = new MonitorFieldSet("Live fields");
-		monitorFieldSet.createFieldGreenRed("check-1", "Alpha").set(MonitorFieldGreenRed.Value.GREEN, "Good");
-		monitorFieldSet.createFieldGreenRed("check-2", "Beta").set(MonitorFieldGreenRed.Value.RED, "Bad");
-		monitorFieldSet.createFieldGreenRed("check-3", "Gamma").set(MonitorFieldGreenRed.Value.NEUTRAL, "Regular");
+		monitorFieldSet.setSource("/monitor/1");
+		monitorFieldSet.setAutoRefreshPeriod_s(1);
+		MonitorFieldGreenRed field1 =
+				monitorFieldSet.createFieldGreenRed("check-1", "Alpha")
+						.set(MonitorFieldGreenRed.Value.GREEN, "Good");
+		MonitorFieldGreenRed field2 =
+				monitorFieldSet.createFieldGreenRed("check-2", "Beta")
+						.set(MonitorFieldGreenRed.Value.RED, "Bad");
+		MonitorFieldGreenRed field3 =
+				monitorFieldSet.createFieldGreenRed("check-3", "Gamma")
+						.set(MonitorFieldGreenRed.Value.NEUTRAL, "Regular");
 		page.append(monitorFieldSet);
 
 		// Building server with backend web services
@@ -88,6 +99,23 @@ public class DemoServer {
 
 		// Called when table is refreshed
 		backend.registerWebService(table.getSource(), (uri, request, response) -> table.toJsonObject());
+
+		backend.registerWebService(monitorFieldSet.getSource(), (uri, request, response) -> {
+			final List<MonitorFieldGreenRed> fields = new ArrayList<>();
+			final Random random = new Random();
+			for(MonitorFieldGreenRed field : new MonitorFieldGreenRed[] { field1, field2, field3 }) {
+				final int number = random.nextInt(100);
+				if(number < 34) {
+					field.set(MonitorFieldGreenRed.Value.RED, String.format("%d %%", number));
+				} else if(number < 66) {
+					field.set(MonitorFieldGreenRed.Value.NEUTRAL, String.format("%d %%", number));
+				} else {
+					field.set(MonitorFieldGreenRed.Value.GREEN, String.format("%d %%", number));
+				}
+				fields.add(field);
+			}
+			return JsonMonitorField.toJson(fields);
+		});
 
 		HTMLNode.PRETTY_PRINT = true;
 		JsonObject.PRETTY_PRINT = true;

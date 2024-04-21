@@ -51,6 +51,11 @@ public class HTMLNode {
 		return this;
 	}
 
+	public HTMLNode setAttribute(String name, int value) {
+		m_attributes.put(name, String.valueOf(value));
+		return this;
+	}
+
 	public HTMLNode setText(String text) {
 		m_text = new StringBuilder();
 		m_text.append(text);

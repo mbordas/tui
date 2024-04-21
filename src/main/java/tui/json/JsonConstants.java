@@ -13,41 +13,11 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.monitoring;
+package tui.json;
 
-import tui.html.HTMLNode;
-import tui.json.JsonObject;
-import tui.ui.TUIComponent;
+public class JsonConstants {
 
-public abstract class MonitorField extends TUIComponent {
-
-	private final String m_name;
-	private final String m_label;
-	private String m_text = null;
-
-	public abstract HTMLNode toHTMLNode();
-
-	public abstract JsonObject toJsonObject();
-
-	public MonitorField(String name, String label) {
-		m_name = name;
-		m_label = label;
+	public static String toId(long tuid) {
+		return String.valueOf(tuid);
 	}
-
-	public String getName() {
-		return m_name;
-	}
-
-	public String getLabel() {
-		return m_label;
-	}
-
-	public void setText(String text) {
-		m_text = text;
-	}
-
-	public String getText() {
-		return m_text;
-	}
-
 }

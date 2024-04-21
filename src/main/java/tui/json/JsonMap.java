@@ -49,6 +49,11 @@ public class JsonMap extends JsonObject {
 		return result;
 	}
 
+	public void setChild(String name, JsonObject child) {
+		m_children.put(name, child);
+		child.setPrettyPrintDepth(m_prettyPrintDepth + 1);
+	}
+
 	public void setArray(String name, JsonArray array) {
 		m_children.put(name, array);
 		array.setPrettyPrintDepth(m_prettyPrintDepth + 1);
@@ -91,4 +96,5 @@ public class JsonMap extends JsonObject {
 		result.append("}");
 		return result.toString();
 	}
+
 }

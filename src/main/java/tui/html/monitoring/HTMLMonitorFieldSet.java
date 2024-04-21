@@ -29,6 +29,11 @@ public class HTMLMonitorFieldSet {
 		if(fieldSet.getTitle() != null) {
 			result.setAttribute("title", fieldSet.getTitle());
 		}
+		if(fieldSet.getSource() != null) {
+			result.setAttribute("tui-source", fieldSet.getSource())
+					.setAttribute("auto-refresh-period_s", fieldSet.getAutoRefreshPeriod_s());
+		}
+
 		for(MonitorField field : fieldSet.getFields()) {
 			result.addChild(field.toHTMLNode());
 		}

@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.html.monitoring;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.ui.monitoring.MonitorFieldGreenRed;
 
@@ -26,6 +27,7 @@ public class HTMLMonitorFieldGreenRed {
 
 	public static HTMLNode toHTML(MonitorFieldGreenRed field) {
 		final HTMLNode result = new HTMLNode("div")
+				.setAttribute("id", HTMLConstants.toId(field.getTUID()))
 				.setAttribute("class", CLASS)
 				.setAttribute("monitor-field-name", field.getName())
 				.setAttribute("value", field.getValue().name());
