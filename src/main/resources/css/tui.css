@@ -27,10 +27,12 @@ button {
     text-align: center;
     cursor: pointer;
     background-color: var(--global-color-cancel);
+    color: var(--global-color-cancel-contrast);
     border: 1px solid var(--global-color-border);
 }
 button[type=submit] {
     background-color: var(--global-color-action);
+    color: var(--global-color-action-contrast);
 }
 
 /* MONITORING */
@@ -62,13 +64,15 @@ button[type=submit] {
 }
 .tui-monitor-field-value-neutral {
     background-color: var(--global-color-neutral-state);
+    color: var(--global-color-neutral-state-contrast);
 }
 .tui-monitor-field-value-green {
     background-color: var(--global-color-green-state);
+    color: var(--global-color-green-state-contrast);
 }
 .tui-monitor-field-value-red {
     background-color: var(--global-color-red-state);
-    color: var(--global-color-neutral-state);
+    color: var(--global-color-red-state-contrast);
 }
 
 /* TABLE */

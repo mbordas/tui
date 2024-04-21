@@ -37,11 +37,18 @@ public class CSSBuilder {
 		appendGlobalColor(result, "global-color-text", globalStyle.text());
 		appendGlobalColor(result, "global-color-border", globalStyle.borders());
 		appendGlobalColor(result, "global-color-action", globalStyle.action());
+		appendGlobalColor(result, "global-color-action-contrast", computeContrastColor(globalStyle.action()));
 		appendGlobalColor(result, "global-color-cancel", globalStyle.cancel());
+		appendGlobalColor(result, "global-color-cancel-contrast", computeContrastColor(globalStyle.cancel()));
 		appendGlobalColor(result, "global-color-delete", globalStyle.delete());
+		appendGlobalColor(result, "global-color-delete-contrast", computeContrastColor(globalStyle.delete()));
+
 		appendGlobalColor(result, "global-color-neutral-state", globalStyle.neutralState());
+		appendGlobalColor(result, "global-color-neutral-state-contrast", computeContrastColor(globalStyle.neutralState()));
 		appendGlobalColor(result, "global-color-green-state", globalStyle.greenState());
+		appendGlobalColor(result, "global-color-green-state-contrast", computeContrastColor(globalStyle.greenState()));
 		appendGlobalColor(result, "global-color-red-state", globalStyle.redState());
+		appendGlobalColor(result, "global-color-red-state-contrast", computeContrastColor(globalStyle.redState()));
 
 		result.append("\n");
 		final Style.TableColors tableStyle = style.getTableStyle();
@@ -71,6 +78,18 @@ public class CSSBuilder {
 		String green = Integer.toHexString(color.getGreen());
 		String blue = Integer.toHexString(color.getBlue());
 		return String.format("#%1$2s%2$2s%3$2s", red, green, blue).replace(' ', '0');
+	}
+
+	/**
+	 * This code has been found here: https://stackoverflow.com/questions/1855884/determine-font-color-based-on-background-color
+	 */
+	static Color computeContrastColor(Color color) {
+		double perceptiveLuminance = (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
+		if(perceptiveLuminance > 0.5) {
+			return Color.BLACK; // bright colors - black font
+		} else {
+			return Color.WHITE; // dark colors - white font
+		}
 	}
 
 	private static String getResourceFileContent(String resourcePath) throws IOException {
