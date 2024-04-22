@@ -13,12 +13,21 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+"use strict";
+
 function onload() {
     instrumentForms();
     instrumentTables();
     instrumentMonitorFields();
 
     updateDisplayMonitorFields();
+}
+
+function refreshComponent(id) {
+    const element = document.getElementById(id);
+    if(element.nodeName == "TABLE") {
+        refreshTable(id);
+    }
 }
 
 // FORMS
@@ -48,14 +57,6 @@ function instrumentForms() {
         })
     });
 }
-
-function refreshComponent(id) {
-    const element = document.getElementById(id);
-    if(element.nodeName == "TABLE") {
-        refreshTable(id);
-    }
-}
-
 
 // TABLES
 
