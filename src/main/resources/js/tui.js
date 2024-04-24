@@ -30,6 +30,23 @@ function refreshComponent(id) {
     }
 }
 
+// TABS
+
+function selectTab(tabId, tabLink) {
+    const tabPanels = document.querySelectorAll('.tui-panel');
+    tabPanels.forEach(function(panel, i) {
+        panel.style.display = 'none';
+    });
+
+    document.getElementById(tabId).style.display = 'block';
+
+    const tabLinks = document.querySelectorAll('.tui-tablink');
+    tabLinks.forEach(function(link, i) {
+        link.setAttribute('class', 'tui-tablink');
+    });
+    tabLink.setAttribute('class', 'tui-tablink tui-tablink-active');
+}
+
 // FORMS
 
 function instrumentForms() {

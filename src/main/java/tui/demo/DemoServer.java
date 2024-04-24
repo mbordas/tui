@@ -20,8 +20,9 @@ import tui.http.FormRequest;
 import tui.http.TUIBackend;
 import tui.json.JsonObject;
 import tui.json.monitor.JsonMonitorField;
-import tui.ui.Page;
+import tui.ui.Panel;
 import tui.ui.TUI;
+import tui.ui.TabbedPage;
 import tui.ui.Table;
 import tui.ui.form.Form;
 import tui.ui.form.FormInputString;
@@ -48,8 +49,9 @@ public class DemoServer {
 		final TUI ui = new TUI();
 		ui.setHTTPBackend("localhost", 80);
 
-		Page page = new Page("Demo");
-		page.createSection("Demo page")
+		TabbedPage page = new TabbedPage("Demo");
+		final Panel panel1 = page.createTab("Table and form");
+		panel1.createSection("Tables")
 				.createParagraph("Use the form to add row to the table.");
 		ui.add(page);
 
@@ -60,17 +62,20 @@ public class DemoServer {
 			table.append(Map.of("Vendor", row.getKey(), "Serial number", row.getValue()));
 		}
 		table.setSource("/demo/table/1");
-		page.append(table);
+		panel1.append(table);
 
 		final Form form = new Form("New element", "/demo/form/1");
 		final FormInputString inputVendor = form.createInputString("Vendor", "vendor");
 		final FormInputString inputSerialNumber = form.createInputString("Serial number", "serial_number");
 		table.connectForRefresh(form);
-		page.append(form);
+		panel1.append(form);
 
+		final Panel panel2 = page.createTab("Monitor fields");
+		panel2.createSection("Monitoring")
+				.createParagraph("Monitor fields display live data.");
 		final MonitorFieldSet monitorFieldSet = new MonitorFieldSet("Live fields");
 		monitorFieldSet.setSource("/monitor/1");
-		monitorFieldSet.setAutoRefreshPeriod_s(1);
+		monitorFieldSet.setAutoRefreshPeriod_s(5);
 		MonitorFieldGreenRed field1 =
 				monitorFieldSet.createFieldGreenRed("check-1", "Alpha")
 						.set(MonitorFieldGreenRed.Value.GREEN, "Good");
@@ -80,7 +85,7 @@ public class DemoServer {
 		MonitorFieldGreenRed field3 =
 				monitorFieldSet.createFieldGreenRed("check-3", "Gamma")
 						.set(MonitorFieldGreenRed.Value.NEUTRAL, "Regular");
-		page.append(monitorFieldSet);
+		panel2.append(monitorFieldSet);
 
 		// Building server with backend web services
 

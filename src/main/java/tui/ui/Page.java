@@ -22,17 +22,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Page extends TUIComponent {
+public class Page extends APage {
 
-	private final String m_title;
 	private final List<TUIComponent> m_content = new ArrayList<>();
 
 	public Page(String title) {
-		m_title = title;
-	}
-
-	public String getTitle() {
-		return m_title;
+		super(title);
 	}
 
 	public void append(TUIComponent component) {

@@ -8,6 +8,29 @@ body {
     font-family: Arial, sans-serif;
 }
 
+/* TABS */
+
+.tui-tabnav {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+.tui-tablink {
+    font-size: 1em;
+    padding-left: 30px;
+    padding-right: 30px;
+    cursor: pointer;
+    background: none;
+    border-radius: 0px;
+    border-left: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: 1px solid var(--global-color-border);
+}
+.tui-tablink-active {
+    border-bottom: 3px solid var(--global-color-action);
+}
+
 /* FORM */
 
 form {

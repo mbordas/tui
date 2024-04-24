@@ -23,18 +23,18 @@ public class TUI {
 	private Style m_style = new Style();
 	private String m_httpHost;
 	private int m_httpPort;
-	final private List<Page> m_pages = new ArrayList<>();
+	final private List<APage> m_pages = new ArrayList<>();
 
 	public void setHTTPBackend(String host, int port) {
 		m_httpHost = host;
 		m_httpPort = port;
 	}
 
-	public void add(Page page) {
+	public void add(APage page) {
 		m_pages.add(page);
 	}
 
-	public Page getDefaultPage() {
+	public APage getDefaultPage() {
 		return m_pages.isEmpty() ? null : m_pages.get(0);
 	}
 

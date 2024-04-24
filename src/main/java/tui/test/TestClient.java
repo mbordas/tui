@@ -15,7 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test;
 
-import tui.ui.Page;
+import tui.ui.APage;
 import tui.ui.TUI;
 import tui.ui.TUIComponent;
 import tui.ui.Table;
@@ -26,7 +26,7 @@ import java.util.List;
 public class TestClient {
 
 	private final TUI m_ui;
-	private Page m_currentPage;
+	private APage m_currentPage;
 	private TestHTTPClient m_httpClient;
 
 	public TestClient(TUI ui) {

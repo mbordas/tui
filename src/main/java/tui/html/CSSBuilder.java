@@ -34,6 +34,8 @@ public class CSSBuilder {
 		result.append(":root{\n");
 
 		final Style.GlobalColors globalStyle = style.getGlobalColors();
+		appendGlobalColor(result, "global-color-background", Color.WHITE);
+
 		appendGlobalColor(result, "global-color-text", globalStyle.text());
 		appendGlobalColor(result, "global-color-border", globalStyle.borders());
 		appendGlobalColor(result, "global-color-action", globalStyle.action());

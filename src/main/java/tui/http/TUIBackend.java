@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import tui.html.CSSBuilder;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
-import tui.ui.Page;
+import tui.ui.APage;
 import tui.ui.TUI;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,7 +77,7 @@ public class TUIBackend {
 					response.setStatus(200);
 					request.setHandled(true);
 				} else {
-					final Page defaultPage = m_ui.getDefaultPage();
+					final APage defaultPage = m_ui.getDefaultPage();
 					final String html = defaultPage.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
 
 					response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
