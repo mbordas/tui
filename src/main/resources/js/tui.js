@@ -52,6 +52,7 @@ function selectTab(tabId, tabLink) {
 function instrumentForms() {
     const forms = document.querySelectorAll('form');
     forms.forEach(function(form, i) {
+        hideFetchErrorInElement(form);
         form.addEventListener('submit', e => {
             e.preventDefault();
 
@@ -64,6 +65,8 @@ function instrumentForms() {
                     body: new URLSearchParams(data)
                 })
                 .then(response => {
+                    hideFetchErrorInElement(form);
+                    form.classList.remove("fetch-error");
                     if(form.hasAttribute('refresh-listeners')) {
                         form.getAttribute('refresh-listeners').split(",")
                             .forEach(function(id, i) {
@@ -71,8 +74,25 @@ function instrumentForms() {
                             })
                     }
                 })
+                .catch(error => {
+                    form.classList.add("fetch-error");
+                    console.log(error);
+                    showFetchErrorInElement(form, error)
+                });
         })
     });
+}
+
+function showFetchErrorInElement(element, error) {
+    const errorDiv = element.querySelectorAll('.fetch-error-message')[0];
+    errorDiv.innerText = error;
+    errorDiv.style.display = 'block';
+}
+
+function hideFetchErrorInElement(element) {
+    const errorDiv = element.querySelectorAll('.fetch-error-message')[0];
+    errorDiv.innerText = '';
+    errorDiv.style.display = 'none';
 }
 
 // TABLES
@@ -130,39 +150,46 @@ function updateDisplayMonitorFields() {
     const fields = document.querySelectorAll('.tui-monitor-field');
     fields.forEach(function(field, i) {
         const value = field.getAttribute('value');
-        const valueSpans = field.querySelectorAll('.tui-monitor-field-value');
-        valueSpans.forEach(function(valueSpan, i) {
-            switch(value) {
-                case 'GREEN':
-                    valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-green');
-                    break;
-                case 'RED':
-                    valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-red');
-                    break;
-                case 'NEUTRAL':
-                    valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-neutral');
-                    break;
-                default:
-                    error('Unsupported value: ' + value);
-            }
-        });
+        const valueSpan = field.querySelectorAll('.tui-monitor-field-value')[0];
+        switch(value) {
+            case 'GREEN':
+                valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-green');
+                break;
+            case 'RED':
+                valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-red');
+                break;
+            case 'NEUTRAL':
+                valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-neutral');
+                break;
+            default:
+                error('Unsupported value: ' + value);
+        }
     });
 }
 
-async function refreshMonitorFields(sourcePath) {
-    console.log('refreshing ' + sourcePath);
-    const response = await fetch(sourcePath);
-    const json = await response.json();
-    for(const field of json.fields) {
-        switch(field.type) {
-            case 'monitor-field-greenred':
-                const fieldDiv = document.getElementById(field.tuid);
-                fieldDiv.setAttribute('value', field.value);
-                const valueSpan = fieldDiv.querySelector('.tui-monitor-field-value');
-                valueSpan.innerText = field.text;
-            break;
-        }
-    }
+async function refreshMonitorFields(sourcePath, fieldset) {
+    fetch(sourcePath)
+        .then(response => response.json())
+        .then(json => {
+            hideFetchErrorInElement(fieldset);
+            fieldset.classList.remove("fetch-error");
+            for(const field of json.fields) {
+                switch(field.type) {
+                    case 'monitor-field-greenred':
+                        const fieldDiv = document.getElementById(field.tuid);
+                        fieldDiv.setAttribute('value', field.value);
+                        const valueSpan = fieldDiv.querySelector('.tui-monitor-field-value');
+                        valueSpan.innerText = field.text;
+                    break;
+                }
+            }
+        })
+        .catch(error => {
+            fieldset.classList.add("fetch-error");
+            console.log(error);
+            showFetchErrorInElement(fieldset, error)
+        });
+
     updateDisplayMonitorFields();
 }
 
@@ -172,7 +199,7 @@ function instrumentMonitorFields() {
         const sourcePath = fieldset.getAttribute('tui-source');
         const period_s = parseInt(fieldset.getAttribute('auto-refresh-period_s'));
         function refresh() {
-            refreshMonitorFields(sourcePath);
+            refreshMonitorFields(sourcePath, fieldset);
         }
         const intervalId = setInterval(refresh, 1000 * period_s);
     });

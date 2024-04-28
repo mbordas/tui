@@ -64,7 +64,6 @@ button[type=submit] {
     border-radius: 2px;
     display: grid;
     border: 1px solid var(--global-color-border);
-    padding: 10px;
 }
 .tui-monitor-field {
 }
@@ -122,4 +121,15 @@ td {
 }
 tr:hover {
     background-color: var(--table-color-row-hover);
+}
+
+/* FETCH ERRORS */
+
+.fetch-error {
+    border: 2px solid var(--global-color-fetch-error);
+}
+.fetch-error-message {
+    font-size: 0.7em;
+    background-color: var(--global-color-fetch-error);
+    color: var(--global-color-fetch-error-contrast);
 }

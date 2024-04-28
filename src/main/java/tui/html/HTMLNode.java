@@ -64,6 +64,9 @@ public class HTMLNode {
 
 	public HTMLNode createChild(String name) {
 		final HTMLNode result = new HTMLNode(name);
+		if("div".equals(name)) {
+			result.setText(" "); // Will force to create a closing tag in DOM
+		}
 		return addChild(result);
 	}
 

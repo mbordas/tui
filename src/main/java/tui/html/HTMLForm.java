@@ -44,6 +44,8 @@ public class HTMLForm {
 			result.setAttribute("refresh-listeners", tuids.toString());
 		}
 
+		HTMLFetchErrorMessage.addErrorMessageChild(result);
+
 		final HTMLNode fieldset = result.createChild("fieldset");
 		fieldset.createChild("legend").setText(form.getTitle());
 		for(FormInputString input : form.getInputs()) {

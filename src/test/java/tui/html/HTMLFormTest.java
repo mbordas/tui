@@ -13,34 +13,34 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.html.monitoring;
+package tui.html;
 
-import tui.html.HTMLFetchErrorMessage;
-import tui.html.HTMLNode;
-import tui.ui.monitoring.MonitorField;
-import tui.ui.monitoring.MonitorFieldSet;
+import org.junit.Test;
+import tui.ui.form.Form;
 
-public class HTMLMonitorFieldSet {
+import static org.junit.Assert.assertEquals;
 
-	public static final String CLASS = "tui-monitor-fieldset";
+public class HTMLFormTest {
 
-	public static HTMLNode toHTML(MonitorFieldSet fieldSet) {
-		final HTMLNode result = new HTMLNode("div")
-				.setAttribute("class", CLASS);
+	@Test
+	public void toHTML() {
+		final Form form = new Form("test form", null);
+		form.createInputString("input", "input1");
 
-		HTMLFetchErrorMessage.addErrorMessageChild(result);
+		final HTMLNode html = HTMLForm.toHTML(form);
 
-		if(fieldSet.getTitle() != null) {
-			result.setAttribute("title", fieldSet.getTitle());
-		}
-		if(fieldSet.getSource() != null) {
-			result.setAttribute("tui-source", fieldSet.getSource())
-					.setAttribute("auto-refresh-period_s", fieldSet.getAutoRefreshPeriod_s());
-		}
-
-		for(MonitorField field : fieldSet.getFields()) {
-			result.addChild(field.toHTMLNode());
-		}
-		return result;
+		HTMLNode.PRETTY_PRINT = true;
+		assertEquals("""
+				<form action method="post" enctype="multipart/form-data">
+				  <div class="fetch-error-message"> </div>
+				  <fieldset>
+				    <legend>test form</legend>
+				    <label>input      <input placeholder="Text input" name="input1"/>
+				</label>
+				  </fieldset>
+				  <button type="submit">Submit</button>
+				</form>
+				""", html.toHTML());
 	}
+
 }

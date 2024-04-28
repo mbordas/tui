@@ -52,6 +52,9 @@ public class CSSBuilder {
 		appendGlobalColor(result, "global-color-red-state", globalStyle.redState());
 		appendGlobalColor(result, "global-color-red-state-contrast", computeContrastColor(globalStyle.redState()));
 
+		appendGlobalColor(result, "global-color-fetch-error", Color.ORANGE);
+		appendGlobalColor(result, "--global-color-fetch-error-contrast", computeContrastColor(Color.ORANGE));
+
 		result.append("\n");
 		final Style.TableColors tableStyle = style.getTableStyle();
 		appendGlobalColor(result, "table-color-row-hover", tableStyle.rowHover());
