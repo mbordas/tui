@@ -39,21 +39,14 @@ public class CSSBuilder {
 		appendGlobalColor(result, "global-color-text", globalStyle.text());
 		appendGlobalColor(result, "global-color-border", globalStyle.borders());
 		appendGlobalColor(result, "global-color-action", globalStyle.action());
-		appendGlobalColor(result, "global-color-action-contrast", computeContrastColor(globalStyle.action()));
 		appendGlobalColor(result, "global-color-cancel", globalStyle.cancel());
-		appendGlobalColor(result, "global-color-cancel-contrast", computeContrastColor(globalStyle.cancel()));
 		appendGlobalColor(result, "global-color-delete", globalStyle.delete());
-		appendGlobalColor(result, "global-color-delete-contrast", computeContrastColor(globalStyle.delete()));
 
 		appendGlobalColor(result, "global-color-neutral-state", globalStyle.neutralState());
-		appendGlobalColor(result, "global-color-neutral-state-contrast", computeContrastColor(globalStyle.neutralState()));
 		appendGlobalColor(result, "global-color-green-state", globalStyle.greenState());
-		appendGlobalColor(result, "global-color-green-state-contrast", computeContrastColor(globalStyle.greenState()));
 		appendGlobalColor(result, "global-color-red-state", globalStyle.redState());
-		appendGlobalColor(result, "global-color-red-state-contrast", computeContrastColor(globalStyle.redState()));
 
 		appendGlobalColor(result, "global-color-fetch-error", Color.ORANGE);
-		appendGlobalColor(result, "--global-color-fetch-error-contrast", computeContrastColor(Color.ORANGE));
 
 		result.append("\n");
 		final Style.TableColors tableStyle = style.getTableStyle();
@@ -72,6 +65,7 @@ public class CSSBuilder {
 
 	private static void appendGlobalColor(StringBuilder builder, String name, Color value) {
 		appendGlobalVar(builder, name, toCSS(value));
+		appendGlobalVar(builder, name + "-contrast", toCSS(computeContrastColor(value)));
 	}
 
 	private static void appendGlobalVar(StringBuilder builder, String name, String value) {
