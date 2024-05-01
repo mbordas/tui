@@ -63,12 +63,18 @@ public class TUIBackend {
 
 				if(m_webServices.containsKey(uri)) {
 					final TUIWebService webService = m_webServices.get(uri);
-					final JsonObject node = webService.handle(uri, request, response);
-					final String json = node.toJson();
-					response.setContentType(HTMLConstants.JSON_CONTENT_TYPE);
-					response.getWriter().write(json);
-					response.setStatus(200);
-					request.setHandled(true);
+					try {
+						final JsonObject node = webService.handle(uri, request, response);
+						final String json = node.toJson();
+						response.setContentType(HTMLConstants.JSON_CONTENT_TYPE);
+						response.getWriter().write(json);
+						response.setStatus(200);
+						request.setHandled(true);
+					} catch(Throwable t) {
+						LOG.error(t.getMessage(), t);
+						response.setStatus(500);
+						request.setHandled(true);
+					}
 				} else if(PATH_TO_SCRIPT.equals(uri)) {
 					respondWithResource(request, response, "js/tui.js", HTMLConstants.JAVASCRIPT_CONTENT_TYPE);
 				} else if(PATH_TO_CSS.equals(uri)) {

@@ -17,19 +17,26 @@ package tui.html;
 
 import tui.http.FormRequest;
 import tui.ui.TUIComponent;
-import tui.ui.form.Form;
 import tui.ui.form.FormInputString;
+import tui.ui.form.ModalForm;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-public class HTMLForm {
+public class HTMLModalForm {
 
-	public static final String CLASS = "tui-form";
+	public static HTMLNode toHTML(ModalForm form) {
+		final HTMLNode result = new HTMLNode("div")
+				.setAttribute("class", "tui-modal-form-container");
 
-	public static HTMLNode toHTML(Form form) {
-		final HTMLNode result = new HTMLNode("form")
-				.setAttribute("class", CLASS)
+		result.createChild("button")
+				.setAttribute("class", "tui-modal-form-open-button")
+				.setText(form.getOpenButtonLabel());
+
+		final HTMLNode dialog = result.createChild("dialog")
+				.setAttribute("class", "modal");
+
+		final HTMLNode htmlForm = dialog.createChild("form")
 				.setAttribute("action", form.getTarget())
 				.setAttribute("method", "post")
 				.setAttribute("enctype", FormRequest.ENCTYPE);
@@ -47,19 +54,25 @@ public class HTMLForm {
 			result.setAttribute("refresh-listeners", tuids.toString());
 		}
 
-		HTMLFetchErrorMessage.addErrorMessageChild(result);
+		HTMLFetchErrorMessage.addErrorMessageChild(htmlForm);
 
-		final HTMLNode fieldset = result.createChild("fieldset");
+		final HTMLNode fieldset = htmlForm.createChild("fieldset");
 		fieldset.createChild("legend").setText(form.getTitle());
 		for(FormInputString input : form.getInputs()) {
-			final HTMLNode label = fieldset.createChild("label")
+			final HTMLNode div = fieldset.createChild("div");
+			final HTMLNode label = div.createChild("label")
 					.setText(input.getLabel());
 			label.createChild("input")
 					.setAttribute("placeholder", "Text input")
 					.setAttribute("name", input.getName());
 		}
 
-		result.createChild("button")
+		htmlForm.createChild("button")
+				.setAttribute("class", "tui-modal-form-cancel-button")
+				.setAttribute("type", "button")
+				.setText("Cancel");
+
+		htmlForm.createChild("button")
 				.setAttribute("type", "submit")
 				.setText("Submit");
 

@@ -25,11 +25,13 @@ import tui.ui.TUIComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Form extends TUIComponent {
 
 	private final String m_title;
+
 	private final String m_target; // Web service path
 
 	private final Set<FormInputString> m_inputs = new LinkedHashSet<>();
@@ -85,6 +87,24 @@ public class Form extends TUIComponent {
 	}
 
 	public static JsonObject getSuccessfulSubmissionResponse() {
-		return new JsonMap("message").setAttribute("value", "form submitted");
+		return new JsonMap("formSubmissionResponse")
+				.setAttribute("status", "ok")
+				.setAttribute("message", "form submitted");
+	}
+
+	public static JsonObject getFailedSubmissionResponse(String message, Map<String, String> errorMessageByFieldName) {
+		final JsonMap result = new JsonMap("formSubmissionResponse")
+				.setAttribute("status", "nok")
+				.setAttribute("message", message);
+
+		final JsonMap fieldsErrorsMap = new JsonMap(null);
+		for(Map.Entry<String, String> errorEntry : errorMessageByFieldName.entrySet()) {
+			final String fieldName = errorEntry.getKey();
+			final String errorMessage = errorEntry.getValue();
+			fieldsErrorsMap.setAttribute(fieldName, errorMessage);
+		}
+
+		result.setChild("errors", fieldsErrorsMap);
+		return result;
 	}
 }

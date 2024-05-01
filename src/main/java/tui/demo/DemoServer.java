@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.demo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tui.html.HTMLNode;
 import tui.http.FormRequest;
 import tui.http.TUIBackend;
@@ -26,16 +28,20 @@ import tui.ui.TabbedPage;
 import tui.ui.Table;
 import tui.ui.form.Form;
 import tui.ui.form.FormInputString;
+import tui.ui.form.ModalForm;
 import tui.ui.monitoring.MonitorFieldGreenRed;
 import tui.ui.monitoring.MonitorFieldSet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class DemoServer {
+
+	private static final Logger LOG = LoggerFactory.getLogger(DemoServer.class);
 
 	public static void main(String[] args) throws Exception {
 
@@ -64,7 +70,7 @@ public class DemoServer {
 		table.setSource("/demo/table/1");
 		panel1.append(table);
 
-		final Form form = new Form("New element", "/demo/form/1");
+		final Form form = new ModalForm("New element", "Add", "/demo/form/1");
 		final FormInputString inputVendor = form.createInputString("Vendor", "vendor");
 		final FormInputString inputSerialNumber = form.createInputString("Serial number", "serial_number");
 		table.connectForRefresh(form);
@@ -87,6 +93,13 @@ public class DemoServer {
 						.set(MonitorFieldGreenRed.Value.NEUTRAL, "Regular");
 		panel2.append(monitorFieldSet);
 
+		final Panel panel3 = page.createTab("Modal form");
+		final ModalForm modalForm = new ModalForm("Add a new element", "Add", "/modalform/add");
+		final FormInputString modalFormFieldName = modalForm.createInputString("Name", "name");
+		panel3.createSection("Modal form")
+				.createParagraph("Modal forms use dialog elements.");
+		panel3.append(modalForm);
+
 		// Building server with backend web services
 
 		final TUIBackend backend = new TUIBackend(ui);
@@ -104,6 +117,18 @@ public class DemoServer {
 
 		// Called when table is refreshed
 		backend.registerWebService(table.getSource(), (uri, request, response) -> table.toJsonObject());
+
+		backend.registerWebService(modalForm.getTarget(), (uri, request, response) -> {
+			final String nameValue = FormRequest.getStringField(request, modalFormFieldName.getName());
+			LOG.info("Modal form submitted with parameter name=" + nameValue);
+			if(nameValue.isEmpty()) {
+				Map<String, String> errors = new HashMap<>();
+				errors.put(modalFormFieldName.getName(), "Value cannot be empty");
+				return Form.getFailedSubmissionResponse("Errors found in form data", errors);
+			} else {
+				return Form.getSuccessfulSubmissionResponse();
+			}
+		});
 
 		backend.registerWebService(monitorFieldSet.getSource(), (uri, request, response) -> {
 			final List<MonitorFieldGreenRed> fields = new ArrayList<>();

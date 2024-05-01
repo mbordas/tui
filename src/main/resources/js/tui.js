@@ -17,6 +17,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function onload() {
     instrumentForms();
+    instrumentModalForms();
     instrumentTables();
     instrumentMonitorFields();
 
@@ -50,7 +51,7 @@ function selectTab(tabId, tabLink) {
 // FORMS
 
 function instrumentForms() {
-    const forms = document.querySelectorAll('form');
+    const forms = document.querySelectorAll('.tui-form');
     forms.forEach(function(form, i) {
         hideFetchErrorInElement(form);
         form.addEventListener('submit', e => {
@@ -80,6 +81,75 @@ function instrumentForms() {
                     showFetchErrorInElement(form, error)
                 });
         })
+    });
+}
+
+function instrumentModalForms() {
+    const modalFormsContainers = document.querySelectorAll('.tui-modal-form-container');
+    modalFormsContainers.forEach(function(formContainer, i) {
+        const openButton = formContainer.querySelector('button');
+        const dialog = formContainer.querySelector('dialog');
+        const form = dialog.querySelector('form');
+        const cancelButton = form.querySelector('.tui-modal-form-cancel-button');
+        const submitButton = form.querySelector('.tui-modal-form-submit-button');
+
+        hideFetchErrorInElement(form);
+
+        openButton.addEventListener('click', () => {
+            dialog.showModal();
+        });
+        cancelButton.addEventListener('click', () => {
+            dialog.close();
+        });
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const url = form.action;
+            const data = new FormData(e.target);
+
+            fetch(url, {
+                    method: form.method,
+                    enctype: 'multipart/form-data',
+                    body: new URLSearchParams(data)
+                })
+                .then(response => {
+                    if(!response.ok) {
+                        throw new Error('HTTP error, status = ${response.status}');
+                    }
+                    hideFetchErrorInElement(form);
+                    form.classList.remove("fetch-error");
+                    return response.json();
+                })
+                .then((json) => {
+                    if(json['status'] == 'ok') {
+                        const fields = form.querySelectorAll('input');
+                        fields.forEach(function (field) {
+                            field.removeAttribute('title');
+                            field.classList.remove("tui-form-input-invalid");
+                        });
+                        if(formContainer.hasAttribute('refresh-listeners')) {
+                            formContainer.getAttribute('refresh-listeners').split(",")
+                                .forEach(function(id, i) {
+                                    refreshComponent(id);
+                                })
+                        }
+                        dialog.close();
+                    } else {
+                        Object.keys(json['errors']).forEach(function(key) {
+                            const field = form.querySelector("[name='" + key + "']");
+                            const message = json['errors'][key];
+                            field.setAttribute('title', message);
+                            field.classList.add("tui-form-input-invalid");
+                        });
+
+                        throw new Error(json['message']);
+                    }
+                })
+                .catch(error => {
+                    form.classList.add("fetch-error");
+                    showFetchErrorInElement(form, error);
+                });
+        });
+
     });
 }
 
@@ -176,10 +246,13 @@ async function refreshMonitorFields(sourcePath, fieldset) {
             for(const field of json.fields) {
                 switch(field.type) {
                     case 'monitor-field-greenred':
-                        const fieldDiv = document.getElementById(field.tuid);
-                        fieldDiv.setAttribute('value', field.value);
-                        const valueSpan = fieldDiv.querySelector('.tui-monitor-field-value');
-                        valueSpan.innerText = field.text;
+                        // Selecting element by numeric id must be handled that (weird) way
+                        const fieldDiv = fieldset.querySelector("[id='" + field.tuid + "']");
+                        if(fieldDiv) {
+                            fieldDiv.setAttribute('value', field.value);
+                            const valueSpan = fieldDiv.querySelector('.tui-monitor-field-value');
+                            valueSpan.innerText = field.text;
+                        }
                     break;
                 }
             }

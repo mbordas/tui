@@ -39,6 +39,20 @@ form {
 fieldset {
     border: 1px solid var(--global-color-border);
 }
+fieldset>label {
+    display: inline;
+    vertical-align: top;
+}
+.tui-form-input-invalid {
+    border: 2px solid var(--global-color-red-state);
+}
+.modal {
+    max-width: 50ch;
+}
+.modal::backdrop {
+    background: var(--global-color-background-contrast);
+    opacity: .5
+}
 
 /* BUTTON */
 
@@ -53,7 +67,7 @@ button {
     color: var(--global-color-cancel-contrast);
     border: 1px solid var(--global-color-border);
 }
-button[type=submit] {
+button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button {
     background-color: var(--global-color-action);
     color: var(--global-color-action-contrast);
 }
