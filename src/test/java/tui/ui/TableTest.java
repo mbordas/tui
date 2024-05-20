@@ -35,6 +35,8 @@ public class TableTest {
 		assertEquals("""
 				{
 				  "type": "table",
+				  "tuid": " """ + table.getTUID() + """
+				",
 				  "title": "Test table",
 				  "thead": [
 				    "A",
@@ -46,7 +48,7 @@ public class TableTest {
 				      ""
 				    ]
 				  ]
-				}""", table.toJsonObject().toJson());
+				}""", table.toJsonMap().toJson());
 	}
 
 	@Test

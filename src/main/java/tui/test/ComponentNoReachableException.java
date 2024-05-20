@@ -15,44 +15,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test;
 
-import tui.ui.Table;
+public class ComponentNoReachableException extends RuntimeException {
 
-import java.util.List;
-
-public class TTable {
-
-	private final Table m_table;
-
-	public TTable(Table table) {
-		m_table = table;
+	public ComponentNoReachableException(String format, Object... args) {
+		super(String.format(format, args));
 	}
-
-	public String getTitle() {
-		return m_table.getTitle();
-	}
-
-	public boolean isEmpty() {
-		return m_table.size() == 0;
-	}
-
-	public boolean anyCellMatch(String columnName, Object valueEquals) {
-		int columnIndex = 0;
-		for(String column : m_table.getColumns()) {
-			if(column.equals(columnName)) {
-				break;
-			}
-			columnIndex++;
-		}
-
-		for(List<Object> row : m_table.getRows()) {
-			final Object testedValue = row.get(columnIndex);
-			if(valueEquals == null && testedValue == null) {
-				return true;
-			} else if(valueEquals != null && valueEquals.equals(testedValue)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 }

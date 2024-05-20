@@ -17,7 +17,13 @@ package tui.json;
 
 public class JsonConstants {
 
+	public static final String ATTRIBUTE_TUID = "tuid";
+
 	public static String toId(long tuid) {
 		return String.valueOf(tuid);
+	}
+
+	public static long readTUID(JsonMap map) {
+		return Long.parseLong(map.getAttribute(ATTRIBUTE_TUID));
 	}
 }

@@ -36,7 +36,9 @@ public class JsonParser {
 			final String key = keyIterator.next();
 			final Object _object = object.get(key);
 			if(_object instanceof String jsonString) {
-				result.setAttribute(key, jsonString);
+				if(!JsonObject.KEY_TYPE.equals(key)) {
+					result.setAttribute(key, jsonString);
+				}
 			} else if(_object instanceof JSONArray jsonArray) {
 				final JsonArray array = toArray(jsonArray);
 				result.setArray(key, array);

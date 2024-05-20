@@ -15,24 +15,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test;
 
-import tui.ui.APage;
-import tui.ui.TUI;
-import tui.ui.TUIComponent;
-import tui.ui.Table;
-import tui.ui.form.Form;
+import org.apache.http.HttpException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tui.json.JsonMap;
+import tui.json.JsonParser;
+import tui.test.components.TComponent;
+import tui.test.components.TForm;
+import tui.test.components.TPage;
+import tui.test.components.TTable;
 
 import java.util.List;
+import java.util.Map;
 
 public class TestClient {
 
-	private final TUI m_ui;
-	private APage m_currentPage;
+	private static final Logger LOG = LoggerFactory.getLogger(TestClient.class);
+
+	private TPage m_currentPage;
 	private TestHTTPClient m_httpClient;
 
-	public TestClient(TUI ui) {
-		m_ui = ui;
-		m_currentPage = m_ui.getDefaultPage();
-		m_httpClient = new TestHTTPClient(ui.getHTTPHost(), ui.getHTTPPort());
+	public TestClient(String host, int port) {
+		m_currentPage = null;
+		m_httpClient = new TestHTTPClient(host, port);
+	}
+
+	public void open(String endPoint) throws HttpException {
+		final String json = m_httpClient.callBackend(endPoint, Map.of("format", "json"));
+		final JsonMap jsonMap = JsonParser.parseMap(json);
+		try {
+			m_currentPage = TPage.parse(jsonMap, this);
+		} catch(Exception e) {
+			LOG.error("Error when opening page '{}': {}", endPoint, e.getMessage());
+			LOG.debug("JsonMap:\n{}", jsonMap.toJson());
+			throw e;
+		}
 	}
 
 	public String getTitle() {
@@ -40,27 +57,52 @@ public class TestClient {
 	}
 
 	public TTable getTable(String title) {
-		final List<TUIComponent> tables = m_currentPage.getSubComponents().stream()
-				.filter((component) -> component instanceof Table table && title.equals(table.getTitle()))
+		final List<TComponent> tables = m_currentPage.getSubComponents().stream()
+				.filter((component) -> component instanceof TTable table && title.equals(table.getTitle()))
 				.toList();
 		if(tables.isEmpty()) {
 			throw new TestExecutionException("No table found in current page with title: %s", title);
 		} else if(tables.size() > 1) {
 			throw new TestExecutionException("Multiple tables found in current page with title: %s", title);
 		}
-		return new TTable((Table) tables.get(0));
+		return (TTable) tables.get(0);
 	}
 
 	public TForm getForm(String title) {
-		final List<TUIComponent> forms = m_currentPage.getSubComponents().stream()
-				.filter((component) -> component instanceof Form form && title.equals(form.getTitle()))
+		final List<TComponent> forms = m_currentPage.getSubComponents().stream()
+				.filter((component) -> component instanceof TForm form && title.equals(form.getTitle()))
 				.toList();
 		if(forms.isEmpty()) {
 			throw new TestExecutionException("No form found in current page with title: %s", title);
 		} else if(forms.size() > 1) {
 			throw new TestExecutionException("Multiple forms found in current page with title: %s", title);
 		}
-		return new TForm((Form) forms.get(0), m_httpClient);
+		return (TForm) forms.get(0);
 	}
 
+	public String callBackend(String target, Map<String, Object> parameters) throws HttpException {
+		return m_httpClient.callBackend(target, parameters);
+	}
+
+	public TComponent find(long tuid) {
+		if(m_currentPage.getTUID() == tuid) {
+			return m_currentPage;
+		} else {
+			return m_currentPage.find(tuid);
+		}
+	}
+
+	/**
+	 * Refreshes component by using its source attribute.
+	 */
+	public void refresh(long tuid) throws HttpException {
+		final TComponent componentToRefresh = find(tuid);
+		if(componentToRefresh == null) {
+			throw new ComponentNoReachableException("Component with tuid=%d is not reachable", tuid);
+		}
+
+		if(componentToRefresh instanceof TTable table) {
+			table.refresh(this);
+		}
+	}
 }

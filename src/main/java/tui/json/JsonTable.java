@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
+import tui.test.components.TTable;
 import tui.ui.Table;
 
 import java.util.ArrayList;
@@ -26,16 +27,22 @@ import java.util.Map;
 
 public class JsonTable extends JsonMap {
 
-	public static final String TYPE = "table";
+	public static final String JSON_TYPE = "table";
 
-	public JsonTable() {
-		super(TYPE);
+	public static final String ATTRIBUTE_SOURCE = "source";
+
+	public JsonTable(long tuid) {
+		super(JSON_TYPE);
 	}
 
-	public static JsonObject toJson(Table table) {
-		JsonTable result = new JsonTable();
-
+	public static JsonMap toJson(Table table) {
+		JsonTable result = new JsonTable(table.getTUID());
+		result.setAttribute(JsonConstants.ATTRIBUTE_TUID, JsonConstants.toId(table.getTUID()));
 		result.setAttribute("title", table.getTitle());
+
+		if(table.getSource() != null) {
+			result.setAttribute(ATTRIBUTE_SOURCE, table.getSource());
+		}
 
 		final JsonArray thead = result.createArray("thead");
 		for(String column : table.getColumns()) {
@@ -58,10 +65,15 @@ public class JsonTable extends JsonMap {
 		return result;
 	}
 
-	public static Table parseJson(String json) {
+	public static TTable parseJson(String json) {
 		final JsonMap map = JsonParser.parseMap(json);
+		return parse(map);
+	}
 
+	public static TTable parse(JsonMap map) {
 		final String title = map.getAttribute("title");
+		final long tuid = JsonConstants.readTUID(map);
+		final String sourcePath = map.getAttributeOrNull(ATTRIBUTE_SOURCE);
 
 		final JsonArray thead = map.getArray("thead");
 		final Collection<String> columns = new ArrayList<>();
@@ -74,7 +86,7 @@ public class JsonTable extends JsonMap {
 				throw new JsonException("Unexpected json type: %s", columnObject.getClass().getCanonicalName());
 			}
 		}
-		final Table result = new Table(title, columns);
+		final TTable result = new TTable(tuid, title, columns, sourcePath);
 
 		final JsonArray array = map.getArray("tbody");
 		final Iterator<JsonObject> rowIterator = array.iterator();

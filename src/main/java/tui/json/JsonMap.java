@@ -15,9 +15,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class JsonMap extends JsonObject {
 
@@ -27,14 +29,27 @@ public class JsonMap extends JsonObject {
 		super(type);
 	}
 
+	public JsonMap(String type, long tuid) {
+		super(type);
+		setAttribute(JsonConstants.ATTRIBUTE_TUID, JsonConstants.toId(tuid));
+	}
+
 	public JsonMap setAttribute(String name, String value) {
 		m_children.put(name, new JsonString(value));
 		return this;
 	}
 
 	public String getAttribute(String key) {
-		if(!m_children.containsKey(key)) {
+		final String result = getAttributeOrNull(key);
+		if(result == null) {
 			throw new JsonException("Attribute '%s' not found", key);
+		}
+		return result;
+	}
+
+	public String getAttributeOrNull(String key) {
+		if(!m_children.containsKey(key)) {
+			return null;
 		}
 		final JsonObject jsonObject = m_children.get(key);
 		if(jsonObject instanceof JsonString jsonString) {
@@ -46,6 +61,12 @@ public class JsonMap extends JsonObject {
 	public JsonArray createArray(String name) {
 		final JsonArray result = new JsonArray();
 		setArray(name, result);
+		return result;
+	}
+
+	public <X> JsonArray createArray(String name, Collection<X> items, Function<X, JsonObject> convertion) {
+		final JsonArray result = createArray(name);
+		items.forEach((item) -> result.add(convertion.apply(item)));
 		return result;
 	}
 

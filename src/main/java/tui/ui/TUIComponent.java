@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui;
 
 import tui.html.HTMLNode;
+import tui.json.JsonMap;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
@@ -31,6 +32,8 @@ public abstract class TUIComponent {
 	}
 
 	public abstract HTMLNode toHTMLNode();
+
+	public abstract JsonMap toJsonMap();
 
 	public long getTUID() {
 		return m_tuid;

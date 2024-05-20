@@ -116,7 +116,7 @@ public class DemoServer {
 		});
 
 		// Called when table is refreshed
-		backend.registerWebService(table.getSource(), (uri, request, response) -> table.toJsonObject());
+		backend.registerWebService(table.getSource(), (uri, request, response) -> table.toJsonMap());
 
 		backend.registerWebService(modalForm.getTarget(), (uri, request, response) -> {
 			final String nameValue = FormRequest.getStringField(request, modalFormFieldName.getName());

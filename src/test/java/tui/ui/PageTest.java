@@ -17,8 +17,13 @@ package tui.ui;
 
 import org.junit.Test;
 import tui.html.HTMLNode;
+import tui.json.JsonMap;
+import tui.test.components.TComponent;
+import tui.test.components.TComponentFactory;
+import tui.test.components.TPage;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PageTest {
 
@@ -41,6 +46,41 @@ public class PageTest {
 						</html>
 						""",
 				page.toHTMLNode().toHTML().replaceAll("\r\n", "\n"));
+	}
+
+	@Test
+	public void toJsonAndTPage() {
+		Page page = new Page("Empty page");
+		page.createSection("section A");
+
+		final JsonMap jsonMap = page.toJsonMap();
+
+		final TComponent _page = TComponentFactory.parse(jsonMap, null);
+
+		assertTrue(_page instanceof TPage);
+	}
+
+	@Test
+	public void toJsonMap() {
+		final Page page = new Page("Empty page");
+		final Section section = page.createSection("section A");
+
+		//
+		final JsonMap jsonMap = page.toJsonMap();
+		//
+
+		assertEquals(Page.JSON_TYPE, jsonMap.getType());
+
+		//
+		final String json = jsonMap.toJson();
+		//
+
+		assertEquals(
+				"{\"type\": \"page\",\"tuid\": \"" + page.getTUID()
+						+ "\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"" + section.getTUID()
+						+ "\",\"title\": \"section A\",\"content\": []}]}",
+				json);
+
 	}
 
 }

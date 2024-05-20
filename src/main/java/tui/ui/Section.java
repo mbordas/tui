@@ -17,12 +17,15 @@ package tui.ui;
 
 import tui.html.HTMLNode;
 import tui.html.HTMLSection;
+import tui.json.JsonMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class Section extends TUIComponent {
+
+	public static final String JSON_TYPE = "section";
 
 	private final String m_title;
 
@@ -64,10 +67,18 @@ public class Section extends TUIComponent {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public HTMLNode toHTMLNode() {
 		return HTMLSection.toHTML(this, 1);
+	}
+
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		result.setAttribute("title", m_title);
+		result.createArray("content", m_content, TUIComponent::toJsonMap);
+		return result;
 	}
 
 }

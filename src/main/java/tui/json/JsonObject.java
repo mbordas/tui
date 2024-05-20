@@ -32,6 +32,10 @@ public abstract class JsonObject {
 		m_type = type;
 	}
 
+	public String getType() {
+		return m_type;
+	}
+
 	protected StringBuilder prettyPrintTab(StringBuilder builder, int relativeDepth) {
 		if(PRETTY_PRINT) {
 			builder.append("  ".repeat(Math.max(0, m_prettyPrintDepth + relativeDepth)));

@@ -31,7 +31,7 @@ public class HTMLFormTest {
 
 		HTMLNode.PRETTY_PRINT = true;
 		assertEquals("""
-				<form action method="post" enctype="multipart/form-data">
+				<form class="tui-form" action method="post" enctype="multipart/form-data">
 				  <div class="fetch-error-message"> </div>
 				  <fieldset>
 				    <legend>test form</legend>

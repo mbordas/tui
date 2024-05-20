@@ -16,7 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.monitoring;
 
 import tui.html.HTMLNode;
-import tui.json.JsonObject;
+import tui.json.JsonMap;
 import tui.ui.TUIComponent;
 
 public abstract class MonitorField extends TUIComponent {
@@ -27,7 +27,7 @@ public abstract class MonitorField extends TUIComponent {
 
 	public abstract HTMLNode toHTMLNode();
 
-	public abstract JsonObject toJsonObject();
+	public abstract JsonMap toJsonMap();
 
 	public MonitorField(String name, String label) {
 		m_name = name;

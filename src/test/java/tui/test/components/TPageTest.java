@@ -13,30 +13,26 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.test;
+package tui.test.components;
 
 import org.junit.Test;
-import tui.ui.Table;
+import tui.json.JsonMap;
+import tui.json.JsonParser;
+import tui.ui.Page;
 
-import java.util.List;
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-public class TTableTest {
+public class TPageTest {
 
 	@Test
-	public void anyMatch() {
-		final Table table = new Table("table", List.of("Name"));
-		table.append(Map.of("Name", "Alice"));
-		table.append(Map.of("Name", "Bob"));
+	public void parseJson() {
+		Page page = new Page("My page");
+		page.createSection("My section");
+		final String json = page.toJsonMap().toJson();
 
-		final TTable tTable = new TTable(table);
+		JsonMap jsonMap = JsonParser.parseMap(json);
+		final TPage result = TPage.parse(jsonMap, null);
 
-		assertTrue(tTable.anyCellMatch("Name", "Alice"));
-		assertTrue(tTable.anyCellMatch("Name", "Bob"));
-		assertFalse(tTable.anyCellMatch("Name", "Carl"));
+		assertEquals("My page", result.getTitle());
 	}
-
 }

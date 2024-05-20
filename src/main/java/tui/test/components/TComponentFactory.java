@@ -13,42 +13,32 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.monitoring;
+package tui.test.components;
 
-import tui.html.HTMLNode;
-import tui.html.monitoring.HTMLMonitorFieldGreenRed;
 import tui.json.JsonMap;
-import tui.json.monitor.JsonMonitorFieldGreenRed;
+import tui.json.JsonObject;
+import tui.json.JsonParser;
+import tui.json.JsonTable;
+import tui.test.TestClient;
+import tui.ui.Page;
+import tui.ui.Section;
+import tui.ui.form.Form;
 
-public class MonitorFieldGreenRed extends MonitorField {
+public class TComponentFactory {
 
-	public enum Value {
-		GREEN, RED, NEUTRAL
+	public static TComponent parse(String json, TestClient testClient) {
+		final JsonMap map = JsonParser.parseMap(json);
+		return switch(map.getType()) {
+			case Page.JSON_TYPE -> TPage.parse(map, testClient);
+			case Section.JSON_TYPE -> TSection.parse(map, testClient);
+			case JsonTable.JSON_TYPE -> JsonTable.parse(map);
+			case Form.JSON_TYPE -> TForm.parse(map, testClient);
+			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
+		};
 	}
 
-	private Value m_value = Value.NEUTRAL;
-
-	public MonitorFieldGreenRed(String name, String label) {
-		super(name, label);
+	public static TComponent parse(JsonObject json, TestClient testClient) {
+		return parse(json.toJson(), testClient);
 	}
 
-	public MonitorFieldGreenRed set(Value value, String text) {
-		m_value = value;
-		setText(text);
-		return this;
-	}
-
-	public Value getValue() {
-		return m_value;
-	}
-
-	@Override
-	public HTMLNode toHTMLNode() {
-		return HTMLMonitorFieldGreenRed.toHTML(this);
-	}
-
-	@Override
-	public JsonMap toJsonMap() {
-		return JsonMonitorFieldGreenRed.toJson(this);
-	}
 }

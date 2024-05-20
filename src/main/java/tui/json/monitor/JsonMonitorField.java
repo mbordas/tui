@@ -30,7 +30,7 @@ public class JsonMonitorField {
 		final JsonArray array = result.createArray("fields");
 
 		for(MonitorField field : fields) {
-			array.add(field.toJsonObject());
+			array.add(field.toJsonMap());
 		}
 		return result;
 	}

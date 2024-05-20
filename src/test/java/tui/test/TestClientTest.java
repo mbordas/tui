@@ -19,6 +19,8 @@ import org.junit.After;
 import org.junit.Test;
 import tui.http.FormRequest;
 import tui.http.TUIBackend;
+import tui.test.components.TForm;
+import tui.test.components.TTable;
 import tui.ui.Page;
 import tui.ui.TUI;
 import tui.ui.Table;
@@ -75,7 +77,7 @@ public class TestClientTest {
 			m_backend = new TUIBackend(ui);
 			final Table dataTable = new Table("My table", List.of(columnName));
 			dataTable.append(Map.of(columnName, "John Doe"));
-			m_backend.registerWebService(endPointGetTable, (uri, request, response) -> dataTable.toJsonObject());
+			m_backend.registerWebService(endPointGetTable, (uri, request, response) -> dataTable.toJsonMap());
 			m_backend.registerWebService(endPointAppendTable, (uri, request, response) -> {
 				final String nameValue = FormRequest.getStringField(request, parameterName);
 				assert nameValue != null;
@@ -88,7 +90,10 @@ public class TestClientTest {
 		// Testing with TestClient
 
 		{
-			final TestClient client = new TestClient(ui);
+			final TestClient client = new TestClient(ui.getHTTPHost(), ui.getHTTPPort());
+
+			client.open("index");
+
 			final TTable myTable = client.getTable("My table");
 			final TForm myForm = client.getForm("My form");
 

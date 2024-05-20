@@ -17,12 +17,15 @@ package tui.ui.monitoring;
 
 import tui.html.HTMLNode;
 import tui.html.monitoring.HTMLMonitorFieldSet;
+import tui.json.JsonMap;
 import tui.ui.TUIComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MonitorFieldSet extends TUIComponent {
+
+	public static final String JSON_TYPE = "monitor_fieldset";
 
 	private final String m_title;
 	private final List<MonitorField> m_fields = new ArrayList<>();
@@ -66,6 +69,16 @@ public class MonitorFieldSet extends TUIComponent {
 	@Override
 	public HTMLNode toHTMLNode() {
 		return HTMLMonitorFieldSet.toHTML(this);
+	}
+
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute("title", m_title);
+		result.setAttribute("source", m_source);
+		result.setAttribute("auto_refresh_period_s", String.valueOf(m_autoRefreshPeriod_s));
+		result.createArray("fields", m_fields, MonitorField::toJsonMap);
+		return result;
 	}
 
 }

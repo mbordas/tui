@@ -16,8 +16,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui;
 
 import tui.html.HTMLNode;
+import tui.json.JsonMap;
 
 public class Paragraph extends TUIComponent {
+
+	public static final String JSON_TYPE = "paragraph";
 
 	private String m_text;
 
@@ -32,5 +35,12 @@ public class Paragraph extends TUIComponent {
 	@Override
 	public HTMLNode toHTMLNode() {
 		return new HTMLNode("p").setText(m_text);
+	}
+
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute("text", m_text);
+		return result;
 	}
 }

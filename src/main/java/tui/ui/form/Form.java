@@ -17,18 +17,26 @@ package tui.ui.form;
 
 import tui.html.HTMLForm;
 import tui.html.HTMLNode;
+import tui.json.JsonArray;
+import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
+import tui.json.JsonString;
 import tui.ui.TUIComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Form extends TUIComponent {
+
+	public static final String JSON_TYPE = "form";
+	public static final String JSON_TYPE_FORM_SUBMISSION_RESPONSE = "formSubmissionResponse";
 
 	private final String m_title;
 
@@ -76,24 +84,46 @@ public class Form extends TUIComponent {
 		return HTMLForm.toHTML(this);
 	}
 
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute(JsonConstants.ATTRIBUTE_TUID, JsonConstants.toId(getTUID()));
+		result.setAttribute("title", m_title);
+		result.setAttribute("target", m_target);
+		result.createArray("refreshListeners", m_refreshListeners, (listener) -> new JsonString(JsonConstants.toId(listener.getTUID())));
+		result.createArray("inputs", m_inputs, FormInputString::toJsonObject);
+		return result;
+	}
+
+	public static Set<Long> getRefreshListenersIds(JsonMap map) {
+		final Set<Long> result = new TreeSet<>();
+		final JsonArray refreshListeners = map.getArray("refreshListeners");
+		final Iterator<JsonObject> iterator = refreshListeners.iterator();
+		while(iterator.hasNext()) {
+			final JsonString listenerId = (JsonString) iterator.next();
+			result.add(Long.parseLong(listenerId.getValue()));
+		}
+		return result;
+	}
+
 	public static boolean isSuccessfulSubmissionResponse(String json) {
 		final JsonMap jsonMap = JsonParser.parseMap(json);
-		if(!"message".equals(jsonMap.getAttribute("type"))) {
+		if(!JSON_TYPE_FORM_SUBMISSION_RESPONSE.equals(jsonMap.getType())) {
 			return false;
-		} else if(!"form submitted".equals(jsonMap.getAttribute("value"))) {
+		} else if(!"ok".equals(jsonMap.getAttribute("status"))) {
 			return false;
 		}
 		return true;
 	}
 
 	public static JsonObject getSuccessfulSubmissionResponse() {
-		return new JsonMap("formSubmissionResponse")
+		return new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
 				.setAttribute("message", "form submitted");
 	}
 
 	public static JsonObject getFailedSubmissionResponse(String message, Map<String, String> errorMessageByFieldName) {
-		final JsonMap result = new JsonMap("formSubmissionResponse")
+		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "nok")
 				.setAttribute("message", message);
 

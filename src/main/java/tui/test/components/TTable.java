@@ -13,54 +13,69 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.test.components;
 
-import tui.html.HTMLNode;
-import tui.html.HTMLTable;
-import tui.json.JsonMap;
+import org.apache.http.HttpException;
 import tui.json.JsonTable;
-import tui.ui.form.Form;
+import tui.test.TestClient;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class Table extends TUIComponent {
+public class TTable extends TComponent {
 
-	final String m_title;
-	final List<String> m_columns = new ArrayList<>();
+	private String m_title;
+	final List<String> m_columns;
 	final List<List<Object>> m_rows = new ArrayList<>();
-	private String m_sourcePath = null;
-	private boolean m_isConnectedForRefresh = false;
+	private final String m_sourcePath;
 
-	public Table(String title, Collection<String> columns) {
+	public TTable(long tuid, String title, Collection<String> columns, String sourcePath) {
+		super(tuid);
 		m_title = title;
-		m_columns.addAll(columns);
+		m_columns = new ArrayList<>(columns);
+		m_sourcePath = sourcePath;
 	}
 
 	public String getTitle() {
 		return m_title;
 	}
 
-	public void setSource(String path) {
-		m_sourcePath = path;
-	}
-
 	public List<String> getColumns() {
-		return m_columns;
+		return new ArrayList<>(m_columns);
 	}
 
 	public List<List<Object>> getRows() {
 		return m_rows;
 	}
 
-	public boolean hasSource() {
-		return m_sourcePath != null;
+	public int size() {
+		return m_rows.size();
 	}
 
-	public String getSource() {
-		return m_sourcePath;
+	public boolean isEmpty() {
+		return m_rows.isEmpty();
+	}
+
+	public boolean anyCellMatch(String columnName, Object valueEquals) {
+		int columnIndex = 0;
+		for(String column : m_columns) {
+			if(column.equals(columnName)) {
+				break;
+			}
+			columnIndex++;
+		}
+
+		for(List<Object> row : m_rows) {
+			final Object testedValue = row.get(columnIndex);
+			if(valueEquals == null && testedValue == null) {
+				return true;
+			} else if(valueEquals != null && valueEquals.equals(testedValue)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void append(Map<String, Object> values) {
@@ -71,32 +86,15 @@ public class Table extends TUIComponent {
 		m_rows.add(row);
 	}
 
-	public int size() {
-		return m_rows.size();
-	}
-
-	/**
-	 * This table will automatically refresh each time the form is successfully submitted.
-	 */
-	public void connectForRefresh(Form form) {
-		if(m_sourcePath == null) {
-			throw new TUIConfigurationException("Cannot connect table for refresh because its source is not set.");
-		}
-		form.registerRefreshListener(this);
-		m_isConnectedForRefresh = true;
-	}
-
-	public boolean isConnectedForRefresh() {
-		return m_isConnectedForRefresh;
-	}
-
 	@Override
-	public HTMLNode toHTMLNode() {
-		return HTMLTable.toHTML(this);
+	public TComponent find(long tuid) {
+		return null;
 	}
 
-	public JsonMap toJsonMap() {
-		return JsonTable.toJson(this);
+	public void refresh(TestClient testClient) throws HttpException {
+		final String json = testClient.callBackend(m_sourcePath, null);
+		final TTable freshTable = JsonTable.parseJson(json);
+		m_rows.clear();
+		m_rows.addAll(freshTable.getRows());
 	}
-
 }

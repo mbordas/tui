@@ -15,7 +15,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.form;
 
+import tui.json.JsonMap;
+import tui.json.JsonObject;
+
 public class FormInputString implements Comparable<FormInputString> {
+
+	public static final String JSON_TYPE = "from_input_string";
 
 	private final String m_label;
 	private final String m_name;
@@ -36,6 +41,21 @@ public class FormInputString implements Comparable<FormInputString> {
 	@Override
 	public int compareTo(FormInputString other) {
 		return m_name.compareTo(other.m_name);
+	}
+
+	public JsonObject toJsonObject() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute("label", m_label);
+		result.setAttribute("name", m_name);
+		return result;
+	}
+
+	public static String getLabel(JsonMap map) {
+		return map.getAttribute("label");
+	}
+
+	public static String getName(JsonMap map) {
+		return map.getAttribute("name");
 	}
 
 }

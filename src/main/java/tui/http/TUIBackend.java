@@ -83,11 +83,18 @@ public class TUIBackend {
 					response.setStatus(200);
 					request.setHandled(true);
 				} else {
+					final String format = httpServletRequest.getParameter("format");
 					final APage defaultPage = m_ui.getDefaultPage();
-					final String html = defaultPage.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
+					if("json".equals(format)) {
+						final String json = defaultPage.toJsonMap().toJson();
+						response.setContentType(HTMLConstants.JSON_CONTENT_TYPE);
+						response.getWriter().write(json);
+					} else {
+						final String html = defaultPage.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
+						response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
+						response.getWriter().write(html);
+					}
 
-					response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
-					response.getWriter().write(html);
 					response.setStatus(200);
 					request.setHandled(true);
 				}

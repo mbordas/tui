@@ -8,11 +8,14 @@ package tui.ui;
 
 import tui.html.HTMLNode;
 import tui.html.HTMLPanel;
+import tui.json.JsonMap;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Panel extends TUIComponent {
+
+	public static final String JSON_TYPE = "panel";
 
 	private final List<TUIComponent> m_content = new ArrayList<>();
 
@@ -33,6 +36,13 @@ public class Panel extends TUIComponent {
 	@Override
 	public HTMLNode toHTMLNode() {
 		return HTMLPanel.toHTML(this);
+	}
+
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.createArray("content", m_content, TUIComponent::toJsonMap);
+		return result;
 	}
 
 }

@@ -13,58 +13,54 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.json;
+package tui.test.components;
 
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import tui.test.components.TTable;
-import tui.ui.Table;
+import tui.json.JsonArray;
+import tui.json.JsonConstants;
+import tui.json.JsonMap;
+import tui.json.JsonObject;
+import tui.test.TestClient;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+public class TSection extends TComponent {
 
-public class JsonTableTest {
+	private String m_title;
 
-	private static final Logger LOG = LoggerFactory.getLogger(JsonTableTest.class);
+	private List<TComponent> m_content;
 
-	@Test
-	public void serialization() {
-		final String columnA = "Col A";
-		final String columnB = "Col B";
-		final Table table = new Table("Table Test Title", List.of(columnA, columnB));
-		table.append(row(columnA, "value 1A", columnB, "value 1B"));
-		table.append(row(columnA, "value 2A", columnB, "value 2B"));
-
-		final String json = table.toJsonMap().toJson();
-		LOG.debug("Table:\n" + json);
-
-		//
-		final TTable result = JsonTable.parseJson(json);
-		//
-
-		assertEquals("Table Test Title", result.getTitle());
-		// Checking columns
-		assertEquals(columnA, result.getColumns().get(0));
-		assertEquals(columnB, result.getColumns().get(1));
-		// Checking rows
-		assertEquals(2, result.size());
-		final List<List<Object>> rows = result.getRows();
-		assertEquals("value 1A", rows.get(0).get(0));
-		assertEquals("value 1B", rows.get(0).get(1));
-		assertEquals("value 2A", rows.get(1).get(0));
-		assertEquals("value 2B", rows.get(1).get(1));
-
+	TSection(long tuid, String title) {
+		super(tuid);
+		m_title = title;
+		m_content = new ArrayList<>();
 	}
 
-	private static Map<String, Object> row(String colA, String valA, String colB, String valB) {
-		final Map<String, Object> result = new LinkedHashMap<>();
-		result.put(colA, valA);
-		result.put(colB, valB);
+	public String getTitle() {
+		return m_title;
+	}
+
+	public static TSection parse(JsonMap jsonMap, TestClient testClient) {
+		final String title = jsonMap.getAttribute("title");
+		final long tuid = JsonConstants.readTUID(jsonMap);
+		TSection result = new TSection(tuid, title);
+		final JsonArray content = jsonMap.getArray("content");
+		final Iterator<JsonObject> contentIterator = content.iterator();
+		while(contentIterator.hasNext()) {
+			final JsonObject componentJson = contentIterator.next();
+			result.m_content.add(TComponentFactory.parse(componentJson, testClient));
+		}
 		return result;
 	}
 
+	public Collection<TComponent> getSubComponents() {
+		return new ArrayList<>(m_content);
+	}
+
+	@Override
+	public TComponent find(long tuid) {
+		return TComponent.find(tuid, m_content);
+	}
 }

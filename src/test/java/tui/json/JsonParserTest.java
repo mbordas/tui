@@ -16,9 +16,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.json;
 
 import org.junit.Test;
+import tui.ui.Page;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class JsonParserTest {
 
@@ -38,6 +40,26 @@ public class JsonParserTest {
 
 		assertTrue(str1 instanceof JsonString);
 		assertEquals("v1", ((JsonString) str1).getValue());
+	}
+
+	@Test
+	public void parsePageMap() {
+		Page page = new Page("My title");
+		page.createSection("My section");
+
+		final String json = page.toJsonMap().toJson();
+
+		//
+		final JsonMap jsonMap = JsonParser.parseMap(json);
+		//
+
+		assertEquals(Page.JSON_TYPE, jsonMap.getType());
+		try {
+			jsonMap.getAttribute("type");
+			fail();
+		} catch(Exception e) {
+			assertEquals("Attribute 'type' not found", e.getMessage());
+		}
 	}
 
 }

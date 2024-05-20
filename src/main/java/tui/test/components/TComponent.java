@@ -13,24 +13,30 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui;
+package tui.test.components;
 
-import org.junit.Test;
-import tui.test.TestClient;
-import tui.ui.Page;
-import tui.ui.TUI;
+import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
+public abstract class TComponent {
 
-public class TUISimpleTest {
+	long m_tuid;
 
-	@Test
-	public void start() {
-		final TUI ui = new TUI();
-		ui.add(new Page("home"));
+	protected TComponent(long tuid) {
+		m_tuid = tuid;
+	}
 
-		final TestClient client = new TestClient(ui);
+	public long getTUID() {
+		return m_tuid;
+	}
 
-		assertEquals("home", client.getTitle());
+	public abstract TComponent find(long tuid);
+
+	protected static TComponent find(long tuid, Collection<? extends TComponent> children) {
+		for(TComponent child : children) {
+			if(child.getTUID() == tuid) {
+				return child;
+			}
+		}
+		return null;
 	}
 }

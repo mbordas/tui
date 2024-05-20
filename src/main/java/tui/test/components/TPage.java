@@ -13,52 +13,54 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.test;
+package tui.test.components;
 
-import org.apache.http.HttpException;
-import tui.ui.TUIComponent;
-import tui.ui.Table;
-import tui.ui.form.Form;
-import tui.ui.form.FormInputString;
+import tui.json.JsonArray;
+import tui.json.JsonConstants;
+import tui.json.JsonMap;
+import tui.json.JsonObject;
+import tui.test.TestClient;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
-public class TForm {
+public class TPage extends TComponent {
 
-	private final TestHTTPClient m_httpClient;
-	private final Form m_form;
+	private String m_title;
 
-	private final Map<String, Object> m_enteredValues = new HashMap<>();
+	private List<TComponent> m_content;
 
-	public TForm(Form form, TestHTTPClient httpClient) {
-		m_form = form;
-		m_httpClient = httpClient;
+	TPage(long tuid, String title) {
+		super(tuid);
+		m_title = title;
+		m_content = new ArrayList<>();
 	}
 
-	public void enterInput(String fieldName, String value) {
-		final Optional<FormInputString> anyField = m_form.getInputs().stream().filter(
-				(field) -> field.getName().equals(fieldName)).findAny();
-		if(anyField.isEmpty()) {
-			throw new TestExecutionException("No string input found in form '%s' with name: %s", m_form.getTitle(), fieldName);
-		}
-		m_enteredValues.put(fieldName, value);
+	public String getTitle() {
+		return m_title;
 	}
 
-	/**
-	 * Sends form data to the backend. When successful, it refreshes listeners too.
-	 */
-	public void submit() throws HttpException {
-		final String jsonResponse = m_httpClient.callBackend(m_form.getTarget(), m_enteredValues);
-		if(!Form.isSuccessfulSubmissionResponse(jsonResponse)) {
-			throw new HttpException("Unexpected web service response");
+	public static TPage parse(JsonMap jsonMap, TestClient testClient) {
+		final String title = jsonMap.getAttribute("title");
+		final long tuid = JsonConstants.readTUID(jsonMap);
+		TPage result = new TPage(tuid, title);
+		final JsonArray content = jsonMap.getArray("content");
+		final Iterator<JsonObject> contentIterator = content.iterator();
+		while(contentIterator.hasNext()) {
+			final JsonObject componentJson = contentIterator.next();
+			result.m_content.add(TComponentFactory.parse(componentJson, testClient));
 		}
-		for(TUIComponent refreshListener : m_form.getRefreshListeners()) {
-			if(refreshListener instanceof Table table) {
-				table.refresh(m_httpClient);
-			}
-		}
+		return result;
+	}
 
+	public Collection<TComponent> getSubComponents() {
+		return new ArrayList<>(m_content);
+	}
+
+	@Override
+	public TComponent find(long tuid) {
+		return TComponent.find(tuid, m_content);
 	}
 }
