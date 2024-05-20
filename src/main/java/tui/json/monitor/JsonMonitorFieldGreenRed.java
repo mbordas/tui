@@ -15,7 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json.monitor;
 
-import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.ui.components.monitoring.MonitorFieldGreenRed;
 
@@ -24,8 +23,7 @@ public class JsonMonitorFieldGreenRed {
 	public static final String JSON_TYPE = "monitor-field-greenred";
 
 	public static JsonMap toJson(MonitorFieldGreenRed field) {
-		return new JsonMap(JSON_TYPE)
-				.setAttribute(JsonConstants.ATTRIBUTE_TUID, JsonConstants.toId(field.getTUID()))
+		return new JsonMap(JSON_TYPE, field.getTUID())
 				.setAttribute("value", field.getValue().name())
 				.setAttribute("text", field.getText());
 	}

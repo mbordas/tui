@@ -86,8 +86,7 @@ public class Form extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
-		result.setAttribute(JsonConstants.ATTRIBUTE_TUID, JsonConstants.toId(getTUID()));
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("title", m_title);
 		result.setAttribute("target", m_target);
 		result.createArray("refreshListeners", m_refreshListeners, (listener) -> new JsonString(JsonConstants.toId(listener.getTUID())));

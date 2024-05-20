@@ -33,12 +33,11 @@ public class JsonTable extends JsonMap {
 	public static final String ATTRIBUTE_SOURCE = "source";
 
 	public JsonTable(long tuid) {
-		super(JSON_TYPE);
+		super(JSON_TYPE, tuid);
 	}
 
 	public static JsonMap toJson(Table table) {
 		JsonTable result = new JsonTable(table.getTUID());
-		result.setAttribute(JsonConstants.ATTRIBUTE_TUID, JsonConstants.toId(table.getTUID()));
 		result.setAttribute("title", table.getTitle());
 
 		if(table.getSource() != null) {
