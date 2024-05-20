@@ -32,8 +32,8 @@ public class TPage extends TComponent {
 
 	private List<TComponent> m_content;
 
-	TPage(long tuid, String title) {
-		super(tuid);
+	TPage(long tuid, String title, TestClient testClient) {
+		super(tuid, testClient);
 		m_title = title;
 		m_content = new ArrayList<>();
 	}
@@ -45,7 +45,7 @@ public class TPage extends TComponent {
 	public static TPage parse(JsonMap jsonMap, TestClient testClient) {
 		final String title = jsonMap.getAttribute("title");
 		final long tuid = JsonConstants.readTUID(jsonMap);
-		TPage result = new TPage(tuid, title);
+		TPage result = new TPage(tuid, title, testClient);
 		final JsonArray content = jsonMap.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {

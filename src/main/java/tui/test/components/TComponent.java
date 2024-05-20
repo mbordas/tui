@@ -15,14 +15,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import tui.test.TestClient;
+
 import java.util.Collection;
 
+/**
+ * Any component of a page on client-side is a {@link TComponent}. It gives convenient methods for test.
+ */
 public abstract class TComponent {
 
-	long m_tuid;
+	private final long m_tuid;
+	protected final TestClient m_testClient;
 
-	protected TComponent(long tuid) {
+	/**
+	 * @param tuid       Unique identifier.
+	 * @param testClient This client object will help acting on some component, and determining if they are reachable.
+	 */
+	protected TComponent(long tuid, TestClient testClient) {
 		m_tuid = tuid;
+		m_testClient = testClient;
 	}
 
 	public long getTUID() {
@@ -31,8 +42,12 @@ public abstract class TComponent {
 
 	public abstract TComponent find(long tuid);
 
-	protected static TComponent find(long tuid, Collection<? extends TComponent> children) {
-		for(TComponent child : children) {
+	public boolean isReachable() {
+		return m_testClient.find(getTUID()) != null;
+	}
+
+	protected static TComponent find(long tuid, Collection<? extends TComponent> reachableChildren) {
+		for(TComponent child : reachableChildren) {
 			if(child.getTUID() == tuid) {
 				return child;
 			}

@@ -31,7 +31,7 @@ public class TComponentFactory {
 		return switch(map.getType()) {
 			case Page.JSON_TYPE -> TPage.parse(map, testClient);
 			case Section.JSON_TYPE -> TSection.parse(map, testClient);
-			case JsonTable.JSON_TYPE -> JsonTable.parse(map);
+			case JsonTable.JSON_TYPE -> JsonTable.parse(map, testClient);
 			case Form.JSON_TYPE -> TForm.parse(map, testClient);
 			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
 		};

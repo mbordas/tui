@@ -43,7 +43,7 @@ public class JsonTableTest {
 		LOG.debug("Table:\n" + json);
 
 		//
-		final TTable result = JsonTable.parseJson(json);
+		final TTable result = JsonTable.parseJson(json, null);
 		//
 
 		assertEquals("Table Test Title", result.getTitle());

@@ -32,8 +32,8 @@ public class TSection extends TComponent {
 
 	private List<TComponent> m_content;
 
-	TSection(long tuid, String title) {
-		super(tuid);
+	TSection(long tuid, String title, TestClient testClient) {
+		super(tuid, testClient);
 		m_title = title;
 		m_content = new ArrayList<>();
 	}
@@ -45,7 +45,7 @@ public class TSection extends TComponent {
 	public static TSection parse(JsonMap jsonMap, TestClient testClient) {
 		final String title = jsonMap.getAttribute("title");
 		final long tuid = JsonConstants.readTUID(jsonMap);
-		TSection result = new TSection(tuid, title);
+		TSection result = new TSection(tuid, title, testClient);
 		final JsonArray content = jsonMap.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {

@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
+import tui.test.TestClient;
 import tui.test.components.TTable;
 import tui.ui.Table;
 
@@ -65,12 +66,12 @@ public class JsonTable extends JsonMap {
 		return result;
 	}
 
-	public static TTable parseJson(String json) {
+	public static TTable parseJson(String json, TestClient testClient) {
 		final JsonMap map = JsonParser.parseMap(json);
-		return parse(map);
+		return parse(map, testClient);
 	}
 
-	public static TTable parse(JsonMap map) {
+	public static TTable parse(JsonMap map, TestClient testClient) {
 		final String title = map.getAttribute("title");
 		final long tuid = JsonConstants.readTUID(map);
 		final String sourcePath = map.getAttributeOrNull(ATTRIBUTE_SOURCE);
@@ -86,7 +87,7 @@ public class JsonTable extends JsonMap {
 				throw new JsonException("Unexpected json type: %s", columnObject.getClass().getCanonicalName());
 			}
 		}
-		final TTable result = new TTable(tuid, title, columns, sourcePath);
+		final TTable result = new TTable(tuid, title, columns, sourcePath, testClient);
 
 		final JsonArray array = map.getArray("tbody");
 		final Iterator<JsonObject> rowIterator = array.iterator();

@@ -31,8 +31,8 @@ public class TTable extends TComponent {
 	final List<List<Object>> m_rows = new ArrayList<>();
 	private final String m_sourcePath;
 
-	public TTable(long tuid, String title, Collection<String> columns, String sourcePath) {
-		super(tuid);
+	public TTable(long tuid, String title, Collection<String> columns, String sourcePath, TestClient testClient) {
+		super(tuid, testClient);
 		m_title = title;
 		m_columns = new ArrayList<>(columns);
 		m_sourcePath = sourcePath;
@@ -93,7 +93,7 @@ public class TTable extends TComponent {
 
 	public void refresh(TestClient testClient) throws HttpException {
 		final String json = testClient.callBackend(m_sourcePath, null);
-		final TTable freshTable = JsonTable.parseJson(json);
+		final TTable freshTable = JsonTable.parseJson(json, testClient);
 		m_rows.clear();
 		m_rows.addAll(freshTable.getRows());
 	}

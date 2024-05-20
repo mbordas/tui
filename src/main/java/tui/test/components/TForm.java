@@ -38,7 +38,6 @@ public class TForm extends TComponent {
 
 	private String m_title;
 	private String m_target;
-	private TestClient m_testClient;
 
 	private final List<TFormField> m_fields = new ArrayList<>();
 	private final Set<Long> m_refreshListeners = new TreeSet<>();
@@ -55,8 +54,8 @@ public class TForm extends TComponent {
 		}
 	}
 
-	TForm(long tuid, String title, String target) {
-		super(tuid);
+	TForm(long tuid, String title, String target, TestClient testClient) {
+		super(tuid, testClient);
 		m_title = title;
 		m_target = target;
 	}
@@ -99,8 +98,7 @@ public class TForm extends TComponent {
 		final long tuid = JsonConstants.readTUID(json);
 		final String title = json.getAttribute("title");
 		final String target = json.getAttribute("target");
-		final TForm result = new TForm(tuid, title, target);
-		result.m_testClient = testClient;
+		final TForm result = new TForm(tuid, title, target, testClient);
 
 		final JsonArray array = json.getArray("inputs");
 		final Iterator<JsonObject> iterator = array.iterator();
