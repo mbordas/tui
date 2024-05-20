@@ -7,7 +7,7 @@
 package tui.html;
 
 import tui.ui.Panel;
-import tui.ui.TUIComponent;
+import tui.ui.UIComponent;
 
 public class HTMLPanel {
 
@@ -17,7 +17,7 @@ public class HTMLPanel {
 		final HTMLNode result = new HTMLNode("div")
 				.setAttribute("id", HTMLConstants.toId(panel.getTUID()))
 				.setAttribute("class", CLASS);
-		for(TUIComponent component : panel.getContent()) {
+		for(UIComponent component : panel.getContent()) {
 			result.addChild(component.toHTMLNode());
 		}
 		return result;

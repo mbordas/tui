@@ -16,7 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.html;
 
 import tui.ui.Page;
-import tui.ui.TUIComponent;
+import tui.ui.UIComponent;
 
 public class HTMLPage {
 
@@ -46,7 +46,7 @@ public class HTMLPage {
 			body.setAttribute("onload", onLoadFunctionCall);
 		}
 		final HTMLNode main = body.createChild("main");
-		for(TUIComponent component : page.getContent()) {
+		for(UIComponent component : page.getContent()) {
 			main.addChild(component.toHTMLNode());
 		}
 

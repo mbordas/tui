@@ -24,7 +24,7 @@ import tui.html.CSSBuilder;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
 import tui.ui.APage;
-import tui.ui.TUI;
+import tui.ui.UI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,12 +42,12 @@ public class TUIBackend {
 	public static final String PATH_TO_SCRIPT = "/js/tui.js";
 	public static final String SCRIPT_ONLOAD_FUNCTION_CALL = "onload()";
 
-	private final TUI m_ui;
+	private final UI m_ui;
 	private Server m_server;
 
 	private final Map<String, TUIWebService> m_webServices = new HashMap<>();
 
-	public TUIBackend(TUI ui) {
+	public TUIBackend(UI ui) {
 		m_ui = ui;
 	}
 

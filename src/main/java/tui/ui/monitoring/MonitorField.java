@@ -17,9 +17,9 @@ package tui.ui.monitoring;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.ui.TUIComponent;
+import tui.ui.UIComponent;
 
-public abstract class MonitorField extends TUIComponent {
+public abstract class MonitorField extends UIComponent {
 
 	private final String m_name;
 	private final String m_label;

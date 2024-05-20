@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class Table extends TUIComponent {
+public class Table extends UIComponent {
 
 	final String m_title;
 	final List<String> m_columns = new ArrayList<>();
@@ -80,7 +80,7 @@ public class Table extends TUIComponent {
 	 */
 	public void connectForRefresh(Form form) {
 		if(m_sourcePath == null) {
-			throw new TUIConfigurationException("Cannot connect table for refresh because its source is not set.");
+			throw new UIConfigurationException("Cannot connect table for refresh because its source is not set.");
 		}
 		form.registerRefreshListener(this);
 		m_isConnectedForRefresh = true;

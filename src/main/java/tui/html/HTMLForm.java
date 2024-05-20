@@ -16,7 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.html;
 
 import tui.http.FormRequest;
-import tui.ui.TUIComponent;
+import tui.ui.UIComponent;
 import tui.ui.form.Form;
 import tui.ui.form.FormInputString;
 
@@ -34,9 +34,9 @@ public class HTMLForm {
 				.setAttribute("method", "post")
 				.setAttribute("enctype", FormRequest.ENCTYPE);
 
-		final Collection<TUIComponent> refreshListeners = form.getRefreshListeners();
+		final Collection<UIComponent> refreshListeners = form.getRefreshListeners();
 		if(!refreshListeners.isEmpty()) {
-			final Iterator<TUIComponent> iterator = refreshListeners.iterator();
+			final Iterator<UIComponent> iterator = refreshListeners.iterator();
 			final StringBuilder tuids = new StringBuilder();
 			while(iterator.hasNext()) {
 				tuids.append(iterator.next().getTUID());

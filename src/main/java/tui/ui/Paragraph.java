@@ -18,7 +18,7 @@ package tui.ui;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 
-public class Paragraph extends TUIComponent {
+public class Paragraph extends UIComponent {
 
 	public static final String JSON_TYPE = "paragraph";
 

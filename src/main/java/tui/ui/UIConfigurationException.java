@@ -15,9 +15,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui;
 
-public class TUIConfigurationException extends RuntimeException {
+public class UIConfigurationException extends RuntimeException {
 
-	public TUIConfigurationException(String format, Object... args) {
+	public UIConfigurationException(String format, Object... args) {
 		super(String.format(format, args));
 	}
 }

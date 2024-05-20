@@ -16,14 +16,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.html;
 
 import tui.ui.Section;
-import tui.ui.TUIComponent;
+import tui.ui.UIComponent;
 
 public class HTMLSection {
 
 	public static HTMLNode toHTML(Section section, int depth) {
 		final HTMLNode result = new HTMLNode("section");
 		result.createChild("h" + depth).setText(section.getTitle());
-		for(TUIComponent component : section.getContent()) {
+		for(UIComponent component : section.getContent()) {
 			final HTMLNode child;
 			if(component instanceof Section _section) {
 				child = toHTML(_section, depth + 1);

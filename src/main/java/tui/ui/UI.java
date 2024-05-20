@@ -13,34 +13,40 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.http;
+package tui.ui;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import tui.html.HTMLNode;
-import tui.ui.Page;
-import tui.ui.Section;
-import tui.ui.TUI;
+import java.util.ArrayList;
+import java.util.List;
 
-public class TUIBackendTest {
+public class UI {
 
-	@Ignore
-	@Test
-	public void defaultPage() throws Exception {
-		HTMLNode.PRETTY_PRINT = true;
-		final TUI ui = new TUI();
-		final Page page = new Page("Server default page");
-		final Section subSection = page.createSection("Title 1").createSubSection("Title 2");
-		subSection.createParagraph("Lorem ipsum");
+	private Style m_style = new Style();
+	private String m_httpHost;
+	private int m_httpPort;
+	final private List<APage> m_pages = new ArrayList<>();
 
-		ui.add(page);
-		ui.setHTTPBackend("localhost", 8080);
-
-		final TUIBackend server = new TUIBackend(ui);
-
-		server.start();
-
-		Thread.sleep(60_000);
+	public void setHTTPBackend(String host, int port) {
+		m_httpHost = host;
+		m_httpPort = port;
 	}
 
+	public void add(APage page) {
+		m_pages.add(page);
+	}
+
+	public APage getDefaultPage() {
+		return m_pages.isEmpty() ? null : m_pages.get(0);
+	}
+
+	public String getHTTPHost() {
+		return m_httpHost;
+	}
+
+	public int getHTTPPort() {
+		return m_httpPort;
+	}
+
+	public Style getStyle() {
+		return m_style;
+	}
 }

@@ -13,13 +13,13 @@ import tui.json.JsonMap;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Panel extends TUIComponent {
+public class Panel extends UIComponent {
 
 	public static final String JSON_TYPE = "panel";
 
-	private final List<TUIComponent> m_content = new ArrayList<>();
+	private final List<UIComponent> m_content = new ArrayList<>();
 
-	public void append(TUIComponent component) {
+	public void append(UIComponent component) {
 		m_content.add(component);
 	}
 
@@ -29,7 +29,7 @@ public class Panel extends TUIComponent {
 		return result;
 	}
 
-	public List<TUIComponent> getContent() {
+	public List<UIComponent> getContent() {
 		return m_content;
 	}
 
@@ -41,7 +41,7 @@ public class Panel extends TUIComponent {
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE);
-		result.createArray("content", m_content, TUIComponent::toJsonMap);
+		result.createArray("content", m_content, UIComponent::toJsonMap);
 		return result;
 	}
 

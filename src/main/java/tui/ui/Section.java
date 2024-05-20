@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Section extends TUIComponent {
+public class Section extends UIComponent {
 
 	public static final String JSON_TYPE = "section";
 
 	private final String m_title;
 
-	private final List<TUIComponent> m_content = new ArrayList<>();
+	private final List<UIComponent> m_content = new ArrayList<>();
 
 	public Section(String title) {
 		m_title = title;
@@ -51,16 +51,16 @@ public class Section extends TUIComponent {
 		return m_title;
 	}
 
-	public List<TUIComponent> getContent() {
+	public List<UIComponent> getContent() {
 		return m_content;
 	}
 
 	@Override
-	public Collection<TUIComponent> getSubComponents() {
-		final Collection<TUIComponent> result = new ArrayList<>();
-		for(TUIComponent component : m_content) {
+	public Collection<UIComponent> getSubComponents() {
+		final Collection<UIComponent> result = new ArrayList<>();
+		for(UIComponent component : m_content) {
 			result.add(component);
-			final Collection<TUIComponent> subComponents = component.getSubComponents();
+			final Collection<UIComponent> subComponents = component.getSubComponents();
 			if(subComponents != null) {
 				result.addAll(subComponents);
 			}
@@ -77,7 +77,7 @@ public class Section extends TUIComponent {
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("title", m_title);
-		result.createArray("content", m_content, TUIComponent::toJsonMap);
+		result.createArray("content", m_content, UIComponent::toJsonMap);
 		return result;
 	}
 

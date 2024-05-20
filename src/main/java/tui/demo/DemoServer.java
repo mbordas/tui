@@ -23,9 +23,9 @@ import tui.http.TUIBackend;
 import tui.json.JsonObject;
 import tui.json.monitor.JsonMonitorField;
 import tui.ui.Panel;
-import tui.ui.TUI;
 import tui.ui.TabbedPage;
 import tui.ui.Table;
+import tui.ui.UI;
 import tui.ui.form.Form;
 import tui.ui.form.FormInputString;
 import tui.ui.form.ModalForm;
@@ -52,7 +52,7 @@ public class DemoServer {
 
 		// Building UI
 
-		final TUI ui = new TUI();
+		final UI ui = new UI();
 		ui.setHTTPBackend("localhost", 80);
 
 		TabbedPage page = new TabbedPage("Demo");

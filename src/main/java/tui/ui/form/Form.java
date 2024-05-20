@@ -23,7 +23,7 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.json.JsonString;
-import tui.ui.TUIComponent;
+import tui.ui.UIComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Form extends TUIComponent {
+public class Form extends UIComponent {
 
 	public static final String JSON_TYPE = "form";
 	public static final String JSON_TYPE_FORM_SUBMISSION_RESPONSE = "formSubmissionResponse";
@@ -43,7 +43,7 @@ public class Form extends TUIComponent {
 	private final String m_target; // Web service path
 
 	private final Set<FormInputString> m_inputs = new LinkedHashSet<>();
-	private final Collection<TUIComponent> m_refreshListeners = new ArrayList<>();
+	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
 
 	public Form(String title, String target) {
 		m_title = title;
@@ -62,7 +62,7 @@ public class Form extends TUIComponent {
 		return m_inputs;
 	}
 
-	public Collection<TUIComponent> getRefreshListeners() {
+	public Collection<UIComponent> getRefreshListeners() {
 		return m_refreshListeners;
 	}
 
@@ -75,7 +75,7 @@ public class Form extends TUIComponent {
 	/**
 	 * Registered listener will be refreshed each time the form will be successfully submitted.
 	 */
-	public void registerRefreshListener(TUIComponent listener) {
+	public void registerRefreshListener(UIComponent listener) {
 		m_refreshListeners.add(listener);
 	}
 

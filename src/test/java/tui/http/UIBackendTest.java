@@ -13,30 +13,34 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.http;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import tui.html.HTMLNode;
-import tui.json.JsonMap;
+import tui.ui.Page;
+import tui.ui.Section;
+import tui.ui.UI;
 
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicLong;
+public class UIBackendTest {
 
-public abstract class TUIComponent {
+	@Ignore
+	@Test
+	public void defaultPage() throws Exception {
+		HTMLNode.PRETTY_PRINT = true;
+		final UI ui = new UI();
+		final Page page = new Page("Server default page");
+		final Section subSection = page.createSection("Title 1").createSubSection("Title 2");
+		subSection.createParagraph("Lorem ipsum");
 
-	private static final AtomicLong m_counter = new AtomicLong(0L);
+		ui.add(page);
+		ui.setHTTPBackend("localhost", 8080);
 
-	private final long m_tuid = m_counter.incrementAndGet();
+		final TUIBackend server = new TUIBackend(ui);
 
-	public Collection<TUIComponent> getSubComponents() {
-		return null;
-	}
+		server.start();
 
-	public abstract HTMLNode toHTMLNode();
-
-	public abstract JsonMap toJsonMap();
-
-	public long getTUID() {
-		return m_tuid;
+		Thread.sleep(60_000);
 	}
 
 }

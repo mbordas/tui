@@ -15,38 +15,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui;
 
-import java.util.ArrayList;
-import java.util.List;
+import tui.html.HTMLNode;
+import tui.json.JsonMap;
 
-public class TUI {
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicLong;
 
-	private Style m_style = new Style();
-	private String m_httpHost;
-	private int m_httpPort;
-	final private List<APage> m_pages = new ArrayList<>();
+public abstract class UIComponent {
 
-	public void setHTTPBackend(String host, int port) {
-		m_httpHost = host;
-		m_httpPort = port;
+	private static final AtomicLong m_counter = new AtomicLong(0L);
+
+	private final long m_tuid = m_counter.incrementAndGet();
+
+	public Collection<UIComponent> getSubComponents() {
+		return null;
 	}
 
-	public void add(APage page) {
-		m_pages.add(page);
+	public abstract HTMLNode toHTMLNode();
+
+	public abstract JsonMap toJsonMap();
+
+	public long getTUID() {
+		return m_tuid;
 	}
 
-	public APage getDefaultPage() {
-		return m_pages.isEmpty() ? null : m_pages.get(0);
-	}
-
-	public String getHTTPHost() {
-		return m_httpHost;
-	}
-
-	public int getHTTPPort() {
-		return m_httpPort;
-	}
-
-	public Style getStyle() {
-		return m_style;
-	}
 }

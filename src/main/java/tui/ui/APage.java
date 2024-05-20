@@ -8,7 +8,7 @@ package tui.ui;
 
 import tui.html.HTMLNode;
 
-public abstract class APage extends TUIComponent {
+public abstract class APage extends UIComponent {
 
 	public abstract HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall);
 

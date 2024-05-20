@@ -22,8 +22,8 @@ import tui.http.TUIBackend;
 import tui.test.components.TForm;
 import tui.test.components.TTable;
 import tui.ui.Page;
-import tui.ui.TUI;
 import tui.ui.Table;
+import tui.ui.UI;
 import tui.ui.form.Form;
 
 import java.util.List;
@@ -56,7 +56,7 @@ public class TestClientTest {
 
 		// Building frontend
 
-		final TUI ui = new TUI();
+		final UI ui = new UI();
 		ui.setHTTPBackend("localhost", 90);
 		{
 			final Page page = new Page("Test case");

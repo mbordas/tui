@@ -18,12 +18,12 @@ package tui.ui.monitoring;
 import tui.html.HTMLNode;
 import tui.html.monitoring.HTMLMonitorFieldSet;
 import tui.json.JsonMap;
-import tui.ui.TUIComponent;
+import tui.ui.UIComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MonitorFieldSet extends TUIComponent {
+public class MonitorFieldSet extends UIComponent {
 
 	public static final String JSON_TYPE = "monitor_fieldset";
 

@@ -27,17 +27,17 @@ public class Page extends APage {
 
 	public static final String JSON_TYPE = "page";
 
-	private final List<TUIComponent> m_content = new ArrayList<>();
+	private final List<UIComponent> m_content = new ArrayList<>();
 
 	public Page(String title) {
 		super(title);
 	}
 
-	public void append(TUIComponent component) {
+	public void append(UIComponent component) {
 		m_content.add(component);
 	}
 
-	public List<TUIComponent> getContent() {
+	public List<UIComponent> getContent() {
 		return m_content;
 	}
 
@@ -55,16 +55,16 @@ public class Page extends APage {
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("title", m_title);
-		result.createArray("content", m_content, TUIComponent::toJsonMap);
+		result.createArray("content", m_content, UIComponent::toJsonMap);
 		return result;
 	}
 
 	@Override
-	public Collection<TUIComponent> getSubComponents() {
-		final Collection<TUIComponent> result = new ArrayList<>();
-		for(TUIComponent component : m_content) {
+	public Collection<UIComponent> getSubComponents() {
+		final Collection<UIComponent> result = new ArrayList<>();
+		for(UIComponent component : m_content) {
 			result.add(component);
-			final Collection<TUIComponent> subComponents = component.getSubComponents();
+			final Collection<UIComponent> subComponents = component.getSubComponents();
 			if(subComponents != null) {
 				result.addAll(subComponents);
 			}
