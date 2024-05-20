@@ -21,6 +21,8 @@ import tui.json.JsonMap;
 import tui.test.components.TComponent;
 import tui.test.components.TComponentFactory;
 import tui.test.components.TPage;
+import tui.ui.components.Page;
+import tui.ui.components.Section;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

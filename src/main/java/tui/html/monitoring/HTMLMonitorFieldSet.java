@@ -17,8 +17,8 @@ package tui.html.monitoring;
 
 import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
-import tui.ui.monitoring.MonitorField;
-import tui.ui.monitoring.MonitorFieldSet;
+import tui.ui.components.monitoring.MonitorField;
+import tui.ui.components.monitoring.MonitorFieldSet;
 
 public class HTMLMonitorFieldSet {
 

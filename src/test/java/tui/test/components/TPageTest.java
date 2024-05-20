@@ -18,7 +18,7 @@ package tui.test.components;
 import org.junit.Test;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
-import tui.ui.Page;
+import tui.ui.components.Page;
 
 import static org.junit.Assert.assertEquals;
 

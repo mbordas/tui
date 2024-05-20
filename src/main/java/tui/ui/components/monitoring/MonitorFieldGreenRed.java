@@ -13,68 +13,42 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.components.monitoring;
 
 import tui.html.HTMLNode;
-import tui.html.HTMLPage;
+import tui.html.monitoring.HTMLMonitorFieldGreenRed;
 import tui.json.JsonMap;
+import tui.json.monitor.JsonMonitorFieldGreenRed;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+public class MonitorFieldGreenRed extends MonitorField {
 
-public class Page extends APage {
-
-	public static final String JSON_TYPE = "page";
-
-	private final List<UIComponent> m_content = new ArrayList<>();
-
-	public Page(String title) {
-		super(title);
+	public enum Value {
+		GREEN, RED, NEUTRAL
 	}
 
-	public void append(UIComponent component) {
-		m_content.add(component);
+	private Value m_value = Value.NEUTRAL;
+
+	public MonitorFieldGreenRed(String name, String label) {
+		super(name, label);
 	}
 
-	public List<UIComponent> getContent() {
-		return m_content;
+	public MonitorFieldGreenRed set(Value value, String text) {
+		m_value = value;
+		setText(text);
+		return this;
 	}
 
-	public Section createSection(String title) {
-		final Section result = new Section(title);
-		m_content.add(result);
-		return result;
-	}
-
-	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
-		return HTMLPage.toHTML(this, pathToCSS, pathToScript, onLoadFunctionCall);
-	}
-
-	@Override
-	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
-		result.setAttribute("title", m_title);
-		result.createArray("content", m_content, UIComponent::toJsonMap);
-		return result;
-	}
-
-	@Override
-	public Collection<UIComponent> getSubComponents() {
-		final Collection<UIComponent> result = new ArrayList<>();
-		for(UIComponent component : m_content) {
-			result.add(component);
-			final Collection<UIComponent> subComponents = component.getSubComponents();
-			if(subComponents != null) {
-				result.addAll(subComponents);
-			}
-		}
-		return result;
+	public Value getValue() {
+		return m_value;
 	}
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return toHTMLNode(null, null, null);
+		return HTMLMonitorFieldGreenRed.toHTML(this);
 	}
 
+	@Override
+	public JsonMap toJsonMap() {
+		return JsonMonitorFieldGreenRed.toJson(this);
+	}
 }

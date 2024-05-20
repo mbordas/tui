@@ -17,7 +17,7 @@ package tui.json;
 
 import tui.test.TestClient;
 import tui.test.components.TTable;
-import tui.ui.Table;
+import tui.ui.components.Table;
 
 import java.util.ArrayList;
 import java.util.Collection;

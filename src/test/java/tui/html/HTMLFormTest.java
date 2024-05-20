@@ -16,7 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.html;
 
 import org.junit.Test;
-import tui.ui.form.Form;
+import tui.ui.components.form.Form;
 
 import static org.junit.Assert.assertEquals;
 

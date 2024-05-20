@@ -13,7 +13,7 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.form;
+package tui.ui.components.form;
 
 import tui.html.HTMLForm;
 import tui.html.HTMLNode;
@@ -23,7 +23,7 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.json.JsonString;
-import tui.ui.UIComponent;
+import tui.ui.components.UIComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -6,8 +6,8 @@
 
 package tui.html;
 
-import tui.ui.Panel;
-import tui.ui.TabbedPage;
+import tui.ui.components.Panel;
+import tui.ui.components.TabbedPage;
 
 import java.util.Map;
 

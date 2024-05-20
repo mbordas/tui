@@ -13,41 +13,68 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.monitoring;
+package tui.ui.components;
 
 import tui.html.HTMLNode;
+import tui.html.HTMLPage;
 import tui.json.JsonMap;
-import tui.ui.UIComponent;
 
-public abstract class MonitorField extends UIComponent {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-	private final String m_name;
-	private final String m_label;
-	private String m_text = null;
+public class Page extends APage {
 
-	public abstract HTMLNode toHTMLNode();
+	public static final String JSON_TYPE = "page";
 
-	public abstract JsonMap toJsonMap();
+	private final List<UIComponent> m_content = new ArrayList<>();
 
-	public MonitorField(String name, String label) {
-		m_name = name;
-		m_label = label;
+	public Page(String title) {
+		super(title);
 	}
 
-	public String getName() {
-		return m_name;
+	public void append(UIComponent component) {
+		m_content.add(component);
 	}
 
-	public String getLabel() {
-		return m_label;
+	public List<UIComponent> getContent() {
+		return m_content;
 	}
 
-	public void setText(String text) {
-		m_text = text;
+	public Section createSection(String title) {
+		final Section result = new Section(title);
+		m_content.add(result);
+		return result;
 	}
 
-	public String getText() {
-		return m_text;
+	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
+		return HTMLPage.toHTML(this, pathToCSS, pathToScript, onLoadFunctionCall);
+	}
+
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		result.setAttribute("title", m_title);
+		result.createArray("content", m_content, UIComponent::toJsonMap);
+		return result;
+	}
+
+	@Override
+	public Collection<UIComponent> getSubComponents() {
+		final Collection<UIComponent> result = new ArrayList<>();
+		for(UIComponent component : m_content) {
+			result.add(component);
+			final Collection<UIComponent> subComponents = component.getSubComponents();
+			if(subComponents != null) {
+				result.addAll(subComponents);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public HTMLNode toHTMLNode() {
+		return toHTMLNode(null, null, null);
 	}
 
 }

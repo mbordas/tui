@@ -22,8 +22,8 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.test.TestClient;
 import tui.test.TestExecutionException;
-import tui.ui.form.Form;
-import tui.ui.form.FormInputString;
+import tui.ui.components.form.Form;
+import tui.ui.components.form.FormInputString;
 
 import java.util.ArrayList;
 import java.util.HashMap;

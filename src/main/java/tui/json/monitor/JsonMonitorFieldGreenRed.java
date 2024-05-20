@@ -17,7 +17,7 @@ package tui.json.monitor;
 
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
-import tui.ui.monitoring.MonitorFieldGreenRed;
+import tui.ui.components.monitoring.MonitorFieldGreenRed;
 
 public class JsonMonitorFieldGreenRed {
 

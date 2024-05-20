@@ -18,9 +18,9 @@ package tui.http;
 import org.junit.Ignore;
 import org.junit.Test;
 import tui.html.HTMLNode;
-import tui.ui.Page;
-import tui.ui.Section;
 import tui.ui.UI;
+import tui.ui.components.Page;
+import tui.ui.components.Section;
 
 public class UIBackendTest {
 

@@ -16,7 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.json;
 
 import org.junit.Test;
-import tui.ui.Page;
+import tui.ui.components.Page;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;

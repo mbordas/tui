@@ -17,7 +17,7 @@ package tui.html.monitoring;
 
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
-import tui.ui.monitoring.MonitorFieldGreenRed;
+import tui.ui.components.monitoring.MonitorFieldGreenRed;
 
 public class HTMLMonitorFieldGreenRed {
 

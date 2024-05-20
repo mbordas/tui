@@ -4,7 +4,7 @@
  * http://www.smartgridenergy.fr
  */
 
-package tui.ui;
+package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.html.HTMLTabbedPage;

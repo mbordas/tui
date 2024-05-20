@@ -13,30 +13,72 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.components.monitoring;
 
 import tui.html.HTMLNode;
+import tui.html.monitoring.HTMLMonitorFieldSet;
 import tui.json.JsonMap;
+import tui.ui.components.UIComponent;
 
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class UIComponent {
+public class MonitorFieldSet extends UIComponent {
 
-	private static final AtomicLong m_counter = new AtomicLong(0L);
+	public static final String JSON_TYPE = "monitor_fieldset";
 
-	private final long m_tuid = m_counter.incrementAndGet();
+	private final String m_title;
+	private final List<MonitorField> m_fields = new ArrayList<>();
+	private String m_source = null;
+	private int m_autoRefreshPeriod_s = 5;
 
-	public Collection<UIComponent> getSubComponents() {
-		return null;
+	public MonitorFieldSet(String title) {
+		m_title = title;
 	}
 
-	public abstract HTMLNode toHTMLNode();
+	public void setSource(String source) {
+		m_source = source;
+	}
 
-	public abstract JsonMap toJsonMap();
+	public String getSource() {
+		return m_source;
+	}
 
-	public long getTUID() {
-		return m_tuid;
+	public void setAutoRefreshPeriod_s(int period_s) {
+		m_autoRefreshPeriod_s = period_s;
+	}
+
+	public int getAutoRefreshPeriod_s() {
+		return m_autoRefreshPeriod_s;
+	}
+
+	public String getTitle() {
+		return m_title;
+	}
+
+	public List<MonitorField> getFields() {
+		return m_fields;
+	}
+
+	public MonitorFieldGreenRed createFieldGreenRed(String name, String label) {
+		final MonitorFieldGreenRed result = new MonitorFieldGreenRed(name, label);
+		m_fields.add(result);
+		return result;
+	}
+
+	@Override
+	public HTMLNode toHTMLNode() {
+		return HTMLMonitorFieldSet.toHTML(this);
+	}
+
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute("title", m_title);
+		result.setAttribute("source", m_source);
+		result.setAttribute("auto_refresh_period_s", String.valueOf(m_autoRefreshPeriod_s));
+		result.createArray("fields", m_fields, MonitorField::toJsonMap);
+		return result;
 	}
 
 }

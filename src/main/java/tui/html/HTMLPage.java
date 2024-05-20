@@ -15,8 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.html;
 
-import tui.ui.Page;
-import tui.ui.UIComponent;
+import tui.ui.components.Page;
+import tui.ui.components.UIComponent;
 
 public class HTMLPage {
 

@@ -16,9 +16,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.html;
 
 import tui.http.FormRequest;
-import tui.ui.UIComponent;
-import tui.ui.form.Form;
-import tui.ui.form.FormInputString;
+import tui.ui.components.UIComponent;
+import tui.ui.components.form.Form;
+import tui.ui.components.form.FormInputString;
 
 import java.util.Collection;
 import java.util.Iterator;

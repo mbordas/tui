@@ -6,8 +6,8 @@
 
 package tui.html;
 
-import tui.ui.Panel;
-import tui.ui.UIComponent;
+import tui.ui.components.Panel;
+import tui.ui.components.UIComponent;
 
 public class HTMLPanel {
 

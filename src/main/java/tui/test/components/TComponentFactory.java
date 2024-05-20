@@ -20,9 +20,9 @@ import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.json.JsonTable;
 import tui.test.TestClient;
-import tui.ui.Page;
-import tui.ui.Section;
-import tui.ui.form.Form;
+import tui.ui.components.Page;
+import tui.ui.components.Section;
+import tui.ui.components.form.Form;
 
 public class TComponentFactory {
 

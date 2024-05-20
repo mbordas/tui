@@ -13,72 +13,49 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.components.form;
 
-import tui.html.HTMLNode;
-import tui.html.HTMLSection;
 import tui.json.JsonMap;
+import tui.json.JsonObject;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+public class FormInputString implements Comparable<FormInputString> {
 
-public class Section extends UIComponent {
+	public static final String JSON_TYPE = "from_input_string";
 
-	public static final String JSON_TYPE = "section";
+	private final String m_label;
+	private final String m_name;
 
-	private final String m_title;
-
-	private final List<UIComponent> m_content = new ArrayList<>();
-
-	public Section(String title) {
-		m_title = title;
+	public FormInputString(String label, String name) {
+		m_label = label;
+		m_name = name;
 	}
 
-	public Section createSubSection(String title) {
-		final Section result = new Section(title);
-		m_content.add(result);
-		return result;
+	public String getLabel() {
+		return m_label;
 	}
 
-	public Paragraph createParagraph(String text) {
-		final Paragraph result = new Paragraph(text);
-		m_content.add(result);
-		return result;
-	}
-
-	public String getTitle() {
-		return m_title;
-	}
-
-	public List<UIComponent> getContent() {
-		return m_content;
+	public String getName() {
+		return m_name;
 	}
 
 	@Override
-	public Collection<UIComponent> getSubComponents() {
-		final Collection<UIComponent> result = new ArrayList<>();
-		for(UIComponent component : m_content) {
-			result.add(component);
-			final Collection<UIComponent> subComponents = component.getSubComponents();
-			if(subComponents != null) {
-				result.addAll(subComponents);
-			}
-		}
+	public int compareTo(FormInputString other) {
+		return m_name.compareTo(other.m_name);
+	}
+
+	public JsonObject toJsonObject() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute("label", m_label);
+		result.setAttribute("name", m_name);
 		return result;
 	}
 
-	@Override
-	public HTMLNode toHTMLNode() {
-		return HTMLSection.toHTML(this, 1);
+	public static String getLabel(JsonMap map) {
+		return map.getAttribute("label");
 	}
 
-	@Override
-	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
-		result.setAttribute("title", m_title);
-		result.createArray("content", m_content, UIComponent::toJsonMap);
-		return result;
+	public static String getName(JsonMap map) {
+		return map.getAttribute("name");
 	}
 
 }

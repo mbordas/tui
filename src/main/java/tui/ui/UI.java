@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui;
 
+import tui.ui.components.APage;
+
 import java.util.ArrayList;
 import java.util.List;
 

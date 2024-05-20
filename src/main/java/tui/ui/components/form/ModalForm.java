@@ -13,7 +13,7 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.form;
+package tui.ui.components.form;
 
 import tui.html.HTMLModalForm;
 import tui.html.HTMLNode;

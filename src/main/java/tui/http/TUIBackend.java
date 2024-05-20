@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 import tui.html.CSSBuilder;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
-import tui.ui.APage;
 import tui.ui.UI;
+import tui.ui.components.APage;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

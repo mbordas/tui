@@ -15,7 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.html;
 
-import tui.ui.Table;
+import tui.ui.components.Table;
 
 import java.util.List;
 

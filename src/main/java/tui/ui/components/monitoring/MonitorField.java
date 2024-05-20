@@ -13,49 +13,41 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.form;
+package tui.ui.components.monitoring;
 
+import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.json.JsonObject;
+import tui.ui.components.UIComponent;
 
-public class FormInputString implements Comparable<FormInputString> {
+public abstract class MonitorField extends UIComponent {
 
-	public static final String JSON_TYPE = "from_input_string";
-
-	private final String m_label;
 	private final String m_name;
+	private final String m_label;
+	private String m_text = null;
 
-	public FormInputString(String label, String name) {
-		m_label = label;
+	public abstract HTMLNode toHTMLNode();
+
+	public abstract JsonMap toJsonMap();
+
+	public MonitorField(String name, String label) {
 		m_name = name;
-	}
-
-	public String getLabel() {
-		return m_label;
+		m_label = label;
 	}
 
 	public String getName() {
 		return m_name;
 	}
 
-	@Override
-	public int compareTo(FormInputString other) {
-		return m_name.compareTo(other.m_name);
+	public String getLabel() {
+		return m_label;
 	}
 
-	public JsonObject toJsonObject() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
-		result.setAttribute("label", m_label);
-		result.setAttribute("name", m_name);
-		return result;
+	public void setText(String text) {
+		m_text = text;
 	}
 
-	public static String getLabel(JsonMap map) {
-		return map.getAttribute("label");
-	}
-
-	public static String getName(JsonMap map) {
-		return map.getAttribute("name");
+	public String getText() {
+		return m_text;
 	}
 
 }

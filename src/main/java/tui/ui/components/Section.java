@@ -13,42 +13,72 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.monitoring;
+package tui.ui.components;
 
 import tui.html.HTMLNode;
-import tui.html.monitoring.HTMLMonitorFieldGreenRed;
+import tui.html.HTMLSection;
 import tui.json.JsonMap;
-import tui.json.monitor.JsonMonitorFieldGreenRed;
 
-public class MonitorFieldGreenRed extends MonitorField {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-	public enum Value {
-		GREEN, RED, NEUTRAL
+public class Section extends UIComponent {
+
+	public static final String JSON_TYPE = "section";
+
+	private final String m_title;
+
+	private final List<UIComponent> m_content = new ArrayList<>();
+
+	public Section(String title) {
+		m_title = title;
 	}
 
-	private Value m_value = Value.NEUTRAL;
-
-	public MonitorFieldGreenRed(String name, String label) {
-		super(name, label);
+	public Section createSubSection(String title) {
+		final Section result = new Section(title);
+		m_content.add(result);
+		return result;
 	}
 
-	public MonitorFieldGreenRed set(Value value, String text) {
-		m_value = value;
-		setText(text);
-		return this;
+	public Paragraph createParagraph(String text) {
+		final Paragraph result = new Paragraph(text);
+		m_content.add(result);
+		return result;
 	}
 
-	public Value getValue() {
-		return m_value;
+	public String getTitle() {
+		return m_title;
+	}
+
+	public List<UIComponent> getContent() {
+		return m_content;
+	}
+
+	@Override
+	public Collection<UIComponent> getSubComponents() {
+		final Collection<UIComponent> result = new ArrayList<>();
+		for(UIComponent component : m_content) {
+			result.add(component);
+			final Collection<UIComponent> subComponents = component.getSubComponents();
+			if(subComponents != null) {
+				result.addAll(subComponents);
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return HTMLMonitorFieldGreenRed.toHTML(this);
+		return HTMLSection.toHTML(this, 1);
 	}
 
 	@Override
 	public JsonMap toJsonMap() {
-		return JsonMonitorFieldGreenRed.toJson(this);
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		result.setAttribute("title", m_title);
+		result.createArray("content", m_content, UIComponent::toJsonMap);
+		return result;
 	}
+
 }

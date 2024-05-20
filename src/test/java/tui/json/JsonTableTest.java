@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.test.components.TTable;
-import tui.ui.Table;
+import tui.ui.components.Table;
 
 import java.util.LinkedHashMap;
 import java.util.List;

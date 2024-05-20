@@ -18,6 +18,8 @@ package tui.ui;
 import org.junit.Test;
 import tui.html.HTMLNode;
 import tui.json.JsonObject;
+import tui.ui.components.Page;
+import tui.ui.components.Table;
 
 import java.util.List;
 import java.util.Map;

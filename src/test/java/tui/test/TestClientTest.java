@@ -21,10 +21,10 @@ import tui.http.FormRequest;
 import tui.http.TUIBackend;
 import tui.test.components.TForm;
 import tui.test.components.TTable;
-import tui.ui.Page;
-import tui.ui.Table;
 import tui.ui.UI;
-import tui.ui.form.Form;
+import tui.ui.components.Page;
+import tui.ui.components.Table;
+import tui.ui.components.form.Form;
 
 import java.util.List;
 import java.util.Map;

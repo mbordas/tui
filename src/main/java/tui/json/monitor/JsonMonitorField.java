@@ -17,7 +17,7 @@ package tui.json.monitor;
 
 import tui.json.JsonArray;
 import tui.json.JsonMap;
-import tui.ui.monitoring.MonitorField;
+import tui.ui.components.monitoring.MonitorField;
 
 import java.util.Collection;
 
