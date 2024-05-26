@@ -20,7 +20,7 @@ import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.test.TestClient;
+import tui.test.TClient;
 import tui.test.TestExecutionException;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInputString;
@@ -54,8 +54,8 @@ public class TForm extends TComponent {
 		}
 	}
 
-	TForm(long tuid, String title, String target, TestClient testClient) {
-		super(tuid, testClient);
+	TForm(long tuid, String title, String target, TClient tClient) {
+		super(tuid, tClient);
 		m_title = title;
 		m_target = target;
 	}
@@ -79,13 +79,13 @@ public class TForm extends TComponent {
 	public void submit() throws HttpException {
 		final Map<String, Object> parameters = new HashMap<>();
 		m_fields.forEach((field) -> parameters.put(field.name, field.enteredValue));
-		final String jsonResponse = m_testClient.callBackend(m_target, parameters);
+		final String jsonResponse = m_client.callBackend(m_target, parameters);
 		if(!Form.isSuccessfulSubmissionResponse(jsonResponse)) {
 			throw new HttpException("Unexpected web service response");
 		}
 
 		for(long listenerId : m_refreshListeners) {
-			m_testClient.refresh(listenerId);
+			m_client.refresh(listenerId);
 		}
 	}
 
@@ -94,11 +94,11 @@ public class TForm extends TComponent {
 		return null;
 	}
 
-	public static TForm parse(JsonMap json, TestClient testClient) {
+	public static TForm parse(JsonMap json, TClient client) {
 		final long tuid = JsonConstants.readTUID(json);
 		final String title = json.getAttribute("title");
 		final String target = json.getAttribute("target");
-		final TForm result = new TForm(tuid, title, target, testClient);
+		final TForm result = new TForm(tuid, title, target, client);
 
 		final JsonArray array = json.getArray("inputs");
 		final Iterator<JsonObject> iterator = array.iterator();

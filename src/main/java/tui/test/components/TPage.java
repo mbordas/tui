@@ -19,7 +19,7 @@ import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.test.TestClient;
+import tui.test.TClient;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,8 +32,8 @@ public class TPage extends TComponent {
 
 	private List<TComponent> m_content;
 
-	TPage(long tuid, String title, TestClient testClient) {
-		super(tuid, testClient);
+	TPage(long tuid, String title, TClient tClient) {
+		super(tuid, tClient);
 		m_title = title;
 		m_content = new ArrayList<>();
 	}
@@ -42,15 +42,15 @@ public class TPage extends TComponent {
 		return m_title;
 	}
 
-	public static TPage parse(JsonMap jsonMap, TestClient testClient) {
+	public static TPage parse(JsonMap jsonMap, TClient client) {
 		final String title = jsonMap.getAttribute("title");
 		final long tuid = JsonConstants.readTUID(jsonMap);
-		TPage result = new TPage(tuid, title, testClient);
+		TPage result = new TPage(tuid, title, client);
 		final JsonArray content = jsonMap.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {
 			final JsonObject componentJson = contentIterator.next();
-			result.m_content.add(TComponentFactory.parse(componentJson, testClient));
+			result.m_content.add(TComponentFactory.parse(componentJson, client));
 		}
 		return result;
 	}

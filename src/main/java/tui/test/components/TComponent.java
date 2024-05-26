@@ -15,7 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import tui.test.TestClient;
+import tui.test.TClient;
 
 import java.util.Collection;
 
@@ -25,15 +25,15 @@ import java.util.Collection;
 public abstract class TComponent {
 
 	private final long m_tuid;
-	protected final TestClient m_testClient;
+	protected final TClient m_client;
 
 	/**
-	 * @param tuid       Unique identifier.
-	 * @param testClient This client object will help acting on some component, and determining if they are reachable.
+	 * @param tuid   Unique identifier.
+	 * @param client This client object will help acting on some component, and determining if they are reachable.
 	 */
-	protected TComponent(long tuid, TestClient testClient) {
+	protected TComponent(long tuid, TClient client) {
 		m_tuid = tuid;
-		m_testClient = testClient;
+		m_client = client;
 	}
 
 	public long getTUID() {
@@ -43,7 +43,7 @@ public abstract class TComponent {
 	public abstract TComponent find(long tuid);
 
 	public boolean isReachable() {
-		return m_testClient.find(getTUID()) != null;
+		return m_client.find(getTUID()) != null;
 	}
 
 	protected static TComponent find(long tuid, Collection<? extends TComponent> reachableChildren) {

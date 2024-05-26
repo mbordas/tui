@@ -32,7 +32,7 @@ import java.util.Map;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TestClientTest {
+public class TClientTest {
 
 	private TUIBackend m_backend;
 
@@ -90,7 +90,7 @@ public class TestClientTest {
 		// Testing with TestClient
 
 		{
-			final TestClient client = new TestClient(ui.getHTTPHost(), ui.getHTTPPort());
+			final TClient client = new TClient(ui.getHTTPHost(), ui.getHTTPPort());
 
 			client.open("index");
 

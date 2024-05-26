@@ -19,26 +19,26 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.json.JsonTable;
-import tui.test.TestClient;
+import tui.test.TClient;
 import tui.ui.components.Page;
 import tui.ui.components.Section;
 import tui.ui.components.form.Form;
 
 public class TComponentFactory {
 
-	public static TComponent parse(String json, TestClient testClient) {
+	public static TComponent parse(String json, TClient client) {
 		final JsonMap map = JsonParser.parseMap(json);
 		return switch(map.getType()) {
-			case Page.JSON_TYPE -> TPage.parse(map, testClient);
-			case Section.JSON_TYPE -> TSection.parse(map, testClient);
-			case JsonTable.JSON_TYPE -> JsonTable.parse(map, testClient);
-			case Form.JSON_TYPE -> TForm.parse(map, testClient);
+			case Page.JSON_TYPE -> TPage.parse(map, client);
+			case Section.JSON_TYPE -> TSection.parse(map, client);
+			case JsonTable.JSON_TYPE -> JsonTable.parse(map, client);
+			case Form.JSON_TYPE -> TForm.parse(map, client);
 			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
 		};
 	}
 
-	public static TComponent parse(JsonObject json, TestClient testClient) {
-		return parse(json.toJson(), testClient);
+	public static TComponent parse(JsonObject json, TClient tClient) {
+		return parse(json.toJson(), tClient);
 	}
 
 }

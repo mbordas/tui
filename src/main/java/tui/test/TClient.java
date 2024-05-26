@@ -28,14 +28,14 @@ import tui.test.components.TTable;
 import java.util.List;
 import java.util.Map;
 
-public class TestClient {
+public class TClient {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TestClient.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TClient.class);
 
 	private TPage m_currentPage;
 	private TestHTTPClient m_httpClient;
 
-	public TestClient(String host, int port) {
+	public TClient(String host, int port) {
 		m_currentPage = null;
 		m_httpClient = new TestHTTPClient(host, port);
 	}
