@@ -26,8 +26,10 @@ import tui.json.JsonObject;
 import tui.ui.UI;
 import tui.ui.components.APage;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -49,6 +51,10 @@ public class TUIBackend {
 
 	public TUIBackend(UI ui) {
 		m_ui = ui;
+	}
+
+	public int getPort() {
+		return m_ui.getHTTPPort();
 	}
 
 	public void start() throws Exception {
@@ -76,21 +82,26 @@ public class TUIBackend {
 						request.setHandled(true);
 					}
 				} else if(PATH_TO_SCRIPT.equals(uri)) {
-					respondWithResource(request, response, "js/tui.js", HTMLConstants.JAVASCRIPT_CONTENT_TYPE);
+					respondWithTextResource(request, response, "js/tui.js", HTMLConstants.JAVASCRIPT_CONTENT_TYPE);
 				} else if(PATH_TO_CSS.equals(uri)) {
 					response.setContentType(HTMLConstants.CSS_CONTENT_TYPE);
 					response.getWriter().write(CSSBuilder.toCSS(m_ui.getStyle()));
 					response.setStatus(200);
 					request.setHandled(true);
+				} else if("/favicon.ico".equals(uri)) {
+					respondWithBinaryResource(request, response, "favicon.ico", HTMLConstants.PNG_CONTENT_TYPE);
 				} else {
 					final String format = httpServletRequest.getParameter("format");
-					final APage defaultPage = m_ui.getDefaultPage();
+					final APage page = m_ui.getPage(uri);
+					if(page == null) {
+						throw new FileNotFoundException("No page found at: " + uri);
+					}
 					if("json".equals(format)) {
-						final String json = defaultPage.toJsonMap().toJson();
+						final String json = page.toJsonMap().toJson();
 						response.setContentType(HTMLConstants.JSON_CONTENT_TYPE);
 						response.getWriter().write(json);
 					} else {
-						final String html = defaultPage.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
+						final String html = page.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
 						response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
 						response.getWriter().write(html);
 					}
@@ -100,7 +111,7 @@ public class TUIBackend {
 				}
 			}
 
-			private void respondWithResource(Request request, HttpServletResponse response, String resourcePath, String contentType) {
+			private void respondWithTextResource(Request request, HttpServletResponse response, String resourcePath, String contentType) {
 				response.setContentType(contentType);
 				try {
 					final String content;
@@ -109,6 +120,23 @@ public class TUIBackend {
 						content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 					}
 					response.getWriter().write(content);
+					response.setStatus(200);
+					request.setHandled(true);
+				} catch(IOException e) {
+					e.printStackTrace();
+					response.setStatus(500);
+					request.setHandled(true);
+				}
+			}
+
+			private void respondWithBinaryResource(Request request, HttpServletResponse response, String resourcePath, String contentType) {
+				response.setContentType(contentType);
+				try {
+					final ServletOutputStream outputStream = response.getOutputStream();
+					try(InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath)) {
+						assert is != null;
+						outputStream.write(is.readAllBytes());
+					}
 					response.setStatus(200);
 					request.setHandled(true);
 				} catch(IOException e) {

@@ -17,27 +17,31 @@ package tui.ui;
 
 import tui.ui.components.APage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UI {
 
 	private Style m_style = new Style();
 	private String m_httpHost;
 	private int m_httpPort;
-	final private List<APage> m_pages = new ArrayList<>();
+	final private Map<String, APage> m_pages = new HashMap();
 
 	public void setHTTPBackend(String host, int port) {
 		m_httpHost = host;
 		m_httpPort = port;
 	}
 
-	public void add(APage page) {
-		m_pages.add(page);
+	public void add(String target, APage page) {
+		if(target.startsWith("/")) {
+			m_pages.put(target, page);
+		} else {
+			m_pages.put("/" + target, page);
+		}
 	}
 
-	public APage getDefaultPage() {
-		return m_pages.isEmpty() ? null : m_pages.get(0);
+	public APage getPage(String target) {
+		return m_pages.get(target);
 	}
 
 	public String getHTTPHost() {
@@ -51,4 +55,5 @@ public class UI {
 	public Style getStyle() {
 		return m_style;
 	}
+
 }

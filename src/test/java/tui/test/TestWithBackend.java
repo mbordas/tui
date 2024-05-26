@@ -13,46 +13,55 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.test.components;
+package tui.test;
 
-import org.apache.http.HttpException;
-import org.junit.Test;
-import tui.json.JsonMap;
-import tui.json.JsonParser;
-import tui.test.Browser;
-import tui.test.TClient;
-import tui.test.TestWithBackend;
+import org.junit.After;
+import tui.http.TUIBackend;
+import tui.ui.UI;
 import tui.ui.components.Page;
 
-import static org.junit.Assert.assertEquals;
+import java.io.IOException;
+import java.net.ServerSocket;
 
-public class TPageTest extends TestWithBackend {
+public class TestWithBackend {
 
-	@Test
-	public void parseJson() {
-		Page page = new Page("My page");
-		page.createSection("My section");
-		final String json = page.toJsonMap().toJson();
+	private TUIBackend m_backend;
+	private Browser m_browser;
 
-		JsonMap jsonMap = JsonParser.parseMap(json);
-		final TPage result = TPage.parse(jsonMap, null);
-
-		assertEquals("My page", result.getTitle());
+	@After
+	public void after() throws Exception {
+		if(m_browser != null) {
+			m_browser.stop();
+		}
+		if(m_backend != null) {
+			m_backend.stop();
+		}
 	}
 
-	@Test
-	public void browse() throws HttpException {
-		final Page page = new Page("Home");
-		startBackend("/index", page);
+	protected void startBackend(String target, Page page) {
+		try {
+			final UI ui = new UI();
+			ui.add(target, page);
+			ui.setHTTPBackend("localhost", getRandomAvailablePort());
+			m_backend = new TUIBackend(ui);
+			m_backend.start();
+		} catch(Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
 
-		// TUI
-		final TClient client = startClient();
-		client.open("/index");
-		assertEquals("Home", client.getTitle());
+	static int getRandomAvailablePort() throws IOException {
+		try(ServerSocket socket = new ServerSocket(0, 50, null)) {
+			return socket.getLocalPort();
+		}
+	}
 
-		// Web UI
-		final Browser browser = startBrowser();
-		browser.open("/index");
-		assertEquals("Home", browser.getTitle());
+	protected TClient startClient() {
+		return new TClient("localhost", m_backend.getPort());
+	}
+
+	protected Browser startBrowser() {
+		m_browser = new Browser(m_backend.getPort());
+		return m_browser;
 	}
 }

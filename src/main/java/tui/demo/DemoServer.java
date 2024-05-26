@@ -59,7 +59,7 @@ public class DemoServer {
 		final Panel panel1 = page.createTab("Table and form");
 		panel1.createSection("Tables")
 				.createParagraph("Use the form to add row to the table.");
-		ui.add(page);
+		ui.add("index", page);
 
 		final String columnVendor = "Vendor";
 		final String columnSerialNumber = "Serial number";

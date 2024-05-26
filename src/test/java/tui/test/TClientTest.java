@@ -60,7 +60,7 @@ public class TClientTest {
 		ui.setHTTPBackend("localhost", 90);
 		{
 			final Page page = new Page("Test case");
-			ui.add(page);
+			ui.add("index", page);
 			final Table uiTable = new Table("My table", List.of(columnName));
 			uiTable.setSource(endPointGetTable);
 			page.append(uiTable);

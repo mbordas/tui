@@ -33,7 +33,7 @@ public class UIBackendTest {
 		final Section subSection = page.createSection("Title 1").createSubSection("Title 2");
 		subSection.createParagraph("Lorem ipsum");
 
-		ui.add(page);
+		ui.add("index", page);
 		ui.setHTTPBackend("localhost", 8080);
 
 		final TUIBackend server = new TUIBackend(ui);
