@@ -15,12 +15,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
-public class FormInputString extends FormInput {
+import tui.json.JsonMap;
+import tui.json.JsonObject;
 
-	public static final String JSON_TYPE = "from_input_string";
+public abstract class FormInput implements Comparable<FormInput> {
 
-	public FormInputString(String label, String name) {
-		super(JSON_TYPE, label, name);
+	protected final String m_type;
+	protected final String m_label;
+	protected final String m_name;
+
+	public FormInput(String type, String label, String name) {
+		m_type = type;
+		m_label = label;
+		m_name = name;
 	}
 
+	public String getLabel() {
+		return m_label;
+	}
+
+	public String getName() {
+		return m_name;
+	}
+
+	public JsonObject toJsonObject() {
+		final JsonMap result = new JsonMap(m_type);
+		result.setAttribute("label", m_label);
+		result.setAttribute("name", m_name);
+		return result;
+	}
+
+	@Override
+	public int compareTo(FormInput other) {
+		return m_name.compareTo(other.m_name);
+	}
+
+	public static String getLabel(JsonMap map) {
+		return map.getAttribute("label");
+	}
+
+	public static String getName(JsonMap map) {
+		return map.getAttribute("name");
+	}
 }

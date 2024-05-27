@@ -13,21 +13,21 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.html;
+package tui.ui.components.form;
 
 import org.junit.Test;
-import tui.ui.components.form.Form;
+import tui.html.HTMLNode;
 
 import static org.junit.Assert.assertEquals;
 
-public class HTMLFormTest {
+public class FormTest {
 
 	@Test
 	public void toHTML() {
 		final Form form = new Form("test form", null);
 		form.createInputString("input", "input1");
 
-		final HTMLNode html = HTMLForm.toHTML(form);
+		final HTMLNode html = form.toHTMLNode();
 
 		HTMLNode.PRETTY_PRINT = true;
 		assertEquals("""
@@ -35,8 +35,10 @@ public class HTMLFormTest {
 				  <div class="fetch-error-message"> </div>
 				  <fieldset>
 				    <legend>test form</legend>
-				    <label>input      <input placeholder="Text input" name="input1"/>
-				</label>
+				    <p>
+				      <label for="input1">input</label>
+				      <input name="input1" placeholder="Text input" type="text"/>
+				    </p>
 				  </fieldset>
 				  <button type="submit">Submit</button>
 				</form>

@@ -17,7 +17,7 @@ package tui.html;
 
 import tui.http.FormRequest;
 import tui.ui.components.UIComponent;
-import tui.ui.components.form.FormInputString;
+import tui.ui.components.form.FormInput;
 import tui.ui.components.form.ModalForm;
 
 import java.util.Collection;
@@ -58,7 +58,7 @@ public class HTMLModalForm {
 
 		final HTMLNode fieldset = htmlForm.createChild("fieldset");
 		fieldset.createChild("legend").setText(form.getTitle());
-		for(FormInputString input : form.getInputs()) {
+		for(FormInput input : form.getInputs()) {
 			final HTMLNode div = fieldset.createChild("div");
 			final HTMLNode label = div.createChild("label")
 					.setText(input.getLabel());

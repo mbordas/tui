@@ -6,9 +6,14 @@
 
 package tui.test;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tui.ui.components.form.Form;
+
+import java.util.List;
 
 public class Browser {
 
@@ -36,5 +41,9 @@ public class Browser {
 
 	public void stop() {
 		m_driver.quit();
+	}
+
+	public List<WebElement> getForms() {
+		return m_driver.findElements(By.className(Form.HTML_CLASS));
 	}
 }

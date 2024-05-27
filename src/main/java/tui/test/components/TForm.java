@@ -23,7 +23,7 @@ import tui.json.JsonObject;
 import tui.test.TClient;
 import tui.test.TestExecutionException;
 import tui.ui.components.form.Form;
-import tui.ui.components.form.FormInputString;
+import tui.ui.components.form.FormInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,8 +106,8 @@ public class TForm extends TComponent {
 			final JsonObject input = iterator.next();
 			assert input instanceof JsonMap;
 			JsonMap map = (JsonMap) input;
-			final String name = FormInputString.getName(map);
-			final String label = FormInputString.getLabel(map);
+			final String name = FormInput.getName(map);
+			final String label = FormInput.getLabel(map);
 			result.m_fields.add(new TFormField(name, label, null));
 		}
 

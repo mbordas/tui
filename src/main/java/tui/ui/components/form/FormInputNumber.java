@@ -15,12 +15,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
-public class FormInputString extends FormInput {
+public class FormInputNumber extends FormInput {
 
-	public static final String JSON_TYPE = "from_input_string";
+	public static final String JSON_TYPE = "from_input_number";
 
-	public FormInputString(String label, String name) {
+	public FormInputNumber(String label, String name) {
 		super(JSON_TYPE, label, name);
 	}
-
 }

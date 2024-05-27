@@ -15,8 +15,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
-import tui.html.HTMLForm;
+import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
+import tui.http.FormRequest;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -35,6 +36,8 @@ import java.util.TreeSet;
 
 public class Form extends UIComponent {
 
+	public static final String HTML_CLASS = "tui-form";
+
 	public static final String JSON_TYPE = "form";
 	public static final String JSON_TYPE_FORM_SUBMISSION_RESPONSE = "formSubmissionResponse";
 
@@ -42,7 +45,7 @@ public class Form extends UIComponent {
 
 	private final String m_target; // Web service path
 
-	private final Set<FormInputString> m_inputs = new LinkedHashSet<>();
+	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
 
 	public Form(String title, String target) {
@@ -58,7 +61,7 @@ public class Form extends UIComponent {
 		return m_target;
 	}
 
-	public Set<FormInputString> getInputs() {
+	public Set<FormInput> getInputs() {
 		return m_inputs;
 	}
 
@@ -72,6 +75,12 @@ public class Form extends UIComponent {
 		return result;
 	}
 
+	public FormInputNumber createInputNumber(String label, String name) {
+		final FormInputNumber result = new FormInputNumber(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
 	/**
 	 * Registered listener will be refreshed each time the form will be successfully submitted.
 	 */
@@ -81,7 +90,51 @@ public class Form extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return HTMLForm.toHTML(this);
+		final HTMLNode result = new HTMLNode("form")
+				.setAttribute("class", HTML_CLASS)
+				.setAttribute("action", getTarget())
+				.setAttribute("method", "post")
+				.setAttribute("enctype", FormRequest.ENCTYPE);
+
+		final Collection<UIComponent> refreshListeners = getRefreshListeners();
+		if(!refreshListeners.isEmpty()) {
+			final Iterator<UIComponent> iterator = refreshListeners.iterator();
+			final StringBuilder tuids = new StringBuilder();
+			while(iterator.hasNext()) {
+				tuids.append(iterator.next().getTUID());
+				if(iterator.hasNext()) {
+					tuids.append(",");
+				}
+			}
+			result.setAttribute("refresh-listeners", tuids.toString());
+		}
+
+		HTMLFetchErrorMessage.addErrorMessageChild(result);
+
+		final HTMLNode fieldset = result.createChild("fieldset");
+		fieldset.createChild("legend").setText(getTitle());
+		for(FormInput input : getInputs()) {
+			final HTMLNode paragraph = fieldset.createChild("p");
+			paragraph.createChild("label")
+					.setAttribute("for", input.getName())
+					.setText(input.getLabel());
+
+			final HTMLNode htmlInput = paragraph.createChild("input")
+					.setAttribute("name", input.getName());
+			if(input instanceof FormInputString) {
+				htmlInput.setAttribute("placeholder", "Text input");
+				htmlInput.setAttribute("type", "text");
+			} else if(input instanceof FormInputNumber) {
+				htmlInput.setAttribute("placeholder", "Number");
+				htmlInput.setAttribute("type", "number");
+			}
+		}
+
+		result.createChild("button")
+				.setAttribute("type", "submit")
+				.setText("Submit");
+
+		return result;
 	}
 
 	@Override
@@ -90,7 +143,7 @@ public class Form extends UIComponent {
 		result.setAttribute("title", m_title);
 		result.setAttribute("target", m_target);
 		result.createArray("refreshListeners", m_refreshListeners, (listener) -> new JsonString(JsonConstants.toId(listener.getTUID())));
-		result.createArray("inputs", m_inputs, FormInputString::toJsonObject);
+		result.createArray("inputs", m_inputs, FormInput::toJsonObject);
 		return result;
 	}
 
