@@ -31,4 +31,10 @@ public class FormRequest {
 		LOG.debug("Parameter '{}': {}", key, result);
 		return result;
 	}
+
+	public static Integer getIntegerField(HttpServletRequest request, String key) {
+		final Integer result = request.getParameterMap().containsKey(key) ? Integer.valueOf(request.getParameter(key)) : null;
+		LOG.debug("Parameter '{}': {}", key, result);
+		return result;
+	}
 }

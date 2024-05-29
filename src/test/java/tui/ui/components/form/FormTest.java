@@ -25,7 +25,8 @@ public class FormTest {
 	@Test
 	public void toHTML() {
 		final Form form = new Form("test form", null);
-		form.createInputString("input", "input1");
+		form.createInputString("string", "input1");
+		form.createInputNumber("number", "input2");
 
 		final HTMLNode html = form.toHTMLNode();
 
@@ -36,13 +37,22 @@ public class FormTest {
 				  <fieldset>
 				    <legend>test form</legend>
 				    <p>
-				      <label for="input1">input</label>
+				      <label for="input1">string</label>
 				      <input name="input1" placeholder="Text input" type="text"/>
+				    </p>
+				    <p>
+				      <label for="input2">number</label>
+				      <input name="input2" placeholder="Number" type="number"/>
 				    </p>
 				  </fieldset>
 				  <button type="submit">Submit</button>
 				</form>
 				""", html.toHTML());
+	}
+
+	@Test
+	public void browse() {
+
 	}
 
 }

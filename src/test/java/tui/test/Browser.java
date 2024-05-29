@@ -11,9 +11,14 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tui.test.components.TFormTest;
 import tui.ui.components.form.Form;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+
+import static tui.test.components.TFormTest.getFieldName;
 
 public class Browser {
 
@@ -43,7 +48,50 @@ public class Browser {
 		m_driver.quit();
 	}
 
+	public WebElement getForm(String title) {
+		final Optional<WebElement> anyFormElement = getForms().stream()
+				.filter(WebElement::isDisplayed)
+				.filter((element) -> title.equals(TFormTest.getTitle(element)))
+				.findAny();
+
+		if(anyFormElement.isPresent()) {
+			return anyFormElement.get();
+		} else {
+			throw new RuntimeException("Form element not found: " + title);
+		}
+	}
+
+	public Collection<WebElement> getFields(String formTitle) {
+		final WebElement formElement = getForm(formTitle);
+		return TFormTest.getFields(formElement);
+	}
+
 	public List<WebElement> getForms() {
 		return m_driver.findElements(By.className(Form.HTML_CLASS));
+	}
+
+	public void typeField(String formTitle, String name, String value) {
+		final Optional<WebElement> anyFieldName = getFields(formTitle).stream()
+				.filter((field) -> name.equals(getFieldName(field)))
+				.findAny();
+
+		if(anyFieldName.isPresent()) {
+			WebElement inputElement = anyFieldName.get().findElement(By.tagName("input"));
+			inputElement.sendKeys(value);
+		} else {
+			throw new RuntimeException("Field input element not found: " + name);
+		}
+	}
+
+	public void submit(String formTitle) {
+		final WebElement formElement = getForm(formTitle);
+		final Optional<WebElement> anySubmitButton = formElement.findElements(By.tagName("button")).stream()
+				.filter((button) -> "submit".equals(button.getAttribute("type")))
+				.findAny();
+		if(anySubmitButton.isPresent()) {
+			anySubmitButton.get().click();
+		} else {
+			throw new RuntimeException("Submit button not found.");
+		}
 	}
 }

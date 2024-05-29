@@ -17,6 +17,7 @@ package tui.test;
 
 import org.junit.After;
 import tui.http.TUIBackend;
+import tui.http.TUIWebService;
 import tui.ui.UI;
 import tui.ui.components.Page;
 
@@ -50,6 +51,10 @@ public class TestWithBackend {
 		}
 	}
 
+	protected void registerWebService(String path, TUIWebService webservice) {
+		m_backend.registerWebService(path, webservice);
+	}
+
 	static int getRandomAvailablePort() throws IOException {
 		try(ServerSocket socket = new ServerSocket(0, 50, null)) {
 			return socket.getLocalPort();
@@ -63,5 +68,13 @@ public class TestWithBackend {
 	protected Browser startBrowser() {
 		m_browser = new Browser(m_backend.getPort());
 		return m_browser;
+	}
+
+	protected void wait_s(double delay_s) {
+		try {
+			Thread.sleep((long) (delay_s * 1000.0));
+		} catch(InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

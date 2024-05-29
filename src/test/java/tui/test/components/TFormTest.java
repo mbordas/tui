@@ -18,6 +18,7 @@ package tui.test.components;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import tui.http.FormRequest;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
@@ -25,6 +26,7 @@ import tui.ui.components.form.Form;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,29 +35,45 @@ public class TFormTest extends TestWithBackend {
 
 	@Test
 	public void browse() {
+
+		// UI: building the page
 		final Page page = new Page("Home");
 		final Form form = new Form("Test form", "/form");
 		form.createInputString("Name", "name");
 		form.createInputNumber("Age", "age");
 		page.append(form);
 
+		// Backend
 		startBackend("/index", page);
+		// Atomic references will store the values sent by the browser to the backend web service
+		final AtomicReference<String> submittedName = new AtomicReference<>();
+		final AtomicReference<Integer> submittedAge = new AtomicReference<>();
+		registerWebService("/form", (uri, request, response) -> {
+			final String name = FormRequest.getStringField(request, "name");
+			final Integer age = FormRequest.getIntegerField(request, "age");
+			submittedName.set(name);
+			submittedAge.set(age);
+			return Form.getSuccessfulSubmissionResponse();
+		});
 
+		// Opening the page
 		final Browser browser = startBrowser();
 		browser.open("/index");
 
-		browser.getTitle();
-
-		final WebElement formElement = browser.getForms().get(0);
-
-		assertTrue(formElement.isDisplayed());
-		assertEquals("Test form", getTitle(formElement));
-
-		final Collection<WebElement> fields = getFields(formElement);
+		// Filling the form
+		final Collection<WebElement> fields = browser.getFields("Test form");
 		assertEquals(2, fields.size());
-
 		checkField(fields, "Name", "text", "name");
 		checkField(fields, "Age", "number", "age");
+
+		browser.typeField("Test form", "name", "My name");
+		browser.typeField("Test form", "age", "42");
+		browser.submit("Test form");
+
+		// Testing values received by the backend
+		wait_s(0.1);
+		assertEquals("My name", submittedName.get());
+		assertEquals(42, submittedAge.get(), 0);
 	}
 
 	private static void checkField(Collection<WebElement> fields, String label, String type, String name) {
@@ -69,13 +87,13 @@ public class TFormTest extends TestWithBackend {
 		assertEquals(label, name, getFieldName(fieldName));
 	}
 
-	static String getTitle(WebElement formElement) {
+	public static String getTitle(WebElement formElement) {
 		final WebElement fieldset = formElement.findElement(By.tagName("fieldset"));
 		final WebElement legend = fieldset.findElement(By.tagName("legend"));
 		return legend.getText();
 	}
 
-	static Collection<WebElement> getFields(WebElement formElement) {
+	public static Collection<WebElement> getFields(WebElement formElement) {
 		return formElement.findElements(By.tagName("p"));
 	}
 
@@ -89,7 +107,7 @@ public class TFormTest extends TestWithBackend {
 		return inputElement.getAttribute("type");
 	}
 
-	static String getFieldName(WebElement fieldElement) {
+	public static String getFieldName(WebElement fieldElement) {
 		final WebElement inputElement = fieldElement.findElement(By.tagName("input"));
 		return inputElement.getAttribute("name");
 	}
