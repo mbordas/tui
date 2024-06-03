@@ -15,35 +15,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import tui.json.JsonArray;
+import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.json.JsonParser;
-import tui.json.JsonTable;
 import tui.test.TClient;
-import tui.ui.components.Page;
-import tui.ui.components.Panel;
-import tui.ui.components.Section;
-import tui.ui.components.TabbedPage;
-import tui.ui.components.form.Form;
 
-public class TComponentFactory {
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-	public static TComponent parse(String json, TClient client) {
-		final JsonMap map = JsonParser.parseMap(json);
-		return switch(map.getType()) {
-			case Page.JSON_TYPE -> TPage.parse(map, client);
-			case TabbedPage.JSON_TYPE -> TTabbedPage.parse(map, client);
-			case TabbedPage.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
-			case Panel.JSON_TYPE -> TPanel.parse(map, client);
-			case Section.JSON_TYPE -> TSection.parse(map, client);
-			case JsonTable.JSON_TYPE -> JsonTable.parse(map, client);
-			case Form.JSON_TYPE -> TForm.parse(map, client);
-			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
-		};
+public class TPanel extends TComponent {
+
+	private final List<TComponent> m_content = new ArrayList<>();
+
+	/**
+	 * @param tuid   Unique identifier.
+	 * @param client This client object will help acting on some component, and determining if they are reachable.
+	 */
+	protected TPanel(long tuid, TClient client) {
+		super(tuid, client);
 	}
 
-	public static TComponent parse(JsonObject json, TClient tClient) {
-		return parse(json.toJson(), tClient);
+	public List<TComponent> getContent() {
+		return m_content;
 	}
 
+	@Override
+	public TComponent find(long tuid) {
+		return null;
+	}
+
+	public static TPanel parse(JsonMap map, TClient client) {
+		final long tuid = JsonConstants.readTUID(map);
+		TPanel result = new TPanel(tuid, client);
+		final JsonArray content = map.getArray("content");
+		final Iterator<JsonObject> contentIterator = content.iterator();
+		while(contentIterator.hasNext()) {
+			final JsonObject componentJson = contentIterator.next();
+			result.m_content.add(TComponentFactory.parse(componentJson, client));
+		}
+		return result;
+	}
 }

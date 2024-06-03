@@ -46,6 +46,16 @@ public class JsonArray extends JsonObject {
 		return m_items.get(i);
 	}
 
+	public JsonMap getMap(int i) {
+		final JsonObject result = m_items.get(i);
+		if(result instanceof JsonMap map) {
+			return map;
+		} else {
+			throw new RuntimeException(
+					String.format("Item #%d is of type %s != %s", i, result.getClass().getSimpleName(), JsonMap.class.getSimpleName()));
+		}
+	}
+
 	public Iterator<JsonObject> iterator() {
 		return m_items.iterator();
 	}

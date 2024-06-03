@@ -20,9 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
+import tui.test.components.ATPage;
+import tui.test.components.BadComponentException;
 import tui.test.components.TComponent;
 import tui.test.components.TForm;
-import tui.test.components.TPage;
+import tui.test.components.TTabbedPage;
 import tui.test.components.TTable;
 
 import java.util.List;
@@ -32,7 +34,7 @@ public class TClient {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TClient.class);
 
-	private TPage m_currentPage;
+	private ATPage m_currentPage;
 	private TestHTTPClient m_httpClient;
 
 	public TClient(String host, int port) {
@@ -44,7 +46,7 @@ public class TClient {
 		final String json = m_httpClient.callBackend(endPoint, Map.of("format", "json"));
 		final JsonMap jsonMap = JsonParser.parseMap(json);
 		try {
-			m_currentPage = TPage.parse(jsonMap, this);
+			m_currentPage = ATPage.parse(jsonMap, this);
 		} catch(Exception e) {
 			LOG.error("Error when opening page '{}': {}", endPoint, e.getMessage());
 			LOG.debug("JsonMap:\n{}", jsonMap.toJson());
@@ -56,8 +58,16 @@ public class TClient {
 		return m_currentPage.getTitle();
 	}
 
+	public String getTabTitle() {
+		if(m_currentPage instanceof TTabbedPage page) {
+			return page.getTabTitle();
+		} else {
+			throw new BadComponentException("Current page '%s' has no tabs.", m_currentPage.getTitle());
+		}
+	}
+
 	public TTable getTable(String title) {
-		final List<TComponent> tables = m_currentPage.getSubComponents().stream()
+		final List<TComponent> tables = m_currentPage.getReachableSubComponents().stream()
 				.filter((component) -> component instanceof TTable table && title.equals(table.getTitle()))
 				.toList();
 		if(tables.isEmpty()) {
@@ -69,7 +79,7 @@ public class TClient {
 	}
 
 	public TForm getForm(String title) {
-		final List<TComponent> forms = m_currentPage.getSubComponents().stream()
+		final List<TComponent> forms = m_currentPage.getReachableSubComponents().stream()
 				.filter((component) -> component instanceof TForm form && title.equals(form.getTitle()))
 				.toList();
 		if(forms.isEmpty()) {

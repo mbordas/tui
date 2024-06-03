@@ -19,7 +19,7 @@ import org.junit.After;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
 import tui.ui.UI;
-import tui.ui.components.Page;
+import tui.ui.components.APage;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -39,7 +39,7 @@ public class TestWithBackend {
 		}
 	}
 
-	protected void startBackend(String target, Page page) {
+	protected void startBackend(String target, APage page) {
 		try {
 			final UI ui = new UI();
 			ui.add(target, page);

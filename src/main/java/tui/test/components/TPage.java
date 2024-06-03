@@ -26,20 +26,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class TPage extends TComponent {
-
-	private String m_title;
+public class TPage extends ATPage {
 
 	private List<TComponent> m_content;
 
 	TPage(long tuid, String title, TClient tClient) {
-		super(tuid, tClient);
-		m_title = title;
+		super(tuid, title, tClient);
 		m_content = new ArrayList<>();
-	}
-
-	public String getTitle() {
-		return m_title;
 	}
 
 	public static TPage parse(JsonMap jsonMap, TClient client) {
@@ -55,7 +48,7 @@ public class TPage extends TComponent {
 		return result;
 	}
 
-	public Collection<TComponent> getSubComponents() {
+	public Collection<TComponent> getReachableSubComponents() {
 		return new ArrayList<>(m_content);
 	}
 

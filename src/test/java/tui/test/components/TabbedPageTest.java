@@ -15,35 +15,74 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.apache.http.HttpException;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tui.json.JsonArray;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.json.JsonParser;
-import tui.json.JsonTable;
 import tui.test.TClient;
-import tui.ui.components.Page;
+import tui.test.TestWithBackend;
 import tui.ui.components.Panel;
 import tui.ui.components.Section;
 import tui.ui.components.TabbedPage;
-import tui.ui.components.form.Form;
 
-public class TComponentFactory {
+import static org.junit.Assert.assertEquals;
 
-	public static TComponent parse(String json, TClient client) {
-		final JsonMap map = JsonParser.parseMap(json);
-		return switch(map.getType()) {
-			case Page.JSON_TYPE -> TPage.parse(map, client);
-			case TabbedPage.JSON_TYPE -> TTabbedPage.parse(map, client);
-			case TabbedPage.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
-			case Panel.JSON_TYPE -> TPanel.parse(map, client);
-			case Section.JSON_TYPE -> TSection.parse(map, client);
-			case JsonTable.JSON_TYPE -> JsonTable.parse(map, client);
-			case Form.JSON_TYPE -> TForm.parse(map, client);
-			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
-		};
+public class TabbedPageTest extends TestWithBackend {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TabbedPageTest.class);
+
+	private TabbedPage m_page;
+
+	@Before
+	public void before() {
+		m_page = new TabbedPage("Home");
+		final Panel tab1 = m_page.createTab("First tab");
+		tab1.createSection("Section 1-1");
+		final Panel tab2 = m_page.createTab("Second tab");
+		tab2.createSection("Section 2-1");
 	}
 
-	public static TComponent parse(JsonObject json, TClient tClient) {
-		return parse(json.toJson(), tClient);
+	@Test
+	public void json() {
+		final JsonMap jsonMap = m_page.toJsonMap();
+		JsonObject.PRETTY_PRINT = true;
+		LOG.debug(jsonMap.toJson());
+
+		assertEquals(TabbedPage.JSON_TYPE, jsonMap.getType());
+		assertEquals("Home", jsonMap.getAttribute("title"));
+
+		final JsonArray content = jsonMap.getArray("content");
+
+		{
+			final JsonMap tab1 = content.getMap(0);
+
+			assertEquals(TabbedPage.TABBED_PANEL_JSON_TYPE, tab1.getType());
+			assertEquals("First tab", tab1.getAttribute("title"));
+			final JsonArray tab1Array = tab1.getArray("content");
+			final JsonMap section1 = tab1Array.getMap(0);
+			assertEquals(Section.JSON_TYPE, section1.getType());
+			assertEquals("Section 1-1", section1.getAttribute("title"));
+		}
+	}
+
+	@Test
+	public void client() throws HttpException {
+		startBackend("/index", m_page);
+
+		// TUI
+		final TClient client = startClient();
+		client.open("/index");
+		assertEquals("Home", client.getTitle());
+		assertEquals("First tab", client.getTabTitle());
+	}
+
+	@Test
+	public void browse() {
+
 	}
 
 }

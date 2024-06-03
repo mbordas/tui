@@ -84,6 +84,10 @@ public class JsonMap extends JsonObject {
 		return (JsonArray) m_children.get(name);
 	}
 
+	public JsonMap getMap(String name) {
+		return (JsonMap) m_children.get(name);
+	}
+
 	public void setPrettyPrintDepth(int depth) {
 		m_prettyPrintDepth = depth;
 		for(JsonObject child : m_children.values()) {

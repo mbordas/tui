@@ -19,7 +19,7 @@ public class TabbedPage extends APage {
 	public static final String JSON_TYPE = "tabbed_page";
 	public static final String TABBED_PANEL_JSON_TYPE = "tabbed_panel";
 
-	private final Map<String, Panel> m_content = new LinkedHashMap<>();
+	private final Map<String /* title */, Panel> m_content = new LinkedHashMap<>();
 
 	public TabbedPage(String title) {
 		super(title);
@@ -47,13 +47,14 @@ public class TabbedPage extends APage {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("title", getTitle());
 		final JsonArray tabNodes = result.createArray("content");
 		for(Map.Entry<String, Panel> tabEntry : m_content.entrySet()) {
-			final JsonMap tabNode = new JsonMap(TABBED_PANEL_JSON_TYPE);
+			final Panel panel = tabEntry.getValue();
+			final JsonMap tabNode = new JsonMap(TABBED_PANEL_JSON_TYPE, panel.getTUID());
 			tabNode.setAttribute("title", tabEntry.getKey());
-			tabNode.setChild("content", tabEntry.getValue().toJsonMap());
+			tabNode.createArray("content", tabEntry.getValue().getContent(), UIComponent::toJsonMap);
 			tabNodes.add(tabNode);
 		}
 		return result;
