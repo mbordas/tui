@@ -13,40 +13,15 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.html;
+package tui.test.components;
 
-import tui.ui.components.Table;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
-import java.util.List;
+public class TTableTest {
 
-public class HTMLTable {
-
-	public static HTMLNode toHTML(Table table) {
-		final HTMLNode result = new HTMLNode("table");
-
-		if(table.isConnectedForRefresh()) {
-			result.setAttribute("id", HTMLConstants.toId(table.getTUID()));
-		}
-
-		if(table.hasSource()) {
-			result.setAttribute("tui-source", table.getSource());
-		}
-
-		final HTMLNode head = result.createChild("thead");
-		final HTMLNode headRow = head.createChild("tr");
-		for(String column : table.getColumns()) {
-			headRow.createChild("th").setText(column);
-		}
-
-		final HTMLNode body = result.createChild("tbody");
-		for(List<Object> _row : table.getRows()) {
-			final HTMLNode row = body.createChild("tr");
-			for(Object _cell : _row) {
-				row.createChild("td").setText(_cell == null ? "" : String.valueOf(_cell));
-			}
-		}
-
-		return result;
+	public static String getTitle(WebElement tableElement) {
+		final WebElement caption = tableElement.findElement(By.tagName("caption"));
+		return caption.getText();
 	}
-
 }

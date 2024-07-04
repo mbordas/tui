@@ -136,6 +136,9 @@ td {
 tr:hover {
     background-color: var(--table-color-row-hover);
 }
+.tui-tablepicker td {
+    cursor: pointer;
+}
 
 /* FETCH ERRORS */
 

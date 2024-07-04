@@ -19,8 +19,9 @@ public class Panel extends UIComponent {
 
 	private final List<UIComponent> m_content = new ArrayList<>();
 
-	public void append(UIComponent component) {
+	public <C extends UIComponent> C append(C component) {
 		m_content.add(component);
+		return component;
 	}
 
 	public Section createSection(String title) {

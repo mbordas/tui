@@ -12,6 +12,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.test.components.TFormTest;
+import tui.test.components.TTableTest;
 import tui.ui.components.form.Form;
 
 import java.util.Collection;
@@ -59,6 +60,23 @@ public class Browser {
 		} else {
 			throw new RuntimeException("Form element not found: " + title);
 		}
+	}
+
+	public WebElement getTable(String title) {
+		final Optional<WebElement> anyFormElement = getTables().stream()
+				.filter(WebElement::isDisplayed)
+				.filter((element) -> title.equals(TTableTest.getTitle(element)))
+				.findAny();
+
+		if(anyFormElement.isPresent()) {
+			return anyFormElement.get();
+		} else {
+			throw new RuntimeException("Table element not found: " + title);
+		}
+	}
+
+	public List<WebElement> getTables() {
+		return m_driver.findElements(By.tagName("table"));
 	}
 
 	public Collection<WebElement> getFields(String formTitle) {

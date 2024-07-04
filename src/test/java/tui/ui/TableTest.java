@@ -72,7 +72,8 @@ public class TableTest {
 				  </head>
 				  <body>
 				    <main>
-				      <table>
+				      <table class="tui-table">
+				        <caption>Test table</caption>
 				        <thead>
 				          <tr>
 				            <th>A</th>

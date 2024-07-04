@@ -15,44 +15,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
-import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.json.JsonTable;
+import tui.test.components.BadComponentException;
 
-public class Paragraph extends UILoadableComponent {
+import java.util.ArrayList;
+import java.util.Collection;
 
-	public static final String JSON_TYPE = "paragraph";
+public class TablePicker extends Table {
 
-	private String m_text;
+	public static final String HTML_CLASS = "tui-tablepicker";
 
-	public Paragraph(String text) {
-		m_text = text;
+	private Collection<UILoadableComponent> m_connectedComponents = new ArrayList<>();
+
+	public TablePicker(String title, Collection<String> columns) {
+		super(title, columns);
 	}
 
-	public String getText() {
-		return m_text;
+	public UILoadableComponent connectListener(UILoadableComponent component) {
+		if(component.getSource() == null) {
+			throw new BadComponentException("%s must have a source set for reload events.", UILoadableComponent.class.getSimpleName());
+		}
+		m_connectedComponents.add(component);
+		return component;
 	}
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("p");
-		if(hasSource()) {
-			result.setAttribute("id", HTMLConstants.toId(getTUID()));
-			result.setAttribute("tui-source", getSource());
+		final HTMLNode result = super.toHTMLNode()
+				.setAttribute("class", HTML_CLASS);
+		if(!m_connectedComponents.isEmpty()) {
+			result.setAttribute("tui-load-listeners", getTUIsSeparatedByComa(m_connectedComponents));
 		}
-		result.setText(m_text);
 		return result;
 	}
 
-	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
-		if(hasSource()) {
-			result.setAttribute("id", HTMLConstants.toId(getTUID()));
-			result.setAttribute("tui-source", getSource());
+		final JsonMap result = JsonTable.toJson(this);
+		if(!m_connectedComponents.isEmpty()) {
+			result.setAttribute("tui-load-listeners", getTUIsSeparatedByComa(m_connectedComponents));
 		}
-		result.setAttribute("text", m_text);
 		return result;
 	}
-
 }

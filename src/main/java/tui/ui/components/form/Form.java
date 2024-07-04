@@ -98,15 +98,7 @@ public class Form extends UIComponent {
 
 		final Collection<UIComponent> refreshListeners = getRefreshListeners();
 		if(!refreshListeners.isEmpty()) {
-			final Iterator<UIComponent> iterator = refreshListeners.iterator();
-			final StringBuilder tuids = new StringBuilder();
-			while(iterator.hasNext()) {
-				tuids.append(iterator.next().getTUID());
-				if(iterator.hasNext()) {
-					tuids.append(",");
-				}
-			}
-			result.setAttribute("refresh-listeners", tuids.toString());
+			result.setAttribute("refresh-listeners", getTUIsSeparatedByComa(refreshListeners));
 		}
 
 		HTMLFetchErrorMessage.addErrorMessageChild(result);

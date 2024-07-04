@@ -122,4 +122,14 @@ public class JsonMap extends JsonObject {
 		return result.toString();
 	}
 
+	public Map<String, String> toMap() {
+		final Map<String, String> result = new LinkedHashMap<>();
+		for(Map.Entry<String, JsonObject> entry : m_children.entrySet()) {
+			final JsonObject value = entry.getValue();
+			if(value != null) {
+				result.put(entry.getKey(), value.toString());
+			}
+		}
+		return result;
+	}
 }

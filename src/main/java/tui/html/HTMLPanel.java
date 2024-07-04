@@ -17,6 +17,7 @@ public class HTMLPanel {
 		final HTMLNode result = new HTMLNode("div")
 				.setAttribute("id", HTMLConstants.toId(panel.getTUID()))
 				.setAttribute("class", CLASS);
+
 		for(UIComponent component : panel.getContent()) {
 			result.addChild(component.toHTMLNode());
 		}

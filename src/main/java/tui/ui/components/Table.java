@@ -15,8 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
-import tui.html.HTMLTable;
 import tui.json.JsonMap;
 import tui.json.JsonTable;
 import tui.ui.UIConfigurationException;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Table extends UIComponent {
+
+	public static final String HTML_CLASS = "tui-table";
 
 	final String m_title;
 	final List<String> m_columns = new ArrayList<>();
@@ -93,7 +95,34 @@ public class Table extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return HTMLTable.toHTML(this);
+		final HTMLNode result = new HTMLNode("table")
+				.setAttribute("class", HTML_CLASS);
+
+		if(isConnectedForRefresh() || hasSource()) {
+			result.setAttribute("id", HTMLConstants.toId(getTUID()));
+		}
+
+		if(hasSource()) {
+			result.setAttribute("tui-source", getSource());
+		}
+
+		result.createChild("caption").setText(getTitle());
+
+		final HTMLNode head = result.createChild("thead");
+		final HTMLNode headRow = head.createChild("tr");
+		for(String column : getColumns()) {
+			headRow.createChild("th").setText(column);
+		}
+
+		final HTMLNode body = result.createChild("tbody");
+		for(List<Object> _row : getRows()) {
+			final HTMLNode row = body.createChild("tr");
+			for(Object _cell : _row) {
+				row.createChild("td").setText(_cell == null ? "" : String.valueOf(_cell));
+			}
+		}
+
+		return result;
 	}
 
 	public JsonMap toJsonMap() {

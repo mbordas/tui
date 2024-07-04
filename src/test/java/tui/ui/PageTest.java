@@ -18,6 +18,7 @@ package tui.ui;
 import org.junit.Test;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.json.JsonObject;
 import tui.test.components.TComponent;
 import tui.test.components.TComponentFactory;
 import tui.test.components.TPage;
@@ -74,13 +75,14 @@ public class PageTest {
 		assertEquals(Page.JSON_TYPE, jsonMap.getType());
 
 		//
+		JsonObject.PRETTY_PRINT = false;
 		final String json = jsonMap.toJson();
 		//
 
 		assertEquals(
-				"{\"type\": \"page\",\"tuid\": \"" + page.getTUID()
-						+ "\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"" + section.getTUID()
-						+ "\",\"title\": \"section A\",\"content\": []}]}",
+				String.format(
+						"{\"type\": \"page\",\"tuid\": \"%d\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"%d\",\"title\": \"section A\",\"content\": []}]}",
+						page.getTUID(), section.getTUID()),
 				json);
 
 	}

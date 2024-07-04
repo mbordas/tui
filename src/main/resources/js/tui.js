@@ -24,10 +24,31 @@ function onload() {
     updateDisplayMonitorFields();
 }
 
-function refreshComponent(id) {
+/*
+    Calls the backend web service defined as 'source' in the component's attributes.
+    Optional 'data' is a Map which contains parameters as (key, value) strings that will be sent as content (HTTP POST).
+*/
+async function refreshComponent(id, data) {
     const element = document.getElementById(id);
-    if(element.nodeName == "TABLE") {
-        refreshTable(id);
+    const component = document.getElementById(id);
+    const sourcePath = component.getAttribute('tui-source');
+    console.log('refreshing component ' + id + ' with source: ' + sourcePath);
+    const jsonBody = data === undefined ? '' : JSON.stringify(Array.from(data.entries()));
+    const response = await fetch(sourcePath, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: jsonBody,
+        });
+
+    const json = await response.json();
+    console.log(json);
+
+    if(json['type'] == 'paragraph') {
+        component.innerText = json['text'];
+    } else if(json['type'] == 'table') {
+        updateTable(component, json);
     }
 }
 
@@ -180,24 +201,42 @@ function instrumentTables() {
             buttonRefresh.setAttribute('type', 'button');
             buttonRefresh.textContent = 'Refresh';
             buttonRefresh.addEventListener('click', function(){
-                refreshTable(table.id);
+                refreshComponent(table.id);
             });
             tableContainer.append(buttonRefresh);
 
             table.replaceWith(tableContainer);
             tableContainer.append(table);
         }
+
+        instrumentTablePicker(table);
     });
 }
 
-async function refreshTable(id) {
-    const table = document.getElementById(id);
-    const sourcePath = table.getAttribute('tui-source');
-    console.log("refreshing table " + id + " with source: " + sourcePath);
-    const response = await fetch(sourcePath);
-    const json = await response.json();
-    console.log(json);
+function instrumentTablePicker(tablePickerElement) {
+    if(tablePickerElement.hasAttribute('tui-load-listeners')) {
+        const columns = Array.from(tablePickerElement.querySelectorAll("th")).map(cell => cell.textContent);
 
+        for(const row of tablePickerElement.querySelectorAll("tbody tr")) {
+            const values = Array.from(row.querySelectorAll("td")).map(cell => cell.textContent);
+
+            const data = new Map();
+            var colIndex = 0;
+            for(const column of columns) {
+                data.set(column, values[colIndex++]);
+            }
+
+            row.addEventListener("click", function () {
+                tablePickerElement.getAttribute('tui-load-listeners').split(",")
+                    .forEach(function(id, i) {
+                        refreshComponent(id, data);
+                    })
+            });
+        }
+    }
+}
+
+async function updateTable(tableElement, json) {
     const freshBody = document.createElement("tbody");
     for(var r = 0; r < json['tbody'].length; r++) {
         const row = json['tbody'][r];
@@ -211,7 +250,9 @@ async function refreshTable(id) {
         freshBody.append(freshRow);
     }
 
-    table.getElementsByTagName("tbody")[0].replaceWith(freshBody);
+    tableElement.getElementsByTagName("tbody")[0].replaceWith(freshBody);
+
+    instrumentTablePicker(tableElement);
 }
 
 // MONITORING
