@@ -15,9 +15,11 @@ import tui.test.components.TFormTest;
 import tui.test.components.TTableTest;
 import tui.ui.components.form.Form;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static tui.test.components.TFormTest.getFieldName;
 
@@ -79,6 +81,19 @@ public class Browser {
 		return m_driver.findElements(By.tagName("table"));
 	}
 
+	@Nullable
+	public WebElement getTableCellByText(WebElement table, Predicate<String> conditionOnText) {
+		final List<WebElement> cells = table.findElements(By.tagName("td"));
+		final Optional<WebElement> anyCell = cells.stream()
+				.filter((cell) -> conditionOnText.test(cell.getText()))
+				.findAny();
+		return anyCell.orElse(null);
+	}
+
+	public List<WebElement> getPanels() {
+		return m_driver.findElements(By.className("tui-panel"));
+	}
+
 	public Collection<WebElement> getFields(String formTitle) {
 		final WebElement formElement = getForm(formTitle);
 		return TFormTest.getFields(formElement);
@@ -112,4 +127,5 @@ public class Browser {
 			throw new RuntimeException("Submit button not found.");
 		}
 	}
+
 }

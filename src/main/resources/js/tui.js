@@ -13,6 +13,13 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+    Naming the functions
+    - instrumentXXX: completes the DOM structure, adds triggers and code.
+    - updateXXX: updates the content and the display.
+    - refreshXXX: calls the backend in order to get fresh data, then updates and instruments when needed.
+*/
+
 "use strict";
 
 function onload() {
@@ -21,7 +28,7 @@ function onload() {
     instrumentTables();
     instrumentMonitorFields();
 
-    updateDisplayMonitorFields();
+    updateMonitorFields();
 }
 
 /*
@@ -45,10 +52,13 @@ async function refreshComponent(id, data) {
     const json = await response.json();
     console.log(json);
 
-    if(json['type'] == 'paragraph') {
+    const type = json['type'];
+    if(type == 'paragraph') {
         component.innerText = json['text'];
-    } else if(json['type'] == 'table') {
+    } else if(type == 'table') {
         updateTable(component, json);
+    } else {
+        console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
     }
 }
 
@@ -257,7 +267,7 @@ async function updateTable(tableElement, json) {
 
 // MONITORING
 
-function updateDisplayMonitorFields() {
+function updateMonitorFields() {
     const fields = document.querySelectorAll('.tui-monitor-field');
     fields.forEach(function(field, i) {
         const value = field.getAttribute('value');
@@ -304,7 +314,7 @@ async function refreshMonitorFields(sourcePath, fieldset) {
             showFetchErrorInElement(fieldset, error)
         });
 
-    updateDisplayMonitorFields();
+    updateMonitorFields();
 }
 
 function instrumentMonitorFields() {

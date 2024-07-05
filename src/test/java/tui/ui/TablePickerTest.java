@@ -16,8 +16,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
 import tui.test.Browser;
@@ -38,11 +38,13 @@ import static org.junit.Assert.assertEquals;
 
 public class TablePickerTest extends TestWithBackend {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TablePickerTest.class);
-
 	record Item(String id, String name, String content) {
 	}
 
+	/**
+	 * Here we create a {@link TablePicker} linked to a simple {@link Paragraph}. When a row from the table is clicked, then the text
+	 * of the paragraph is updated with row related content.
+	 */
 	@Test
 	public void browse() {
 		final Collection<Item> items = buildItems(3);
@@ -68,8 +70,24 @@ public class TablePickerTest extends TestWithBackend {
 		final Browser browser = startBrowser();
 		browser.open("/index");
 
-		assertEquals("Home", browser.getTitle());
-		browser.getTable(tablePicker.getTitle());
+		assertEquals("Reloadable panel", getParagraph(browser).getText()); // Initial text
+
+		final WebElement tablepickerElement = browser.getTable(tablePicker.getTitle());
+
+		final WebElement cell = browser.getTableCellByText(tablepickerElement, (text) -> text.equals("Item-2"));
+
+		assert cell != null;
+		cell.click();
+		wait_s(1);
+
+		assertEquals("This is the content of Item-2", getParagraph(browser).getText());
+	}
+
+	private WebElement getParagraph(Browser browser) {
+		final List<WebElement> panels = browser.getPanels();
+		assertEquals(1, panels.size());
+		final WebElement panelElement = panels.get(0);
+		return panelElement.findElement(By.tagName("p"));
 	}
 
 	private static TUIWebService buildWebServiceParagraphLoad(Collection<Item> items) {
