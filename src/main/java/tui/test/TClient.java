@@ -24,9 +24,12 @@ import tui.test.components.ATPage;
 import tui.test.components.BadComponentException;
 import tui.test.components.TComponent;
 import tui.test.components.TForm;
+import tui.test.components.TPanel;
 import tui.test.components.TTabbedPage;
 import tui.test.components.TTable;
+import tui.test.components.TTablePicker;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -58,12 +61,34 @@ public class TClient {
 		return m_currentPage.getTitle();
 	}
 
+	public Collection<TComponent> getReachableSubComponents() {
+		return m_currentPage.getReachableSubComponents();
+	}
+
 	public String getTabTitle() {
 		if(m_currentPage instanceof TTabbedPage page) {
 			return page.getTabTitle();
 		} else {
 			throw new BadComponentException("Current page '%s' has no tabs.", m_currentPage.getTitle());
 		}
+	}
+
+	public TPanel getPanel(int index) {
+		final List<TPanel> panels = getPanels();
+		if(panels.isEmpty()) {
+			throw new TestExecutionException("No Panel found in current page.");
+		} else if(index >= panels.size()) {
+			throw new TestExecutionException("Panel #%d does not exist (%d panels in page)", index, panels.size());
+		} else {
+			return panels.get(index);
+		}
+	}
+
+	public List<TPanel> getPanels() {
+		return m_currentPage.getReachableSubComponents().stream()
+				.filter((component) -> component instanceof TPanel)
+				.map((panel) -> (TPanel) panel)
+				.toList();
 	}
 
 	public TTable getTable(String title) {
@@ -76,6 +101,18 @@ public class TClient {
 			throw new TestExecutionException("Multiple tables found in current page with title: %s", title);
 		}
 		return (TTable) tables.get(0);
+	}
+
+	public TTablePicker getTablePicker(String title) {
+		final List<TComponent> tables = m_currentPage.getReachableSubComponents().stream()
+				.filter((component) -> component instanceof TTablePicker tablepicker && title.equals(tablepicker.getTitle()))
+				.toList();
+		if(tables.isEmpty()) {
+			throw new TestExecutionException("No table found in current page with title: %s", title);
+		} else if(tables.size() > 1) {
+			throw new TestExecutionException("Multiple tables found in current page with title: %s", title);
+		}
+		return (TTablePicker) tables.get(0);
 	}
 
 	public TForm getForm(String title) {
@@ -115,4 +152,5 @@ public class TClient {
 			table.refresh(this);
 		}
 	}
+
 }

@@ -13,52 +13,53 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components;
+package tui.test.components;
 
-import tui.html.HTMLNode;
+import org.apache.http.HttpException;
+import tui.json.JsonConstants;
 import tui.json.JsonMap;
-import tui.test.components.BadComponentException;
+import tui.json.JsonParser;
+import tui.test.TClient;
+import tui.ui.components.Paragraph;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Map;
 
-public class TablePicker extends Table {
+public class TParagraph extends TRefreshableComponent {
 
-	public static final String HTML_CLASS = "tui-tablepicker";
-	public static final String JSON_TYPE = "tablepicker";
+	private String m_source;
+	private String m_text;
 
-	public static final String ATTRIBUTE_REFRESH_LISTENERS = "tui-refresh-listeners";
-
-	private Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
-
-	public TablePicker(String title, Collection<String> columns) {
-		super(title, columns);
-	}
-
-	public UIRefreshableComponent connectListener(UIRefreshableComponent component) {
-		if(component.getSource() == null) {
-			throw new BadComponentException("%s must have a source set for reload events.", UIRefreshableComponent.class.getSimpleName());
-		}
-		m_connectedComponents.add(component);
-		return component;
+	/**
+	 * @param tuid   Unique identifier.
+	 * @param client This client object will help acting on some component, and determining if they are reachable.
+	 */
+	protected TParagraph(long tuid, TClient client, String source) {
+		super(tuid, client);
+		m_source = source;
 	}
 
 	@Override
-	public HTMLNode toHTMLNode() {
-		final HTMLNode result = super.toHTMLNode()
-				.setAttribute("class", HTML_CLASS);
-		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
-		}
-		return result;
+	public void refresh(Map<String, Object> data) throws HttpException {
+		final String response = m_client.callBackend(m_source, data);
+		final JsonMap map = JsonParser.parseMap(response);
+		m_text = map.getAttribute(Paragraph.ATTRIBUTE_TEXT);
 	}
 
-	public JsonMap toJsonMap() {
-		final JsonMap result = super.toJsonMap(JSON_TYPE);
-		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
-		}
-		return result;
+	public String getText() {
+		return m_text;
 	}
 
+	@Override
+	public TComponent find(long tuid) {
+		return null;
+	}
+
+	public static TParagraph parse(JsonMap map, TClient client) {
+		final long tuid = JsonConstants.readTUID(map);
+		final String source = map.getAttribute(Paragraph.ATTRIBUTE_SOURCE);
+
+		final TParagraph result = new TParagraph(tuid, client, source);
+		result.m_text = map.getAttribute(Paragraph.ATTRIBUTE_TEXT);
+		return result;
+	}
 }

@@ -6,7 +6,7 @@
 
 package tui.ui.components;
 
-public abstract class UILoadableComponent extends UIComponent {
+public abstract class UIRefreshableComponent extends UIComponent {
 
 	protected String m_source;
 

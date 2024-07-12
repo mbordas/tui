@@ -13,52 +13,22 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components;
+package tui.test.components;
 
-import tui.html.HTMLNode;
-import tui.json.JsonMap;
-import tui.test.components.BadComponentException;
+import org.apache.http.HttpException;
+import tui.test.TClient;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Map;
 
-public class TablePicker extends Table {
+public abstract class TRefreshableComponent extends TComponent {
 
-	public static final String HTML_CLASS = "tui-tablepicker";
-	public static final String JSON_TYPE = "tablepicker";
-
-	public static final String ATTRIBUTE_REFRESH_LISTENERS = "tui-refresh-listeners";
-
-	private Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
-
-	public TablePicker(String title, Collection<String> columns) {
-		super(title, columns);
+	/**
+	 * @param tuid   Unique identifier.
+	 * @param client This client object will help acting on some component, and determining if they are reachable.
+	 */
+	protected TRefreshableComponent(long tuid, TClient client) {
+		super(tuid, client);
 	}
 
-	public UIRefreshableComponent connectListener(UIRefreshableComponent component) {
-		if(component.getSource() == null) {
-			throw new BadComponentException("%s must have a source set for reload events.", UIRefreshableComponent.class.getSimpleName());
-		}
-		m_connectedComponents.add(component);
-		return component;
-	}
-
-	@Override
-	public HTMLNode toHTMLNode() {
-		final HTMLNode result = super.toHTMLNode()
-				.setAttribute("class", HTML_CLASS);
-		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
-		}
-		return result;
-	}
-
-	public JsonMap toJsonMap() {
-		final JsonMap result = super.toJsonMap(JSON_TYPE);
-		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
-		}
-		return result;
-	}
-
+	public abstract void refresh(Map<String, Object> data) throws HttpException;
 }

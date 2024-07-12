@@ -7,6 +7,11 @@
 package tui.test;
 
 public class TestExecutionException extends RuntimeException {
+
+	public TestExecutionException(Throwable t) {
+		super(t.getMessage(), t);
+	}
+
 	public TestExecutionException(String format, Object... args) {
 		super(String.format(format, args));
 	}

@@ -130,7 +130,11 @@ public class Table extends UIComponent {
 	}
 
 	public JsonMap toJsonMap() {
-		JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		return toJsonMap(JSON_TYPE);
+	}
+
+	protected JsonMap toJsonMap(String type) {
+		JsonMap result = new JsonMap(type, getTUID());
 		result.setAttribute("title", getTitle());
 
 		if(getSource() != null) {

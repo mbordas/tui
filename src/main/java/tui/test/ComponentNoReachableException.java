@@ -20,4 +20,8 @@ public class ComponentNoReachableException extends RuntimeException {
 	public ComponentNoReachableException(String format, Object... args) {
 		super(String.format(format, args));
 	}
+
+	public ComponentNoReachableException(long tuid) {
+		this("Component #%d is not reachable.", tuid);
+	}
 }

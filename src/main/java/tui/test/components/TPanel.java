@@ -43,7 +43,7 @@ public class TPanel extends TComponent {
 
 	@Override
 	public TComponent find(long tuid) {
-		return null;
+		return TComponent.find(tuid, m_content);
 	}
 
 	public static TPanel parse(JsonMap map, TClient client) {

@@ -18,6 +18,7 @@ package tui.test.components;
 import tui.test.TClient;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Any component of a page on client-side is a {@link TComponent}. It gives convenient methods for test.
@@ -51,7 +52,18 @@ public abstract class TComponent {
 			if(child.getTUID() == tuid) {
 				return child;
 			}
+			final TComponent foundComponent = child.find(tuid);
+			if(foundComponent != null) {
+				return foundComponent;
+			}
 		}
 		return null;
+	}
+
+	protected static <T extends TComponent> List<T> getContent(final Class<T> clazz, Collection<? extends TComponent> reachableChildren) {
+		return reachableChildren.stream()
+				.filter((component) -> component.getClass() == clazz)
+				.map((component) -> (T) component)
+				.toList();
 	}
 }

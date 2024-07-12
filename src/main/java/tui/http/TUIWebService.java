@@ -17,6 +17,8 @@ package tui.http;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tui.json.JsonObject;
 
 import javax.servlet.ServletInputStream;
@@ -24,10 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface TUIWebService {
+
+	static final Logger LOG = LoggerFactory.getLogger(TUIWebService.class);
 
 	JsonObject handle(String uri, HttpServletRequest request, HttpServletResponse response) throws IOException;
 
@@ -51,17 +56,26 @@ public interface TUIWebService {
 	}
 
 	static Map<String, String> parsePostMap(String json) {
+		if(json.trim().isEmpty()) {
+			return new HashMap<>();
+		}
+
 		final Map<String, String> result = new LinkedHashMap<>();
-		final JSONArray object = new JSONArray(json);
-		int index = 0;
-		JSONArray entry = object.getJSONArray(index);
-		while(entry != null) {
-			result.put(entry.get(0).toString(), entry.get(1).toString());
-			try {
-				entry = object.getJSONArray(++index);
-			} catch(JSONException e) {
-				break;
+		try {
+			final JSONArray object = new JSONArray(json);
+			int index = 0;
+			JSONArray entry = object.getJSONArray(index);
+			while(entry != null) {
+				result.put(entry.get(0).toString(), entry.get(1).toString());
+				try {
+					entry = object.getJSONArray(++index);
+				} catch(JSONException e) {
+					break;
+				}
 			}
+		} catch(Exception e) {
+			LOG.error("Exception parsing json: {}", json);
+			throw e;
 		}
 		return result;
 	}

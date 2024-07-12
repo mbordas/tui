@@ -59,6 +59,19 @@ public class TTable extends TComponent {
 		return m_rows;
 	}
 
+	public Map<String, Object> getRow(int index) {
+		final List<Object> values = m_rows.get(index);
+		int colIndex = 0;
+
+		final Map<String, Object> result = new LinkedHashMap<>();
+		for(String column : m_columns) {
+			Object value = values.get(colIndex);
+			result.put(column, value);
+			colIndex++;
+		}
+		return result;
+	}
+
 	public int size() {
 		return m_rows.size();
 	}

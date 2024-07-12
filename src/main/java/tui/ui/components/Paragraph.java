@@ -19,9 +19,12 @@ import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 
-public class Paragraph extends UILoadableComponent {
+public class Paragraph extends UIRefreshableComponent {
 
 	public static final String JSON_TYPE = "paragraph";
+
+	public static final String ATTRIBUTE_TEXT = "text";
+	public static final String ATTRIBUTE_SOURCE = "tui-source";
 
 	private String m_text;
 
@@ -38,7 +41,7 @@ public class Paragraph extends UILoadableComponent {
 		final HTMLNode result = new HTMLNode("p");
 		if(hasSource()) {
 			result.setAttribute("id", HTMLConstants.toId(getTUID()));
-			result.setAttribute("tui-source", getSource());
+			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
 		result.setText(m_text);
 		return result;
@@ -46,12 +49,11 @@ public class Paragraph extends UILoadableComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		if(hasSource()) {
-			result.setAttribute("id", HTMLConstants.toId(getTUID()));
-			result.setAttribute("tui-source", getSource());
+			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
-		result.setAttribute("text", m_text);
+		result.setAttribute(ATTRIBUTE_TEXT, m_text);
 		return result;
 	}
 

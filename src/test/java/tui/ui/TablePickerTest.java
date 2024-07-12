@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TablePickerTest extends TestWithBackend {
 
-	record Item(String id, String name, String content) {
+	public record Item(String id, String name, String content) {
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class TablePickerTest extends TestWithBackend {
 		return panelElement.findElement(By.tagName("p"));
 	}
 
-	private static TUIWebService buildWebServiceParagraphLoad(Collection<Item> items) {
+	public static TUIWebService buildWebServiceParagraphLoad(Collection<Item> items) {
 		return (uri, request, response) -> {
 			final String id = TUIWebService.getStringParameter(request, "Id");
 			final Optional<Item> anyItem = items.stream()
@@ -101,7 +101,7 @@ public class TablePickerTest extends TestWithBackend {
 		};
 	}
 
-	private static Collection<Item> buildItems(int count) {
+	public static Collection<Item> buildItems(int count) {
 		final Collection<Item> items = new ArrayList<>();
 		for(int i = 1; i <= count; i++) {
 			items.add(new Item("00" + i, "Item-" + i, "This is the content of Item-" + i));
@@ -109,7 +109,7 @@ public class TablePickerTest extends TestWithBackend {
 		return items;
 	}
 
-	private static void putItemsInTable(Collection<Item> items, Table table) {
+	public static void putItemsInTable(Collection<Item> items, Table table) {
 		for(Item item : items) {
 			table.append(Map.of("Id", item.id(), "Name", item.name()));
 		}
