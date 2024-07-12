@@ -16,11 +16,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.apache.http.HttpException;
+import tui.json.JsonArray;
+import tui.json.JsonConstants;
+import tui.json.JsonException;
+import tui.json.JsonMap;
+import tui.json.JsonObject;
+import tui.json.JsonParser;
+import tui.json.JsonString;
 import tui.test.TClient;
 import tui.ui.components.Table;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,8 +102,71 @@ public class TTable extends TComponent {
 
 	public void refresh(TClient client) throws HttpException {
 		final String json = client.callBackend(m_sourcePath, null);
-		final TTable freshTable = Table.parseJson(json, client);
+		final TTable freshTable = parseJson(json, client);
 		m_rows.clear();
 		m_rows.addAll(freshTable.getRows());
+	}
+
+	public static TTable parseJson(String json, TClient client) {
+		final JsonMap map = JsonParser.parseMap(json);
+		return parse(map, client);
+	}
+
+	public record BaseAttributes(long tuid, String title, Collection<String> columns, String source) {
+	}
+
+	/**
+	 * Reads attributes for Table and any inherited class.
+	 */
+	public static BaseAttributes parseBaseAttributes(JsonMap map) {
+		final String title = map.getAttribute("title");
+		final long tuid = JsonConstants.readTUID(map);
+		final String sourcePath = map.getAttributeOrNull(Table.ATTRIBUTE_SOURCE);
+
+		final JsonArray thead = map.getArray("thead");
+		final Collection<String> columns = new ArrayList<>();
+		final Iterator<JsonObject> theadIterator = thead.iterator();
+		while(theadIterator.hasNext()) {
+			final JsonObject columnObject = theadIterator.next();
+			if(columnObject instanceof JsonString columnString) {
+				columns.add(columnString.getValue());
+			} else {
+				throw new JsonException("Unexpected json type: %s", columnObject.getClass().getCanonicalName());
+			}
+		}
+		return new BaseAttributes(tuid, title, columns, sourcePath);
+	}
+
+	public static TTable parse(JsonMap map, TClient client) {
+		final BaseAttributes baseAttributes = parseBaseAttributes(map);
+
+		final TTable result = new TTable(baseAttributes.tuid, baseAttributes.title, baseAttributes.columns, baseAttributes.source, client);
+
+		loadRows(map, baseAttributes.columns, result);
+
+		return result;
+	}
+
+	public static void loadRows(JsonMap map, Collection<String> columns, TTable result) {
+		final JsonArray array = map.getArray("tbody");
+		final Iterator<JsonObject> rowIterator = array.iterator();
+		while(rowIterator.hasNext()) {
+			final JsonObject rowObject = rowIterator.next();
+			if(rowObject instanceof JsonArray rowArray) {
+				Map<String, Object> row = new LinkedHashMap<>();
+				int c = 0;
+				for(String column : columns) {
+					final JsonObject cellObject = rowArray.get(c++);
+					if(cellObject instanceof JsonString cellString) {
+						row.put(column, cellString.getValue());
+					} else {
+						throw new JsonException("Unexpected json type: %s", cellObject.getClass().getCanonicalName());
+					}
+				}
+				result.append(row);
+			} else {
+				throw new JsonException("Unexpected json type: %s", rowObject.getClass().getCanonicalName());
+			}
+		}
 	}
 }

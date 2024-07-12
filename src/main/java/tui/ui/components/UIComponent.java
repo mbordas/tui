@@ -17,6 +17,7 @@ package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.utils.TUIUtils;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,14 +42,9 @@ public abstract class UIComponent {
 	}
 
 	public static String getTUIsSeparatedByComa(Collection<? extends UIComponent> components) {
-		final Iterator<? extends UIComponent> iterator = components.iterator();
-		final StringBuilder tuids = new StringBuilder();
-		while(iterator.hasNext()) {
-			tuids.append(iterator.next().getTUID());
-			if(iterator.hasNext()) {
-				tuids.append(",");
-			}
-		}
-		return tuids.toString();
+		final Iterator<Long> tuidIterator = components.stream()
+				.map(UIComponent::getTUID)
+				.iterator();
+		return TUIUtils.toTUIDsSeparatedByComa(tuidIterator);
 	}
 }

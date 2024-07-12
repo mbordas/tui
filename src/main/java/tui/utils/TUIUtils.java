@@ -13,39 +13,29 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.test.components;
+package tui.utils;
 
-import tui.json.JsonMap;
-import tui.json.JsonObject;
-import tui.json.JsonParser;
-import tui.test.TClient;
-import tui.ui.components.Page;
-import tui.ui.components.Panel;
-import tui.ui.components.Section;
-import tui.ui.components.TabbedPage;
-import tui.ui.components.Table;
-import tui.ui.components.TablePicker;
-import tui.ui.components.form.Form;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class TComponentFactory {
+public class TUIUtils {
 
-	public static TComponent parse(String json, TClient client) {
-		final JsonMap map = JsonParser.parseMap(json);
-		return switch(map.getType()) {
-			case Page.JSON_TYPE -> TPage.parse(map, client);
-			case TabbedPage.JSON_TYPE -> TTabbedPage.parse(map, client);
-			case TabbedPage.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
-			case Panel.JSON_TYPE -> TPanel.parse(map, client);
-			case Section.JSON_TYPE -> TSection.parse(map, client);
-			case Table.JSON_TYPE -> TTable.parse(map, client);
-			case TablePicker.JSON_TYPE -> TTablePicker.parse(map, client);
-			case Form.JSON_TYPE -> TForm.parse(map, client);
-			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
-		};
+	public static String toTUIDsSeparatedByComa(Iterator<Long> tuidIterator) {
+		final StringBuilder result = new StringBuilder();
+		while(tuidIterator.hasNext()) {
+			result.append(tuidIterator.next());
+			if(tuidIterator.hasNext()) {
+				result.append(",");
+			}
+		}
+		return result.toString();
 	}
 
-	public static TComponent parse(JsonObject json, TClient tClient) {
-		return parse(json.toJson(), tClient);
+	public static Set<Long> parseTUIDsSeparatedByComa(String input) {
+		return Arrays.stream(input.split(","))
+				.map((longStr) -> Long.valueOf(longStr))
+				.collect(Collectors.toSet());
 	}
-
 }

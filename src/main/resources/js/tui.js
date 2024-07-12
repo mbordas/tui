@@ -224,7 +224,7 @@ function instrumentTables() {
 }
 
 function instrumentTablePicker(tablePickerElement) {
-    if(tablePickerElement.hasAttribute('tui-load-listeners')) {
+    if(tablePickerElement.hasAttribute('tui-refresh-listeners')) {
         const columns = Array.from(tablePickerElement.querySelectorAll("th")).map(cell => cell.textContent);
 
         for(const row of tablePickerElement.querySelectorAll("tbody tr")) {
@@ -237,7 +237,7 @@ function instrumentTablePicker(tablePickerElement) {
             }
 
             row.addEventListener("click", function () {
-                tablePickerElement.getAttribute('tui-load-listeners').split(",")
+                tablePickerElement.getAttribute('tui-refresh-listeners').split(",")
                     .forEach(function(id, i) {
                         refreshComponent(id, data);
                     })

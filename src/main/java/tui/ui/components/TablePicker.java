@@ -25,6 +25,9 @@ import java.util.Collection;
 public class TablePicker extends Table {
 
 	public static final String HTML_CLASS = "tui-tablepicker";
+	public static final String JSON_TYPE = "tablepicker";
+
+	public static final String ATTRIBUTE_REFRESH_LISTENERS = "tui-refresh-listeners";
 
 	private Collection<UILoadableComponent> m_connectedComponents = new ArrayList<>();
 
@@ -45,7 +48,7 @@ public class TablePicker extends Table {
 		final HTMLNode result = super.toHTMLNode()
 				.setAttribute("class", HTML_CLASS);
 		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute("tui-load-listeners", getTUIsSeparatedByComa(m_connectedComponents));
+			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
 		return result;
 	}
@@ -53,8 +56,9 @@ public class TablePicker extends Table {
 	public JsonMap toJsonMap() {
 		final JsonMap result = toJsonMap();
 		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute("tui-load-listeners", getTUIsSeparatedByComa(m_connectedComponents));
+			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
 		return result;
 	}
+
 }
