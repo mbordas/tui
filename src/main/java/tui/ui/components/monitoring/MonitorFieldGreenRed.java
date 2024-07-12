@@ -15,12 +15,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.monitoring;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
-import tui.html.monitoring.HTMLMonitorFieldGreenRed;
 import tui.json.JsonMap;
-import tui.json.monitor.JsonMonitorFieldGreenRed;
 
 public class MonitorFieldGreenRed extends MonitorField {
+
+	public static final String CLASS = "tui-monitor-field tui-monitor-field-greenred";
+	public static final String CLASS_LABEL = "tui-monitor-field-label";
+	public static final String CLASS_VALUE = "tui-monitor-field-value";
+
+	public static final String JSON_TYPE = "monitor-field-greenred";
 
 	public enum Value {
 		GREEN, RED, NEUTRAL
@@ -44,11 +49,21 @@ public class MonitorFieldGreenRed extends MonitorField {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return HTMLMonitorFieldGreenRed.toHTML(this);
+		final HTMLNode result = new HTMLNode("div")
+				.setAttribute("id", HTMLConstants.toId(getTUID()))
+				.setAttribute("class", CLASS)
+				.setAttribute("monitor-field-name", getName())
+				.setAttribute("value", getValue().name());
+		result.createChild("span").setAttribute("class", CLASS_LABEL).setText(getLabel());
+		result.createChild("span").setAttribute("class", CLASS_VALUE).setText(getText());
+
+		return result;
 	}
 
 	@Override
 	public JsonMap toJsonMap() {
-		return JsonMonitorFieldGreenRed.toJson(this);
+		return new JsonMap(JSON_TYPE, getTUID())
+				.setAttribute("value", getValue().name())
+				.setAttribute("text", getText());
 	}
 }

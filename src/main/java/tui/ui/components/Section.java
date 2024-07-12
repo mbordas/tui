@@ -16,7 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import tui.html.HTMLNode;
-import tui.html.HTMLSection;
 import tui.json.JsonMap;
 
 import java.util.ArrayList;
@@ -70,7 +69,22 @@ public class Section extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return HTMLSection.toHTML(this, 1);
+		return toHTML(this, 1);
+	}
+
+	private static HTMLNode toHTML(Section section, int depth) {
+		final HTMLNode result = new HTMLNode("section");
+		result.createChild("h" + depth).setText(section.getTitle());
+		for(UIComponent component : section.getContent()) {
+			final HTMLNode child;
+			if(component instanceof Section _section) {
+				child = toHTML(_section, depth + 1);
+			} else {
+				child = component.toHTMLNode();
+			}
+			result.addChild(child);
+		}
+		return result;
 	}
 
 	@Override

@@ -16,10 +16,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.monitoring;
 
 import tui.html.HTMLNode;
+import tui.json.JsonArray;
 import tui.json.JsonMap;
 import tui.ui.components.UIComponent;
 
+import java.util.Collection;
+
 public abstract class MonitorField extends UIComponent {
+
+	public static final String JSON_TYPE = "monitor-fields";
 
 	private final String m_name;
 	private final String m_label;
@@ -48,6 +53,16 @@ public abstract class MonitorField extends UIComponent {
 
 	public String getText() {
 		return m_text;
+	}
+
+	public static JsonMap toJson(Collection<? extends MonitorField> fields) {
+		JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonArray array = result.createArray("fields");
+
+		for(MonitorField field : fields) {
+			array.add(field.toJsonMap());
+		}
+		return result;
 	}
 
 }

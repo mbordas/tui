@@ -15,8 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
-import tui.html.HTMLPage;
 import tui.json.JsonMap;
 
 import java.util.ArrayList;
@@ -48,7 +48,36 @@ public class Page extends APage {
 	}
 
 	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
-		return HTMLPage.toHTML(this, pathToCSS, pathToScript, onLoadFunctionCall);
+		final HTMLNode result = new HTMLNode("html");
+		result.setRoot(true);
+
+		final HTMLNode head = result.createChild("head");
+		head.createChild("meta").setAttribute("charset", "utf-8");
+		head.createChild("meta").setAttribute("name", "viewport")
+				.setAttribute("content", "width=device-width, initial-scale=1");
+		head.createChild("title").setText(getTitle());
+		if(pathToCSS != null) {
+			head.createChild("link")
+					.setAttribute("rel", "stylesheet")
+					.setAttribute("href", pathToCSS);
+		}
+		if(pathToScript != null) {
+			head.createChild("script")
+					.setAttribute("type", HTMLConstants.JAVASCRIPT_CONTENT_TYPE)
+					.setAttribute("src", pathToScript)
+					.setAttribute("defer", null); // the script is meant to be executed after the document has been parsed
+		}
+
+		final HTMLNode body = result.createChild("body");
+		if(onLoadFunctionCall != null) {
+			body.setAttribute("onload", onLoadFunctionCall);
+		}
+		final HTMLNode main = body.createChild("main");
+		for(UIComponent component : getContent()) {
+			main.addChild(component.toHTMLNode());
+		}
+
+		return result;
 	}
 
 	@Override

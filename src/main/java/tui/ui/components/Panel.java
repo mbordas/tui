@@ -6,14 +6,16 @@
 
 package tui.ui.components;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
-import tui.html.HTMLPanel;
 import tui.json.JsonMap;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Panel extends UIComponent {
+
+	public static final String CLASS = "tui-panel";
 
 	public static final String JSON_TYPE = "panel";
 
@@ -36,7 +38,14 @@ public class Panel extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return HTMLPanel.toHTML(this);
+		final HTMLNode result = new HTMLNode("div")
+				.setAttribute("id", HTMLConstants.toId(getTUID()))
+				.setAttribute("class", CLASS);
+
+		for(UIComponent component : getContent()) {
+			result.addChild(component.toHTMLNode());
+		}
+		return result;
 	}
 
 	@Override

@@ -21,7 +21,6 @@ import tui.html.HTMLNode;
 import tui.http.FormRequest;
 import tui.http.TUIBackend;
 import tui.json.JsonObject;
-import tui.json.monitor.JsonMonitorField;
 import tui.ui.UI;
 import tui.ui.components.Panel;
 import tui.ui.components.TabbedPage;
@@ -29,6 +28,7 @@ import tui.ui.components.Table;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInputString;
 import tui.ui.components.form.ModalForm;
+import tui.ui.components.monitoring.MonitorField;
 import tui.ui.components.monitoring.MonitorFieldGreenRed;
 import tui.ui.components.monitoring.MonitorFieldSet;
 
@@ -144,7 +144,7 @@ public class DemoServer {
 				}
 				fields.add(field);
 			}
-			return JsonMonitorField.toJson(fields);
+			return MonitorField.toJson(fields);
 		});
 
 		HTMLNode.PRETTY_PRINT = true;

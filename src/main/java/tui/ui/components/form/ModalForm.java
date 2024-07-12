@@ -15,8 +15,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
-import tui.html.HTMLModalForm;
+import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
+import tui.http.FormRequest;
+import tui.ui.components.UIComponent;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 public class ModalForm extends Form {
 
@@ -33,6 +38,56 @@ public class ModalForm extends Form {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return HTMLModalForm.toHTML(this);
+		final HTMLNode result = new HTMLNode("div")
+				.setAttribute("class", "tui-modal-form-container");
+
+		result.createChild("button")
+				.setAttribute("class", "tui-modal-form-open-button")
+				.setText(getOpenButtonLabel());
+
+		final HTMLNode dialog = result.createChild("dialog")
+				.setAttribute("class", "modal");
+
+		final HTMLNode htmlForm = dialog.createChild("form")
+				.setAttribute("action", getTarget())
+				.setAttribute("method", "post")
+				.setAttribute("enctype", FormRequest.ENCTYPE);
+
+		final Collection<UIComponent> refreshListeners = getRefreshListeners();
+		if(!refreshListeners.isEmpty()) {
+			final Iterator<UIComponent> iterator = refreshListeners.iterator();
+			final StringBuilder tuids = new StringBuilder();
+			while(iterator.hasNext()) {
+				tuids.append(iterator.next().getTUID());
+				if(iterator.hasNext()) {
+					tuids.append(",");
+				}
+			}
+			result.setAttribute("refresh-listeners", tuids.toString());
+		}
+
+		HTMLFetchErrorMessage.addErrorMessageChild(htmlForm);
+
+		final HTMLNode fieldset = htmlForm.createChild("fieldset");
+		fieldset.createChild("legend").setText(getTitle());
+		for(FormInput input : getInputs()) {
+			final HTMLNode div = fieldset.createChild("div");
+			final HTMLNode label = div.createChild("label")
+					.setText(input.getLabel());
+			label.createChild("input")
+					.setAttribute("placeholder", "Text input")
+					.setAttribute("name", input.getName());
+		}
+
+		htmlForm.createChild("button")
+				.setAttribute("class", "tui-modal-form-cancel-button")
+				.setAttribute("type", "button")
+				.setText("Cancel");
+
+		htmlForm.createChild("button")
+				.setAttribute("type", "submit")
+				.setText("Submit");
+
+		return result;
 	}
 }

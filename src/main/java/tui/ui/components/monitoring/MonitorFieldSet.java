@@ -15,8 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.monitoring;
 
+import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
-import tui.html.monitoring.HTMLMonitorFieldSet;
 import tui.json.JsonMap;
 import tui.ui.components.UIComponent;
 
@@ -26,6 +26,7 @@ import java.util.List;
 public class MonitorFieldSet extends UIComponent {
 
 	public static final String JSON_TYPE = "monitor_fieldset";
+	public static final String CLASS = "tui-monitor-fieldset";
 
 	private final String m_title;
 	private final List<MonitorField> m_fields = new ArrayList<>();
@@ -68,7 +69,23 @@ public class MonitorFieldSet extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return HTMLMonitorFieldSet.toHTML(this);
+		final HTMLNode result = new HTMLNode("div")
+				.setAttribute("class", CLASS);
+
+		HTMLFetchErrorMessage.addErrorMessageChild(result);
+
+		if(getTitle() != null) {
+			result.setAttribute("title", getTitle());
+		}
+		if(getSource() != null) {
+			result.setAttribute("tui-source", getSource())
+					.setAttribute("auto-refresh-period_s", getAutoRefreshPeriod_s());
+		}
+
+		for(MonitorField field : getFields()) {
+			result.addChild(field.toHTMLNode());
+		}
+		return result;
 	}
 
 	@Override
