@@ -18,12 +18,12 @@ package tui.test.components;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
-import tui.json.JsonTable;
 import tui.test.TClient;
 import tui.ui.components.Page;
 import tui.ui.components.Panel;
 import tui.ui.components.Section;
 import tui.ui.components.TabbedPage;
+import tui.ui.components.Table;
 import tui.ui.components.form.Form;
 
 public class TComponentFactory {
@@ -36,7 +36,7 @@ public class TComponentFactory {
 			case TabbedPage.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
 			case Panel.JSON_TYPE -> TPanel.parse(map, client);
 			case Section.JSON_TYPE -> TSection.parse(map, client);
-			case JsonTable.JSON_TYPE -> JsonTable.parse(map, client);
+			case Table.JSON_TYPE -> Table.parse(map, client);
 			case Form.JSON_TYPE -> TForm.parse(map, client);
 			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
 		};

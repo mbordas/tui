@@ -18,9 +18,11 @@ package tui.ui;
 import org.junit.Test;
 import tui.html.HTMLNode;
 import tui.json.JsonObject;
+import tui.test.components.TTable;
 import tui.ui.components.Page;
 import tui.ui.components.Table;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,5 +93,40 @@ public class TableTest {
 				  </body>
 				</html>
 				""", page.toHTMLNode().toHTML());
+	}
+
+	@Test
+	public void serialization() {
+		final String columnA = "Col A";
+		final String columnB = "Col B";
+		final Table table = new Table("Table Test Title", List.of(columnA, columnB));
+		table.append(row(columnA, "value 1A", columnB, "value 1B"));
+		table.append(row(columnA, "value 2A", columnB, "value 2B"));
+
+		final String json = table.toJsonMap().toJson();
+
+		//
+		final TTable result = Table.parseJson(json, null);
+		//
+
+		assertEquals("Table Test Title", result.getTitle());
+		// Checking columns
+		assertEquals(columnA, result.getColumns().get(0));
+		assertEquals(columnB, result.getColumns().get(1));
+		// Checking rows
+		assertEquals(2, result.size());
+		final List<List<Object>> rows = result.getRows();
+		assertEquals("value 1A", rows.get(0).get(0));
+		assertEquals("value 1B", rows.get(0).get(1));
+		assertEquals("value 2A", rows.get(1).get(0));
+		assertEquals("value 2B", rows.get(1).get(1));
+
+	}
+
+	private static Map<String, Object> row(String colA, String valA, String colB, String valB) {
+		final Map<String, Object> result = new LinkedHashMap<>();
+		result.put(colA, valA);
+		result.put(colB, valB);
+		return result;
 	}
 }

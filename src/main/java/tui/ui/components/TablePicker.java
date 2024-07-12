@@ -17,7 +17,6 @@ package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.json.JsonTable;
 import tui.test.components.BadComponentException;
 
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class TablePicker extends Table {
 	}
 
 	public JsonMap toJsonMap() {
-		final JsonMap result = JsonTable.toJson(this);
+		final JsonMap result = toJsonMap();
 		if(!m_connectedComponents.isEmpty()) {
 			result.setAttribute("tui-load-listeners", getTUIsSeparatedByComa(m_connectedComponents));
 		}

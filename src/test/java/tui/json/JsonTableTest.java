@@ -15,56 +15,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tui.test.components.TTable;
-import tui.ui.components.Table;
-
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 public class JsonTableTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JsonTableTest.class);
-
-	@Test
-	public void serialization() {
-		final String columnA = "Col A";
-		final String columnB = "Col B";
-		final Table table = new Table("Table Test Title", List.of(columnA, columnB));
-		table.append(row(columnA, "value 1A", columnB, "value 1B"));
-		table.append(row(columnA, "value 2A", columnB, "value 2B"));
-
-		final String json = table.toJsonMap().toJson();
-		LOG.debug("Table:\n" + json);
-
-		//
-		final TTable result = JsonTable.parseJson(json, null);
-		//
-
-		assertEquals("Table Test Title", result.getTitle());
-		// Checking columns
-		assertEquals(columnA, result.getColumns().get(0));
-		assertEquals(columnB, result.getColumns().get(1));
-		// Checking rows
-		assertEquals(2, result.size());
-		final List<List<Object>> rows = result.getRows();
-		assertEquals("value 1A", rows.get(0).get(0));
-		assertEquals("value 1B", rows.get(0).get(1));
-		assertEquals("value 2A", rows.get(1).get(0));
-		assertEquals("value 2B", rows.get(1).get(1));
-
-	}
-
-	private static Map<String, Object> row(String colA, String valA, String colB, String valB) {
-		final Map<String, Object> result = new LinkedHashMap<>();
-		result.put(colA, valA);
-		result.put(colB, valB);
-		return result;
-	}
 
 }

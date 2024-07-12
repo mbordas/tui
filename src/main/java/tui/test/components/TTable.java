@@ -16,8 +16,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.apache.http.HttpException;
-import tui.json.JsonTable;
 import tui.test.TClient;
+import tui.ui.components.Table;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,7 +93,7 @@ public class TTable extends TComponent {
 
 	public void refresh(TClient client) throws HttpException {
 		final String json = client.callBackend(m_sourcePath, null);
-		final TTable freshTable = JsonTable.parseJson(json, client);
+		final TTable freshTable = Table.parseJson(json, client);
 		m_rows.clear();
 		m_rows.addAll(freshTable.getRows());
 	}
