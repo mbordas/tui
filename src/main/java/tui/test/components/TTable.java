@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TTable extends TComponent {
+public class TTable extends TRefreshableComponent {
 
 	private String m_title;
 	final List<String> m_columns;
@@ -113,16 +113,17 @@ public class TTable extends TComponent {
 		return null;
 	}
 
-	public void refresh(TClient client) throws HttpException {
-		final String json = client.callBackend(m_sourcePath, null);
-		final TTable freshTable = parseJson(json, client);
-		m_rows.clear();
-		m_rows.addAll(freshTable.getRows());
-	}
-
 	public static TTable parseJson(String json, TClient client) {
 		final JsonMap map = JsonParser.parseMap(json);
 		return parse(map, client);
+	}
+
+	@Override
+	public void refresh(Map<String, Object> data) throws HttpException {
+		final String json = m_client.callBackend(m_sourcePath, data);
+		final TTable freshTable = parseJson(json, m_client);
+		m_rows.clear();
+		m_rows.addAll(freshTable.getRows());
 	}
 
 	public record BaseAttributes(long tuid, String title, Collection<String> columns, String source) {

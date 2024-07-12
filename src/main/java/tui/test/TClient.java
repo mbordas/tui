@@ -142,14 +142,14 @@ public class TClient {
 	/**
 	 * Refreshes component by using its source attribute.
 	 */
-	public void refresh(long tuid) throws HttpException {
+	public void refresh(long tuid, Map<String, Object> data) throws HttpException {
 		final TComponent componentToRefresh = find(tuid);
 		if(componentToRefresh == null) {
 			throw new ComponentNoReachableException("Component with tuid=%d is not reachable", tuid);
 		}
 
 		if(componentToRefresh instanceof TTable table) {
-			table.refresh(this);
+			table.refresh(data);
 		}
 	}
 

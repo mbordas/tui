@@ -85,7 +85,7 @@ public class TForm extends TComponent {
 		}
 
 		for(long listenerId : m_refreshListeners) {
-			m_client.refresh(listenerId);
+			m_client.refresh(listenerId, null);
 		}
 	}
 
