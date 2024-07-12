@@ -19,9 +19,9 @@ public class TabbedPage extends APage {
 	public static final String JSON_TYPE = "tabbed_page";
 	public static final String TABBED_PANEL_JSON_TYPE = "tabbed_panel";
 
-	public static final String CLASS_TABNAV = "tui-tabnav";
-	public static final String CLASS_TABLINK = "tui-tablink";
-	public static final String CLASS_TABLINK_ACTIVE = "tui-tablink-active";
+	public static final String HTML_CLASS_TABNAV = "tui-tabnav";
+	public static final String HTML_CLASS_TABLINK = "tui-tablink";
+	public static final String HTML_CLASS_TABLINK_ACTIVE = "tui-tablink-active";
 
 	private final Map<String /* title */, Panel> m_content = new LinkedHashMap<>();
 
@@ -69,7 +69,7 @@ public class TabbedPage extends APage {
 		final Map<String, Panel> tabs = getContent();
 
 		final HTMLNode tabsNav = main.createChild("div")
-				.setAttribute("class", CLASS_TABNAV);
+				.setAttribute("class", HTML_CLASS_TABNAV);
 
 		int index = 1;
 		for(Map.Entry<String, Panel> tabEntry : tabs.entrySet()) {
@@ -78,7 +78,7 @@ public class TabbedPage extends APage {
 
 			final String onClickCode = String.format("selectTab('%s', this)", HTMLConstants.toId(panel.getTUID()));
 			tabsNav.createChild("button")
-					.setAttribute("class", index == 1 ? CLASS_TABLINK + " " + CLASS_TABLINK_ACTIVE : CLASS_TABLINK)
+					.setAttribute("class", index == 1 ? HTML_CLASS_TABLINK + " " + HTML_CLASS_TABLINK_ACTIVE : HTML_CLASS_TABLINK)
 					.setAttribute("onclick", onClickCode)
 					.setText(label);
 

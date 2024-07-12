@@ -116,7 +116,7 @@ function instrumentForms() {
 }
 
 function instrumentModalForms() {
-    const modalFormsContainers = document.querySelectorAll('.tui-modal-form-container');
+    const modalFormsContainers = document.querySelectorAll('.tui-modal-form');
     modalFormsContainers.forEach(function(formContainer, i) {
         const openButton = formContainer.querySelector('button');
         const dialog = formContainer.querySelector('dialog');

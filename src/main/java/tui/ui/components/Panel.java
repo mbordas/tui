@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Panel extends UIComponent {
 
-	public static final String CLASS = "tui-panel";
+	public static final String HTML_CLASS = "tui-panel";
 
 	public static final String JSON_TYPE = "panel";
 
@@ -40,7 +40,7 @@ public class Panel extends UIComponent {
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = new HTMLNode("div")
 				.setAttribute("id", HTMLConstants.toId(getTUID()))
-				.setAttribute("class", CLASS);
+				.setAttribute("class", HTML_CLASS);
 
 		for(UIComponent component : getContent()) {
 			result.addChild(component.toHTMLNode());

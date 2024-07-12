@@ -21,9 +21,9 @@ import tui.json.JsonMap;
 
 public class MonitorFieldGreenRed extends MonitorField {
 
-	public static final String CLASS = "tui-monitor-field tui-monitor-field-greenred";
-	public static final String CLASS_LABEL = "tui-monitor-field-label";
-	public static final String CLASS_VALUE = "tui-monitor-field-value";
+	public static final String HTML_CLASS = HTML_CLASS_BASE + " tui-monitor-field-greenred";
+	public static final String HTML_CLASS_LABEL = "tui-monitor-field-label";
+	public static final String HTML_CLASS_VALUE = "tui-monitor-field-value";
 
 	public static final String JSON_TYPE = "monitor-field-greenred";
 
@@ -51,11 +51,11 @@ public class MonitorFieldGreenRed extends MonitorField {
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = new HTMLNode("div")
 				.setAttribute("id", HTMLConstants.toId(getTUID()))
-				.setAttribute("class", CLASS)
+				.setAttribute("class", HTML_CLASS)
 				.setAttribute("monitor-field-name", getName())
 				.setAttribute("value", getValue().name());
-		result.createChild("span").setAttribute("class", CLASS_LABEL).setText(getLabel());
-		result.createChild("span").setAttribute("class", CLASS_VALUE).setText(getText());
+		result.createChild("span").setAttribute("class", HTML_CLASS_LABEL).setText(getLabel());
+		result.createChild("span").setAttribute("class", HTML_CLASS_VALUE).setText(getText());
 
 		return result;
 	}

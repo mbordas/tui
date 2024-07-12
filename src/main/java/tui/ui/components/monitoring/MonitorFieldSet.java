@@ -26,7 +26,7 @@ import java.util.List;
 public class MonitorFieldSet extends UIComponent {
 
 	public static final String JSON_TYPE = "monitor_fieldset";
-	public static final String CLASS = "tui-monitor-fieldset";
+	public static final String HTML_CLASS = "tui-monitor-fieldset";
 
 	private final String m_title;
 	private final List<MonitorField> m_fields = new ArrayList<>();
@@ -70,7 +70,7 @@ public class MonitorFieldSet extends UIComponent {
 	@Override
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = new HTMLNode("div")
-				.setAttribute("class", CLASS);
+				.setAttribute("class", HTML_CLASS);
 
 		HTMLFetchErrorMessage.addErrorMessageChild(result);
 

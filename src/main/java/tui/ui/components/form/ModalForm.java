@@ -25,6 +25,8 @@ import java.util.Iterator;
 
 public class ModalForm extends Form {
 
+	public static final String HTML_CLASS = "tui-modal-form";
+
 	private final String m_openButtonLabel;
 
 	public ModalForm(String title, String openButtonLabel, String target) {
@@ -39,7 +41,7 @@ public class ModalForm extends Form {
 	@Override
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = new HTMLNode("div")
-				.setAttribute("class", "tui-modal-form-container");
+				.setAttribute("class", HTML_CLASS);
 
 		result.createChild("button")
 				.setAttribute("class", "tui-modal-form-open-button")

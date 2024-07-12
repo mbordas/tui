@@ -24,7 +24,9 @@ import java.util.Collection;
 
 public abstract class MonitorField extends UIComponent {
 
-	public static final String JSON_TYPE = "monitor-fields";
+	public static final String HTML_CLASS_BASE = "tui-monitor-field";
+
+	public static final String JSON_TYPE_FIELDS = "monitor-fields";
 
 	private final String m_name;
 	private final String m_label;
@@ -56,7 +58,7 @@ public abstract class MonitorField extends UIComponent {
 	}
 
 	public static JsonMap toJson(Collection<? extends MonitorField> fields) {
-		JsonMap result = new JsonMap(JSON_TYPE);
+		JsonMap result = new JsonMap(JSON_TYPE_FIELDS);
 		final JsonArray array = result.createArray("fields");
 
 		for(MonitorField field : fields) {
