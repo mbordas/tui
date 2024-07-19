@@ -13,35 +13,52 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.json;
+package tui.ui.components;
 
-public class JsonString extends JsonObject {
+import tui.html.HTMLNode;
+import tui.json.JsonMap;
+import tui.test.components.BadComponentException;
 
-	public static final String TYPE = "string";
+import java.util.ArrayList;
+import java.util.Collection;
 
-	private final String m_value;
+public class RefreshButton extends UIComponent {
 
-	public JsonString(String value) {
-		super(TYPE);
-		m_value = value;
+	public static final String HTML_CLASS = "tui-refresh-button";
+	public static final String JSON_TYPE = "refreshButton";
+
+	public static final String ATTRIBUTE_REFRESH_LISTENERS = "tui-refresh-listeners";
+
+	private Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
+
+	private final String m_label;
+
+	public RefreshButton(String label) {
+		m_label = label;
 	}
 
-	public String getValue() {
-		return m_value;
+	public UIRefreshableComponent connectListener(UIRefreshableComponent component) {
+		if(component.getSource() == null) {
+			throw new BadComponentException("%s must have a source set for reload events.", UIRefreshableComponent.class.getSimpleName());
+		}
+		m_connectedComponents.add(component);
+		return component;
 	}
 
 	@Override
-	public String toJson() {
-		return String.format("\"%s\"", m_value);
+	public HTMLNode toHTMLNode() {
+		HTMLNode result = new HTMLNode("button")
+				.setAttribute("type", "button")
+				.setAttribute("class", HTML_CLASS)
+				.setText(m_label);
+		if(!m_connectedComponents.isEmpty()) {
+			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
+		}
+		return result;
 	}
 
 	@Override
-	public void setPrettyPrintDepth(int depth) {
+	public JsonMap toJsonMap() {
+		return null;
 	}
-
-	@Override
-	public String toString() {
-		return m_value;
-	}
-
 }

@@ -27,12 +27,13 @@ public class JsonArray extends JsonObject {
 		super(null);
 	}
 
-	public void add(JsonObject item) {
+	public JsonArray add(JsonObject item) {
 		m_items.add(item);
+		return this;
 	}
 
-	public void add(String value) {
-		add(new JsonString(value));
+	public JsonArray add(String value) {
+		return add(new JsonString(value));
 	}
 
 	public JsonArray createArray() {
@@ -40,6 +41,10 @@ public class JsonArray extends JsonObject {
 		m_items.add(result);
 		result.setPrettyPrintDepth(m_prettyPrintDepth + 1);
 		return result;
+	}
+
+	public int size() {
+		return m_items.size();
 	}
 
 	public JsonObject get(int i) {
@@ -53,6 +58,16 @@ public class JsonArray extends JsonObject {
 		} else {
 			throw new RuntimeException(
 					String.format("Item #%d is of type %s != %s", i, result.getClass().getSimpleName(), JsonMap.class.getSimpleName()));
+		}
+	}
+
+	public JsonArray getArray(int i) {
+		final JsonObject result = m_items.get(i);
+		if(result instanceof JsonArray array) {
+			return array;
+		} else {
+			throw new RuntimeException(
+					String.format("Item #%d is of type %s != %s", i, result.getClass().getSimpleName(), JsonArray.class.getSimpleName()));
 		}
 	}
 

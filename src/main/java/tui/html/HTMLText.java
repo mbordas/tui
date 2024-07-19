@@ -13,35 +13,19 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.json;
+package tui.html;
 
-public class JsonString extends JsonObject {
+public class HTMLText extends HTMLNode {
 
-	public static final String TYPE = "string";
+	private final String m_text;
 
-	private final String m_value;
-
-	public JsonString(String value) {
-		super(TYPE);
-		m_value = value;
-	}
-
-	public String getValue() {
-		return m_value;
+	public HTMLText(String text) {
+		super(null);
+		m_text = text;
 	}
 
 	@Override
-	public String toJson() {
-		return String.format("\"%s\"", m_value);
+	public String toHTML() {
+		return m_text;
 	}
-
-	@Override
-	public void setPrettyPrintDepth(int depth) {
-	}
-
-	@Override
-	public String toString() {
-		return m_value;
-	}
-
 }

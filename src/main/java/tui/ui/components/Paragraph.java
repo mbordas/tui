@@ -17,23 +17,62 @@ package tui.ui.components;
 
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
+import tui.html.HTMLText;
+import tui.json.JsonArray;
 import tui.json.JsonMap;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Paragraph extends UIRefreshableComponent {
 
 	public static final String JSON_TYPE = "paragraph";
 
-	public static final String ATTRIBUTE_TEXT = "text";
+	public static final String ATTRIBUTE_CONTENT = "content";
 	public static final String ATTRIBUTE_SOURCE = "tui-source";
 
-	private String m_text;
+	public enum Style {
+		NORMAL(null, "text"), STRONG("strong", "strong");
+		String htmlNodeName;
+		String jsonType;
 
-	public Paragraph(String text) {
-		m_text = text;
+		Style(String htmlNodeName, String jsonType) {
+			this.htmlNodeName = htmlNodeName;
+			this.jsonType = jsonType;
+		}
+
+		public static Style parseJsonType(String type) {
+			return switch(type) {
+				case "text" -> NORMAL;
+				case "strong" -> STRONG;
+				default -> throw new IllegalStateException("Unexpected value: " + type);
+			};
+		}
 	}
 
-	public String getText() {
-		return m_text;
+	public record Fragment(Style style, String text) {
+	}
+
+	private final List<Fragment> m_fragments = new ArrayList<>();
+
+	public Paragraph() {
+	}
+
+	public Paragraph(String text) {
+		appendNormal(text);
+	}
+
+	public Paragraph appendNormal(String text) {
+		return append(Style.NORMAL, text);
+	}
+
+	public Paragraph appendStrong(String text) {
+		return append(Style.STRONG, text);
+	}
+
+	private Paragraph append(Style style, String text) {
+		m_fragments.add(new Fragment(style, text));
+		return this;
 	}
 
 	@Override
@@ -43,7 +82,16 @@ public class Paragraph extends UIRefreshableComponent {
 			result.setAttribute("id", HTMLConstants.toId(getTUID()));
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
-		result.setText(m_text);
+
+		for(Fragment fragment : m_fragments) {
+			if(Style.NORMAL == fragment.style()) {
+				result.addChild(new HTMLText(fragment.text()));
+			} else {
+				result.createChild(fragment.style().htmlNodeName)
+						.setText(fragment.text());
+			}
+		}
+
 		return result;
 	}
 
@@ -53,7 +101,13 @@ public class Paragraph extends UIRefreshableComponent {
 		if(hasSource()) {
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
-		result.setAttribute(ATTRIBUTE_TEXT, m_text);
+
+		final JsonArray content = result.createArray(ATTRIBUTE_CONTENT);
+
+		for(Fragment fragment : m_fragments) {
+			content.add(new JsonArray().add(fragment.style().jsonType).add(fragment.text()));
+		}
+
 		return result;
 	}
 

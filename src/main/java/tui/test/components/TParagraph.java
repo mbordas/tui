@@ -16,18 +16,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.apache.http.HttpException;
+import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
 import tui.test.TClient;
 import tui.ui.components.Paragraph;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TParagraph extends TRefreshableComponent {
 
 	private String m_source;
-	private String m_text;
+	private final List<Paragraph.Fragment> m_fragments = new ArrayList<>();
 
 	/**
 	 * @param tuid   Unique identifier.
@@ -42,11 +45,19 @@ public class TParagraph extends TRefreshableComponent {
 	public void refresh(Map<String, Object> data) throws HttpException {
 		final String response = m_client.callBackend(m_source, data);
 		final JsonMap map = JsonParser.parseMap(response);
-		m_text = map.getAttribute(Paragraph.ATTRIBUTE_TEXT);
+
+		final TParagraph paragraph = parse(map, null);
+		m_source = paragraph.m_source;
+		m_fragments.clear();
+		m_fragments.addAll(paragraph.m_fragments);
 	}
 
 	public String getText() {
-		return m_text;
+		final StringBuilder result = new StringBuilder();
+		for(Paragraph.Fragment fragment : m_fragments) {
+			result.append(fragment.text());
+		}
+		return result.toString();
 	}
 
 	@Override
@@ -56,10 +67,17 @@ public class TParagraph extends TRefreshableComponent {
 
 	public static TParagraph parse(JsonMap map, TClient client) {
 		final long tuid = JsonConstants.readTUID(map);
-		final String source = map.getAttribute(Paragraph.ATTRIBUTE_SOURCE);
-
+		final String source = map.getAttributeOrNull(Paragraph.ATTRIBUTE_SOURCE);
 		final TParagraph result = new TParagraph(tuid, client, source);
-		result.m_text = map.getAttribute(Paragraph.ATTRIBUTE_TEXT);
+
+		final JsonArray content = map.getArray(Paragraph.ATTRIBUTE_CONTENT);
+		for(int i = 0; i < content.size(); i++) {
+			final JsonArray entry = content.getArray(i);
+			final Paragraph.Style style = Paragraph.Style.parseJsonType(entry.get(0).toString());
+			final String text = entry.get(1).toString();
+			result.m_fragments.add(new Paragraph.Fragment(style, text));
+		}
+
 		return result;
 	}
 }

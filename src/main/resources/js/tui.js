@@ -27,6 +27,7 @@ function onload() {
     instrumentModalForms();
     instrumentTables();
     instrumentMonitorFields();
+    instrumentRefreshButtons();
 
     updateMonitorFields();
 }
@@ -54,7 +55,15 @@ async function refreshComponent(id, data) {
 
     const type = json['type'];
     if(type == 'paragraph') {
-        component.innerText = json['text'];
+        component.innerHTML = '';
+        for(var fragment of json['content']) {
+            const fragmentType = fragment[0];
+            if(fragmentType == 'text') {
+                component.innerHTML += fragment[1];
+            } else if(fragmentType == 'strong') {
+                component.innerHTML += '<strong>' + fragment[1] + '</strong>';
+            }
+        }
     } else if(type == 'table') {
         updateTable(component, json);
     } else {
@@ -77,6 +86,20 @@ function selectTab(tabId, tabLink) {
         link.setAttribute('class', 'tui-tablink');
     });
     tabLink.setAttribute('class', 'tui-tablink tui-tablink-active');
+}
+
+// REFRESH BUTTONS
+
+function instrumentRefreshButtons() {
+    const refreshButtons = document.querySelectorAll('.tui-refresh-button');
+    refreshButtons.forEach(function(button, i) {
+        button.addEventListener('click', function() {
+              button.getAttribute('tui-refresh-listeners').split(",")
+                  .forEach(function(id, i) {
+                      refreshComponent(id);
+                  });
+        });
+    });
 }
 
 // FORMS
