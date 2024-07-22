@@ -41,7 +41,11 @@ async function refreshComponent(id, data) {
     const component = document.getElementById(id);
     const sourcePath = component.getAttribute('tui-source');
     console.log('refreshing component ' + id + ' with source: ' + sourcePath);
-    const jsonBody = data === undefined ? '' : JSON.stringify(Array.from(data.entries()));
+    const jsonBody = data === undefined ? ''
+        : (data instanceof Map) ?
+            JSON.stringify(Array.from(data.entries()))
+            : JSON.stringify(Array.from(Object.entries(data)));
+
     const response = await fetch(sourcePath, {
             method: 'POST',
             headers: {
@@ -228,18 +232,35 @@ function instrumentTables() {
             const sourcePath = table.getAttribute('tui-source');
 
             const tableContainer = document.createElement("div");
-            tableContainer.classList.add("tui-container-table");
-
-            const buttonRefresh = document.createElement("button");
-            buttonRefresh.setAttribute('type', 'button');
-            buttonRefresh.textContent = 'Refresh';
-            buttonRefresh.addEventListener('click', function(){
-                refreshComponent(table.id);
-            });
-            tableContainer.append(buttonRefresh);
-
+            tableContainer.classList.add("tui-table-container");
             table.replaceWith(tableContainer);
             tableContainer.append(table);
+
+            if(table.hasAttribute('tui-page-size')) {
+                const pageSize = parseInt(table.getAttribute('tui-page-size'));
+                const tableNavigation = document.createElement('div');
+                tableNavigation.classList.add('tui-table-navigation');
+
+                const previousPageButton = document.createElement('button');
+                previousPageButton.type = 'button';
+                previousPageButton.innerHTML = '<';
+                previousPageButton.onclick = function() {
+                    const pageNumber = parseInt(table.getAttribute('tui-page-number'));
+                    refreshComponent(table.id, {page_size: pageSize, page_number: Math.max(1, pageNumber - 1)});
+                };
+                tableNavigation.append(previousPageButton);
+
+                const nextPageButton = document.createElement('button');
+                nextPageButton.type = 'button';
+                nextPageButton.innerHTML = '>';
+                nextPageButton.onclick = function() {
+                    const pageNumber = parseInt(table.getAttribute('tui-page-number'));
+                    refreshComponent(table.id, {page_size: pageSize, page_number: pageNumber + 1});
+                };
+                tableNavigation.append(nextPageButton);
+
+                tableContainer.append(tableNavigation);
+            }
         }
 
         instrumentTablePicker(table);
@@ -283,7 +304,10 @@ async function updateTable(tableElement, json) {
         freshBody.append(freshRow);
     }
 
-    tableElement.getElementsByTagName("tbody")[0].replaceWith(freshBody);
+    if('pageNumber' in json) {
+        tableElement.setAttribute('tui-page-number', json['pageNumber']);
+    }
+    tableElement.getElementsByTagName('tbody')[0].replaceWith(freshBody);
 
     instrumentTablePicker(tableElement);
 }

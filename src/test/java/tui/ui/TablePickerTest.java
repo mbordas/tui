@@ -18,6 +18,7 @@ package tui.ui;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
 import tui.test.Browser;
@@ -25,13 +26,10 @@ import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.Panel;
 import tui.ui.components.Paragraph;
-import tui.ui.components.Table;
 import tui.ui.components.TablePicker;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +45,7 @@ public class TablePickerTest extends TestWithBackend {
 	 */
 	@Test
 	public void browse() {
-		final Collection<Item> items = buildItems(3);
+		final Collection<Item> items = TableTest.buildItems(3);
 
 		final Page page = new Page("Home");
 		final Panel panel = new Panel();
@@ -55,7 +53,7 @@ public class TablePickerTest extends TestWithBackend {
 		paragraph.setSource("/paragraph");
 
 		final TablePicker tablePicker = new TablePicker("Table picker", List.of("Id", "Name"));
-		putItemsInTable(items, tablePicker);
+		TableTest.putItemsInTable(items, tablePicker);
 		tablePicker.connectListener(paragraph);
 
 		page.append(tablePicker);
@@ -92,31 +90,21 @@ public class TablePickerTest extends TestWithBackend {
 
 	public static TUIWebService buildWebServiceParagraphLoad(Collection<Item> items) {
 		return (uri, request, response) -> {
-			final String id = TUIWebService.getStringParameter(request, "Id");
+			final RequestReader requestReader = new RequestReader(request);
+			final String id = requestReader.getStringParameter("Id");
 			final Optional<Item> anyItem = items.stream()
 					.filter((item) -> item.id().equals(id))
 					.findAny();
+			if(anyItem.isEmpty()) {
+				throw new NullPointerException(String.format("No item present with id: %s", id));
+			}
 			final Paragraph result = new Paragraph(anyItem.get().content());
 			return result.toJsonMap();
 		};
 	}
 
-	public static Collection<Item> buildItems(int count) {
-		final Collection<Item> items = new ArrayList<>();
-		for(int i = 1; i <= count; i++) {
-			items.add(new Item("00" + i, "Item-" + i, "This is the content of Item-" + i));
-		}
-		return items;
-	}
-
-	public static void putItemsInTable(Collection<Item> items, Table table) {
-		for(Item item : items) {
-			table.append(Map.of("Id", item.id(), "Name", item.name()));
-		}
-	}
-
 	public static void main(String[] args) throws Exception {
-		final Collection<Item> items = buildItems(3);
+		final Collection<Item> items = TableTest.buildItems(3);
 
 		final UI ui = new UI();
 		final Page page = new Page("Home");
@@ -125,7 +113,7 @@ public class TablePickerTest extends TestWithBackend {
 		paragraph.setSource("/paragraph");
 
 		final TablePicker tablePicker = new TablePicker("Table picker", List.of("Id", "Name"));
-		putItemsInTable(items, tablePicker);
+		TableTest.putItemsInTable(items, tablePicker);
 		tablePicker.connectListener(paragraph);
 
 		page.append(tablePicker);

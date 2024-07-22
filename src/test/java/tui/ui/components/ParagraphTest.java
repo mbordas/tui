@@ -18,14 +18,9 @@ package tui.ui.components;
 import org.junit.Test;
 import tui.html.HTMLNode;
 import tui.http.TUIBackend;
-import tui.http.TUIWebService;
 import tui.json.JsonObject;
 import tui.test.Browser;
-import tui.ui.TablePickerTest;
 import tui.ui.UI;
-
-import java.util.Collection;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
@@ -57,17 +52,6 @@ public class ParagraphTest {
 		assertEquals("{\"type\": \"paragraph\",\"tuid\": \"" + paragraph.getTUID()
 						+ "\",\"content\": [[\"text\",\"Normal text \"],[\"strong\",\"with strong\"],[\"text\",\" fragment.\"]]}",
 				paragraph.toJsonMap().toJson());
-	}
-
-	public static TUIWebService buildWebServiceParagraphLoad(Collection<TablePickerTest.Item> items) {
-		return (uri, request, response) -> {
-			final String id = TUIWebService.getStringParameter(request, "Id");
-			final Optional<TablePickerTest.Item> anyItem = items.stream()
-					.filter((item) -> item.id().equals(id))
-					.findAny();
-			final Paragraph result = new Paragraph(anyItem.get().content());
-			return result.toJsonMap();
-		};
 	}
 
 	public static void main(String[] args) throws Exception {

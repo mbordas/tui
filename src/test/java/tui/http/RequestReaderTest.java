@@ -15,13 +15,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.http;
 
-import tui.json.JsonObject;
+import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.Map;
 
-public interface TUIWebService {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-	JsonObject handle(String uri, HttpServletRequest request, HttpServletResponse response) throws IOException;
+public class RequestReaderTest {
+
+	@Test
+	public void parsePostMap() {
+		final String json = "[[\"Id\",\"002\"],[\"Name\",\"Item-2\"]]";
+
+		//
+		final Map<String, String> map = RequestReader.parsePostMap(json);
+		//
+
+		assertNotNull(map);
+		assertEquals(2, map.size());
+		assertEquals("002", map.get("Id"));
+		assertEquals("Item-2", map.get("Name"));
+	}
+
 }

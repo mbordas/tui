@@ -17,10 +17,16 @@ package tui.ui;
 
 import org.junit.Test;
 import tui.html.HTMLNode;
+import tui.http.RequestReader;
+import tui.http.TUIBackend;
+import tui.http.TUIWebService;
 import tui.json.JsonObject;
+import tui.test.Browser;
 import tui.ui.components.Page;
 import tui.ui.components.Table;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -91,6 +97,53 @@ public class TableTest {
 				  </body>
 				</html>
 				""", page.toHTMLNode().toHTML());
+	}
+
+	public static Collection<TablePickerTest.Item> buildItems(int count) {
+		final Collection<TablePickerTest.Item> items = new ArrayList<>();
+		for(int i = 1; i <= count; i++) {
+			items.add(new TablePickerTest.Item("00" + i, "Item-" + i, "This is the content of Item-" + i));
+		}
+		return items;
+	}
+
+	public static void putItemsInTable(Collection<TablePickerTest.Item> items, Table table) {
+		for(TablePickerTest.Item item : items) {
+			table.append(Map.of("Id", item.id(), "Name", item.name()));
+		}
+	}
+
+	public static TUIWebService buildWebServiceTableLoad(Table table) {
+		return (uri, request, response) -> {
+			final RequestReader requestReader = new RequestReader(request);
+			final int pageSize = requestReader.getIntParameter(Table.PARAMETER_PAGE_SIZE);
+			final int pageNumber = requestReader.getIntParameter(Table.PARAMETER_PAGE_NUMBER);
+			final Table result = table.getPage(pageNumber, pageSize);
+			return result.toJsonMap();
+		};
+	}
+
+	public static void main(String[] args) throws Exception {
+		final Collection<TablePickerTest.Item> items = buildItems(30);
+
+		final UI ui = new UI();
+		final Page page = new Page("Home");
+
+		final Table table = new Table("Table", List.of("Id", "Name"));
+		table.setSource("/table");
+		table.setPaging(7);
+		putItemsInTable(items, table);
+
+		page.append(table);
+		ui.add("/index", page);
+		ui.setHTTPBackend("localhost", 8080);
+
+		final TUIBackend backend = new TUIBackend(ui);
+		backend.registerWebService(table.getSource(), buildWebServiceTableLoad(table.clone()));
+		backend.start();
+
+		final Browser browser = new Browser(backend.getPort());
+		browser.open("/index");
 	}
 
 }

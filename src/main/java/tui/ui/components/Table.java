@@ -34,12 +34,17 @@ public class Table extends UIComponent {
 
 	public static final String HTML_CLASS = "tui-table";
 	public static final String ATTRIBUTE_SOURCE = "source";
+	public static final String ATTRIBUTE_PAGE_NUMBER = "pageNumber";
+
+	public static final String PARAMETER_PAGE_NUMBER = "page_number";
+	public static final String PARAMETER_PAGE_SIZE = "page_size";
 
 	final String m_title;
 	final List<String> m_columns = new ArrayList<>();
 	final List<List<Object>> m_rows = new ArrayList<>();
 	private String m_sourcePath = null;
-	private boolean m_isConnectedForRefresh = false;
+	private Integer m_pageSize = null;
+	private Integer m_pageNumber = null;
 
 	public Table(String title, Collection<String> columns) {
 		m_title = title;
@@ -54,12 +59,38 @@ public class Table extends UIComponent {
 		m_sourcePath = path;
 	}
 
+	public void setPaging(int size) {
+		m_pageSize = size;
+	}
+
 	public List<String> getColumns() {
 		return m_columns;
 	}
 
 	public List<List<Object>> getRows() {
 		return m_rows;
+	}
+
+	public Table getPage(int pageNumber, int pageSize) {
+		final Table result = new Table(m_title, m_columns);
+		int rowIndex = pageSize * (pageNumber - 1);
+		while(rowIndex < pageSize * pageNumber && rowIndex < m_rows.size()) {
+			result.m_rows.add(m_rows.get(rowIndex));
+			rowIndex++;
+		}
+		result.m_pageNumber = pageNumber;
+		return result;
+	}
+
+	public Table clone() {
+		final Table result = new Table(m_title, new ArrayList<>(m_columns));
+		for(List<Object> row : m_rows) {
+			result.m_rows.add(List.copyOf(row));
+		}
+		result.m_sourcePath = m_sourcePath;
+		result.m_pageSize = m_pageSize;
+		result.m_pageNumber = m_pageNumber;
+		return result;
 	}
 
 	public boolean hasSource() {
@@ -90,11 +121,6 @@ public class Table extends UIComponent {
 			throw new UIConfigurationException("Cannot connect table for refresh because its source is not set.");
 		}
 		form.registerRefreshListener(this);
-		m_isConnectedForRefresh = true;
-	}
-
-	public boolean isConnectedForRefresh() {
-		return m_isConnectedForRefresh;
 	}
 
 	@Override
@@ -102,12 +128,14 @@ public class Table extends UIComponent {
 		final HTMLNode result = new HTMLNode("table")
 				.setAttribute("class", HTML_CLASS);
 
-		if(isConnectedForRefresh() || hasSource()) {
-			result.setAttribute("id", HTMLConstants.toId(getTUID()));
-		}
-
 		if(hasSource()) {
+			result.setAttribute("id", HTMLConstants.toId(getTUID()));
 			result.setAttribute("tui-source", getSource());
+
+			if(m_pageSize != null) {
+				result.setAttribute("tui-page-size", m_pageSize);
+				result.setAttribute("tui-page-number", 1);
+			}
 		}
 
 		result.createChild("caption").setText(getTitle());
@@ -119,10 +147,15 @@ public class Table extends UIComponent {
 		}
 
 		final HTMLNode body = result.createChild("tbody");
+		int rowNumber = 1;
 		for(List<Object> _row : getRows()) {
 			final HTMLNode row = body.createChild("tr");
 			for(Object _cell : _row) {
 				row.createChild("td").setText(_cell == null ? "" : String.valueOf(_cell));
+			}
+			rowNumber++;
+			if(m_pageSize != null && rowNumber >= m_pageSize) {
+				break;
 			}
 		}
 
@@ -139,6 +172,9 @@ public class Table extends UIComponent {
 
 		if(getSource() != null) {
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
+		}
+		if(m_pageNumber != null) {
+			result.setAttribute(ATTRIBUTE_PAGE_NUMBER, Integer.toString(m_pageNumber));
 		}
 
 		final JsonArray thead = result.createArray("thead");
