@@ -17,8 +17,6 @@ package tui.ui.components;
 
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
-import tui.json.JsonArray;
-import tui.json.JsonException;
 import tui.json.JsonMap;
 import tui.ui.UIConfigurationException;
 import tui.ui.components.form.Form;
@@ -34,21 +32,19 @@ public class Table extends UIComponent {
 
 	public static final String HTML_CLASS = "tui-table";
 	public static final String ATTRIBUTE_SOURCE = "source";
-	public static final String ATTRIBUTE_PAGE_NUMBER = "pageNumber";
 
 	public static final String PARAMETER_PAGE_NUMBER = "page_number";
 	public static final String PARAMETER_PAGE_SIZE = "page_size";
 
 	final String m_title;
-	final List<String> m_columns = new ArrayList<>();
-	final List<List<Object>> m_rows = new ArrayList<>();
+
+	final TableData m_data;
 	private String m_sourcePath = null;
 	private Integer m_pageSize = null;
-	private Integer m_pageNumber = null;
 
 	public Table(String title, Collection<String> columns) {
 		m_title = title;
-		m_columns.addAll(columns);
+		m_data = new TableData(columns);
 	}
 
 	public String getTitle() {
@@ -64,32 +60,22 @@ public class Table extends UIComponent {
 	}
 
 	public List<String> getColumns() {
-		return m_columns;
+		return m_data.getColumns();
 	}
 
 	public List<List<Object>> getRows() {
-		return m_rows;
+		return m_data.getRows();
 	}
 
-	public Table getPage(int pageNumber, int pageSize) {
-		final Table result = new Table(m_title, m_columns);
-		int rowIndex = pageSize * (pageNumber - 1);
-		while(rowIndex < pageSize * pageNumber && rowIndex < m_rows.size()) {
-			result.m_rows.add(m_rows.get(rowIndex));
-			rowIndex++;
-		}
-		result.m_pageNumber = pageNumber;
-		return result;
+	public TableData getPage(int pageNumber, int pageSize) {
+		return m_data.getPage(pageNumber, pageSize);
 	}
 
 	public Table clone() {
-		final Table result = new Table(m_title, new ArrayList<>(m_columns));
-		for(List<Object> row : m_rows) {
-			result.m_rows.add(List.copyOf(row));
-		}
+		final Table result = new Table(m_title, new ArrayList<>(m_data.getColumns()));
+		result.m_data.copy(m_data);
 		result.m_sourcePath = m_sourcePath;
 		result.m_pageSize = m_pageSize;
-		result.m_pageNumber = m_pageNumber;
 		return result;
 	}
 
@@ -102,15 +88,11 @@ public class Table extends UIComponent {
 	}
 
 	public void append(Map<String, Object> values) {
-		final List<Object> row = new ArrayList<>();
-		for(String column : m_columns) {
-			row.add(values.get(column));
-		}
-		m_rows.add(row);
+		m_data.append(values);
 	}
 
 	public int size() {
-		return m_rows.size();
+		return m_data.size();
 	}
 
 	/**
@@ -169,31 +151,11 @@ public class Table extends UIComponent {
 	protected JsonMap toJsonMap(String type) {
 		JsonMap result = new JsonMap(type, getTUID());
 		result.setAttribute("title", getTitle());
-
 		if(getSource() != null) {
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
-		if(m_pageNumber != null) {
-			result.setAttribute(ATTRIBUTE_PAGE_NUMBER, Integer.toString(m_pageNumber));
-		}
 
-		final JsonArray thead = result.createArray("thead");
-		for(String column : getColumns()) {
-			thead.add(column);
-		}
-		final JsonArray tbody = result.createArray("tbody");
-		for(List<Object> _row : getRows()) {
-			final JsonArray row = tbody.createArray();
-			for(Object _cell : _row) {
-				if(_cell == null) {
-					row.add("");
-				} else if(_cell instanceof String cellString) {
-					row.add(cellString);
-				} else {
-					throw new JsonException("Unsupported type: %s", _cell.getClass().getCanonicalName());
-				}
-			}
-		}
+		TableData.fill(result, m_data);
 
 		return result;
 	}

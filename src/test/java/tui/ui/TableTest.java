@@ -24,6 +24,7 @@ import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.ui.components.Page;
 import tui.ui.components.Table;
+import tui.ui.components.TableData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -118,7 +119,7 @@ public class TableTest {
 			final RequestReader requestReader = new RequestReader(request);
 			final int pageSize = requestReader.getIntParameter(Table.PARAMETER_PAGE_SIZE);
 			final int pageNumber = requestReader.getIntParameter(Table.PARAMETER_PAGE_NUMBER);
-			final Table result = table.getPage(pageNumber, pageSize);
+			final TableData result = table.getPage(pageNumber, pageSize);
 			return result.toJsonMap();
 		};
 	}
