@@ -31,8 +31,8 @@ public class Table extends UIComponent {
 	public static final String JSON_TYPE = "table";
 
 	public static final String HTML_CLASS = "tui-table";
+	public static final String HTML_CLASS_NAVIGATION = "tui-table-navigation";
 	public static final String ATTRIBUTE_SOURCE = "source";
-
 	public static final String PARAMETER_PAGE_NUMBER = "page_number";
 	public static final String PARAMETER_PAGE_SIZE = "page_size";
 
@@ -44,7 +44,7 @@ public class Table extends UIComponent {
 
 	public Table(String title, Collection<String> columns) {
 		m_title = title;
-		m_data = new TableData(columns);
+		m_data = new TableData(columns, 0);
 	}
 
 	public String getTitle() {
@@ -55,8 +55,12 @@ public class Table extends UIComponent {
 		m_sourcePath = path;
 	}
 
-	public void setPaging(int size) {
-		m_pageSize = size;
+	public void setPaging(int pageSize) {
+		if(!hasSource()) {
+			throw new UIConfigurationException("Can't set paging for a Table without source.");
+		}
+		m_pageSize = pageSize;
+		m_data.setPaging(pageSize);
 	}
 
 	public List<String> getColumns() {
@@ -68,7 +72,7 @@ public class Table extends UIComponent {
 	}
 
 	public TableData getPage(int pageNumber, int pageSize) {
-		return m_data.getPage(pageNumber, pageSize);
+		return m_data.getPage(pageNumber, pageSize, size());
 	}
 
 	public Table clone() {
@@ -89,6 +93,7 @@ public class Table extends UIComponent {
 
 	public void append(Map<String, Object> values) {
 		m_data.append(values);
+		m_data.incrementTableSize();
 	}
 
 	public int size() {
@@ -116,7 +121,11 @@ public class Table extends UIComponent {
 
 			if(m_pageSize != null) {
 				result.setAttribute("tui-page-size", m_pageSize);
+				result.setAttribute("tui-table-size", size());
 				result.setAttribute("tui-page-number", 1);
+				result.setAttribute("tui-last-page-number", TableData.computeLastPageNumber(size(), m_pageSize));
+				result.setAttribute("tui-first-item-number", 1);
+				result.setAttribute("tui-last-item-number", Math.min(m_pageSize, size()));
 			}
 		}
 

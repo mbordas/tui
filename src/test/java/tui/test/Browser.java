@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.test.components.TFormTest;
 import tui.test.components.TTableTest;
+import tui.ui.components.Table;
 import tui.ui.components.form.Form;
 
 import javax.annotation.Nullable;
@@ -51,19 +52,6 @@ public class Browser {
 		m_driver.quit();
 	}
 
-	public WebElement getForm(String title) {
-		final Optional<WebElement> anyFormElement = getForms().stream()
-				.filter(WebElement::isDisplayed)
-				.filter((element) -> title.equals(TFormTest.getTitle(element)))
-				.findAny();
-
-		if(anyFormElement.isPresent()) {
-			return anyFormElement.get();
-		} else {
-			throw new RuntimeException("Form element not found: " + title);
-		}
-	}
-
 	public WebElement getTable(String title) {
 		final Optional<WebElement> anyFormElement = getTables().stream()
 				.filter(WebElement::isDisplayed)
@@ -74,6 +62,38 @@ public class Browser {
 			return anyFormElement.get();
 		} else {
 			throw new RuntimeException("Table element not found: " + title);
+		}
+	}
+
+	private WebElement getTableNavigation(String title) {
+		final WebElement tableElement = getTable(title);
+		final WebElement tableContainer = getParent(tableElement);
+		return tableContainer.findElement(By.className(Table.HTML_CLASS_NAVIGATION));
+	}
+
+	public WebElement getTableNavigationButtonPrevious(String tableTitle) {
+		return getTableNavigationButton(tableTitle, "<");
+	}
+
+	public WebElement getTableNavigationButtonNext(String tableTitle) {
+		return getTableNavigationButton(tableTitle, ">");
+	}
+
+	public String getTableNavigationLocationText(String tableTitle) {
+		final WebElement tableNavigation = getTableNavigation(tableTitle);
+		final WebElement span = tableNavigation.findElement(By.tagName("span"));
+		return span.getText();
+	}
+
+	private WebElement getTableNavigationButton(String tableTitle, String label) {
+		final WebElement tableNavigation = getTableNavigation(tableTitle);
+		final Optional<WebElement> anyButton = tableNavigation.findElements(By.tagName("button")).stream()
+				.filter((button) -> button.getText().equals(label))
+				.findAny();
+		if(anyButton.isEmpty()) {
+			throw new NullPointerException(String.format("Table navigation button '%s' not found.", label));
+		} else {
+			return anyButton.get();
 		}
 	}
 
@@ -97,6 +117,21 @@ public class Browser {
 	public Collection<WebElement> getFields(String formTitle) {
 		final WebElement formElement = getForm(formTitle);
 		return TFormTest.getFields(formElement);
+	}
+
+	// FORMS
+
+	public WebElement getForm(String title) {
+		final Optional<WebElement> anyFormElement = getForms().stream()
+				.filter(WebElement::isDisplayed)
+				.filter((element) -> title.equals(TFormTest.getTitle(element)))
+				.findAny();
+
+		if(anyFormElement.isPresent()) {
+			return anyFormElement.get();
+		} else {
+			throw new RuntimeException("Form element not found: " + title);
+		}
 	}
 
 	public List<WebElement> getForms() {
@@ -126,6 +161,12 @@ public class Browser {
 		} else {
 			throw new RuntimeException("Submit button not found.");
 		}
+	}
+
+	// UTILS
+
+	public static WebElement getParent(WebElement element) {
+		return element.findElement(By.xpath("parent::*"));
 	}
 
 }

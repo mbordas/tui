@@ -25,9 +25,11 @@ import tui.json.JsonParser;
 import tui.json.JsonString;
 import tui.test.TClient;
 import tui.ui.components.Table;
+import tui.ui.components.TableData;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,6 +41,8 @@ public class TTable extends TRefreshableComponent {
 	final List<String> m_columns;
 	final List<List<Object>> m_rows = new ArrayList<>();
 	private final String m_sourcePath;
+	private TableData.PageInfo m_pageInfo = null;
+	private Integer m_lastPageNumber = null;
 
 	public TTable(long tuid, String title, Collection<String> columns, String sourcePath, TClient tClient) {
 		super(tuid, tClient);
@@ -72,12 +76,20 @@ public class TTable extends TRefreshableComponent {
 		return result;
 	}
 
+	/**
+	 * Returns the number of displayed rows. When paging is set, then it gives the number of rows in current page. When no paging is set,
+	 * then it gives the global size of the table.
+	 */
 	public int size() {
 		return m_rows.size();
 	}
 
 	public boolean isEmpty() {
 		return m_rows.isEmpty();
+	}
+
+	public TableData.PageInfo getPageInfo() {
+		return m_pageInfo;
 	}
 
 	public boolean anyCellMatch(String columnName, Object valueEquals) {
@@ -113,17 +125,36 @@ public class TTable extends TRefreshableComponent {
 		return null;
 	}
 
-	public static TTable parseJson(String json, TClient client) {
-		final JsonMap map = JsonParser.parseMap(json);
-		return parse(map, client);
-	}
-
 	@Override
 	public void refresh(Map<String, Object> data) throws HttpException {
 		final String json = m_client.callBackend(m_sourcePath, data);
-		final TTable freshTable = parseJson(json, m_client);
-		m_rows.clear();
-		m_rows.addAll(freshTable.getRows());
+		parseUpdate(json);
+	}
+
+	/**
+	 * Clicks on button '<' and waits table to load previous page.
+	 */
+	public void clickPreviousPage() throws HttpException {
+		if(m_pageInfo == null) {
+			throw new BadComponentException("Table has no paging set");
+		}
+		final Map<String, Object> data = new HashMap<>();
+		data.put(Table.PARAMETER_PAGE_SIZE, m_pageInfo.pageSize());
+		data.put(Table.PARAMETER_PAGE_NUMBER, Math.max(m_pageInfo.pageNumber() - 1, 1));
+		refresh(data);
+	}
+
+	/**
+	 * Clicks on button '>' and waits table to load next page.
+	 */
+	public void clickNextPage() throws HttpException {
+		if(m_pageInfo == null) {
+			throw new BadComponentException("Table has no paging set");
+		}
+		final Map<String, Object> data = new HashMap<>();
+		data.put(Table.PARAMETER_PAGE_SIZE, m_pageInfo.pageSize());
+		data.put(Table.PARAMETER_PAGE_NUMBER, Math.min(m_pageInfo.pageNumber() + 1, m_lastPageNumber));
+		refresh(data);
 	}
 
 	public record BaseAttributes(long tuid, String title, Collection<String> columns, String source) {
@@ -151,14 +182,39 @@ public class TTable extends TRefreshableComponent {
 		return new BaseAttributes(tuid, title, columns, sourcePath);
 	}
 
+	public static TTable parseJson(String json, TClient client) {
+		final JsonMap map = JsonParser.parseMap(json);
+		return parse(map, client);
+	}
+
+	/**
+	 * Parses a json map describing a complete table. When you need to parse table update only, you should call parseUpdate.
+	 */
 	public static TTable parse(JsonMap map, TClient client) {
 		final BaseAttributes baseAttributes = parseBaseAttributes(map);
-
 		final TTable result = new TTable(baseAttributes.tuid, baseAttributes.title, baseAttributes.columns, baseAttributes.source, client);
-
 		loadRows(map, baseAttributes.columns, result);
-
+		loadPageInfo(map, result);
 		return result;
+	}
+
+	private void parseUpdate(String json) {
+		final JsonMap map = JsonParser.parseMap(json);
+		m_rows.clear();
+		loadRows(map, m_columns, this);
+		loadPageInfo(map, this);
+	}
+
+	private static void loadPageInfo(JsonMap map, TTable result) {
+		if(map.hasAttribute(TableData.ATTRIBUTE_PAGE_NUMBER)) {
+			result.m_pageInfo = new TableData.PageInfo(
+					Integer.parseInt(map.getAttribute(TableData.ATTRIBUTE_PAGE_NUMBER)),
+					Integer.parseInt(map.getAttribute(TableData.ATTRIBUTE_PAGE_SIZE)),
+					Integer.parseInt(map.getAttribute(TableData.ATTRIBUTE_FIRST_ITEM_NUMBER)),
+					Integer.parseInt(map.getAttribute(TableData.ATTRIBUTE_LAST_ITEM_NUMBER))
+			);
+			result.m_lastPageNumber = Integer.parseInt(map.getAttribute(TableData.ATTRIBUTE_LAST_PAGE_NUMBER));
+		}
 	}
 
 	public static void loadRows(JsonMap map, Collection<String> columns, TTable result) {
@@ -183,4 +239,5 @@ public class TTable extends TRefreshableComponent {
 			}
 		}
 	}
+
 }

@@ -16,12 +16,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui;
 
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 import tui.html.HTMLNode;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
 import tui.json.JsonObject;
 import tui.test.Browser;
+import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.Table;
 import tui.ui.components.TableData;
@@ -33,7 +35,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class TableTest {
+public class TableTest extends TestWithBackend {
 
 	@Test
 	public void toJson() {
@@ -47,6 +49,7 @@ public class TableTest {
 				  "tuid": " """ + table.getTUID() + """
 				",
 				  "title": "Test table",
+				  "tableSize": "1",
 				  "thead": [
 				    "A",
 				    "B"
@@ -98,6 +101,75 @@ public class TableTest {
 				  </body>
 				</html>
 				""", page.toHTMLNode().toHTML());
+	}
+
+	@Test
+	public void browseNoPaging() {
+		final Collection<TablePickerTest.Item> items = TableTest.buildItems(3);
+
+		final Page page = new Page("Home");
+
+		final Table table = new Table("Table picker", List.of("Id", "Name"));
+		TableTest.putItemsInTable(items, table);
+		page.append(table);
+
+		startBackend("/index", page);
+
+		// Web UI
+		final Browser browser = startBrowser();
+		browser.open("/index");
+
+		final WebElement tableElement = browser.getTable(table.getTitle());
+		final WebElement cell = browser.getTableCellByText(tableElement, (text) -> text.equals("Item-2"));
+
+		assert cell != null;
+	}
+
+	@Test
+	public void browseWithPaging() {
+		final Collection<TablePickerTest.Item> items = TableTest.buildItems(18);
+
+		final Page page = new Page("Home");
+
+		final Table table = new Table("Table picker", List.of("Id", "Name"));
+		TableTest.putItemsInTable(items, table);
+		table.setSource("/table");
+		table.setPaging(7);
+		page.append(table);
+
+		startBackend("/index", page);
+		registerWebService(table.getSource(), buildWebServiceTableLoad(table.clone()));
+
+		// Web UI
+		final Browser browser = startBrowser();
+		browser.open("/index");
+
+		assertEquals("1 - 7 (18)", browser.getTableNavigationLocationText(table.getTitle()));
+
+		// Clicking on button to previous page should do nothing
+		browser.getTableNavigationButtonPrevious(table.getTitle()).click();
+		wait_s(1);
+		assertEquals("1 - 7 (18)", browser.getTableNavigationLocationText(table.getTitle()));
+
+		// Clicking on button to next page should go to page #2
+		browser.getTableNavigationButtonNext(table.getTitle()).click();
+		wait_s(1);
+		assertEquals("8 - 14 (18)", browser.getTableNavigationLocationText(table.getTitle()));
+
+		// Clicking on button to next page should go to page #3
+		browser.getTableNavigationButtonNext(table.getTitle()).click();
+		wait_s(1);
+		assertEquals("15 - 18 (18)", browser.getTableNavigationLocationText(table.getTitle()));
+
+		// Clicking on button to next page should do nothing
+		browser.getTableNavigationButtonNext(table.getTitle()).click();
+		wait_s(1);
+		assertEquals("15 - 18 (18)", browser.getTableNavigationLocationText(table.getTitle()));
+
+		// Clicking on button to previous page should go to page #2
+		browser.getTableNavigationButtonPrevious(table.getTitle()).click();
+		wait_s(1);
+		assertEquals("8 - 14 (18)", browser.getTableNavigationLocationText(table.getTitle()));
 	}
 
 	public static Collection<TablePickerTest.Item> buildItems(int count) {

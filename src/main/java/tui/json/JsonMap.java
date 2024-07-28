@@ -34,6 +34,10 @@ public class JsonMap extends JsonObject {
 		setAttribute(JsonConstants.ATTRIBUTE_TUID, JsonConstants.toId(tuid));
 	}
 
+	public boolean hasAttribute(String key) {
+		return m_children.containsKey(key);
+	}
+
 	public JsonMap setAttribute(String name, String value) {
 		m_children.put(name, new JsonString(value));
 		return this;

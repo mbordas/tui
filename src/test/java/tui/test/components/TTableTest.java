@@ -15,18 +15,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.apache.http.HttpException;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import tui.test.TClient;
+import tui.test.TestWithBackend;
+import tui.ui.TablePickerTest;
+import tui.ui.TableTest;
+import tui.ui.components.Page;
 import tui.ui.components.Table;
+import tui.ui.components.TableData;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class TTableTest {
+public class TTableTest extends TestWithBackend {
 
 	public static String getTitle(WebElement tableElement) {
 		final WebElement caption = tableElement.findElement(By.tagName("caption"));
@@ -58,7 +66,92 @@ public class TTableTest {
 		assertEquals("value 1B", rows.get(0).get(1));
 		assertEquals("value 2A", rows.get(1).get(0));
 		assertEquals("value 2B", rows.get(1).get(1));
+	}
 
+	@Test
+	public void paging() throws HttpException {
+		final Collection<TablePickerTest.Item> items = TableTest.buildItems(18);
+
+		final Page page = new Page("Home");
+
+		final Table table = new Table("Table picker", List.of("Id", "Name"));
+		TableTest.putItemsInTable(items, table);
+		table.setSource("/table");
+		table.setPaging(7);
+		page.append(table);
+
+		startBackend("/index", page);
+		registerWebService(table.getSource(), TableTest.buildWebServiceTableLoad(table.clone()));
+
+		final TClient client = startClient();
+
+		client.open("/index");
+
+		final TTable ttable = client.getTable(table.getTitle());
+		assertEquals(7, ttable.size());
+		{
+			final TableData.PageInfo pageInfo = ttable.getPageInfo();
+			assertEquals(7, pageInfo.pageSize());
+			assertEquals(1, pageInfo.pageNumber());
+			assertEquals(1, pageInfo.firstItemNumber());
+			assertEquals(7, pageInfo.lastItemNumber());
+		}
+
+		// going to page #2
+		ttable.clickNextPage();
+		assertEquals(7, ttable.size());
+		{
+			final TableData.PageInfo pageInfo = ttable.getPageInfo();
+			assertEquals(7, pageInfo.pageSize());
+			assertEquals(2, pageInfo.pageNumber());
+			assertEquals(8, pageInfo.firstItemNumber());
+			assertEquals(14, pageInfo.lastItemNumber());
+		}
+
+		// going to page #3
+		ttable.clickNextPage();
+		assertEquals(4, ttable.size());
+		{
+			final TableData.PageInfo pageInfo = ttable.getPageInfo();
+			assertEquals(7, pageInfo.pageSize());
+			assertEquals(3, pageInfo.pageNumber());
+			assertEquals(15, pageInfo.firstItemNumber());
+			assertEquals(18, pageInfo.lastItemNumber());
+		}
+
+		// can't go to page #4
+		ttable.clickNextPage();
+		assertEquals(4, ttable.size());
+		{
+			final TableData.PageInfo pageInfo = ttable.getPageInfo();
+			assertEquals(7, pageInfo.pageSize());
+			assertEquals(3, pageInfo.pageNumber());
+			assertEquals(15, pageInfo.firstItemNumber());
+			assertEquals(18, pageInfo.lastItemNumber());
+		}
+
+		// going back to page #2
+		ttable.clickPreviousPage();
+		assertEquals(7, ttable.size());
+		{
+			final TableData.PageInfo pageInfo = ttable.getPageInfo();
+			assertEquals(7, pageInfo.pageSize());
+			assertEquals(2, pageInfo.pageNumber());
+			assertEquals(8, pageInfo.firstItemNumber());
+			assertEquals(14, pageInfo.lastItemNumber());
+		}
+
+		// can't go to page #0
+		ttable.clickPreviousPage(); // to page #1
+		ttable.clickPreviousPage(); // still page #1
+		assertEquals(7, ttable.size());
+		{
+			final TableData.PageInfo pageInfo = ttable.getPageInfo();
+			assertEquals(7, pageInfo.pageSize());
+			assertEquals(1, pageInfo.pageNumber());
+			assertEquals(1, pageInfo.firstItemNumber());
+			assertEquals(7, pageInfo.lastItemNumber());
+		}
 	}
 
 	private static Map<String, Object> row(String colA, String valA, String colB, String valB) {

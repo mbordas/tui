@@ -68,7 +68,7 @@ async function refreshComponent(id, data) {
                 component.innerHTML += '<strong>' + fragment[1] + '</strong>';
             }
         }
-    } else if(type == 'table') {
+    } else if(type == 'table' || type == 'table-data') {
         updateTable(component, json);
     } else {
         console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
@@ -255,11 +255,20 @@ function instrumentTables() {
                 nextPageButton.innerHTML = '>';
                 nextPageButton.onclick = function() {
                     const pageNumber = parseInt(table.getAttribute('tui-page-number'));
-                    refreshComponent(table.id, {page_size: pageSize, page_number: pageNumber + 1});
+                    const lastPageNumber = parseInt(table.getAttribute('tui-last-page-number'));
+                    refreshComponent(table.id, {page_size: pageSize, page_number: Math.min(pageNumber + 1, lastPageNumber)});
                 };
                 tableNavigation.append(nextPageButton);
 
+                const pageLocationSpan = document.createElement('span');
+                tableNavigation.append(pageLocationSpan);
+
                 tableContainer.append(tableNavigation);
+
+                const tableSize = parseInt(table.getAttribute('tui-table-size'));
+                const firstItemNumber = parseInt(table.getAttribute('tui-first-item-number'));
+                const lastItemNumber = parseInt(table.getAttribute('tui-last-item-number'));
+                updateTableNavigation(table, tableSize, firstItemNumber, lastItemNumber);
             }
         }
 
@@ -306,10 +315,21 @@ async function updateTable(tableElement, json) {
 
     if('pageNumber' in json) {
         tableElement.setAttribute('tui-page-number', json['pageNumber']);
+        tableElement.setAttribute('tui-last-page-number', json['lastPageNumber']);
+        updateTableNavigation(tableElement, json['tableSize'], json['firstItemNumber'], json['lastItemNumber']);
     }
+
     tableElement.getElementsByTagName('tbody')[0].replaceWith(freshBody);
 
     instrumentTablePicker(tableElement);
+}
+
+function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastItemNumber) {
+    tableElement
+        .parentElement
+        .getElementsByClassName('tui-table-navigation')[0]
+        .getElementsByTagName('span')[0]
+        .innerText = `${firstItemNumber} - ${lastItemNumber} (${tableSize})`;
 }
 
 // MONITORING

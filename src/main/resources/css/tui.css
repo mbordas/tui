@@ -139,6 +139,10 @@ tr:hover {
 .tui-tablepicker td {
     cursor: pointer;
 }
+.tui-table-navigation {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 
 /* FETCH ERRORS */
 
