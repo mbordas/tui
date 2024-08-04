@@ -72,7 +72,7 @@ public class CSSBuilder {
 		builder.append(String.format("--%s: %s;\n", name, value));
 	}
 
-	static String toCSS(Color color) {
+	public static String toCSS(Color color) {
 		String red = Integer.toHexString(color.getRed());
 		String green = Integer.toHexString(color.getGreen());
 		String blue = Integer.toHexString(color.getBlue());
