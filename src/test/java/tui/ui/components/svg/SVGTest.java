@@ -22,6 +22,7 @@ import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.UI;
 import tui.ui.components.Page;
+import tui.ui.components.RefreshButton;
 import tui.ui.components.form.Form;
 
 import java.awt.*;
@@ -37,7 +38,7 @@ public class SVGTest {
 
 		HTMLNode.PRETTY_PRINT = true;
 		assertEquals("""
-				<svg>
+				<svg width="20" height="20">
 				  <rect x="5" y="10" width="15" height="20" rx="0" ry="0" style="stroke:#000000;stroke-width:1;stroke-opacity:1.00;fill:#000000;fill-opacity:1.00;"/>
 				</svg>
 				""", svg.toHTMLNode().toHTML());
@@ -58,18 +59,15 @@ public class SVGTest {
 		form.registerRefreshListener(svg);
 		page.append(form);
 
-		svg.add(new SVGRectangle(5, 5, 150, 150)
-				.withCornerRadius(10, 20)
-				.withStrokeColor(Color.RED)
-				.withStrokeWidth(3)
-				.withStrokeDashArray(5, 2)
-				.withFillColor(Color.RED));
+		RefreshButton refreshButton = new RefreshButton("Refresh graph");
+		refreshButton.connectListener(svg);
+		page.append(refreshButton);
 
-		svg.add(new SVGRectangle(30, 30, 150, 150)
-				.withStrokeColor(Color.BLACK)
-				.withStrokeOpacity(0.5)
-				.withStrokeWidth(3)
-				.withStrokeDashArray(5, 2)
+		svg.add(new SVGPath(50, 50)
+				.lineRelative(100, 10)
+				.lineRelative(0, 80)
+				.close()
+				.withStrokeColor(Color.BLUE)
 				.withFillColor(Color.BLUE)
 				.withFillOpacity(0.5));
 		page.append(svg);
