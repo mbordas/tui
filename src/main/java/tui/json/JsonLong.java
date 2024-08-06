@@ -13,38 +13,27 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components.svg;
+package tui.json;
 
-import tui.json.JsonMap;
+public class JsonLong extends JsonValue<Long> {
 
-public class SVGRectangle extends SVGComponent {
+	public static final String TYPE = "long";
 
-	private long m_x, m_y, m_width, m_height;
-	private long m_rx = 0, m_ry = 0;
-
-	public SVGRectangle(long x, long y, long width, long height) {
-		m_x = x;
-		m_y = y;
-		m_width = width;
-		m_height = height;
-	}
-
-	public SVGRectangle withCornerRadius(long rx, long ry) {
-		m_rx = rx;
-		m_ry = ry;
-		return this;
+	public JsonLong(long value) {
+		super(TYPE, value);
 	}
 
 	@Override
-	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap("rect");
-		result.setAttribute("x", m_x);
-		result.setAttribute("y", m_y);
-		result.setAttribute("width", m_width);
-		result.setAttribute("height", m_height);
-		result.setAttribute("rx", m_rx);
-		result.setAttribute("ry", m_ry);
-		setStyleAttribute(result);
-		return result;
+	public String toJson() {
+		return String.format("%d", getValue());
+	}
+
+	@Override
+	public void setPrettyPrintDepth(int depth) {
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(getValue());
 	}
 }

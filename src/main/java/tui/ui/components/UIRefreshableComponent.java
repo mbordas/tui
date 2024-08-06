@@ -8,6 +8,8 @@ package tui.ui.components;
 
 public abstract class UIRefreshableComponent extends UIComponent {
 
+	public static final String ATTRIBUTE_SOURCE = "tui-source";
+
 	protected String m_source;
 
 	public String getSource() {

@@ -17,6 +17,7 @@ package tui.ui.components.svg;
 
 import tui.html.CSSBuilder;
 import tui.html.HTMLNode;
+import tui.json.JsonMap;
 
 import java.awt.*;
 import java.util.Locale;
@@ -33,7 +34,7 @@ public abstract class SVGComponent {
 	record StrokeDashArray(int length, int space) {
 	}
 
-	public abstract HTMLNode toHTMLNode();
+	public abstract JsonMap toJsonMap();
 
 	public SVGComponent withStrokeColor(Color color) {
 		m_strokeColor = color;
@@ -80,6 +81,10 @@ public abstract class SVGComponent {
 	}
 
 	protected void setStyleAttribute(HTMLNode svgComponentNode) {
+		svgComponentNode.setAttribute("style", computeStyleAttribute());
+	}
+
+	protected void setStyleAttribute(JsonMap svgComponentNode) {
 		svgComponentNode.setAttribute("style", computeStyleAttribute());
 	}
 }

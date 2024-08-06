@@ -51,6 +51,10 @@ public class JsonArray extends JsonObject {
 		return m_items.get(i);
 	}
 
+	public List<JsonObject> getItems() {
+		return m_items;
+	}
+
 	public JsonMap getMap(int i) {
 		final JsonObject result = m_items.get(i);
 		if(result instanceof JsonMap map) {

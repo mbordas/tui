@@ -29,8 +29,7 @@ public class Paragraph extends UIRefreshableComponent {
 	public static final String JSON_TYPE = "paragraph";
 
 	public static final String ATTRIBUTE_CONTENT = "content";
-	public static final String ATTRIBUTE_SOURCE = "tui-source";
-
+	
 	public enum Style {
 		NORMAL(null, "text"), STRONG("strong", "strong");
 		String htmlNodeName;

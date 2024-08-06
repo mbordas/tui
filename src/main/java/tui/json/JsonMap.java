@@ -43,6 +43,11 @@ public class JsonMap extends JsonObject {
 		return this;
 	}
 
+	public JsonMap setAttribute(String name, long value) {
+		m_children.put(name, new JsonLong(value));
+		return this;
+	}
+
 	public String getAttribute(String key) {
 		final String result = getAttributeOrNull(key);
 		if(result == null) {
@@ -60,6 +65,36 @@ public class JsonMap extends JsonObject {
 			return jsonString.getValue();
 		}
 		throw new JsonException("Child '%s' is not a string", key);
+	}
+
+	public Map<String, JsonValue<?>> getAttributes() {
+		final Map<String, JsonValue<?>> result = new LinkedHashMap<>();
+		for(Map.Entry<String, JsonObject> child : m_children.entrySet()) {
+			if(child.getValue() instanceof JsonValue<?> value) {
+				result.put(child.getKey(), value);
+			}
+		}
+		return result;
+	}
+
+	public Map<String, JsonMap> getMaps() {
+		final Map<String, JsonMap> result = new LinkedHashMap<>();
+		for(Map.Entry<String, JsonObject> child : m_children.entrySet()) {
+			if(child.getValue() instanceof JsonMap map) {
+				result.put(child.getKey(), map);
+			}
+		}
+		return result;
+	}
+
+	public Map<String, JsonArray> getArrays() {
+		final Map<String, JsonArray> result = new LinkedHashMap<>();
+		for(Map.Entry<String, JsonObject> child : m_children.entrySet()) {
+			if(child.getValue() instanceof JsonArray array) {
+				result.put(child.getKey(), array);
+			}
+		}
+		return result;
 	}
 
 	public JsonArray createArray(String name) {
@@ -126,14 +161,4 @@ public class JsonMap extends JsonObject {
 		return result.toString();
 	}
 
-	public Map<String, String> toMap() {
-		final Map<String, String> result = new LinkedHashMap<>();
-		for(Map.Entry<String, JsonObject> entry : m_children.entrySet()) {
-			final JsonObject value = entry.getValue();
-			if(value != null) {
-				result.put(entry.getKey(), value.toString());
-			}
-		}
-		return result;
-	}
 }

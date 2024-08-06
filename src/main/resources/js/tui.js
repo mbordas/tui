@@ -28,6 +28,7 @@ function onload() {
     instrumentTables();
     instrumentMonitorFields();
     instrumentRefreshButtons();
+    instrumentSVG();
 
     updateMonitorFields();
 }
@@ -70,6 +71,8 @@ async function refreshComponent(id, data) {
         }
     } else if(type == 'table' || type == 'table-data') {
         updateTable(component, json);
+    } else if(type == 'svg') {
+        updateSVG(component, json);
     } else {
         console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
     }
@@ -331,6 +334,52 @@ function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastIte
         .getElementsByTagName('span')[0]
         .innerText = `${firstItemNumber} - ${lastItemNumber} (${tableSize})`;
 }
+
+// SVG
+
+function instrumentSVG() {
+    const svgs = document.querySelectorAll('svg');
+    svgs.forEach(function(svg, i) {
+        const svgContainer = document.createElement("div");
+        svgContainer.classList.add("tui-svg-container");
+        svg.replaceWith(svgContainer);
+        svgContainer.append(svg);
+    });
+}
+
+function updateSVG(svgElement, json) {
+    // Creating the SVG tag with same id
+    const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // Setting attributes given by backend
+    copySVGAttributes(json, newElement);
+    // Overriding with original attributes that are consistent with page structure
+    const source = json['tui-source'];
+    if(source != '') {
+        newElement.setAttribute('tui-source', source);
+    }
+    newElement.setAttribute('id', svgElement.getAttribute('id'));
+
+    const svgContainer = svgElement.parentElement;
+    svgContainer.removeChild(svgElement);
+    svgContainer.appendChild(newElement);
+
+    // Creating SVG components
+    const jsonComponents = Array.from(json['components']);
+    jsonComponents.forEach(function(jsonComponent, i) {
+        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", jsonComponent['type']);
+        copySVGAttributes(jsonComponent, svgElement);
+        newElement.appendChild(svgElement);
+    });
+}
+
+function copySVGAttributes(svgJson, svgElement) {
+    for(let key in svgJson) {
+        if(svgJson.hasOwnProperty(key) && key != 'type' && key != 'components') {
+            svgElement.setAttribute(key, svgJson[key]);
+        }
+    }
+}
+
 
 // MONITORING
 

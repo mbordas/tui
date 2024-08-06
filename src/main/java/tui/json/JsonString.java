@@ -15,24 +15,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
-public class JsonString extends JsonObject {
+public class JsonString extends JsonValue<String> {
 
 	public static final String TYPE = "string";
 
-	private final String m_value;
-
 	public JsonString(String value) {
-		super(TYPE);
-		m_value = value;
-	}
-
-	public String getValue() {
-		return m_value;
+		super(TYPE, value);
 	}
 
 	@Override
 	public String toJson() {
-		return String.format("\"%s\"", m_value);
+		return String.format("\"%s\"", getValue());
 	}
 
 	@Override
@@ -41,7 +34,7 @@ public class JsonString extends JsonObject {
 
 	@Override
 	public String toString() {
-		return m_value;
+		return getValue();
 	}
 
 }

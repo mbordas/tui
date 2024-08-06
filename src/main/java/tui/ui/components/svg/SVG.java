@@ -15,19 +15,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
+import tui.json.JsonArray;
 import tui.json.JsonMap;
-import tui.ui.components.UIComponent;
+import tui.json.JsonObject;
+import tui.json.JsonValue;
+import tui.ui.components.UIRefreshableComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class SVG extends UIComponent {
+public class SVG extends UIRefreshableComponent {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SVG.class);
+
+	public static final String JSON_TYPE = "svg";
 
 	private final List<SVGComponent> m_components = new ArrayList<>();
+	private int m_width_px;
+	private int m_height_px;
 	private ViewBox m_viewBox = null;
 
 	record ViewBox(long x, long y, long width, long height) {
+	}
+
+	public SVG(int width_px, int height_px) {
+		m_width_px = width_px;
+		m_height_px = height_px;
 	}
 
 	public void add(SVGComponent component) {
@@ -38,20 +56,67 @@ public class SVG extends UIComponent {
 		m_viewBox = new ViewBox(x, y, width, height);
 	}
 
+	/**
+	 * Here we translate a {@link JsonMap} into {@link HTMLNode}, which is the exact same process that should be done at browser side
+	 * by the Javascript.
+	 */
 	@Override
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = new HTMLNode("svg");
-		if(m_viewBox != null) {
-			result.setAttribute("viewBox", String.format("%d %d %d %d", m_viewBox.x, m_viewBox.y, m_viewBox.width, m_viewBox.height));
+
+		final JsonMap jsonMap = toJsonMap();
+		for(Map.Entry<String, JsonValue<?>> attribute : jsonMap.getAttributes().entrySet()) {
+			result.setAttribute(attribute.getKey(), attribute.getValue().toString());
 		}
-		for(SVGComponent component : m_components) {
-			result.addChild(component.toHTMLNode());
+
+		for(JsonObject component : jsonMap.getArray("components").getItems()) {
+			result.addChild(toHTMLNode(component));
 		}
+
+		return result;
+	}
+
+	static HTMLNode toHTMLNode(JsonObject json) {
+		final HTMLNode result = new HTMLNode(json.getType());
+
+		LOG.info("JSON:\n{}", json.toJson());
+
+		if(json instanceof JsonMap map) {
+			for(Map.Entry<String, JsonValue<?>> attribute : map.getAttributes().entrySet()) {
+				result.setAttribute(attribute.getKey(), attribute.getValue().toString());
+			}
+			for(Map.Entry<String, JsonMap> submap : map.getMaps().entrySet()) {
+				result.addChild(toHTMLNode(submap.getValue()));
+			}
+			for(Map.Entry<String, JsonArray> subarray : map.getArrays().entrySet()) {
+				result.addChild(toHTMLNode(subarray.getValue()));
+			}
+		} else if(json instanceof JsonArray array) {
+			final HTMLNode child = result.createChild(array.getType());
+			for(JsonObject item : array.getItems()) {
+				child.addChild(toHTMLNode(item));
+			}
+		}
+
 		return result;
 	}
 
 	@Override
 	public JsonMap toJsonMap() {
-		return null;
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		if(hasSource()) {
+			result.setAttribute("id", HTMLConstants.toId(getTUID()));
+			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
+		}
+		result.setAttribute("width", m_width_px);
+		result.setAttribute("height", m_height_px);
+		if(m_viewBox != null) {
+			result.setAttribute("viewBox", String.format("%d %d %d %d", m_viewBox.x, m_viewBox.y, m_viewBox.width, m_viewBox.height));
+		}
+		final JsonArray components = result.createArray("components");
+		for(SVGComponent component : m_components) {
+			components.add(component.toJsonMap());
+		}
+		return result;
 	}
 }

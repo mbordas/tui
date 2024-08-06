@@ -17,10 +17,12 @@ package tui.ui.components.svg;
 
 import org.junit.Test;
 import tui.html.HTMLNode;
+import tui.http.FormRequest;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.UI;
 import tui.ui.components.Page;
+import tui.ui.components.form.Form;
 
 import java.awt.*;
 
@@ -30,13 +32,13 @@ public class SVGTest {
 
 	@Test
 	public void oneRectangle() {
-		final SVG svg = new SVG();
+		final SVG svg = new SVG(20, 20);
 		svg.add(new SVGRectangle(5, 10, 15, 20));
 
 		HTMLNode.PRETTY_PRINT = true;
 		assertEquals("""
 				<svg>
-				  <rect x="5" y="10" width="15" height="20"/>
+				  <rect x="5" y="10" width="15" height="20" rx="0" ry="0" style="stroke:#000000;stroke-width:1;stroke-opacity:1.00;fill:#000000;fill-opacity:1.00;"/>
 				</svg>
 				""", svg.toHTMLNode().toHTML());
 	}
@@ -45,7 +47,17 @@ public class SVGTest {
 		final UI ui = new UI();
 		final Page page = new Page("Home");
 
-		final SVG svg = new SVG();
+		final Form form = new Form("New rectangle", "/addRectangle");
+		form.createInputNumber("x", "x");
+		form.createInputNumber("y", "y");
+		form.createInputNumber("width", "width");
+		form.createInputNumber("height", "height");
+
+		final SVG svg = new SVG(200, 200);
+		svg.setSource("/getSVG");
+		form.registerRefreshListener(svg);
+		page.append(form);
+
 		svg.add(new SVGRectangle(5, 5, 150, 150)
 				.withCornerRadius(10, 20)
 				.withStrokeColor(Color.RED)
@@ -66,6 +78,18 @@ public class SVGTest {
 		ui.setHTTPBackend("localhost", 8080);
 
 		final TUIBackend backend = new TUIBackend(ui);
+
+		backend.registerWebService(form.getTarget(), (uri, request, response) -> {
+			final int x = FormRequest.getIntegerField(request, "x");
+			final int y = FormRequest.getIntegerField(request, "y");
+			final int width = FormRequest.getIntegerField(request, "width");
+			final int height = FormRequest.getIntegerField(request, "height");
+			svg.add(new SVGRectangle(x, y, width, height).withFillColor(Color.ORANGE).withFillOpacity(0.5));
+			return Form.getSuccessfulSubmissionResponse();
+		});
+
+		backend.registerWebService(svg.getSource(), (uri, request, response) -> svg.toJsonMap());
+
 		backend.start();
 
 		final Browser browser = new Browser(backend.getPort());
