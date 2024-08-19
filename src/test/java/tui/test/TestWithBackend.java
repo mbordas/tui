@@ -51,14 +51,16 @@ public class TestWithBackend {
 		}
 	}
 
-	protected void registerWebService(String path, TUIWebService webservice) {
-		m_backend.registerWebService(path, webservice);
+	protected Browser startAndBrowse(APage page) {
+		final String target = "/index";
+		startBackend(target, page);
+		final Browser result = startBrowser();
+		result.open(target);
+		return result;
 	}
 
-	static int getRandomAvailablePort() throws IOException {
-		try(ServerSocket socket = new ServerSocket(0, 50, null)) {
-			return socket.getLocalPort();
-		}
+	protected void registerWebService(String path, TUIWebService webservice) {
+		m_backend.registerWebService(path, webservice);
 	}
 
 	protected TClient startClient() {
@@ -75,6 +77,12 @@ public class TestWithBackend {
 			Thread.sleep((long) (delay_s * 1000.0));
 		} catch(InterruptedException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	protected static int getRandomAvailablePort() throws IOException {
+		try(ServerSocket socket = new ServerSocket(0, 50, null)) {
+			return socket.getLocalPort();
 		}
 	}
 }

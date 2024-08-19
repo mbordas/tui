@@ -16,11 +16,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.form;
 
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 import tui.html.HTMLNode;
+import tui.http.TUIBackend;
+import tui.test.Browser;
+import tui.test.TestWithBackend;
+import tui.ui.UI;
+import tui.ui.components.Page;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class FormTest {
+public class FormTest extends TestWithBackend {
 
 	@Test
 	public void toHTML() {
@@ -51,8 +58,37 @@ public class FormTest {
 	}
 
 	@Test
-	public void browse() {
+	public void errorOnSubmit() {
+		final Form form = new Form("Error will occur on submit", "/form");
+		form.createInputString("Message", "message");
+		final Page page = new Page("Error on submit");
+		page.append(form);
+		final Browser browser = startAndBrowse(page);
+		browser.typeField(form.getTitle(), "message", "entered value");
+		browser.submit(form.getTitle());
+		wait_s(0.1);
 
+		final WebElement formElement = browser.getForm(form.getTitle());
+
+		assertTrue(browser.isOnError(formElement));
+		assertEquals("Error: HTTP error, status = 500", browser.getErrorMessage(formElement));
+	}
+
+	public static void main(String[] args) throws Exception {
+		final UI ui = new UI();
+		final Page page = new Page("Home");
+
+		final Form form = new Form("Error will occur on submit", "/form");
+		form.createInputString("Message", "message");
+		page.append(form);
+
+		final TUIBackend backend = new TUIBackend(ui);
+		ui.add("/index", page);
+		ui.setHTTPBackend("localhost", getRandomAvailablePort());
+		backend.start();
+
+		final Browser browser = new Browser(backend.getPort());
+		browser.open("/index");
 	}
 
 }

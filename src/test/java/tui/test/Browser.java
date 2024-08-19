@@ -163,6 +163,18 @@ public class Browser {
 		}
 	}
 
+	// ERRORS
+
+	public boolean isOnError(WebElement element) {
+		final WebElement errorElement = element.findElement(By.className("fetch-error-message"));
+		return errorElement.isDisplayed();
+	}
+
+	public String getErrorMessage(WebElement element) {
+		final WebElement errorElement = element.findElement(By.className("fetch-error-message"));
+		return errorElement.getText();
+	}
+
 	// UTILS
 
 	public static WebElement getParent(WebElement element) {

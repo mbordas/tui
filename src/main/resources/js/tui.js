@@ -127,8 +127,11 @@ function instrumentForms() {
                     body: new URLSearchParams(data)
                 })
                 .then(response => {
+                     if(!response.ok) {
+                        throw new Error(`HTTP error, status = ${response.status}`);
+                    }
                     hideFetchErrorInElement(form);
-                    form.classList.remove("fetch-error");
+                    form.classList.remove('fetch-error');
                     if(form.hasAttribute('refresh-listeners')) {
                         form.getAttribute('refresh-listeners').split(",")
                             .forEach(function(id, i) {
@@ -174,7 +177,7 @@ function instrumentModalForms() {
                 })
                 .then(response => {
                     if(!response.ok) {
-                        throw new Error('HTTP error, status = ${response.status}');
+                        throw new Error(`HTTP error, status = ${response.status}`);
                     }
                     hideFetchErrorInElement(form);
                     form.classList.remove("fetch-error");
