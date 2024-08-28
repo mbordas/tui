@@ -15,7 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
-import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.html.HTMLText;
 import tui.json.JsonArray;
@@ -28,8 +27,9 @@ public class Paragraph extends UIRefreshableComponent {
 
 	public static final String JSON_TYPE = "paragraph";
 
+	public static final String HTML_CLASS_CONTAINER = "tui-container-paragraph";
 	public static final String ATTRIBUTE_CONTENT = "content";
-	
+
 	public enum Style {
 		NORMAL(null, "text"), STRONG("strong", "strong");
 		String htmlNodeName;
@@ -76,22 +76,19 @@ public class Paragraph extends UIRefreshableComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("p");
-		if(hasSource()) {
-			result.setAttribute("id", HTMLConstants.toId(getTUID()));
-			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
-		}
+		final ContainedElement containedElement = createContainedNode("p", HTML_CLASS_CONTAINER);
 
+		final HTMLNode paragraphElement = containedElement.element();
 		for(Fragment fragment : m_fragments) {
 			if(Style.NORMAL == fragment.style()) {
-				result.addChild(new HTMLText(fragment.text()));
+				paragraphElement.addChild(new HTMLText(fragment.text()));
 			} else {
-				result.createChild(fragment.style().htmlNodeName)
+				paragraphElement.createChild(fragment.style().htmlNodeName)
 						.setText(fragment.text());
 			}
 		}
 
-		return result;
+		return containedElement.getHigherNode();
 	}
 
 	@Override

@@ -26,8 +26,11 @@ import java.net.ServerSocket;
 
 public class TestWithBackend {
 
-	private TUIBackend m_backend;
-	private Browser m_browser;
+	protected record BackendAndBrowser(TUIBackend backend, Browser browser) {
+	}
+
+	protected TUIBackend m_backend;
+	protected Browser m_browser;
 
 	@After
 	public void after() throws Exception {
@@ -51,12 +54,12 @@ public class TestWithBackend {
 		}
 	}
 
-	protected Browser startAndBrowse(APage page) {
+	protected BackendAndBrowser startAndBrowse(APage page) {
 		final String target = "/index";
 		startBackend(target, page);
-		final Browser result = startBrowser();
-		result.open(target);
-		return result;
+		startBrowser();
+		m_browser.open(target);
+		return new BackendAndBrowser(m_backend, m_browser);
 	}
 
 	protected void registerWebService(String path, TUIWebService webservice) {

@@ -28,7 +28,6 @@ function onload() {
     instrumentTables();
     instrumentMonitorFields();
     instrumentRefreshButtons();
-    instrumentSVG();
 
     updateMonitorFields();
 }
@@ -47,35 +46,59 @@ async function refreshComponent(id, data) {
             JSON.stringify(Array.from(data.entries()))
             : JSON.stringify(Array.from(Object.entries(data)));
 
-    const response = await fetch(sourcePath, {
+    fetch(sourcePath, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: jsonBody,
-        });
-
-    const json = await response.json();
-    console.log(json);
-
-    const type = json['type'];
-    if(type == 'paragraph') {
-        component.innerHTML = '';
-        for(var fragment of json['content']) {
-            const fragmentType = fragment[0];
-            if(fragmentType == 'text') {
-                component.innerHTML += fragment[1];
-            } else if(fragmentType == 'strong') {
-                component.innerHTML += '<strong>' + fragment[1] + '</strong>';
+        })
+        .then(response => {
+            if(!response.ok) {
+                throw new Error(`HTTP error, status = ${response.status}`);
             }
-        }
-    } else if(type == 'table' || type == 'table-data') {
-        updateTable(component, json);
-    } else if(type == 'svg') {
-        updateSVG(component, json);
-    } else {
-        console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
-    }
+            hideFetchError(component);
+            return response.json();
+        })
+        .then((json) => {
+            const type = json['type'];
+            if(type == 'paragraph') {
+                component.innerHTML = '';
+                for(var fragment of json['content']) {
+                    const fragmentType = fragment[0];
+                    if(fragmentType == 'text') {
+                        component.innerHTML += fragment[1];
+                    } else if(fragmentType == 'strong') {
+                        component.innerHTML += '<strong>' + fragment[1] + '</strong>';
+                    }
+                }
+            } else if(type == 'table' || type == 'table-data') {
+                updateTable(component, json);
+            } else if(type == 'svg') {
+                updateSVG(component, json);
+            } else {
+                console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
+            }
+        })
+        .catch(error => {
+            showFetchError(component, error);
+        });
+}
+
+function showFetchError(element, error) {
+    const containerElement = element.parentElement;
+    containerElement.classList.add('fetch-error');
+    const errorDiv = containerElement.querySelectorAll('.fetch-error-message')[0];
+    errorDiv.innerText = error.message;
+    errorDiv.style.display = 'block';
+}
+
+function hideFetchError(element) {
+    const containerElement = element.parentElement;
+    containerElement.classList.remove('fetch-error');
+    const errorDiv = containerElement.querySelectorAll('.fetch-error-message')[0];
+    errorDiv.innerText = '';
+    errorDiv.style.display = 'none';
 }
 
 // TABS
@@ -114,7 +137,7 @@ function instrumentRefreshButtons() {
 function instrumentForms() {
     const forms = document.querySelectorAll('.tui-form');
     forms.forEach(function(form, i) {
-        hideFetchErrorInElement(form);
+        instrumentFormWithErrorMessage(form);
         form.addEventListener('submit', e => {
             e.preventDefault();
 
@@ -156,8 +179,6 @@ function instrumentModalForms() {
         const form = dialog.querySelector('form');
         const cancelButton = form.querySelector('.tui-modal-form-cancel-button');
         const submitButton = form.querySelector('.tui-modal-form-submit-button');
-
-        hideFetchErrorInElement(form);
 
         openButton.addEventListener('click', () => {
             dialog.showModal();
@@ -217,6 +238,12 @@ function instrumentModalForms() {
     });
 }
 
+function instrumentFormWithErrorMessage(formElement) {
+     const errorMessageElement = document.createElement('div');
+     errorMessageElement.setAttribute('class', 'fetch-error-message');
+     formElement.insertBefore(errorMessageElement,formElement.firstChild);
+}
+
 function showFetchErrorInElement(element, error) {
     const errorDiv = element.querySelectorAll('.fetch-error-message')[0];
     errorDiv.innerText = error;
@@ -236,11 +263,6 @@ function instrumentTables() {
     tables.forEach(function(table, i) {
         if(table.hasAttribute('tui-source')) {
             const sourcePath = table.getAttribute('tui-source');
-
-            const tableContainer = document.createElement("div");
-            tableContainer.classList.add("tui-table-container");
-            table.replaceWith(tableContainer);
-            tableContainer.append(table);
 
             if(table.hasAttribute('tui-page-size')) {
                 const pageSize = parseInt(table.getAttribute('tui-page-size'));
@@ -269,6 +291,7 @@ function instrumentTables() {
                 const pageLocationSpan = document.createElement('span');
                 tableNavigation.append(pageLocationSpan);
 
+                const tableContainer = table.parentElement;
                 tableContainer.append(tableNavigation);
 
                 const tableSize = parseInt(table.getAttribute('tui-table-size'));
@@ -339,16 +362,6 @@ function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastIte
 }
 
 // SVG
-
-function instrumentSVG() {
-    const svgs = document.querySelectorAll('svg');
-    svgs.forEach(function(svg, i) {
-        const svgContainer = document.createElement("div");
-        svgContainer.classList.add("tui-svg-container");
-        svg.replaceWith(svgContainer);
-        svgContainer.append(svg);
-    });
-}
 
 function updateSVG(svgElement, json) {
     // Creating the SVG tag with same id

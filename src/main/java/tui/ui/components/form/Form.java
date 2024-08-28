@@ -96,12 +96,12 @@ public class Form extends UIComponent {
 				.setAttribute("method", "post")
 				.setAttribute("enctype", FormRequest.ENCTYPE);
 
+		HTMLFetchErrorMessage.addErrorMessageChild(result);
+
 		final Collection<UIComponent> refreshListeners = getRefreshListeners();
 		if(!refreshListeners.isEmpty()) {
 			result.setAttribute("refresh-listeners", getTUIsSeparatedByComa(refreshListeners));
 		}
-
-		HTMLFetchErrorMessage.addErrorMessageChild(result);
 
 		final HTMLNode fieldset = result.createChild("fieldset");
 		fieldset.createChild("legend").setText(getTitle());

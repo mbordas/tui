@@ -15,7 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
-import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.UIConfigurationException;
@@ -26,11 +25,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class Table extends UIComponent {
+public class Table extends UIRefreshableComponent {
 
 	public static final String JSON_TYPE = "table";
 
 	public static final String HTML_CLASS = "tui-table";
+	public static final String HTML_CLASS_CONTAINER = "tui-table-container";
 	public static final String HTML_CLASS_NAVIGATION = "tui-table-navigation";
 	public static final String ATTRIBUTE_SOURCE = "source";
 	public static final String PARAMETER_PAGE_NUMBER = "page_number";
@@ -112,32 +112,31 @@ public class Table extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("table")
-				.setAttribute("class", HTML_CLASS);
+		final ContainedElement containedElement = createContainedNode("table", HTML_CLASS_CONTAINER);
+
+		final HTMLNode tableElement = containedElement.element();
+		tableElement.setAttribute("class", HTML_CLASS);
 
 		if(hasSource()) {
-			result.setAttribute("id", HTMLConstants.toId(getTUID()));
-			result.setAttribute("tui-source", getSource());
-
 			if(m_pageSize != null) {
-				result.setAttribute("tui-page-size", m_pageSize);
-				result.setAttribute("tui-table-size", size());
-				result.setAttribute("tui-page-number", 1);
-				result.setAttribute("tui-last-page-number", TableData.computeLastPageNumber(size(), m_pageSize));
-				result.setAttribute("tui-first-item-number", 1);
-				result.setAttribute("tui-last-item-number", Math.min(m_pageSize, size()));
+				tableElement.setAttribute("tui-page-size", m_pageSize);
+				tableElement.setAttribute("tui-table-size", size());
+				tableElement.setAttribute("tui-page-number", 1);
+				tableElement.setAttribute("tui-last-page-number", TableData.computeLastPageNumber(size(), m_pageSize));
+				tableElement.setAttribute("tui-first-item-number", 1);
+				tableElement.setAttribute("tui-last-item-number", Math.min(m_pageSize, size()));
 			}
 		}
 
-		result.createChild("caption").setText(getTitle());
+		tableElement.createChild("caption").setText(getTitle());
 
-		final HTMLNode head = result.createChild("thead");
+		final HTMLNode head = tableElement.createChild("thead");
 		final HTMLNode headRow = head.createChild("tr");
 		for(String column : getColumns()) {
 			headRow.createChild("th").setText(column);
 		}
 
-		final HTMLNode body = result.createChild("tbody");
+		final HTMLNode body = tableElement.createChild("tbody");
 		int rowNumber = 1;
 		for(List<Object> _row : getRows()) {
 			final HTMLNode row = body.createChild("tr");
@@ -150,7 +149,7 @@ public class Table extends UIComponent {
 			}
 		}
 
-		return result;
+		return containedElement.getHigherNode();
 	}
 
 	public JsonMap toJsonMap() {

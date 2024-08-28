@@ -15,7 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
-import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
 import tui.http.FormRequest;
 import tui.ui.components.UIComponent;
@@ -67,8 +66,6 @@ public class ModalForm extends Form {
 			}
 			result.setAttribute("refresh-listeners", tuids.toString());
 		}
-
-		HTMLFetchErrorMessage.addErrorMessageChild(htmlForm);
 
 		final HTMLNode fieldset = htmlForm.createChild("fieldset");
 		fieldset.createChild("legend").setText(getTitle());

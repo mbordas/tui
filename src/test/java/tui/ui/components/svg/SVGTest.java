@@ -16,20 +16,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.svg;
 
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tui.html.HTMLNode;
 import tui.http.FormRequest;
 import tui.http.TUIBackend;
 import tui.test.Browser;
+import tui.test.TestWithBackend;
 import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.form.Form;
 
 import java.awt.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 
-public class SVGTest {
+public class SVGTest extends TestWithBackend {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SVGTest.class);
 
 	@Test
 	public void oneRectangle() {
@@ -42,6 +52,42 @@ public class SVGTest {
 				  <rect x="5" y="10" width="15" height="20" rx="0" ry="0" style="stroke:#000000;stroke-width:1;stroke-opacity:1.00;fill:#000000;fill-opacity:1.00;"/>
 				</svg>
 				""", svg.toHTMLNode().toHTML());
+	}
+
+	@Test
+	public void refreshError() {
+		final SVG svg = new SVG(200, 100);
+		svg.setSource("/svg");
+		final RefreshButton refreshButton = new RefreshButton("Refresh SVG");
+		refreshButton.connectListener(svg);
+
+		final Page page = new Page("index");
+		page.append(refreshButton);
+		page.append(svg);
+		startAndBrowse(page);
+
+		final AtomicInteger calls = new AtomicInteger(0);
+		m_backend.registerWebService(svg.getSource(), (uri, request, response) -> {
+			calls.getAndIncrement();
+			svg.add(new SVGRectangle(calls.get(), calls.get(), 10 + calls.get(), 10 + calls.get()));
+			return svg.toJsonMap();
+		});
+
+		m_browser.clickRefreshButton(refreshButton.getLabel());
+		wait_s(2.0);
+
+		final List<WebElement> svgs = m_browser.getSVGs();
+		assertEquals(1, svgs.size());
+		assertEquals(1, svgs.get(0).findElements(By.tagName("rect")).size());
+
+		m_backend.registerWebService(svg.getSource(), (uri, request, response) -> {
+			throw new IOException("Custom exception message");
+		});
+
+		m_browser.clickRefreshButton(refreshButton.getLabel());
+		wait_s(1.0);
+
+		assertEquals("HTTP error, status = 500", m_browser.getErrorMessage(svgs.get(0)));
 	}
 
 	public static void main(String[] args) throws Exception {

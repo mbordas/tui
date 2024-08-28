@@ -35,6 +35,8 @@ public class SVG extends UIRefreshableComponent {
 
 	public static final String JSON_TYPE = "svg";
 
+	public static final String HTML_CLASS_CONTAINER = "tui-container-svg";
+
 	private final List<SVGComponent> m_components = new ArrayList<>();
 	private int m_width_px;
 	private int m_height_px;
@@ -62,18 +64,21 @@ public class SVG extends UIRefreshableComponent {
 	 */
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("svg");
+		final ContainedElement containedElement = createContainedNode("svg", HTML_CLASS_CONTAINER);
 
+		final HTMLNode svgElement = containedElement.element();
 		final JsonMap jsonMap = toJsonMap();
 		for(Map.Entry<String, JsonValue<?>> attribute : jsonMap.getAttributes().entrySet()) {
-			result.setAttribute(attribute.getKey(), attribute.getValue().toString());
+			if(!attribute.getKey().equals(HTMLConstants.ATTRIBUTE_ID)) {
+				svgElement.setAttribute(attribute.getKey(), attribute.getValue().toString());
+			}
 		}
 
 		for(JsonObject component : jsonMap.getArray("components").getItems()) {
-			result.addChild(toHTMLNode(component));
+			svgElement.addChild(toHTMLNode(component));
 		}
 
-		return result;
+		return containedElement.getHigherNode();
 	}
 
 	static HTMLNode toHTMLNode(JsonObject json) {
@@ -105,7 +110,7 @@ public class SVG extends UIRefreshableComponent {
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE);
 		if(hasSource()) {
-			result.setAttribute("id", HTMLConstants.toId(getTUID()));
+			result.setAttribute(HTMLConstants.ATTRIBUTE_ID, HTMLConstants.toId(getTUID()));
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
 		result.setAttribute("width", m_width_px);

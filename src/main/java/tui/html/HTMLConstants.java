@@ -24,6 +24,8 @@ public class HTMLConstants {
 	public static final String CSS_CONTENT_TYPE = "text/css";
 	public static final String JSON_CONTENT_TYPE = "application/json";
 
+	public static final String ATTRIBUTE_ID = "id";
+
 	public static String toId(long tuid) {
 		return String.valueOf(tuid);
 	}

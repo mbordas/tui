@@ -63,7 +63,7 @@ public class FormTest extends TestWithBackend {
 		form.createInputString("Message", "message");
 		final Page page = new Page("Error on submit");
 		page.append(form);
-		final Browser browser = startAndBrowse(page);
+		final Browser browser = startAndBrowse(page).browser();
 		browser.typeField(form.getTitle(), "message", "entered value");
 		browser.submit(form.getTitle());
 		wait_s(0.1);

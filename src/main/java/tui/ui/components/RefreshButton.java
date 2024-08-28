@@ -29,12 +29,16 @@ public class RefreshButton extends UIComponent {
 
 	public static final String ATTRIBUTE_REFRESH_LISTENERS = "tui-refresh-listeners";
 
-	private Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
+	private final Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
 
 	private final String m_label;
 
 	public RefreshButton(String label) {
 		m_label = label;
+	}
+
+	public String getLabel() {
+		return m_label;
 	}
 
 	public UIRefreshableComponent connectListener(UIRefreshableComponent component) {
@@ -61,4 +65,5 @@ public class RefreshButton extends UIComponent {
 	public JsonMap toJsonMap() {
 		return null;
 	}
+
 }
