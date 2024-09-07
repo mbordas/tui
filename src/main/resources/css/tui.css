@@ -4,8 +4,34 @@
 }
 
 body {
+    min-height: 100vh;
     padding: 20px;
     font-family: Arial, sans-serif;
+}
+
+p {
+    margin: 0px;
+    padding: 0px;
+}
+
+.tui-border-on {
+    border: 1px solid var(--global-color-border);
+}
+
+.tui-align-left {
+    text-align: left;
+}
+
+.tui-align-right {
+    text-align: right;
+}
+
+.tui-align-center {
+    text-align: center;
+}
+
+.tui-align-stretch {
+    text-align: justify;
 }
 
 /* TABS */
@@ -29,6 +55,14 @@ body {
 }
 .tui-tablink-active {
     border-bottom: 3px solid var(--global-color-action);
+}
+
+/* LAYOUTS */
+
+.tui-grid {
+    display: grid;
+    margin: 0px;
+    padding: 0px;
 }
 
 /* FORM */

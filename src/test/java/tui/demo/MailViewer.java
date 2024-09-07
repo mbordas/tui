@@ -13,78 +13,68 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components;
+package tui.demo;
 
-import org.junit.Test;
-import tui.html.HTMLNode;
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
-import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.ui.UI;
+import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
+import tui.ui.components.TablePicker;
+import tui.ui.components.layout.Grid;
 
-import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class ParagraphTest {
+public class MailViewer {
 
-	@Test
-	public void html() {
-		final Paragraph paragraph = new Paragraph();
-
-		paragraph
-				.appendNormal("Normal text ")
-				.appendStrong("with strong")
-				.appendNormal(" fragment.");
-
-		HTMLNode.PRETTY_PRINT = false;
-		assertEquals("<p class=\"tui-align-left tui-border-off\">Normal text <strong>with strong</strong> fragment.</p>",
-				paragraph.toHTMLNode().toHTML());
-	}
-
-	@Test
-	public void json() {
-		final Paragraph paragraph = new Paragraph();
-
-		paragraph
-				.appendNormal("Normal text ")
-				.appendStrong("with strong")
-				.appendNormal(" fragment.");
-
-		JsonObject.PRETTY_PRINT = false;
-		assertEquals("{\"type\": \"paragraph\",\"tuid\": \"" + paragraph.getTUID()
-						+ "\",\"textAlign\": \"LEFT\",\"border\": \"off\",\"content\": [[\"text\",\"Normal text \"],"
-						+ "[\"strong\",\"with strong\"],[\"text\",\" fragment.\"]]}",
-				paragraph.toJsonMap().toJson());
+	record Email(String id, String date, String subject, String content) {
 	}
 
 	public static void main(String[] args) throws Exception {
-		final UI ui = new UI();
-		final Page page = new Page("Home");
-		final Panel panel = new Panel();
-		final RefreshButton refreshButton = panel.append(new RefreshButton("Refresh"));
-		final Paragraph paragraph = panel.append(new Paragraph())
-				.appendNormal("This paragraph contains ")
-				.appendStrong("strong")
-				.appendNormal(" text.");
-		paragraph.setSource("/paragraph");
-		refreshButton.connectListener(paragraph);
 
-		page.append(panel);
-		ui.add("/index", page);
+		final List<Email> emails = new ArrayList<>();
+		for(int i = 0; i < 10; i++) {
+			emails.add((new Email(String.valueOf(i), String.format("%d days ago", i + 1), "Subject " + i, "content ".repeat(i + 1))));
+		}
+
+		final UI ui = new UI();
 		ui.setHTTPBackend("localhost", 8080);
+		final Page page = new Page("Home");
+		ui.add("/index", page);
+
+		final TablePicker mailSelector = new TablePicker("Inbox", List.of("id", "date", "subject"));
+		for(Email email : emails) {
+			mailSelector.append(Map.of("id", email.id, "date", email.date, "subject", email.subject));
+		}
+		page.append(mailSelector);
+
+		final Grid mailView = new Grid(2, 1);
+		mailView.setSource("/email/view");
+		mailSelector.connectListener(mailView);
+		page.append(mailView);
 
 		final TUIBackend backend = new TUIBackend(ui);
-		backend.registerWebService(paragraph.getSource(), (uri, request, response) -> {
-			final Paragraph result = new Paragraph()
-					.appendNormal("Current time is ")
-					.appendStrong("" + System.currentTimeMillis())
-					.appendNormal(" ms.");
+		backend.registerWebService(mailView.getSource(), (uri, request, response) -> {
+			final RequestReader requestReader = new RequestReader(request);
+			final String id = requestReader.getStringParameter("id");
+			final Email email = emails.stream().filter((_email) -> _email.id.equals(id)).findAny().get();
+
+			final Grid result = new Grid(2, 1);
+			final Grid header = new Grid(2, 2);
+			header.set(0, 0, new Paragraph("Subject:").setAlign(Paragraph.TextAlign.RIGHT));
+			header.set(0, 1, new Paragraph(email.subject).withBorder(true));
+			header.set(1, 0, new Paragraph("Date:").setAlign(Paragraph.TextAlign.RIGHT));
+			header.set(1, 1, new Paragraph(email.date).withBorder(true));
+			result.set(0, 0, header);
+			result.set(1, 0, new Paragraph(email.content).withBorder(true));
 			return result.toJsonMap();
 		});
-
 		backend.start();
 
 		final Browser browser = new Browser(backend.getPort());
 		browser.open("/index");
 	}
-
 }

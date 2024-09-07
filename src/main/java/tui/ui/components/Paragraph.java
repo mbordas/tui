@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.html.HTMLNode;
 import tui.html.HTMLText;
 import tui.json.JsonArray;
@@ -28,7 +29,11 @@ public class Paragraph extends UIRefreshableComponent {
 	public static final String JSON_TYPE = "paragraph";
 
 	public static final String HTML_CLASS_CONTAINER = "tui-container-paragraph";
+	public static final String HTML_CLASS_BORDER_ON = "tui-border-on";
+	public static final String HTML_CLASS_BORDER_OFF = "tui-border-off";
 	public static final String ATTRIBUTE_CONTENT = "content";
+	public static final String ATTRIBUTE_BORDER = "border";
+	public static final String ATTRIBUTE_TEXT_ALIGN = "textAlign";
 
 	public enum Style {
 		NORMAL(null, "text"), STRONG("strong", "strong");
@@ -49,9 +54,25 @@ public class Paragraph extends UIRefreshableComponent {
 		}
 	}
 
+	public enum TextAlign {
+		LEFT("tui-align-left"), CENTER("tui-align-center"), RIGHT("tui-align-right"), STRETCH("tui-align-stretch");
+
+		private String m_htmlClass;
+
+		private TextAlign(String htmlClass) {
+			m_htmlClass = htmlClass;
+		}
+
+		public String getHTMLClass() {
+			return m_htmlClass;
+		}
+	}
+
 	public record Fragment(Style style, String text) {
 	}
 
+	private boolean m_withBorder = false;
+	private TextAlign m_textAlign = TextAlign.LEFT;
 	private final List<Fragment> m_fragments = new ArrayList<>();
 
 	public Paragraph() {
@@ -59,6 +80,16 @@ public class Paragraph extends UIRefreshableComponent {
 
 	public Paragraph(String text) {
 		appendNormal(text);
+	}
+
+	public Paragraph setAlign(@NotNull Paragraph.TextAlign textAlign) {
+		m_textAlign = textAlign;
+		return this;
+	}
+
+	public Paragraph withBorder(boolean enabled) {
+		m_withBorder = enabled;
+		return this;
 	}
 
 	public Paragraph appendNormal(String text) {
@@ -79,6 +110,8 @@ public class Paragraph extends UIRefreshableComponent {
 		final ContainedElement containedElement = createContainedNode("p", HTML_CLASS_CONTAINER);
 
 		final HTMLNode paragraphElement = containedElement.element();
+		paragraphElement.addClass(m_textAlign.getHTMLClass());
+		paragraphElement.addClass(m_withBorder ? HTML_CLASS_BORDER_ON : HTML_CLASS_BORDER_OFF);
 		for(Fragment fragment : m_fragments) {
 			if(Style.NORMAL == fragment.style()) {
 				paragraphElement.addChild(new HTMLText(fragment.text()));
@@ -97,6 +130,8 @@ public class Paragraph extends UIRefreshableComponent {
 		if(hasSource()) {
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
+		result.setAttribute(ATTRIBUTE_TEXT_ALIGN, m_textAlign.name());
+		result.setAttribute(ATTRIBUTE_BORDER, m_withBorder ? "on" : "off");
 
 		final JsonArray content = result.createArray(ATTRIBUTE_CONTENT);
 

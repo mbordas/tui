@@ -63,19 +63,13 @@ async function refreshComponent(id, data) {
         .then((json) => {
             const type = json['type'];
             if(type == 'paragraph') {
-                component.innerHTML = '';
-                for(var fragment of json['content']) {
-                    const fragmentType = fragment[0];
-                    if(fragmentType == 'text') {
-                        component.innerHTML += fragment[1];
-                    } else if(fragmentType == 'strong') {
-                        component.innerHTML += '<strong>' + fragment[1] + '</strong>';
-                    }
-                }
+                updateParagraph(component, json);
             } else if(type == 'table' || type == 'table-data') {
                 updateTable(component, json);
             } else if(type == 'svg') {
                 updateSVG(component, json);
+            } else if(type == 'grid') {
+                updateGrid(component, json);
             } else {
                 console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
             }
@@ -83,6 +77,23 @@ async function refreshComponent(id, data) {
         .catch(error => {
             showFetchError(component, error);
         });
+}
+
+function createComponent(json) {
+    const type = json['type'];
+    var result;
+    if(type == 'paragraph') {
+        result = document.createElement('p');
+        updateParagraph(result, json);
+    } else if(type == 'grid') {
+        result = document.createElement('div');
+        result.classList.add('tui-grid');
+        updateGrid(result, json);
+    } else {
+        result = null;
+    }
+
+    return result;
 }
 
 function showFetchError(element, error) {
@@ -101,6 +112,41 @@ function hideFetchError(element) {
     errorDiv.style.display = 'none';
 }
 
+// GRIDS
+
+function updateGrid(gridElement, json) {
+    const rows = parseInt(json['rows']);
+    const columns = parseInt(json['columns']);
+    gridElement.style.gridTemplateRows = 'auto '.repeat(rows);
+    gridElement.style.gridTemplateColumns = 'auto '.repeat(columns);
+    gridElement.innerHTML = '';
+
+    for(var row = 0; row < rows; row++) {
+        for(var column = 0; column < columns; column++) {
+            const childName = '' + row + '_' + column;
+            var childElement;
+            if(Object.hasOwn(json, childName)) {
+                childElement = createComponent(json[childName]);
+            } else {
+                childElement = document.createElement('p');
+            }
+            if(row == 0) {
+                childElement.classList.add('tui-grid-first-row');
+            }
+            if(row == rows - 1) {
+                childElement.classList.add('tui-grid-last-row');
+            }
+            if(column == 0) {
+                childElement.classList.add('tui-grid-first-column');
+            }
+            if(column == columns - 1) {
+                childElement.classList.add('tui-grid-last-column');
+            }
+            gridElement.appendChild(childElement);
+        }
+    }
+}
+
 // TABS
 
 function selectTab(tabId, tabLink) {
@@ -116,6 +162,23 @@ function selectTab(tabId, tabLink) {
         link.setAttribute('class', 'tui-tablink');
     });
     tabLink.setAttribute('class', 'tui-tablink tui-tablink-active');
+}
+
+// PARAGRAPHS
+
+function updateParagraph(element, json) {
+    element.innerHTML = '';
+    element.className = '';
+    element.classList.add('tui-align-' + json['textAlign'].toLowerCase());
+    element.classList.add('tui-border-' + json['border']);
+    for(var fragment of json['content']) {
+        const fragmentType = fragment[0];
+        if(fragmentType == 'text') {
+            element.innerHTML += fragment[1];
+        } else if(fragmentType == 'strong') {
+            element.innerHTML += '<strong>' + fragment[1] + '</strong>';
+        }
+    }
 }
 
 // REFRESH BUTTONS
@@ -364,12 +427,10 @@ function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastIte
 // SVG
 
 function updateSVG(svgElement, json) {
-    // Creating the SVG tag with same id
-    const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // Setting attributes given by backend
-    copySVGAttributes(json, newElement);
-    // Overriding with original attributes that are consistent with page structure
-    const source = json['tui-source'];
+
+    const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg"); // Creating the SVG tag with same id
+    copySVGAttributes(json, newElement);  // Setting attributes given by backend
+    const source = json['tui-source']; // Overriding with original attributes that are consistent with page structure
     if(source != '') {
         newElement.setAttribute('tui-source', source);
     }

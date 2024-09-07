@@ -46,6 +46,18 @@ public class HTMLNode {
 		}
 	}
 
+	public HTMLNode setClass(String className) {
+		return setAttribute("class", className);
+	}
+
+	public void addClass(String className) {
+		if(m_attributes.containsKey("class")) {
+			m_attributes.put("class", m_attributes.get("class") + " " + className);
+		} else {
+			setClass(className);
+		}
+	}
+
 	public HTMLNode setAttribute(String name, String value) {
 		m_attributes.put(name, value);
 		return this;

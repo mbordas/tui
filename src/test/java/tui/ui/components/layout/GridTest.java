@@ -13,78 +13,39 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components;
+package tui.ui.components.layout;
 
-import org.junit.Test;
-import tui.html.HTMLNode;
 import tui.http.TUIBackend;
-import tui.json.JsonObject;
 import tui.test.Browser;
+import tui.test.TestWithBackend;
 import tui.ui.UI;
+import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
 
-import static org.junit.Assert.assertEquals;
-
-public class ParagraphTest {
-
-	@Test
-	public void html() {
-		final Paragraph paragraph = new Paragraph();
-
-		paragraph
-				.appendNormal("Normal text ")
-				.appendStrong("with strong")
-				.appendNormal(" fragment.");
-
-		HTMLNode.PRETTY_PRINT = false;
-		assertEquals("<p class=\"tui-align-left tui-border-off\">Normal text <strong>with strong</strong> fragment.</p>",
-				paragraph.toHTMLNode().toHTML());
-	}
-
-	@Test
-	public void json() {
-		final Paragraph paragraph = new Paragraph();
-
-		paragraph
-				.appendNormal("Normal text ")
-				.appendStrong("with strong")
-				.appendNormal(" fragment.");
-
-		JsonObject.PRETTY_PRINT = false;
-		assertEquals("{\"type\": \"paragraph\",\"tuid\": \"" + paragraph.getTUID()
-						+ "\",\"textAlign\": \"LEFT\",\"border\": \"off\",\"content\": [[\"text\",\"Normal text \"],"
-						+ "[\"strong\",\"with strong\"],[\"text\",\" fragment.\"]]}",
-				paragraph.toJsonMap().toJson());
-	}
+public class GridTest extends TestWithBackend {
 
 	public static void main(String[] args) throws Exception {
 		final UI ui = new UI();
 		final Page page = new Page("Home");
-		final Panel panel = new Panel();
-		final RefreshButton refreshButton = panel.append(new RefreshButton("Refresh"));
-		final Paragraph paragraph = panel.append(new Paragraph())
-				.appendNormal("This paragraph contains ")
-				.appendStrong("strong")
-				.appendNormal(" text.");
-		paragraph.setSource("/paragraph");
-		refreshButton.connectListener(paragraph);
 
-		page.append(panel);
+		final Grid grid = new Grid(5, 2);
+
+		//		for(int row = 0; row < 5; row++) {
+		//			for(int col = 0; col < 2; col++) {
+		//				grid.set(row, col, new Paragraph(String.format("%d,%d", row, col)));
+		//			}
+		//		}
+
+		grid.set(1, 1, new Paragraph("1,1").setAlign(Paragraph.TextAlign.LEFT));
+		grid.set(4, 0, new Paragraph("4,0").setAlign(Paragraph.TextAlign.RIGHT));
+		page.append(grid);
 		ui.add("/index", page);
 		ui.setHTTPBackend("localhost", 8080);
 
 		final TUIBackend backend = new TUIBackend(ui);
-		backend.registerWebService(paragraph.getSource(), (uri, request, response) -> {
-			final Paragraph result = new Paragraph()
-					.appendNormal("Current time is ")
-					.appendStrong("" + System.currentTimeMillis())
-					.appendNormal(" ms.");
-			return result.toJsonMap();
-		});
-
 		backend.start();
 
 		final Browser browser = new Browser(backend.getPort());
 		browser.open("/index");
 	}
-
 }
