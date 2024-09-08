@@ -22,6 +22,7 @@ import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.TablePicker;
+import tui.ui.components.layout.CenteredFlow;
 import tui.ui.components.layout.Grid;
 
 import java.util.ArrayList;
@@ -43,6 +44,9 @@ public class MailViewer {
 		final UI ui = new UI();
 		ui.setHTTPBackend("localhost", 8080);
 		final Page page = new Page("Home");
+		page.setReadingWidth(CenteredFlow.Width.NORMAL);
+		page.setHeader(new Paragraph("Header").setAlign(Paragraph.TextAlign.CENTER));
+		page.setFooter(new Paragraph().appendNormal("Example footer text").setAlign(Paragraph.TextAlign.RIGHT));
 		ui.add("/index", page);
 
 		final TablePicker mailSelector = new TablePicker("Inbox", List.of("id", "date", "subject"));
@@ -63,11 +67,10 @@ public class MailViewer {
 			final Email email = emails.stream().filter((_email) -> _email.id.equals(id)).findAny().get();
 
 			final Grid result = new Grid(2, 1);
-			final Grid header = new Grid(2, 2);
-			header.set(0, 0, new Paragraph("Subject:").setAlign(Paragraph.TextAlign.RIGHT));
-			header.set(0, 1, new Paragraph(email.subject).withBorder(true));
-			header.set(1, 0, new Paragraph("Date:").setAlign(Paragraph.TextAlign.RIGHT));
-			header.set(1, 1, new Paragraph(email.date).withBorder(true));
+			final Grid header = new Grid(3, 1);
+			header.set(0, 0, new Paragraph().appendStrong("Subject: ").appendNormal(email.subject));
+			header.set(1, 0, new Paragraph().appendStrong("Date: ").appendNormal(email.date));
+			header.set(2, 0, new Paragraph().appendStrong("Content:"));
 			result.set(0, 0, header);
 			result.set(1, 0, new Paragraph(email.content).withBorder(true));
 			return result.toJsonMap();

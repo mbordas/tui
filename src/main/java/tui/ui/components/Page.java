@@ -18,6 +18,8 @@ package tui.ui.components;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.components.layout.CenteredFlow;
+import tui.ui.components.layout.Grid;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,10 +29,21 @@ public class Page extends APage {
 
 	public static final String JSON_TYPE = "page";
 
+	private CenteredFlow.Width m_width = CenteredFlow.Width.NORMAL;
 	private final List<UIComponent> m_content = new ArrayList<>();
+	private UIComponent m_header = null;
+	private UIComponent m_footer = null;
 
 	public Page(String title) {
 		super(title);
+	}
+
+	public void setHeader(UIComponent header) {
+		m_header = header;
+	}
+
+	public void setFooter(UIComponent footer) {
+		m_footer = footer;
 	}
 
 	public void append(UIComponent component) {
@@ -45,6 +58,12 @@ public class Page extends APage {
 		final Section result = new Section(title);
 		m_content.add(result);
 		return result;
+	}
+
+	public Page setReadingWidth(CenteredFlow.Width width) {
+		assert width != null;
+		m_width = width;
+		return this;
 	}
 
 	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
@@ -72,12 +91,33 @@ public class Page extends APage {
 		if(onLoadFunctionCall != null) {
 			body.setAttribute("onload", onLoadFunctionCall);
 		}
+
+		if(m_header != null) {
+			final HTMLNode header = body.createChild("header");
+			header.addChild(m_header.toHTMLNode());
+		}
+
 		final HTMLNode main = body.createChild("main");
-		for(UIComponent component : getContent()) {
-			main.addChild(component.toHTMLNode());
+
+		final CenteredFlow flow = new CenteredFlow().setWidth(m_width);
+		flow.appendAll(getContent());
+		main.addChild(flow.toHTMLNode());
+
+		if(m_footer != null) {
+			final HTMLNode footer = body.createChild("footer");
+			footer.addChild(m_footer.toHTMLNode());
+		}
+
+		if(m_header != null || m_footer != null) {
+			body.addClass(Grid.HTML_CLASS);
+			body.setAttribute("style", computeBodyStyle());
 		}
 
 		return result;
+	}
+
+	private String computeBodyStyle() {
+		return "grid-template-columns: 100%;grid-template-rows: min-content auto min-content;";
 	}
 
 	@Override

@@ -82,21 +82,26 @@ public class TableTest extends TestWithBackend {
 				  </head>
 				  <body>
 				    <main>
-				      <table class="tui-table">
-				        <caption>Test table</caption>
-				        <thead>
-				          <tr>
-				            <th>A</th>
-				            <th>B</th>
-				          </tr>
-				        </thead>
-				        <tbody>
-				          <tr>
-				            <td>test & co</td>
-				            <td/>
-				          </tr>
-				        </tbody>
-				      </table>
+				      <div class="tui-grid" style="grid-template-rows: auto;grid-template-columns: 1fr min-content 1fr">
+				        <p/>
+				        <div class="tui-reading-normal-area">           <table class="tui-table">
+				            <caption>Test table</caption>
+				            <thead>
+				              <tr>
+				                <th>A</th>
+				                <th>B</th>
+				              </tr>
+				            </thead>
+				            <tbody>
+				              <tr>
+				                <td>test & co</td>
+				                <td/>
+				              </tr>
+				            </tbody>
+				          </table>
+				</div>
+				        <p/>
+				      </div>
 				    </main>
 				  </body>
 				</html>

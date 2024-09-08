@@ -44,7 +44,13 @@ public class PageTest {
 						    <title>Empty page</title>
 						  </head>
 						  <body>
-						    <main/>
+						    <main>
+						      <div class="tui-grid" style="grid-template-rows: auto;grid-template-columns: 1fr min-content 1fr">
+						        <p/>
+						        <div class="tui-reading-normal-area"> </div>
+						        <p/>
+						      </div>
+						    </main>
 						  </body>
 						</html>
 						""",

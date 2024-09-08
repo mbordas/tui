@@ -25,12 +25,6 @@ public class Grid extends UIRefreshableComponent {
 
 	public static final String HTML_CLASS_CONTAINER = "tui-container-grid";
 	public static final String HTML_CLASS = "tui-grid";
-	public static final String HTML_CLASS_FIRST_ROW = "tui-grid-first-row";
-	public static final String HTML_CLASS_LAST_ROW = "tui-grid-last-row";
-
-	public static final String HTML_CLASS_FIRST_COLUMN = "tui-grid-first-column";
-	public static final String HTML_CLASS_LAST_COLUMN = "tui-grid-last-column";
-
 	public static final String JSON_TYPE = "grid";
 
 	private final UIComponent[][] m_components;
@@ -56,26 +50,13 @@ public class Grid extends UIRefreshableComponent {
 						"1fr ".repeat(m_components.length),
 						"1fr ".repeat(m_components[0].length)));
 
-		for(int row = 0; row < m_components.length; row++) {
-			for(int column = 0; column < m_components[0].length; column++) {
-				final UIComponent childComponent = m_components[row][column];
+		for(final UIComponent[] row : m_components) {
+			for(final UIComponent cell : row) {
 				final HTMLNode childElement;
-				if(childComponent != null) {
-					childElement = childComponent.toHTMLNode();
+				if(cell != null) {
+					childElement = cell.toHTMLNode();
 				} else {
 					childElement = new Paragraph("").toHTMLNode();
-				}
-				if(row == 0) {
-					childElement.addClass(HTML_CLASS_FIRST_ROW);
-				}
-				if(column == 0) {
-					childElement.addClass(HTML_CLASS_FIRST_COLUMN);
-				}
-				if(row == m_components.length - 1) {
-					childElement.addClass(HTML_CLASS_LAST_ROW);
-				}
-				if(column == m_components[0].length) {
-					childElement.addClass(HTML_CLASS_LAST_COLUMN);
 				}
 				gridElement.addChild(childElement);
 			}

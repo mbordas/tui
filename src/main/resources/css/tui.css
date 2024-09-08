@@ -5,8 +5,13 @@
 
 body {
     min-height: 100vh;
-    padding: 20px;
+    padding: 0px;
+    margin: 0px;
     font-family: Arial, sans-serif;
+}
+
+main {
+    justify-self: stretch;
 }
 
 p {
@@ -16,6 +21,14 @@ p {
 
 .tui-border-on {
     border: 1px solid var(--global-color-border);
+}
+
+.tui-reading-normal-area {
+    width: 70em;
+}
+
+.tui-reading-wide-margin {
+   width: 20px;
 }
 
 .tui-align-left {
@@ -63,6 +76,7 @@ p {
     display: grid;
     margin: 0px;
     padding: 0px;
+    justify-items: stretch;
 }
 
 /* FORM */

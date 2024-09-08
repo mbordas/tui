@@ -130,18 +130,6 @@ function updateGrid(gridElement, json) {
             } else {
                 childElement = document.createElement('p');
             }
-            if(row == 0) {
-                childElement.classList.add('tui-grid-first-row');
-            }
-            if(row == rows - 1) {
-                childElement.classList.add('tui-grid-last-row');
-            }
-            if(column == 0) {
-                childElement.classList.add('tui-grid-first-column');
-            }
-            if(column == columns - 1) {
-                childElement.classList.add('tui-grid-last-column');
-            }
             gridElement.appendChild(childElement);
         }
     }
