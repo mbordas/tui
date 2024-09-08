@@ -59,8 +59,8 @@ public class TClientTest {
 		final UI ui = new UI();
 		ui.setHTTPBackend("localhost", 90);
 		{
-			final Page page = new Page("Test case");
-			ui.add("index", page);
+			final Page page = new Page("Test case", "/index");
+			ui.add(page);
 			final Table uiTable = new Table("My table", List.of(columnName));
 			uiTable.setSource(endPointGetTable);
 			page.append(uiTable);

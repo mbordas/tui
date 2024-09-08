@@ -58,7 +58,7 @@ public class ParagraphTest {
 
 	public static void main(String[] args) throws Exception {
 		final UI ui = new UI();
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 		final Panel panel = new Panel();
 		final RefreshButton refreshButton = panel.append(new RefreshButton("Refresh"));
 		final Paragraph paragraph = panel.append(new Paragraph())
@@ -69,7 +69,7 @@ public class ParagraphTest {
 		refreshButton.connectListener(paragraph);
 
 		page.append(panel);
-		ui.add("/index", page);
+		ui.add(page);
 		ui.setHTTPBackend("localhost", 8080);
 
 		final TUIBackend backend = new TUIBackend(ui);

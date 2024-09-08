@@ -13,34 +13,47 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components.layout;
+package tui.demo;
 
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.test.TestWithBackend;
 import tui.ui.UI;
+import tui.ui.components.NavLink;
 import tui.ui.components.Page;
-import tui.ui.components.Paragraph;
+import tui.ui.components.layout.Grid;
 
-public class GridTest extends TestWithBackend {
+import java.util.List;
+
+public class Navigation {
+
+	static void computeHeader(Page home, List<Page> pages) {
+
+		final Grid header = new Grid(1, 3 + pages.size());
+
+		header.set(0, 0, new NavLink(home.getTitle(), home.getSource()));
+		int colIndex = 2;
+		home.setHeader(header);
+		for(Page page : pages) {
+			header.set(0, colIndex++, new NavLink(page.getTitle(), page.getSource()));
+			page.setHeader(header);
+		}
+	}
 
 	public static void main(String[] args) throws Exception {
 		final UI ui = new UI();
-		final Page page = new Page("Home", "/index");
-
-		final Grid grid = new Grid(5, 2);
-
-		//		for(int row = 0; row < 5; row++) {
-		//			for(int col = 0; col < 2; col++) {
-		//				grid.set(row, col, new Paragraph(String.format("%d,%d", row, col)));
-		//			}
-		//		}
-
-		grid.set(1, 1, new Paragraph("1,1").setAlign(Paragraph.TextAlign.LEFT));
-		grid.set(4, 0, new Paragraph("4,0").setAlign(Paragraph.TextAlign.RIGHT));
-		page.append(grid);
-		ui.add(page);
 		ui.setHTTPBackend("localhost", 8080);
+
+		final Page pageHome = new Page("Home", "/index");
+		final Page page1 = new Page("Page 1", "/page/1");
+		final Page page2 = new Page("Page 2", "/page/2");
+		final Page page3 = new Page("Page 3", "/page/3");
+
+		computeHeader(pageHome, List.of(page1, page2, page3));
+
+		ui.add(pageHome);
+		ui.add(page1);
+		ui.add(page2);
+		ui.add(page3);
 
 		final TUIBackend backend = new TUIBackend(ui);
 		backend.start();

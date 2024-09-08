@@ -47,7 +47,7 @@ public class TablePickerTest extends TestWithBackend {
 	public void browse() {
 		final Collection<Item> items = TableTest.buildItems(3);
 
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 		final Panel panel = new Panel();
 		final Paragraph paragraph = panel.append(new Paragraph("Reloadable panel"));
 		paragraph.setSource("/paragraph");
@@ -59,7 +59,7 @@ public class TablePickerTest extends TestWithBackend {
 		page.append(tablePicker);
 		page.append(panel);
 
-		startBackend("/index", page);
+		startBackend(page);
 
 		// Web service for paragraph
 		registerWebService(paragraph.getSource(), buildWebServiceParagraphLoad(items));
@@ -107,7 +107,7 @@ public class TablePickerTest extends TestWithBackend {
 		final Collection<Item> items = TableTest.buildItems(3);
 
 		final UI ui = new UI();
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 		final Panel panel = new Panel();
 		final Paragraph paragraph = panel.append(new Paragraph("Reloadable panel"));
 		paragraph.setSource("/paragraph");
@@ -118,7 +118,7 @@ public class TablePickerTest extends TestWithBackend {
 
 		page.append(tablePicker);
 		page.append(panel);
-		ui.add("/index", page);
+		ui.add(page);
 		ui.setHTTPBackend("localhost", 8080);
 
 		final TUIBackend backend = new TUIBackend(ui);

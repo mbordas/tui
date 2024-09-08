@@ -44,7 +44,7 @@ public class TTablePickerTest extends TestWithBackend {
 	public void browseAndClick() throws HttpException {
 		final Collection<TablePickerTest.Item> items = buildItems(3);
 
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 		final Panel panel = new Panel();
 		final Paragraph paragraph = panel.append(new Paragraph("Reloadable panel"));
 		paragraph.setSource("/paragraph");
@@ -56,7 +56,7 @@ public class TTablePickerTest extends TestWithBackend {
 		page.append(tablePicker);
 		page.append(panel);
 
-		startBackend("/index", page);
+		startBackend(page);
 
 		// Web service for paragraph
 		registerWebService(paragraph.getSource(), TablePickerTest.buildWebServiceParagraphLoad(items));

@@ -42,10 +42,10 @@ public class TestWithBackend {
 		}
 	}
 
-	protected void startBackend(String target, APage page) {
+	protected void startBackend(APage page) {
 		try {
 			final UI ui = new UI();
-			ui.add(target, page);
+			ui.add(page);
 			ui.setHTTPBackend("localhost", getRandomAvailablePort());
 			m_backend = new TUIBackend(ui);
 			m_backend.start();
@@ -55,10 +55,9 @@ public class TestWithBackend {
 	}
 
 	protected BackendAndBrowser startAndBrowse(APage page) {
-		final String target = "/index";
-		startBackend(target, page);
+		startBackend(page);
 		startBrowser();
-		m_browser.open(target);
+		m_browser.open(page.getSource());
 		return new BackendAndBrowser(m_backend, m_browser);
 	}
 

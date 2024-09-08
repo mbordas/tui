@@ -38,6 +38,10 @@ public class Page extends APage {
 		super(title);
 	}
 
+	public Page(String title, String source) {
+		super(title, source);
+	}
+
 	public void setHeader(UIComponent header) {
 		m_header = header;
 	}

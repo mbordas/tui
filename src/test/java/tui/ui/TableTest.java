@@ -112,13 +112,13 @@ public class TableTest extends TestWithBackend {
 	public void browseNoPaging() {
 		final Collection<TablePickerTest.Item> items = TableTest.buildItems(3);
 
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 
 		final Table table = new Table("Table picker", List.of("Id", "Name"));
 		TableTest.putItemsInTable(items, table);
 		page.append(table);
 
-		startBackend("/index", page);
+		startBackend(page);
 
 		// Web UI
 		final Browser browser = startBrowser();
@@ -134,7 +134,7 @@ public class TableTest extends TestWithBackend {
 	public void browseWithPaging() {
 		final Collection<TablePickerTest.Item> items = TableTest.buildItems(18);
 
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 
 		final Table table = new Table("Table picker", List.of("Id", "Name"));
 		TableTest.putItemsInTable(items, table);
@@ -142,7 +142,7 @@ public class TableTest extends TestWithBackend {
 		table.setPaging(7);
 		page.append(table);
 
-		startBackend("/index", page);
+		startBackend(page);
 		registerWebService(table.getSource(), buildWebServiceTableLoad(table.clone()));
 
 		// Web UI
@@ -205,7 +205,7 @@ public class TableTest extends TestWithBackend {
 		final Collection<TablePickerTest.Item> items = buildItems(30);
 
 		final UI ui = new UI();
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 
 		final Table table = new Table("Table", List.of("Id", "Name"));
 		table.setSource("/table");
@@ -213,7 +213,7 @@ public class TableTest extends TestWithBackend {
 		putItemsInTable(items, table);
 
 		page.append(table);
-		ui.add("/index", page);
+		ui.add(page);
 		ui.setHTTPBackend("localhost", 8080);
 
 		final TUIBackend backend = new TUIBackend(ui);

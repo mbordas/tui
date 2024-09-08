@@ -42,8 +42,8 @@ public class TPageTest extends TestWithBackend {
 
 	@Test
 	public void browse() throws HttpException {
-		final Page page = new Page("Home");
-		startBackend("/index", page);
+		final Page page = new Page("Home", "/index");
+		startBackend(page);
 
 		// TUI
 		final TClient client = startClient();

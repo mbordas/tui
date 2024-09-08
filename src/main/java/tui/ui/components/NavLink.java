@@ -13,39 +13,38 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components.layout;
+package tui.ui.components;
 
-import tui.http.TUIBackend;
-import tui.test.Browser;
-import tui.test.TestWithBackend;
-import tui.ui.UI;
-import tui.ui.components.Page;
-import tui.ui.components.Paragraph;
+import tui.html.HTMLNode;
+import tui.json.JsonMap;
 
-public class GridTest extends TestWithBackend {
+public class NavLink extends UIComponent {
 
-	public static void main(String[] args) throws Exception {
-		final UI ui = new UI();
-		final Page page = new Page("Home", "/index");
+	public static final String HTML_CLASS = "tui-navlink";
 
-		final Grid grid = new Grid(5, 2);
+	public static final String JSON_TYPE = "navlink";
 
-		//		for(int row = 0; row < 5; row++) {
-		//			for(int col = 0; col < 2; col++) {
-		//				grid.set(row, col, new Paragraph(String.format("%d,%d", row, col)));
-		//			}
-		//		}
+	private String m_label;
+	private String m_target;
 
-		grid.set(1, 1, new Paragraph("1,1").setAlign(Paragraph.TextAlign.LEFT));
-		grid.set(4, 0, new Paragraph("4,0").setAlign(Paragraph.TextAlign.RIGHT));
-		page.append(grid);
-		ui.add(page);
-		ui.setHTTPBackend("localhost", 8080);
+	public NavLink(String label, String target) {
+		m_label = label;
+		m_target = target;
+	}
 
-		final TUIBackend backend = new TUIBackend(ui);
-		backend.start();
+	@Override
+	public HTMLNode toHTMLNode() {
+		final HTMLNode result = new HTMLNode("a");
+		result.setAttribute("href", m_target);
+		result.setText(m_label);
+		return result;
+	}
 
-		final Browser browser = new Browser(backend.getPort());
-		browser.open("/index");
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute("label", m_label);
+		result.setAttribute("target", m_target);
+		return result;
 	}
 }

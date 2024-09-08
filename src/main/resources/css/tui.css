@@ -14,6 +14,23 @@ main {
     justify-self: stretch;
 }
 
+header {
+    color:  var(--global-color-background-contrast);
+    background-color: var(--global-color-background);
+    padding: 10px;
+    border-bottom: solid;
+}
+header a {
+    text-align: center;
+    text-decoration: none;
+}
+
+footer {
+    color:  var(--global-color-background-contrast);
+    background-color: var(--global-color-background);
+    padding: 10px;
+}
+
 p {
     margin: 0px;
     padding: 0px;

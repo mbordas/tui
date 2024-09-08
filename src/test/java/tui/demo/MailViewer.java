@@ -43,11 +43,11 @@ public class MailViewer {
 
 		final UI ui = new UI();
 		ui.setHTTPBackend("localhost", 8080);
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 		page.setReadingWidth(CenteredFlow.Width.NORMAL);
 		page.setHeader(new Paragraph("Header").setAlign(Paragraph.TextAlign.CENTER));
 		page.setFooter(new Paragraph().appendNormal("Example footer text").setAlign(Paragraph.TextAlign.RIGHT));
-		ui.add("/index", page);
+		ui.add(page);
 
 		final TablePicker mailSelector = new TablePicker("Inbox", List.of("id", "date", "subject"));
 		for(Email email : emails) {

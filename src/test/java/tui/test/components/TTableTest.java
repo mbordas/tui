@@ -72,7 +72,7 @@ public class TTableTest extends TestWithBackend {
 	public void paging() throws HttpException {
 		final Collection<TablePickerTest.Item> items = TableTest.buildItems(18);
 
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 
 		final Table table = new Table("Table picker", List.of("Id", "Name"));
 		TableTest.putItemsInTable(items, table);
@@ -80,7 +80,7 @@ public class TTableTest extends TestWithBackend {
 		table.setPaging(7);
 		page.append(table);
 
-		startBackend("/index", page);
+		startBackend(page);
 		registerWebService(table.getSource(), TableTest.buildWebServiceTableLoad(table.clone()));
 
 		final TClient client = startClient();

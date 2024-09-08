@@ -61,7 +61,7 @@ public class FormTest extends TestWithBackend {
 	public void errorOnSubmit() {
 		final Form form = new Form("Error will occur on submit", "/form");
 		form.createInputString("Message", "message");
-		final Page page = new Page("Error on submit");
+		final Page page = new Page("Error on submit", "/index");
 		page.append(form);
 		final Browser browser = startAndBrowse(page).browser();
 		browser.typeField(form.getTitle(), "message", "entered value");
@@ -76,14 +76,14 @@ public class FormTest extends TestWithBackend {
 
 	public static void main(String[] args) throws Exception {
 		final UI ui = new UI();
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 
 		final Form form = new Form("Error will occur on submit", "/form");
 		form.createInputString("Message", "message");
 		page.append(form);
 
 		final TUIBackend backend = new TUIBackend(ui);
-		ui.add("/index", page);
+		ui.add(page);
 		ui.setHTTPBackend("localhost", getRandomAvailablePort());
 		backend.start();
 

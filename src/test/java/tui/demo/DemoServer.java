@@ -55,11 +55,11 @@ public class DemoServer {
 		final UI ui = new UI();
 		ui.setHTTPBackend("localhost", 80);
 
-		TabbedPage page = new TabbedPage("Demo");
+		TabbedPage page = new TabbedPage("Demo", "/index");
 		final Panel panel1 = page.createTab("Table and form");
 		panel1.createSection("Tables")
 				.createParagraph("Use the form to add row to the table.");
-		ui.add("index", page);
+		ui.add(page);
 
 		final String columnVendor = "Vendor";
 		final String columnSerialNumber = "Serial number";

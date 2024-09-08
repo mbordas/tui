@@ -61,7 +61,7 @@ public class SVGTest extends TestWithBackend {
 		final RefreshButton refreshButton = new RefreshButton("Refresh SVG");
 		refreshButton.connectListener(svg);
 
-		final Page page = new Page("index");
+		final Page page = new Page("index", "/index");
 		page.append(refreshButton);
 		page.append(svg);
 		startAndBrowse(page);
@@ -92,7 +92,7 @@ public class SVGTest extends TestWithBackend {
 
 	public static void main(String[] args) throws Exception {
 		final UI ui = new UI();
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 
 		final Form form = new Form("New rectangle", "/addRectangle");
 		form.createInputNumber("x", "x");
@@ -118,7 +118,7 @@ public class SVGTest extends TestWithBackend {
 				.withFillOpacity(0.5));
 		page.append(svg);
 
-		ui.add("/index", page);
+		ui.add(page);
 		ui.setHTTPBackend("localhost", 8080);
 
 		final TUIBackend backend = new TUIBackend(ui);

@@ -39,7 +39,7 @@ public class TabbedPageTest extends TestWithBackend {
 
 	@Before
 	public void before() {
-		m_page = new TabbedPage("Home");
+		m_page = new TabbedPage("Home", "/index");
 		final Panel tab1 = m_page.createTab("First tab");
 		tab1.createSection("Section 1-1");
 		final Panel tab2 = m_page.createTab("Second tab");
@@ -71,7 +71,7 @@ public class TabbedPageTest extends TestWithBackend {
 
 	@Test
 	public void client() throws HttpException {
-		startBackend("/index", m_page);
+		startBackend(m_page);
 
 		// TUI
 		final TClient client = startClient();

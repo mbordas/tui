@@ -32,12 +32,9 @@ public class UI {
 		m_httpPort = port;
 	}
 
-	public void add(String target, APage page) {
-		if(target.startsWith("/")) {
-			m_pages.put(target, page);
-		} else {
-			m_pages.put("/" + target, page);
-		}
+	public void add(APage page) {
+		assert page.getSource() != null;
+		m_pages.put(page.getSource(), page);
 	}
 
 	public APage getPage(String target) {

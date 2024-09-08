@@ -37,14 +37,14 @@ public class TFormTest extends TestWithBackend {
 	public void browse() {
 
 		// UI: building the page
-		final Page page = new Page("Home");
+		final Page page = new Page("Home", "/index");
 		final Form form = new Form("Test form", "/form");
 		form.createInputString("Name", "name");
 		form.createInputNumber("Age", "age");
 		page.append(form);
 
 		// Backend
-		startBackend("/index", page);
+		startBackend(page);
 		// Atomic references will store the values sent by the browser to the backend web service
 		final AtomicReference<String> submittedName = new AtomicReference<>();
 		final AtomicReference<Integer> submittedAge = new AtomicReference<>();
