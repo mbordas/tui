@@ -18,7 +18,7 @@ header {
     color:  var(--global-color-background-contrast);
     background-color: var(--global-color-background);
     padding: 10px;
-    border-bottom: solid;
+    border-bottom: solid 1px;
 }
 header a {
     text-align: center;
@@ -29,6 +29,7 @@ footer {
     color:  var(--global-color-background-contrast);
     background-color: var(--global-color-background);
     padding: 10px;
+    border-top: solid 1px;
 }
 
 p {
