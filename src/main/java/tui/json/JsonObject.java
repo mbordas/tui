@@ -21,7 +21,7 @@ public abstract class JsonObject {
 
 	public static final String KEY_TYPE = "type";
 
-	protected final String m_type;
+	protected String m_type;
 	protected int m_prettyPrintDepth = 0;
 
 	public abstract String toJson();
@@ -29,6 +29,10 @@ public abstract class JsonObject {
 	public abstract void setPrettyPrintDepth(int depth);
 
 	public JsonObject(String type) {
+		m_type = type;
+	}
+
+	public void setType(String type) {
 		m_type = type;
 	}
 

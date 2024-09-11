@@ -50,10 +50,19 @@ public class RequestReader {
 		return valueStr == null ? null : Integer.valueOf(valueStr);
 	}
 
-	public Integer getIntParameter(String key) {
+	public int getIntParameter(String key) {
 		final Integer result = getIntegerParameter(key);
 		if(result == null) {
 			throw new NullPointerException(String.format("expected parameter '%s' not found in request", key));
+		} else {
+			return result;
+		}
+	}
+
+	public int getIntParameter(String key, int defaultValue) {
+		final Integer result = getIntegerParameter(key);
+		if(result == null) {
+			return defaultValue;
 		} else {
 			return result;
 		}

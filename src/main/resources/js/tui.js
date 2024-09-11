@@ -28,6 +28,7 @@ function onload() {
     instrumentTables();
     instrumentMonitorFields();
     instrumentRefreshButtons();
+    instrumentSearchForms();
 
     updateMonitorFields();
 }
@@ -38,6 +39,7 @@ function onload() {
 */
 async function refreshComponent(id, data) {
     const element = document.getElementById(id);
+    setFetchData(element, data);
     const component = document.getElementById(id);
     const sourcePath = component.getAttribute('tui-source');
     console.log('refreshing component ' + id + ' with source: ' + sourcePath);
@@ -77,6 +79,20 @@ async function refreshComponent(id, data) {
         .catch(error => {
             showFetchError(component, error);
         });
+}
+
+/*
+    Links parameters map 'data' to the element so that it will be used to complete the future Ajax requests when refreshing the element.
+*/
+function setFetchData(element, data) {
+    element.fetch_data = data;
+}
+
+/*
+    Gives the parameters map that are linked to the element. These parameters must be added to any refreshing Ajax request.
+*/
+function getFetchData(element) {
+    return (typeof element.fetch_data === 'undefined') ? {} : element.fetch_data;
 }
 
 function createComponent(json) {
@@ -179,6 +195,22 @@ function instrumentRefreshButtons() {
                   .forEach(function(id, i) {
                       refreshComponent(id);
                   });
+        });
+    });
+}
+
+// SEARCH
+
+function instrumentSearchForms() {
+    const searchForms = document.querySelectorAll('.tui-search-form');
+    searchForms.forEach(function(searchElement, i) {
+        const button = searchElement.querySelector('button');
+        button.addEventListener('click', function() {
+            const searched = searchElement.querySelectorAll("input[name='search']")[0].value;
+            searchElement.getAttribute('tui-refresh-listeners').split(",")
+                .forEach(function(id, i) {
+                    refreshComponent(id, {search: searched});
+                });
         });
     });
 }
@@ -325,7 +357,10 @@ function instrumentTables() {
                 previousPageButton.innerHTML = '<';
                 previousPageButton.onclick = function() {
                     const pageNumber = parseInt(table.getAttribute('tui-page-number'));
-                    refreshComponent(table.id, {page_size: pageSize, page_number: Math.max(1, pageNumber - 1)});
+                    const fetchData = getFetchData(table);
+                    fetchData.page_size = pageSize;
+                    fetchData.page_number = Math.max(1, pageNumber - 1);
+                    refreshComponent(table.id, fetchData);
                 };
                 tableNavigation.append(previousPageButton);
 
@@ -335,7 +370,10 @@ function instrumentTables() {
                 nextPageButton.onclick = function() {
                     const pageNumber = parseInt(table.getAttribute('tui-page-number'));
                     const lastPageNumber = parseInt(table.getAttribute('tui-last-page-number'));
-                    refreshComponent(table.id, {page_size: pageSize, page_number: Math.min(pageNumber + 1, lastPageNumber)});
+                    const fetchData = getFetchData(table);
+                    fetchData.page_size = pageSize;
+                    fetchData.page_number = Math.min(pageNumber + 1, lastPageNumber);
+                    refreshComponent(table.id, fetchData);
                 };
                 tableNavigation.append(nextPageButton);
 
