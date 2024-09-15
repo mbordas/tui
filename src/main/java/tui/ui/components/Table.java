@@ -19,11 +19,15 @@ import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.UIConfigurationException;
 import tui.ui.components.form.Form;
+import tui.utils.TUIUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Table extends UIRefreshableComponent {
 
@@ -41,6 +45,8 @@ public class Table extends UIRefreshableComponent {
 	final TableData m_data;
 	private String m_sourcePath = null;
 	private Integer m_pageSize = null;
+	private Set<String> m_hiddenColumns = new HashSet<>();
+	private boolean m_hiddenHead = false;
 
 	public Table(String title, Collection<String> columns) {
 		m_title = title;
@@ -49,6 +55,14 @@ public class Table extends UIRefreshableComponent {
 
 	public String getTitle() {
 		return m_title;
+	}
+
+	public void hideColumn(String column) {
+		m_hiddenColumns.add(column);
+	}
+
+	public void hideHead() {
+		m_hiddenHead = true;
 	}
 
 	public void setSource(String path) {
@@ -117,6 +131,14 @@ public class Table extends UIRefreshableComponent {
 		final HTMLNode tableElement = containedElement.element();
 		tableElement.setAttribute("class", HTML_CLASS);
 
+		final Set<Integer> hiddenColumnsIndexes = computeHiddenColumnsIndexes();
+		if(!m_hiddenColumns.isEmpty()) {
+			tableElement.setAttribute("tui-hidden-columns", TUIUtils.toStringSeparatedByComa(hiddenColumnsIndexes.iterator()));
+		}
+		if(m_hiddenHead) {
+			tableElement.setAttribute("tui-hidden-head", "true");
+		}
+
 		if(hasSource()) {
 			if(m_pageSize != null) {
 				tableElement.setAttribute("tui-page-size", m_pageSize);
@@ -132,16 +154,31 @@ public class Table extends UIRefreshableComponent {
 
 		final HTMLNode head = tableElement.createChild("thead");
 		final HTMLNode headRow = head.createChild("tr");
-		for(String column : getColumns()) {
-			headRow.createChild("th").setText(column);
+		if(m_hiddenHead) {
+			headRow.addClass("tui-hidden-head");
+		}
+		{
+			int colIndex = 0;
+			for(String column : getColumns()) {
+				final HTMLNode th = headRow.createChild("th").setText(column);
+				if(hiddenColumnsIndexes.contains(colIndex)) {
+					th.addClass("tui-hidden-column");
+				}
+				colIndex++;
+			}
 		}
 
 		final HTMLNode body = tableElement.createChild("tbody");
 		int rowNumber = 1;
 		for(List<Object> _row : getRows()) {
 			final HTMLNode row = body.createChild("tr");
+			int colIndex = 0;
 			for(Object _cell : _row) {
-				row.createChild("td").setText(_cell == null ? "" : String.valueOf(_cell));
+				final HTMLNode td = row.createChild("td").setText(_cell == null ? "" : String.valueOf(_cell));
+				if(hiddenColumnsIndexes.contains(colIndex)) {
+					td.addClass("tui-hidden-column");
+				}
+				colIndex++;
 			}
 			rowNumber++;
 			if(m_pageSize != null && rowNumber >= m_pageSize) {
@@ -150,6 +187,16 @@ public class Table extends UIRefreshableComponent {
 		}
 
 		return containedElement.getHigherNode();
+	}
+
+	Set<Integer> computeHiddenColumnsIndexes() {
+		final TreeSet<Integer> indexes = new TreeSet<>();
+		for(int i = 0; i < m_data.m_columns.size(); i++) {
+			if(m_hiddenColumns.contains(m_data.m_columns.get(i))) {
+				indexes.add(i);
+			}
+		}
+		return indexes;
 	}
 
 	public JsonMap toJsonMap() {

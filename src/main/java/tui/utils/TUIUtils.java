@@ -23,10 +23,14 @@ import java.util.stream.Collectors;
 public class TUIUtils {
 
 	public static String toTUIDsSeparatedByComa(Iterator<Long> tuidIterator) {
+		return toStringSeparatedByComa(tuidIterator);
+	}
+
+	public static String toStringSeparatedByComa(Iterator<? extends Object> values) {
 		final StringBuilder result = new StringBuilder();
-		while(tuidIterator.hasNext()) {
-			result.append(tuidIterator.next());
-			if(tuidIterator.hasNext()) {
+		while(values.hasNext()) {
+			result.append(values.next().toString());
+			if(values.hasNext()) {
 				result.append(",");
 			}
 		}

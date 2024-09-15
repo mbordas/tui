@@ -13,7 +13,7 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.components;
 
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
@@ -24,18 +24,35 @@ import tui.http.TUIWebService;
 import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
-import tui.ui.components.Page;
-import tui.ui.components.Table;
-import tui.ui.components.TableData;
+import tui.ui.TablePickerTest;
+import tui.ui.UI;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
 public class TableTest extends TestWithBackend {
+
+	@Test
+	public void computeHiddenColumnsIndexes() {
+		final Table table = new Table("title", List.of("A", "B", "C"));
+		table.hideColumn("B");
+		table.hideColumn("A");
+
+		//
+		final Set<Integer> hiddenColumnsIndexes = table.computeHiddenColumnsIndexes();
+		//
+
+		assertEquals(2, hiddenColumnsIndexes.size());
+		final Iterator<Integer> iterator = hiddenColumnsIndexes.iterator();
+		assertEquals(0, (int) iterator.next());
+		assertEquals(1, (int) iterator.next());
+	}
 
 	@Test
 	public void toJson() {

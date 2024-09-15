@@ -50,6 +50,8 @@ public class MailViewer {
 		ui.add(page);
 
 		final TablePicker mailSelector = new TablePicker("Inbox", List.of("id", "date", "subject"));
+		mailSelector.hideColumn("id");
+		mailSelector.hideHead();
 		for(Email email : emails) {
 			mailSelector.append(Map.of("id", email.id, "date", email.date, "subject", email.subject));
 		}

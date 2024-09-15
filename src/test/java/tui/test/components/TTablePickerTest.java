@@ -33,8 +33,8 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static tui.ui.TableTest.buildItems;
-import static tui.ui.TableTest.putItemsInTable;
+import static tui.ui.components.TableTest.buildItems;
+import static tui.ui.components.TableTest.putItemsInTable;
 
 public class TTablePickerTest extends TestWithBackend {
 

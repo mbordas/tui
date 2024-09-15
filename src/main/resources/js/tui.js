@@ -419,12 +419,16 @@ function instrumentTablePicker(tablePickerElement) {
 
 async function updateTable(tableElement, json) {
     const freshBody = document.createElement("tbody");
+    const hiddenColumnsIndexes = 'tui-hidden-columns' in json? json['tui-hidden-columns'].split(",").map(function(str) { return parseInt(str); }) : [];
     for(var r = 0; r < json['tbody'].length; r++) {
         const row = json['tbody'][r];
         const freshRow = document.createElement("tr");
         for(var c = 0; c < row.length; c++) {
             const cell = row[c];
             const freshCell = document.createElement("td");
+            if(hiddenColumnsIndexes.includes(c)) {
+                freshCell.classList.add("tui-hidden-column");
+            }
             freshRow.append(freshCell);
             freshCell.textContent = cell;
         }
