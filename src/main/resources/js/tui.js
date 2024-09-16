@@ -66,7 +66,7 @@ async function refreshComponent(id, data) {
             const type = json['type'];
             if(type == 'paragraph') {
                 updateParagraph(component, json);
-            } else if(type == 'table' || type == 'table-data') {
+            } else if(type == 'table' || type == 'tablepicker' || type == 'table-data') {
                 updateTable(component, json);
             } else if(type == 'svg') {
                 updateSVG(component, json);
@@ -418,7 +418,7 @@ function instrumentTablePicker(tablePickerElement) {
 }
 
 async function updateTable(tableElement, json) {
-    const freshBody = document.createElement("tbody");
+    const freshBody = document.createElement('tbody');
     const hiddenColumnsIndexes = 'hiddenColumns' in json? json['hiddenColumns'] : [];
     for(var r = 0; r < json['tbody'].length; r++) {
         const row = json['tbody'][r];
@@ -443,7 +443,7 @@ async function updateTable(tableElement, json) {
 
     tableElement.getElementsByTagName('tbody')[0].replaceWith(freshBody);
 
-    instrumentTablePicker(tableElement);
+    instrumentTablePicker(tableElement.parentElement);
 }
 
 function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastItemNumber) {

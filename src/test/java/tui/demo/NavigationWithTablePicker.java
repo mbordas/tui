@@ -21,7 +21,6 @@ import tui.test.Browser;
 import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
-import tui.ui.components.Table;
 import tui.ui.components.TablePicker;
 import tui.ui.components.form.Search;
 import tui.ui.components.layout.CenteredFlow;
@@ -57,6 +56,7 @@ public class NavigationWithTablePicker {
 		search.connectListener(mailSelector);
 		mailNavigationGrid.set(0, 0, mailSelector);
 		mailSelector.hideColumn("id");
+		mailSelector.hideColumn("date");
 		mailSelector.hideHead();
 		for(MailViewer.Email email : emails) {
 			mailSelector.append(Map.of("id", email.id(), "date", email.date(), "subject", email.subject()));
@@ -77,12 +77,13 @@ public class NavigationWithTablePicker {
 		backend.registerWebService(mailSelector.getSource(), (uri, request, response) -> {
 			final RequestReader requestReader = new RequestReader(request);
 			final String searched = requestReader.getStringParameter(Search.PARAMETER_NAME);
-			final Table table = new Table(mailSelector.getTitle(), mailSelector.getColumns());
+			final TablePicker table = new TablePicker(mailSelector.getTitle(), mailSelector.getColumns());
 			emails.stream()
 					.filter((email) -> email.subject().contains(searched))
 					.forEach((email) -> table.append(Map.of("id", email.id(), "date", email.date(), "subject", email.subject())));
 			table.hideColumn("id");
 			table.hideColumn("date");
+			table.hideHead();
 			return table.toJsonMap();
 		});
 

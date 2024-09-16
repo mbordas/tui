@@ -25,7 +25,7 @@ public class JsonString extends JsonValue<String> {
 
 	@Override
 	public String toJson() {
-		return String.format("\"%s\"", getValue());
+		return String.format("\"%s\"", escape(getValue()));
 	}
 
 	@Override
@@ -37,4 +37,18 @@ public class JsonString extends JsonValue<String> {
 		return getValue();
 	}
 
+	/**
+	 * See <a href="https://www.json.org/json-en.html">...</a>
+	 */
+	private String escape(String input) {
+		String result = input;
+		result = result.replace("\\", "\\\\");
+		result = result.replace("\"", "\\\"");
+		result = result.replace("\b", "\\b");
+		result = result.replace("\f", "\\f");
+		result = result.replace("\n", "\\n");
+		result = result.replace("\r", "\\r");
+		result = result.replace("\t", "\\t");
+		return result;
+	}
 }
