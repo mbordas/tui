@@ -419,7 +419,7 @@ function instrumentTablePicker(tablePickerElement) {
 
 async function updateTable(tableElement, json) {
     const freshBody = document.createElement("tbody");
-    const hiddenColumnsIndexes = 'tui-hidden-columns' in json? json['tui-hidden-columns'].split(",").map(function(str) { return parseInt(str); }) : [];
+    const hiddenColumnsIndexes = 'hiddenColumns' in json? json['hiddenColumns'] : [];
     for(var r = 0; r < json['tbody'].length; r++) {
         const row = json['tbody'][r];
         const freshRow = document.createElement("tr");

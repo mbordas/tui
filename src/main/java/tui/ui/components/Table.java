@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import tui.html.HTMLNode;
+import tui.json.JsonLong;
 import tui.json.JsonMap;
 import tui.ui.UIConfigurationException;
 import tui.ui.components.form.Form;
@@ -31,12 +32,13 @@ import java.util.TreeSet;
 
 public class Table extends UIRefreshableComponent {
 
-	public static final String JSON_TYPE = "table";
-
 	public static final String HTML_CLASS = "tui-table";
 	public static final String HTML_CLASS_CONTAINER = "tui-table-container";
 	public static final String HTML_CLASS_NAVIGATION = "tui-table-navigation";
+	public static final String JSON_TYPE = "table";
 	public static final String ATTRIBUTE_SOURCE = "source";
+	public static final String ATTRIBUTE_HIDDEN_HEAD = "hiddenHead";
+	public static final String ATTRIBUTE_HIDDEN_COLUMNS = "hiddenColumns";
 	public static final String PARAMETER_PAGE_NUMBER = "page_number";
 	public static final String PARAMETER_PAGE_SIZE = "page_size";
 
@@ -208,6 +210,13 @@ public class Table extends UIRefreshableComponent {
 		result.setAttribute("title", getTitle());
 		if(getSource() != null) {
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
+		}
+		if(m_hiddenHead) {
+			result.setAttribute(ATTRIBUTE_HIDDEN_HEAD, "true");
+		}
+		if(!m_hiddenColumns.isEmpty()) {
+			result.createArray(ATTRIBUTE_HIDDEN_COLUMNS,
+					computeHiddenColumnsIndexes(), (columnIndex) -> new JsonLong(columnIndex));
 		}
 
 		TableData.fill(result, m_data);

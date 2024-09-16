@@ -28,6 +28,7 @@ public class Grid extends UIRefreshableComponent {
 	public static final String JSON_TYPE = "grid";
 
 	private final UIComponent[][] m_components;
+	private Integer m_firstColumnWidth_px = null;
 
 	public Grid(int rows, int columns) {
 		assert rows > 0;
@@ -35,8 +36,14 @@ public class Grid extends UIRefreshableComponent {
 		m_components = new UIComponent[rows][columns];
 	}
 
-	public void set(int rowIndex, int columnIndex, UIComponent component) {
+	public Grid setFirstColumnWidth_px(int width_px) {
+		m_firstColumnWidth_px = width_px;
+		return this;
+	}
+
+	public Grid set(int rowIndex, int columnIndex, UIComponent component) {
 		m_components[rowIndex][columnIndex] = component;
+		return this;
 	}
 
 	@Override
@@ -48,7 +55,7 @@ public class Grid extends UIRefreshableComponent {
 		gridElement.setAttribute("style",
 				String.format("grid-template-rows: %s;grid-template-columns: %s",
 						"1fr ".repeat(m_components.length),
-						"1fr ".repeat(m_components[0].length)));
+						computeGridTemplateColumns()));
 
 		for(final UIComponent[] row : m_components) {
 			for(final UIComponent cell : row) {
@@ -63,6 +70,14 @@ public class Grid extends UIRefreshableComponent {
 		}
 
 		return containedElement.getHigherNode();
+	}
+
+	String computeGridTemplateColumns() {
+		if(m_firstColumnWidth_px != null) {
+			return String.format("%dpx ", m_firstColumnWidth_px) + "1fr ".repeat(m_components[0].length - 1);
+		} else {
+			return "1fr ".repeat(m_components[0].length);
+		}
 	}
 
 	@Override

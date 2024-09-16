@@ -21,60 +21,83 @@ import tui.test.Browser;
 import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
+import tui.ui.components.Table;
 import tui.ui.components.TablePicker;
+import tui.ui.components.form.Search;
 import tui.ui.components.layout.CenteredFlow;
 import tui.ui.components.layout.Grid;
+import tui.utils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MailViewer {
-
-	public record Email(String id, String date, String subject, String content) {
-	}
+public class NavigationWithTablePicker {
 
 	public static void main(String[] args) throws Exception {
-
-		final List<Email> emails = new ArrayList<>();
-		for(int i = 0; i < 10; i++) {
-			emails.add((new Email(String.valueOf(i), String.format("%d days ago", i + 1), "Subject " + i, "content ".repeat(i + 1))));
+		final List<MailViewer.Email> emails = new ArrayList<>();
+		for(int i = 0; i < 30; i++) {
+			final String subject = String.format("SUB #%d", (int) (1000.0 * Math.random()));
+			emails.add((new MailViewer.Email(String.valueOf(i), String.format("%d days ago", i + 1), subject,
+					i + 1 + " " + TestUtils.LOREM_IPSUM)));
 		}
 
-		final UI ui = new UI();
-		ui.setHTTPBackend("localhost", 8080);
 		final Page page = new Page("Home", "/index");
 		page.setReadingWidth(CenteredFlow.Width.NORMAL);
 		page.setHeader(new Paragraph("Header").setAlign(Paragraph.TextAlign.CENTER));
 		page.setFooter(new Paragraph().appendNormal("Example footer text").setAlign(Paragraph.TextAlign.RIGHT));
-		ui.add(page);
+
+		final Search search = new Search("Search in subject", "Subject contains");
+		page.append(search);
+
+		final Grid mailNavigationGrid = new Grid(1, 2).setFirstColumnWidth_px(200);
 
 		final TablePicker mailSelector = new TablePicker("Inbox", List.of("id", "date", "subject"));
+		mailSelector.setSource("/email/list");
+		search.connectListener(mailSelector);
+		mailNavigationGrid.set(0, 0, mailSelector);
 		mailSelector.hideColumn("id");
 		mailSelector.hideHead();
-		for(Email email : emails) {
-			mailSelector.append(Map.of("id", email.id, "date", email.date, "subject", email.subject));
+		for(MailViewer.Email email : emails) {
+			mailSelector.append(Map.of("id", email.id(), "date", email.date(), "subject", email.subject()));
 		}
-		page.append(mailSelector);
 
 		final Grid mailView = new Grid(2, 1);
+		mailNavigationGrid.set(0, 1, mailView);
 		mailView.setSource("/email/view");
 		mailSelector.connectListener(mailView);
-		page.append(mailView);
 
+		page.append(mailNavigationGrid);
+
+		final UI ui = new UI();
+		ui.setHTTPBackend("localhost", 8080);
+		ui.add(page);
 		final TUIBackend backend = new TUIBackend(ui);
+
+		backend.registerWebService(mailSelector.getSource(), (uri, request, response) -> {
+			final RequestReader requestReader = new RequestReader(request);
+			final String searched = requestReader.getStringParameter(Search.PARAMETER_NAME);
+			final Table table = new Table(mailSelector.getTitle(), mailSelector.getColumns());
+			emails.stream()
+					.filter((email) -> email.subject().contains(searched))
+					.forEach((email) -> table.append(Map.of("id", email.id(), "date", email.date(), "subject", email.subject())));
+			table.hideColumn("id");
+			table.hideColumn("date");
+			return table.toJsonMap();
+		});
+
 		backend.registerWebService(mailView.getSource(), (uri, request, response) -> {
 			final RequestReader requestReader = new RequestReader(request);
 			final String id = requestReader.getStringParameter("id");
-			final Email email = emails.stream().filter((_email) -> _email.id.equals(id)).findAny().get();
+			final MailViewer.Email email = emails.stream().filter((_email) -> _email.id().equals(id)).findAny().get();
 
 			final Grid result = new Grid(2, 1);
 			final Grid header = new Grid(3, 1);
-			header.set(0, 0, new Paragraph().appendStrong("Subject: ").appendNormal(email.subject));
-			header.set(1, 0, new Paragraph().appendStrong("Date: ").appendNormal(email.date));
+			header.set(0, 0, new Paragraph().appendStrong("Subject: ").appendNormal(email.subject()));
+			header.set(1, 0, new Paragraph().appendStrong("Date: ").appendNormal(email.date()));
 			header.set(2, 0, new Paragraph().appendStrong("Content:"));
 			result.set(0, 0, header);
-			result.set(1, 0, new Paragraph(email.content).withBorder(true));
+			result.set(1, 0, new Paragraph(email.content()).withBorder(true));
 			return result.toJsonMap();
 		});
 		backend.start();
