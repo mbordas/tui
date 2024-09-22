@@ -15,11 +15,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.monitoring;
 
+import org.jetbrains.annotations.NotNull;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 
-public class MonitorFieldGreenRed extends MonitorField {
+public class MonitorFieldGreenRed extends MonitorField implements Comparable<MonitorField> {
 
 	public static final String HTML_CLASS = HTML_CLASS_BASE + " tui-monitor-field-greenred";
 	public static final String HTML_CLASS_LABEL = "tui-monitor-field-label";
@@ -32,7 +33,11 @@ public class MonitorFieldGreenRed extends MonitorField {
 	}
 
 	private Value m_value = Value.NEUTRAL;
+	private boolean m_displayLabel = true;
 
+	/**
+	 * @param label Note that it will be used for sorting.
+	 */
 	public MonitorFieldGreenRed(String name, String label) {
 		super(name, label);
 	}
@@ -43,8 +48,17 @@ public class MonitorFieldGreenRed extends MonitorField {
 		return this;
 	}
 
+	public void displayLabel(boolean enable) {
+		m_displayLabel = enable;
+	}
+
 	public Value getValue() {
 		return m_value;
+	}
+
+	@Override
+	public int compareTo(@NotNull MonitorField other) {
+		return getLabel().compareTo(other.getLabel());
 	}
 
 	@Override
@@ -54,7 +68,9 @@ public class MonitorFieldGreenRed extends MonitorField {
 				.setAttribute("class", HTML_CLASS)
 				.setAttribute("monitor-field-name", getName())
 				.setAttribute("value", getValue().name());
-		result.createChild("span").setAttribute("class", HTML_CLASS_LABEL).setText(getLabel());
+		if(m_displayLabel) {
+			result.createChild("span").setAttribute("class", HTML_CLASS_LABEL).setText(getLabel());
+		}
 		result.createChild("span").setAttribute("class", HTML_CLASS_VALUE).setText(getText());
 
 		return result;
@@ -63,6 +79,7 @@ public class MonitorFieldGreenRed extends MonitorField {
 	@Override
 	public JsonMap toJsonMap() {
 		return new JsonMap(JSON_TYPE, getTUID())
+				.setAttribute("name", getName())
 				.setAttribute("value", getValue().name())
 				.setAttribute("text", getText());
 	}

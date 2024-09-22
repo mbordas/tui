@@ -521,7 +521,7 @@ async function refreshMonitorFields(sourcePath, fieldset) {
                 switch(field.type) {
                     case 'monitor-field-greenred':
                         // Selecting element by numeric id must be handled that (weird) way
-                        const fieldDiv = fieldset.querySelector("[id='" + field.tuid + "']");
+                        const fieldDiv = document.querySelector("[monitor-field-name='" + field.name + "']");
                         if(fieldDiv) {
                             fieldDiv.setAttribute('value', field.value);
                             const valueSpan = fieldDiv.querySelector('.tui-monitor-field-value');
