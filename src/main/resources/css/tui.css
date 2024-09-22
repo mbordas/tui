@@ -97,6 +97,10 @@ p {
     justify-items: stretch;
 }
 
+.tui-vertical-scroll {
+    overflow-y: auto;
+}
+
 /* FORM */
 
 form {

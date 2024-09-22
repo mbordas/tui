@@ -22,6 +22,7 @@ import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.layout.CenteredFlow;
 import tui.ui.components.layout.Grid;
+import tui.ui.components.layout.VerticalScroll;
 import tui.ui.components.monitoring.MonitorField;
 import tui.ui.components.monitoring.MonitorFieldGreenRed;
 import tui.ui.components.monitoring.MonitorFieldSet;
@@ -95,7 +96,8 @@ public class Monitoring {
 			leftGrid.set(row.get(), 3, emptyField());
 			row.getAndIncrement();
 		});
-		mainGrid.set(0, 0, leftGrid);
+
+		mainGrid.set(0, 0, new VerticalScroll(800, leftGrid));
 
 		final UI ui = new UI();
 		ui.setHTTPBackend("http://localhost", 8080);
