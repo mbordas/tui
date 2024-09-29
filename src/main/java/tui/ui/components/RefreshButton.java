@@ -27,14 +27,23 @@ public class RefreshButton extends UIComponent {
 	public static final String HTML_CLASS = "tui-refresh-button";
 	public static final String JSON_TYPE = "refreshButton";
 
+	public static final String HTML_ATTRIBUTE_KEY = "tui-key";
+
 	public static final String ATTRIBUTE_REFRESH_LISTENERS = "tui-refresh-listeners";
+
+	public static final String PARAMETER_NAME = "key";
 
 	private final Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
 
 	private final String m_label;
+	private String m_key = null; // This parameter will be sent to backend on refresh calls when it's not null
 
 	public RefreshButton(String label) {
 		m_label = label;
+	}
+
+	public void setKey(String key) {
+		m_key = key;
 	}
 
 	public String getLabel() {
@@ -55,6 +64,9 @@ public class RefreshButton extends UIComponent {
 				.setAttribute("type", "button")
 				.setAttribute("class", HTML_CLASS)
 				.setText(m_label);
+		if(m_key != null) {
+			result.setAttribute(HTML_ATTRIBUTE_KEY, m_key);
+		}
 		if(!m_connectedComponents.isEmpty()) {
 			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}

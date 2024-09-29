@@ -35,7 +35,6 @@ public class Style {
 	);
 
 	public record TableColors(Color rowHover) {
-
 	}
 
 	private TableColors m_tableStyle = new TableColors(

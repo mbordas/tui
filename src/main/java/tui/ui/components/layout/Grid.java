@@ -52,11 +52,10 @@ public class Grid extends UIRefreshableComponent {
 
 		final HTMLNode gridElement = containedElement.element();
 		gridElement.setClass(HTML_CLASS);
-		gridElement.setAttribute("style",
-				String.format("grid-template-rows: %s;grid-template-columns: %s",
-						"1fr ".repeat(m_components.length),
-						computeGridTemplateColumns()));
 
+		gridElement.setStyleProperty("grid-template-rows", "1fr ".repeat(m_components.length));
+		gridElement.setStyleProperty("grid-template-columns", computeGridTemplateColumns());
+		
 		for(final UIComponent[] row : m_components) {
 			for(final UIComponent cell : row) {
 				final HTMLNode childElement;

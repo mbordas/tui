@@ -13,56 +13,24 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.html;
 
 import org.junit.Test;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
-import tui.test.components.TComponent;
-import tui.test.components.TComponentFactory;
-import tui.test.components.TPage;
-import tui.ui.components.Page;
-import tui.ui.components.Section;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class PageTest {
-
-	@Test
-	public void toJsonAndTPage() {
-		Page page = new Page("Empty page");
-		page.createSection("section A");
-
-		final JsonMap jsonMap = page.toJsonMap();
-
-		final TComponent _page = TComponentFactory.parse(jsonMap, null);
-
-		assertTrue(_page instanceof TPage);
-	}
+public class HTMLNodeTest {
 
 	@Test
-	public void toJsonMap() {
-		final Page page = new Page("Empty page");
-		final Section section = page.createSection("section A");
+	public void setStyleProperty() {
+		HTMLNode.PRETTY_PRINT = false;
+		final HTMLNode node = new HTMLNode("div");
 
-		//
-		final JsonMap jsonMap = page.toJsonMap();
-		//
+		node.setStyleProperty("display", "grid");
+		assertEquals("<div style=\"display: grid;\"/>", node.toHTML());
 
-		assertEquals(Page.JSON_TYPE, jsonMap.getType());
-
-		//
-		JsonObject.PRETTY_PRINT = false;
-		final String json = jsonMap.toJson();
-		//
-
-		assertEquals(
-				String.format(
-						"{\"type\": \"page\",\"tuid\": \"%d\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"%d\",\"title\": \"section A\",\"content\": []}]}",
-						page.getTUID(), section.getTUID()),
-				json);
-
+		node.setStyleProperty("width", "100%");
+		assertEquals("<div style=\"display: grid;width: 100%;\"/>", node.toHTML());
 	}
 
 }

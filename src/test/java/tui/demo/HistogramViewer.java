@@ -13,56 +13,45 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.demo;
 
-import org.junit.Test;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
-import tui.test.components.TComponent;
-import tui.test.components.TComponentFactory;
-import tui.test.components.TPage;
+import tui.http.TUIBackend;
+import tui.test.Browser;
+import tui.ui.UI;
 import tui.ui.components.Page;
-import tui.ui.components.Section;
+import tui.ui.components.Paragraph;
+import tui.ui.components.layout.Layouts;
+import tui.ui.components.svg.SVG;
+import tui.ui.components.svg.SVGRectangle;
+import tui.utils.TestUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.awt.*;
 
-public class PageTest {
+public class HistogramViewer {
 
-	@Test
-	public void toJsonAndTPage() {
-		Page page = new Page("Empty page");
-		page.createSection("section A");
+	private static SVG buildSVG(int width_px, int height_px) {
+		final SVG result = new SVG(width_px, height_px);
 
-		final JsonMap jsonMap = page.toJsonMap();
+		result.add(new SVGRectangle(0, 0, width_px, height_px).withStrokeColor(Color.BLACK));
 
-		final TComponent _page = TComponentFactory.parse(jsonMap, null);
-
-		assertTrue(_page instanceof TPage);
+		return result;
 	}
 
-	@Test
-	public void toJsonMap() {
-		final Page page = new Page("Empty page");
-		final Section section = page.createSection("section A");
+	public static void main(String[] args) throws Exception {
+		final Page page = new Page("Histogram", "/index");
+		page.setReadingWidth(Layouts.Width.NORMAL);
 
-		//
-		final JsonMap jsonMap = page.toJsonMap();
-		//
+		page.append(buildSVG(400, 300));
 
-		assertEquals(Page.JSON_TYPE, jsonMap.getType());
+		page.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(Layouts.TextAlign.LEFT));
 
-		//
-		JsonObject.PRETTY_PRINT = false;
-		final String json = jsonMap.toJson();
-		//
+		final UI ui = new UI();
+		ui.setHTTPBackend("http://localhost", 8080);
+		ui.add(page);
+		final TUIBackend backend = new TUIBackend(ui);
+		backend.start();
 
-		assertEquals(
-				String.format(
-						"{\"type\": \"page\",\"tuid\": \"%d\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"%d\",\"title\": \"section A\",\"content\": []}]}",
-						page.getTUID(), section.getTUID()),
-				json);
-
+		final Browser browser = new Browser(backend.getPort());
+		browser.open(page.getSource());
 	}
-
 }

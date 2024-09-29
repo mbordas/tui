@@ -53,7 +53,7 @@ public class VerticalScroll extends UIComponent {
 		final HTMLNode result = new HTMLNode("div")
 				.setAttribute("id", HTMLConstants.toId(getTUID()))
 				.setAttribute("class", HTML_CLASS)
-				.setAttribute("style", String.format("height: %dpx;", m_height_px));
+				.setStyleProperty("height", String.format("%dpx;", m_height_px));
 
 		for(UIComponent component : getContent()) {
 			result.addChild(component.toHTMLNode());

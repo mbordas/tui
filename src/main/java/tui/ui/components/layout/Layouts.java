@@ -13,56 +13,52 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.components.layout;
 
-import org.junit.Test;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
-import tui.test.components.TComponent;
-import tui.test.components.TComponentFactory;
-import tui.test.components.TPage;
-import tui.ui.components.Page;
-import tui.ui.components.Section;
+public class Layouts {
+	public enum Width {
+		NORMAL("tui-reading-normal"),
+		WIDE("tui-reading-wide"),
+		MAX("tui-reading-max");
+		private final String m_htmlClass;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+		Width(String htmlClass) {
+			m_htmlClass = htmlClass;
+		}
 
-public class PageTest {
-
-	@Test
-	public void toJsonAndTPage() {
-		Page page = new Page("Empty page");
-		page.createSection("section A");
-
-		final JsonMap jsonMap = page.toJsonMap();
-
-		final TComponent _page = TComponentFactory.parse(jsonMap, null);
-
-		assertTrue(_page instanceof TPage);
+		public String getHTMLClass() {
+			return m_htmlClass;
+		}
 	}
 
-	@Test
-	public void toJsonMap() {
-		final Page page = new Page("Empty page");
-		final Section section = page.createSection("section A");
+	public enum Spacing {
+		FIT("tui-spacing-fit"),
+		COMPACT("tui-spacing-compact"),
+		NORMAL("tui-spacing-normal"),
+		LARGE("tui-spacing-large");
 
-		//
-		final JsonMap jsonMap = page.toJsonMap();
-		//
+		private final String m_htmlClass;
 
-		assertEquals(Page.JSON_TYPE, jsonMap.getType());
+		Spacing(String htmlClass) {
+			m_htmlClass = htmlClass;
+		}
 
-		//
-		JsonObject.PRETTY_PRINT = false;
-		final String json = jsonMap.toJson();
-		//
-
-		assertEquals(
-				String.format(
-						"{\"type\": \"page\",\"tuid\": \"%d\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"%d\",\"title\": \"section A\",\"content\": []}]}",
-						page.getTUID(), section.getTUID()),
-				json);
-
+		public String getHTMLClass() {
+			return m_htmlClass;
+		}
 	}
 
+	public enum TextAlign {
+		LEFT("tui-align-left"), CENTER("tui-align-center"), RIGHT("tui-align-right"), STRETCH("tui-align-stretch");
+
+		private String m_htmlClass;
+
+		private TextAlign(String htmlClass) {
+			m_htmlClass = htmlClass;
+		}
+
+		public String getHTMLClass() {
+			return m_htmlClass;
+		}
+	}
 }

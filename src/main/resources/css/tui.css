@@ -90,6 +90,19 @@ p {
 
 /* LAYOUTS */
 
+.tui-spacing-fit {
+    padding-top: 0px;
+}
+.tui-spacing-compact {
+    padding-top: 10px;
+}
+.tui-spacing-normal {
+    padding-top: 20px;
+}
+.tui-spacing-large {
+    padding-top: 30px;
+}
+
 .tui-grid {
     display: grid;
     margin: 0px;

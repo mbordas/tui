@@ -23,33 +23,37 @@ import tui.ui.components.UIComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CenteredFlow extends UIComponent {
+public class VerticalFlow extends UIComponent {
 
 	public static final String JSON_TYPE = "centered_flow";
 
-	public enum Width {
-		NORMAL("tui-reading-normal"), WIDE("tui-reading-wide"), MAX("tui-reading-max");
-		private final String m_htmlClass;
-
-		Width(String htmlClass) {
-			m_htmlClass = htmlClass;
-		}
-
-		public String getHTMLClass() {
-			return m_htmlClass;
-		}
-	}
-
-	private Width m_width = Width.NORMAL;
+	private Layouts.Width m_width = Layouts.Width.NORMAL;
+	private Layouts.Spacing m_spacing = Layouts.Spacing.NORMAL;
 	private final List<UIComponent> m_content = new ArrayList<>();
 
-	public CenteredFlow setWidth(@NotNull Width width) {
+	public VerticalFlow setWidth(@NotNull Layouts.Width width) {
 		m_width = width;
 		return this;
 	}
 
+	public VerticalFlow setSpacing(Layouts.Spacing spacing) {
+		m_spacing = spacing;
+		return this;
+	}
+
+	public <C extends UIComponent> C append(C component) {
+		m_content.add(component);
+		return component;
+	}
+
 	public void appendAll(List<UIComponent> components) {
 		m_content.addAll(components);
+	}
+
+	public VerticalFlow appendUnitedBlock(UIComponent... components) {
+		final VerticalFlow unitedBlock = createUnitedBlock(components);
+		append(unitedBlock);
+		return this;
 	}
 
 	@Override
@@ -60,19 +64,32 @@ public class CenteredFlow extends UIComponent {
 	public HTMLNode toHTMLNode(String tagName) {
 		final HTMLNode result = new HTMLNode(tagName);
 		result.addClass(Grid.HTML_CLASS);
+
+		result.setStyleProperty("place-items", "center");
+		result.setStyleProperty("grid-template-rows", "auto");
 		switch(m_width) {
-		case MAX -> result.setAttribute("style", "grid-template-rows: auto;grid-template-columns: 0% 100% 0%");
-		case WIDE -> result.setAttribute("style", "grid-template-rows: auto;grid-template-columns: min-content 1fr min-content");
-		case NORMAL -> result.setAttribute("style", "grid-template-rows: auto;grid-template-columns: 1fr min-content 1fr");
+		case MAX -> result.setStyleProperty("grid-template-columns", "0% 100% 0%");
+		case WIDE -> result.setStyleProperty("grid-template-columns", "min-content 1fr min-content");
+		case NORMAL -> result.setStyleProperty("grid-template-columns", "1fr min-content 1fr");
 		}
 
 		giveMarginReadingProperties(result.createChild("p"));
+
 		final HTMLNode flowContent = giveCenterReadingProperties(result.createChild("div"));
-		giveMarginReadingProperties(result.createChild("p"));
+		flowContent.setStyleProperty("display", "grid");
+		flowContent.setStyleProperty("grid-template-rows", "auto");
 
 		for(UIComponent component : m_content) {
-			flowContent.addChild(component.toHTMLNode());
+			final HTMLNode htmlNode = component.toHTMLNode();
+			htmlNode.setStyleProperty("margin", "auto");
+			final HTMLNode div = new HTMLNode("div");
+			div.setStyleProperty("text-align", "center");
+			div.addClass(m_spacing.getHTMLClass());
+			div.addChild(htmlNode);
+			flowContent.addChild(div);
 		}
+
+		giveMarginReadingProperties(result.createChild("p"));
 
 		return result;
 	}
@@ -94,7 +111,18 @@ public class CenteredFlow extends UIComponent {
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE);
 		result.setAttribute("width", m_width.name());
+		result.setAttribute("spacing", m_spacing.name());
 		result.createArray("content", m_content, UIComponent::toJsonMap);
 		return result;
+	}
+
+	public static VerticalFlow createUnitedBlock(UIComponent... components) {
+		final VerticalFlow unitedBlock = new VerticalFlow();
+		unitedBlock.setWidth(Layouts.Width.MAX);
+		unitedBlock.setSpacing(Layouts.Spacing.FIT);
+		for(UIComponent component : components) {
+			unitedBlock.append(component);
+		}
+		return unitedBlock;
 	}
 }

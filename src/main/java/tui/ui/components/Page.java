@@ -18,18 +18,20 @@ package tui.ui.components;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.ui.components.layout.CenteredFlow;
 import tui.ui.components.layout.Grid;
+import tui.ui.components.layout.Layouts;
+import tui.ui.components.layout.VerticalFlow;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class Page extends APage {
 
 	public static final String JSON_TYPE = "page";
 
-	private CenteredFlow.Width m_width = CenteredFlow.Width.NORMAL;
+	private Layouts.Width m_width = Layouts.Width.NORMAL;
 	private final List<UIComponent> m_content = new ArrayList<>();
 	private UIComponent m_header = null;
 	private UIComponent m_footer = null;
@@ -50,8 +52,9 @@ public class Page extends APage {
 		m_footer = footer;
 	}
 
-	public void append(UIComponent component) {
+	public <C extends UIComponent> C append(C component) {
 		m_content.add(component);
+		return component;
 	}
 
 	public List<UIComponent> getContent() {
@@ -64,7 +67,7 @@ public class Page extends APage {
 		return result;
 	}
 
-	public Page setReadingWidth(CenteredFlow.Width width) {
+	public Page setReadingWidth(Layouts.Width width) {
 		assert width != null;
 		m_width = width;
 		return this;
@@ -103,7 +106,7 @@ public class Page extends APage {
 
 		final HTMLNode main = body.createChild("main");
 
-		final CenteredFlow flow = new CenteredFlow().setWidth(m_width);
+		final VerticalFlow flow = new VerticalFlow().setWidth(m_width);
 		flow.appendAll(getContent());
 		main.addChild(flow.toHTMLNode());
 
@@ -114,14 +117,15 @@ public class Page extends APage {
 
 		if(m_header != null || m_footer != null) {
 			body.addClass(Grid.HTML_CLASS);
-			body.setAttribute("style", computeBodyStyle());
+			body.setStyleProperties(computeBodyStyleProperties());
 		}
 
 		return result;
 	}
 
-	private String computeBodyStyle() {
-		return "grid-template-columns: 100%;grid-template-rows: min-content auto min-content;";
+	private Map<String, String> computeBodyStyleProperties() {
+		return Map.of("grid-template-columns", "100%",
+				"grid-template-rows", "min-content auto min-content");
 	}
 
 	@Override

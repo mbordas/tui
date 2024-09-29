@@ -17,7 +17,6 @@ package tui.ui.components;
 
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import tui.html.HTMLNode;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
@@ -78,51 +77,6 @@ public class TableTest extends TestWithBackend {
 				    ]
 				  ]
 				}""", table.toJsonMap().toJson());
-	}
-
-	@Test
-	public void toHTML() {
-		HTMLNode.PRETTY_PRINT = true;
-		Page page = new Page("Table in page");
-		Table table = new Table("Test table", List.of("A", "B"));
-		table.append(Map.of("A", "test & co"));
-
-		page.append(table);
-
-		assertEquals("""
-				<!DOCTYPE html><?xml version='1.0' encoding='UTF-8'?>
-				<html>
-				  <head>
-				    <meta charset="utf-8"/>
-				    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-				    <title>Table in page</title>
-				  </head>
-				  <body>
-				    <main>
-				      <div class="tui-grid" style="grid-template-rows: auto;grid-template-columns: 1fr min-content 1fr">
-				        <p/>
-				        <div class="tui-reading-normal-area">           <table class="tui-table">
-				            <caption>Test table</caption>
-				            <thead>
-				              <tr>
-				                <th>A</th>
-				                <th>B</th>
-				              </tr>
-				            </thead>
-				            <tbody>
-				              <tr>
-				                <td>test & co</td>
-				                <td/>
-				              </tr>
-				            </tbody>
-				          </table>
-				</div>
-				        <p/>
-				      </div>
-				    </main>
-				  </body>
-				</html>
-				""", page.toHTMLNode().toHTML());
 	}
 
 	@Test

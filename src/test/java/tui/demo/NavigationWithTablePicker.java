@@ -23,8 +23,8 @@ import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.TablePicker;
 import tui.ui.components.form.Search;
-import tui.ui.components.layout.CenteredFlow;
 import tui.ui.components.layout.Grid;
+import tui.ui.components.layout.Layouts;
 import tui.utils.TestUtils;
 
 import java.util.ArrayList;
@@ -42,9 +42,9 @@ public class NavigationWithTablePicker {
 		}
 
 		final Page page = new Page("Home", "/index");
-		page.setReadingWidth(CenteredFlow.Width.NORMAL);
-		page.setHeader(new Paragraph("Header").setAlign(Paragraph.TextAlign.CENTER));
-		page.setFooter(new Paragraph().appendNormal("Example footer text").setAlign(Paragraph.TextAlign.RIGHT));
+		page.setReadingWidth(Layouts.Width.NORMAL);
+		page.setHeader(new Paragraph("Header").setAlign(Layouts.TextAlign.CENTER));
+		page.setFooter(new Paragraph().appendNormal("Example footer text").setAlign(Layouts.TextAlign.RIGHT));
 
 		final Search search = new Search("Search in subject", "Subject contains");
 		page.append(search);

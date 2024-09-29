@@ -36,8 +36,8 @@ public class GridTest extends TestWithBackend {
 		//			}
 		//		}
 
-		grid.set(1, 1, new Paragraph("1,1").setAlign(Paragraph.TextAlign.LEFT));
-		grid.set(4, 0, new Paragraph("4,0").setAlign(Paragraph.TextAlign.RIGHT));
+		grid.set(1, 1, new Paragraph("1,1").setAlign(Layouts.TextAlign.LEFT));
+		grid.set(4, 0, new Paragraph("4,0").setAlign(Layouts.TextAlign.RIGHT));
 		page.append(grid);
 		ui.add(page);
 		ui.setHTTPBackend("localhost", 8080);

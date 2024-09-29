@@ -15,13 +15,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.demo;
 
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.UI;
 import tui.ui.components.Page;
+import tui.ui.components.Panel;
 import tui.ui.components.Paragraph;
-import tui.ui.components.layout.CenteredFlow;
+import tui.ui.components.RefreshButton;
 import tui.ui.components.layout.Grid;
+import tui.ui.components.layout.Layouts;
 import tui.ui.components.layout.VerticalScroll;
 import tui.ui.components.monitoring.MonitorField;
 import tui.ui.components.monitoring.MonitorFieldGreenRed;
@@ -71,9 +74,16 @@ public class Monitoring {
 		return result;
 	}
 
+	private static RefreshButton viewButton(MonitorFieldGreenRed field, Paragraph paragraph) {
+		RefreshButton result = new RefreshButton("view");
+		result.setKey(field.getName());
+		result.connectListener(paragraph);
+		return result;
+	}
+
 	public static void main(String[] args) throws Exception {
 		final Page page = new Page("Monitoring", "/index");
-		page.setReadingWidth(CenteredFlow.Width.WIDE);
+		page.setReadingWidth(Layouts.Width.WIDE);
 
 		final Grid mainGrid = new Grid(1, 2);
 		mainGrid.setFirstColumnWidth_px(500);
@@ -82,6 +92,9 @@ public class Monitoring {
 		updateRandomScores();
 
 		final Grid leftGrid = new Grid(m_citiesHealthScore_pc.size(), 4);
+		final Panel rightPanel = new Panel();
+		final Paragraph rightParagraph = rightPanel.append(new Paragraph());
+		rightParagraph.setSource("/monitoring/view");
 
 		final MonitorFieldSet fieldSet = new MonitorFieldSet("");
 		fieldSet.setSource("/monitoring/fields");
@@ -93,11 +106,12 @@ public class Monitoring {
 			leftGrid.set(row.get(), 0, new Paragraph(field.getName()));
 			leftGrid.set(row.get(), 1, field);
 			leftGrid.set(row.get(), 2, emptyField());
-			leftGrid.set(row.get(), 3, emptyField());
+			leftGrid.set(row.get(), 3, viewButton(field, rightParagraph));
 			row.getAndIncrement();
 		});
 
 		mainGrid.set(0, 0, new VerticalScroll(800, leftGrid));
+		mainGrid.set(0, 1, rightPanel);
 
 		final UI ui = new UI();
 		ui.setHTTPBackend("http://localhost", 8080);
@@ -107,6 +121,12 @@ public class Monitoring {
 		backend.registerWebService(fieldSet.getSource(), (uri, request, response) -> {
 			updateRandomScores();
 			return MonitorField.toJson(computeFields());
+		});
+		backend.registerWebService(rightParagraph.getSource(), (uri, request, response) -> {
+			final RequestReader requestReader = new RequestReader(request);
+			final String key = requestReader.getStringParameter(RefreshButton.PARAMETER_NAME);
+			final Paragraph result = new Paragraph().appendNormal("here is the view detail for: " + key);
+			return result.toJsonMap();
 		});
 
 		backend.start();

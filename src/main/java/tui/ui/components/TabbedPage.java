@@ -96,7 +96,7 @@ public class TabbedPage extends APage {
 					.setText(label);
 
 			final HTMLNode panelNode = panel.toHTMLNode();
-			panelNode.setAttribute("style", index == 1 ? "display:block" : "display:none");
+			panelNode.setStyleProperty("display", index == 1 ? "block" : "none");
 			main.addChild(panelNode);
 
 			index++;

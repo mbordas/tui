@@ -191,10 +191,11 @@ function instrumentRefreshButtons() {
     const refreshButtons = document.querySelectorAll('.tui-refresh-button');
     refreshButtons.forEach(function(button, i) {
         button.addEventListener('click', function() {
-              button.getAttribute('tui-refresh-listeners').split(",")
-                  .forEach(function(id, i) {
-                      refreshComponent(id);
-                  });
+            const data = button.hasAttribute('tui-key') ? { key: button.getAttribute('tui-key')} : {};
+            button.getAttribute('tui-refresh-listeners').split(",")
+            .forEach(function(id, i) {
+                refreshComponent(id, data);
+            });
         });
     });
 }

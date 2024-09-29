@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class HTMLNode {
 
@@ -27,12 +28,17 @@ public class HTMLNode {
 	private boolean m_isRoot = false;
 	private final String m_name;
 	private final Map<String, String> m_attributes = new LinkedHashMap<>();
+	private final Map<String, String> m_styleProperties = new TreeMap<>();
 	private final List<HTMLNode> m_children = new ArrayList<>();
 	private StringBuilder m_text = new StringBuilder();
 	private int m_prettyPrintDepth = 0;
 
 	public HTMLNode(String name) {
 		m_name = name;
+	}
+
+	public String getName() {
+		return m_name;
 	}
 
 	public void setRoot(boolean isRoot) {
@@ -56,6 +62,16 @@ public class HTMLNode {
 		} else {
 			setClass(className);
 		}
+	}
+
+	public HTMLNode setStyleProperty(String key, String value) {
+		m_styleProperties.put(key, value);
+		return this;
+	}
+
+	public HTMLNode setStyleProperties(Map<String, String> properties) {
+		m_styleProperties.putAll(properties);
+		return this;
 	}
 
 	public HTMLNode setAttribute(String name, String value) {
@@ -124,6 +140,17 @@ public class HTMLNode {
 			if(attribute.getValue() != null) {
 				result.append("=\"").append(attribute.getValue()).append("\"");
 			}
+		}
+
+		if(!m_styleProperties.isEmpty()) {
+			final StringBuilder stylePropertiesStr = new StringBuilder();
+			for(Map.Entry<String, String> styleProperty : m_styleProperties.entrySet()) {
+				stylePropertiesStr.append(
+								styleProperty.getKey()).append(": ")
+						.append(styleProperty.getValue()).append(";");
+			}
+			result.append(" style");
+			result.append("=\"").append(stylePropertiesStr).append("\"");
 		}
 
 		if(m_text.isEmpty()

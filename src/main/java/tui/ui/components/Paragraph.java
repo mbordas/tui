@@ -20,6 +20,7 @@ import tui.html.HTMLNode;
 import tui.html.HTMLText;
 import tui.json.JsonArray;
 import tui.json.JsonMap;
+import tui.ui.components.layout.Layouts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,25 +55,11 @@ public class Paragraph extends UIRefreshableComponent {
 		}
 	}
 
-	public enum TextAlign {
-		LEFT("tui-align-left"), CENTER("tui-align-center"), RIGHT("tui-align-right"), STRETCH("tui-align-stretch");
-
-		private String m_htmlClass;
-
-		private TextAlign(String htmlClass) {
-			m_htmlClass = htmlClass;
-		}
-
-		public String getHTMLClass() {
-			return m_htmlClass;
-		}
-	}
-
 	public record Fragment(Style style, String text) {
 	}
 
 	private boolean m_withBorder = false;
-	private TextAlign m_textAlign = TextAlign.LEFT;
+	private Layouts.TextAlign m_textAlign = Layouts.TextAlign.LEFT;
 	private final List<Fragment> m_fragments = new ArrayList<>();
 
 	public Paragraph() {
@@ -82,7 +69,7 @@ public class Paragraph extends UIRefreshableComponent {
 		appendNormal(text);
 	}
 
-	public Paragraph setAlign(@NotNull Paragraph.TextAlign textAlign) {
+	public Paragraph setAlign(@NotNull Layouts.TextAlign textAlign) {
 		m_textAlign = textAlign;
 		return this;
 	}
