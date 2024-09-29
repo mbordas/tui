@@ -90,17 +90,30 @@ p {
 
 /* LAYOUTS */
 
-.tui-spacing-fit {
+.tui-vertical-spacing-fit {
     padding-top: 0px;
 }
-.tui-spacing-compact {
+.tui-vertical-spacing-compact {
     padding-top: 10px;
 }
-.tui-spacing-normal {
+.tui-vertical-spacing-normal {
     padding-top: 20px;
 }
-.tui-spacing-large {
+.tui-vertical-spacing-large {
     padding-top: 30px;
+}
+
+.tui-horizontal-spacing-fit {
+    padding-right: 0px;
+}
+.tui-horizontal-spacing-compact {
+    padding-right: 10px;
+}
+.tui-horizontal-spacing-normal {
+    padding-right: 20px;
+}
+.tui-horizontal-spacing-large {
+    padding-right: 30px;
 }
 
 .tui-grid {

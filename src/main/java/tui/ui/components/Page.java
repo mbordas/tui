@@ -106,7 +106,8 @@ public class Page extends APage {
 
 		final HTMLNode main = body.createChild("main");
 
-		final VerticalFlow flow = new VerticalFlow().setWidth(m_width);
+		final VerticalFlow flow = new VerticalFlow();
+		flow.setWidth(m_width);
 		flow.appendAll(getContent());
 		main.addChild(flow.toHTMLNode());
 

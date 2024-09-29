@@ -56,12 +56,13 @@ public class HTMLNode {
 		return setAttribute("class", className);
 	}
 
-	public void addClass(String className) {
+	public HTMLNode addClass(String className) {
 		if(m_attributes.containsKey("class")) {
 			m_attributes.put("class", m_attributes.get("class") + " " + className);
 		} else {
 			setClass(className);
 		}
+		return this;
 	}
 
 	public HTMLNode setStyleProperty(String key, String value) {

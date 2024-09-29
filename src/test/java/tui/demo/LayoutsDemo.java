@@ -23,6 +23,8 @@ import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.TabbedPage;
 import tui.ui.components.Table;
+import tui.ui.components.layout.HorizontalFlow;
+import tui.ui.components.layout.Layouts;
 import tui.ui.components.layout.VerticalFlow;
 import tui.utils.TestUtils;
 
@@ -45,11 +47,17 @@ public class LayoutsDemo {
 	private static void createTab(TabbedPage page, tui.ui.components.layout.Layouts.Width width,
 			tui.ui.components.layout.Layouts.Spacing spacing) {
 		final Panel tabFit = page.createTab(String.format("%s %s", width.name(), spacing.name()));
-		final VerticalFlow flowFit = tabFit.append(new VerticalFlow().setWidth(width));
+		final VerticalFlow flowFit = tabFit.append(new VerticalFlow());
+		flowFit.setWidth(width);
 		flowFit.setSpacing(spacing);
 
 		flowFit.append(new Paragraph(TestUtils.LOREM_IPSUM));
-		flowFit.append(new RefreshButton("Button"));
+		final HorizontalFlow buttons = flowFit.append(new HorizontalFlow());
+		buttons.setSpacing(spacing);
+		buttons.setAlign(Layouts.TextAlign.LEFT);
+		buttons.append(new RefreshButton("Button 1"));
+		buttons.append(new RefreshButton("Button 2"));
+		buttons.append(new RefreshButton("Button 3"));
 		flowFit.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(tui.ui.components.layout.Layouts.TextAlign.RIGHT));
 
 		flowFit.appendUnitedBlock(createTable(),

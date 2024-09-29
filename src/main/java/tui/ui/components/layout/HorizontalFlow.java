@@ -19,15 +19,16 @@ import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.components.UIComponent;
 
-public class VerticalFlow extends AFlow {
+public class HorizontalFlow extends AFlow {
 
-	public static final String HTML_CLASS = "tui-vertical-flow";
+	public static final String HTML_CLASS = "tui-horizontal-flow";
 
-	public static final String JSON_TYPE = "vertical_flow";
+	public static final String JSON_TYPE = "horizontal_flow";
 
-	public VerticalFlow appendUnitedBlock(UIComponent... components) {
-		final VerticalFlow unitedBlock = createUnitedBlock(components);
-		append(unitedBlock);
+	private Layouts.TextAlign m_componentAlign = Layouts.TextAlign.CENTER;
+
+	public HorizontalFlow setAlign(Layouts.TextAlign align) {
+		m_componentAlign = align;
 		return this;
 	}
 
@@ -38,29 +39,16 @@ public class VerticalFlow extends AFlow {
 
 	public HTMLNode toHTMLNode(String tagName) {
 		final HTMLNode result = new HTMLNode(tagName);
-		result.addClass(Grid.HTML_CLASS);
-
-		result.setStyleProperty("place-items", "center");
-		result.setStyleProperty("grid-template-rows", "auto");
-		switch(m_width) {
-		case MAX -> result.setStyleProperty("grid-template-columns", "0% 100% 0%");
-		case WIDE -> result.setStyleProperty("grid-template-columns", "min-content 1fr min-content");
-		case NORMAL -> result.setStyleProperty("grid-template-columns", "1fr min-content 1fr");
-		}
+		result.addClass(m_componentAlign.getHTMLClass());
 
 		giveMarginReadingProperties(result.createChild("p"));
 
 		final HTMLNode flowContent = giveCenterReadingProperties(result.createChild("div"));
-		flowContent.setStyleProperty("display", "grid");
-		flowContent.setStyleProperty("grid-template-rows", "auto");
-
 		for(UIComponent component : m_content) {
-			final HTMLNode htmlNode = component.toHTMLNode();
-			htmlNode.setStyleProperty("margin", "auto");
 			final HTMLNode div = new HTMLNode("div");
-			div.setStyleProperty("text-align", "center");
-			div.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "vertical-spacing"));
-			div.addChild(htmlNode);
+			div.setStyleProperty("display", "inline");
+			div.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "horizontal-spacing"));
+			div.addChild(component.toHTMLNode());
 			flowContent.addChild(div);
 		}
 
@@ -71,20 +59,6 @@ public class VerticalFlow extends AFlow {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
-		result.setAttribute("width", m_width.name());
-		result.setAttribute("spacing", m_spacing.name());
-		result.createArray("content", m_content, UIComponent::toJsonMap);
-		return result;
-	}
-
-	public static VerticalFlow createUnitedBlock(UIComponent... components) {
-		final VerticalFlow unitedBlock = new VerticalFlow();
-		unitedBlock.setWidth(Layouts.Width.MAX);
-		unitedBlock.setSpacing(Layouts.Spacing.FIT);
-		for(UIComponent component : components) {
-			unitedBlock.append(component);
-		}
-		return unitedBlock;
+		return null;
 	}
 }
