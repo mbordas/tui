@@ -21,13 +21,16 @@ import tui.html.HTMLNode;
 import tui.http.FormRequest;
 import tui.http.TUIBackend;
 import tui.json.JsonObject;
+import tui.test.Browser;
 import tui.ui.UI;
-import tui.ui.components.Panel;
-import tui.ui.components.TabbedPage;
+import tui.ui.components.Page;
+import tui.ui.components.Section;
 import tui.ui.components.Table;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInputString;
 import tui.ui.components.form.ModalForm;
+import tui.ui.components.layout.TabbedFlow;
+import tui.ui.components.layout.VerticalFlow;
 import tui.ui.components.monitoring.MonitorField;
 import tui.ui.components.monitoring.MonitorFieldGreenRed;
 import tui.ui.components.monitoring.MonitorFieldSet;
@@ -53,11 +56,12 @@ public class DemoServer {
 		// Building UI
 
 		final UI ui = new UI();
-		ui.setHTTPBackend("localhost", 80);
+		ui.setHTTPBackend("localhost", 8080);
 
-		TabbedPage page = new TabbedPage("Demo", "/index");
-		final Panel panel1 = page.createTab("Table and form");
-		panel1.createSection("Tables")
+		Page page = new Page("Demo", "/index");
+		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
+		final VerticalFlow panel1 = tabbedFlow.createTab("Table and form");
+		panel1.append(new Section("Tables"))
 				.createParagraph("Use the form to add row to the table.");
 		ui.add(page);
 
@@ -76,8 +80,8 @@ public class DemoServer {
 		table.connectForRefresh(form);
 		panel1.append(form);
 
-		final Panel panel2 = page.createTab("Monitor fields");
-		panel2.createSection("Monitoring")
+		final VerticalFlow panel2 = tabbedFlow.createTab("Monitor fields");
+		panel2.append(new Section("Monitoring"))
 				.createParagraph("Monitor fields display live data.");
 		final MonitorFieldSet monitorFieldSet = new MonitorFieldSet("Live fields");
 		monitorFieldSet.setSource("/monitor/1");
@@ -93,10 +97,10 @@ public class DemoServer {
 						.set(MonitorFieldGreenRed.Value.NEUTRAL, "Regular");
 		panel2.append(monitorFieldSet);
 
-		final Panel panel3 = page.createTab("Modal form");
+		final VerticalFlow panel3 = tabbedFlow.createTab("Modal form");
 		final ModalForm modalForm = new ModalForm("Add a new element", "Add", "/modalform/add");
 		final FormInputString modalFormFieldName = modalForm.createInputString("Name", "name");
-		panel3.createSection("Modal form")
+		panel3.append(new Section("Modal form"))
 				.createParagraph("Modal forms use dialog elements.");
 		panel3.append(modalForm);
 
@@ -150,5 +154,8 @@ public class DemoServer {
 		HTMLNode.PRETTY_PRINT = true;
 		JsonObject.PRETTY_PRINT = true;
 		backend.start();
+
+		final Browser browser = new Browser(backend.getPort());
+		browser.open(page.getSource());
 	}
 }

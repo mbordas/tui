@@ -18,13 +18,13 @@ package tui.demo;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.UI;
-import tui.ui.components.Panel;
+import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
-import tui.ui.components.TabbedPage;
 import tui.ui.components.Table;
 import tui.ui.components.layout.HorizontalFlow;
 import tui.ui.components.layout.Layouts;
+import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
 import tui.utils.TestUtils;
 
@@ -44,37 +44,38 @@ public class LayoutsDemo {
 		return result;
 	}
 
-	private static void createTab(TabbedPage page, tui.ui.components.layout.Layouts.Width width,
+	private static void createTab(TabbedFlow tabbedFlow, tui.ui.components.layout.Layouts.Width width,
 			tui.ui.components.layout.Layouts.Spacing spacing) {
-		final Panel tabFit = page.createTab(String.format("%s %s", width.name(), spacing.name()));
-		final VerticalFlow flowFit = tabFit.append(new VerticalFlow());
-		flowFit.setWidth(width);
-		flowFit.setSpacing(spacing);
+		final VerticalFlow tabFlow = tabbedFlow.createTab(String.format("%s %s", width.name(), spacing.name()));
+		tabFlow.setWidth(width);
+		tabFlow.setSpacing(spacing);
 
-		flowFit.append(new Paragraph(TestUtils.LOREM_IPSUM));
-		final HorizontalFlow buttons = flowFit.append(new HorizontalFlow());
+		tabFlow.append(new Paragraph(TestUtils.LOREM_IPSUM));
+		final HorizontalFlow buttons = tabFlow.append(new HorizontalFlow());
 		buttons.setSpacing(spacing);
 		buttons.setAlign(Layouts.TextAlign.LEFT);
 		buttons.append(new RefreshButton("Button 1"));
 		buttons.append(new RefreshButton("Button 2"));
 		buttons.append(new RefreshButton("Button 3"));
-		flowFit.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(tui.ui.components.layout.Layouts.TextAlign.RIGHT));
+		tabFlow.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(tui.ui.components.layout.Layouts.TextAlign.RIGHT));
 
-		flowFit.appendUnitedBlock(createTable(),
+		tabFlow.appendUnitedBlock(createTable(),
 				new Paragraph("My legend here").setAlign(tui.ui.components.layout.Layouts.TextAlign.CENTER));
 
-		flowFit.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(tui.ui.components.layout.Layouts.TextAlign.STRETCH));
+		tabFlow.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(tui.ui.components.layout.Layouts.TextAlign.STRETCH));
 	}
 
 	public static void main(String[] args) throws Exception {
 
-		final TabbedPage page = new TabbedPage("Layouts", "/index");
+		final Page page = new Page("Layouts", "/index");
 
-		createTab(page, tui.ui.components.layout.Layouts.Width.MAX, tui.ui.components.layout.Layouts.Spacing.FIT);
-		createTab(page, tui.ui.components.layout.Layouts.Width.WIDE, tui.ui.components.layout.Layouts.Spacing.FIT);
-		createTab(page, tui.ui.components.layout.Layouts.Width.NORMAL, tui.ui.components.layout.Layouts.Spacing.COMPACT);
-		createTab(page, tui.ui.components.layout.Layouts.Width.NORMAL, tui.ui.components.layout.Layouts.Spacing.NORMAL);
-		createTab(page, tui.ui.components.layout.Layouts.Width.NORMAL, tui.ui.components.layout.Layouts.Spacing.LARGE);
+		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
+
+		createTab(tabbedFlow, tui.ui.components.layout.Layouts.Width.MAX, tui.ui.components.layout.Layouts.Spacing.FIT);
+		createTab(tabbedFlow, tui.ui.components.layout.Layouts.Width.WIDE, tui.ui.components.layout.Layouts.Spacing.FIT);
+		createTab(tabbedFlow, tui.ui.components.layout.Layouts.Width.NORMAL, tui.ui.components.layout.Layouts.Spacing.COMPACT);
+		createTab(tabbedFlow, tui.ui.components.layout.Layouts.Width.NORMAL, tui.ui.components.layout.Layouts.Spacing.NORMAL);
+		createTab(tabbedFlow, tui.ui.components.layout.Layouts.Width.NORMAL, tui.ui.components.layout.Layouts.Spacing.LARGE);
 
 		final UI ui = new UI();
 		ui.add(page);

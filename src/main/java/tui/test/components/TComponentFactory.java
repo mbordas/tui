@@ -23,10 +23,10 @@ import tui.ui.components.Page;
 import tui.ui.components.Panel;
 import tui.ui.components.Paragraph;
 import tui.ui.components.Section;
-import tui.ui.components.TabbedPage;
 import tui.ui.components.Table;
 import tui.ui.components.TablePicker;
 import tui.ui.components.form.Form;
+import tui.ui.components.layout.TabbedFlow;
 
 public class TComponentFactory {
 
@@ -34,8 +34,7 @@ public class TComponentFactory {
 		final JsonMap map = JsonParser.parseMap(json);
 		return switch(map.getType()) {
 			case Page.JSON_TYPE -> TPage.parse(map, client);
-			case TabbedPage.JSON_TYPE -> TTabbedPage.parse(map, client);
-			case TabbedPage.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
+			case TabbedFlow.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
 			case Panel.JSON_TYPE -> TPanel.parse(map, client);
 			case Paragraph.JSON_TYPE -> TParagraph.parse(map, client);
 			case Section.JSON_TYPE -> TSection.parse(map, client);

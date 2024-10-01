@@ -21,11 +21,9 @@ import org.slf4j.LoggerFactory;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
 import tui.test.components.ATPage;
-import tui.test.components.BadComponentException;
 import tui.test.components.TComponent;
 import tui.test.components.TForm;
 import tui.test.components.TPanel;
-import tui.test.components.TTabbedPage;
 import tui.test.components.TTable;
 import tui.test.components.TTablePicker;
 
@@ -63,14 +61,6 @@ public class TClient {
 
 	public Collection<TComponent> getReachableSubComponents() {
 		return m_currentPage.getReachableSubComponents();
-	}
-
-	public String getTabTitle() {
-		if(m_currentPage instanceof TTabbedPage page) {
-			return page.getTabTitle();
-		} else {
-			throw new BadComponentException("Current page '%s' has no tabs.", m_currentPage.getTitle());
-		}
 	}
 
 	public TPanel getPanel(int index) {

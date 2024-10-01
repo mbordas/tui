@@ -18,7 +18,6 @@ package tui.test.components;
 import tui.json.JsonMap;
 import tui.test.TClient;
 import tui.ui.components.Page;
-import tui.ui.components.TabbedPage;
 
 import java.util.Collection;
 
@@ -48,8 +47,6 @@ public abstract class ATPage extends TComponent {
 		final String type = map.getType();
 		if(Page.JSON_TYPE.equals(type)) {
 			return TPage.parse(map, client);
-		} else if(TabbedPage.JSON_TYPE.equals(type)) {
-			return TTabbedPage.parse(map, client);
 		} else {
 			throw new RuntimeException(String.format("Unsupported type for page: %s", type));
 		}

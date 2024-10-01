@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.layout;
 
 public class Layouts {
+
 	public enum Width {
 		NORMAL("tui-reading-normal"),
 		WIDE("tui-reading-wide"),

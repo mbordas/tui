@@ -154,9 +154,12 @@ function updateGrid(gridElement, json) {
 // TABS
 
 function selectTab(tabId, tabLink) {
-    const tabPanels = document.querySelectorAll('.tui-panel');
-    tabPanels.forEach(function(panel, i) {
-        panel.style.display = 'none';
+    const tabs = tabLink
+        .parentElement // tabnav
+        .parentElement // tabbedFlow element, pdirect children are: tabsnav and tabs
+        .querySelectorAll('.tui-tab');
+    tabs.forEach(function(tab, i) {
+        tab.style.display = 'none';
     });
 
     document.getElementById(tabId).style.display = 'block';
