@@ -19,7 +19,6 @@ import tui.html.HTMLNode;
 import tui.json.JsonMap;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Section extends UIComponent {
@@ -52,19 +51,6 @@ public class Section extends UIComponent {
 
 	public List<UIComponent> getContent() {
 		return m_content;
-	}
-
-	@Override
-	public Collection<UIComponent> getSubComponents() {
-		final Collection<UIComponent> result = new ArrayList<>();
-		for(UIComponent component : m_content) {
-			result.add(component);
-			final Collection<UIComponent> subComponents = component.getSubComponents();
-			if(subComponents != null) {
-				result.addAll(subComponents);
-			}
-		}
-		return result;
 	}
 
 	@Override

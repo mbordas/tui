@@ -23,7 +23,6 @@ import tui.ui.components.layout.Layouts;
 import tui.ui.components.layout.VerticalFlow;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -134,19 +133,6 @@ public class Page extends APage {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("title", m_title);
 		result.createArray("content", m_content, UIComponent::toJsonMap);
-		return result;
-	}
-
-	@Override
-	public Collection<UIComponent> getSubComponents() {
-		final Collection<UIComponent> result = new ArrayList<>();
-		for(UIComponent component : m_content) {
-			result.add(component);
-			final Collection<UIComponent> subComponents = component.getSubComponents();
-			if(subComponents != null) {
-				result.addAll(subComponents);
-			}
-		}
 		return result;
 	}
 

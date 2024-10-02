@@ -29,10 +29,6 @@ public abstract class UIComponent {
 
 	private final long m_tuid = m_counter.incrementAndGet();
 
-	public Collection<UIComponent> getSubComponents() {
-		return null;
-	}
-
 	public abstract HTMLNode toHTMLNode();
 
 	public abstract JsonMap toJsonMap();
