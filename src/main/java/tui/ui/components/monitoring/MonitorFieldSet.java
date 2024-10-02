@@ -69,7 +69,7 @@ public class MonitorFieldSet extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("div")
+		final HTMLNode result = super.toHTMLNode("div", false)
 				.setAttribute("class", HTML_CLASS);
 
 		HTMLFetchErrorMessage.addErrorMessageChild(result);

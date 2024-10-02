@@ -51,7 +51,8 @@ public class Search extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("search").setClass(HTML_CLASS_FORM_SEARCH);
+		final HTMLNode result = super.toHTMLNode("search", false)
+				.setClass(HTML_CLASS_FORM_SEARCH);
 
 		result.createChild("label")
 				.setAttribute("for", PARAMETER_NAME)

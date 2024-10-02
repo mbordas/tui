@@ -4,11 +4,11 @@
  * http://www.smartgridenergy.fr
  */
 
-package tui.ui.components;
+package tui.ui.components.layout;
 
-import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.components.UIComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,20 +26,13 @@ public class Panel extends UIComponent {
 		return component;
 	}
 
-	public Section createSection(String title) {
-		final Section result = new Section(title);
-		m_content.add(result);
-		return result;
-	}
-
 	public List<UIComponent> getContent() {
 		return m_content;
 	}
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("div")
-				.setAttribute("id", HTMLConstants.toId(getTUID()))
+		final HTMLNode result = super.toHTMLNode("div", true)
 				.setAttribute("class", HTML_CLASS);
 
 		for(UIComponent component : getContent()) {

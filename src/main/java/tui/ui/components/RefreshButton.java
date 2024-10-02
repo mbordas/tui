@@ -60,7 +60,7 @@ public class RefreshButton extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		HTMLNode result = new HTMLNode("button")
+		HTMLNode result = super.toHTMLNode("button", false)
 				.setAttribute("type", "button")
 				.setAttribute("class", HTML_CLASS)
 				.setText(m_label);

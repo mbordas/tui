@@ -16,7 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.monitoring;
 
 import org.jetbrains.annotations.NotNull;
-import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 
@@ -63,8 +62,7 @@ public class MonitorFieldGreenRed extends MonitorField implements Comparable<Mon
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("div")
-				.setAttribute("id", HTMLConstants.toId(getTUID()))
+		final HTMLNode result = super.toHTMLNode("div", true)
 				.setAttribute("class", HTML_CLASS)
 				.setAttribute("monitor-field-name", getName())
 				.setAttribute("value", getValue().name());

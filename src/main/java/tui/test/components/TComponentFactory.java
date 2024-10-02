@@ -20,12 +20,12 @@ import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.test.TClient;
 import tui.ui.components.Page;
-import tui.ui.components.Panel;
 import tui.ui.components.Paragraph;
 import tui.ui.components.Section;
 import tui.ui.components.Table;
 import tui.ui.components.TablePicker;
 import tui.ui.components.form.Form;
+import tui.ui.components.layout.Panel;
 import tui.ui.components.layout.TabbedFlow;
 
 public class TComponentFactory {

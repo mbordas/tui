@@ -90,7 +90,7 @@ public class Form extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("form")
+		final HTMLNode result = super.toHTMLNode("form", false)
 				.setAttribute("class", HTML_CLASS)
 				.setAttribute("action", getTarget())
 				.setAttribute("method", "post")

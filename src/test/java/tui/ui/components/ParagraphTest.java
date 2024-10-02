@@ -21,6 +21,7 @@ import tui.http.TUIBackend;
 import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.ui.UI;
+import tui.ui.components.layout.Panel;
 
 import static org.junit.Assert.assertEquals;
 

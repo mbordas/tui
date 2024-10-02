@@ -39,7 +39,7 @@ public class ModalForm extends Form {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("div")
+		final HTMLNode result = super.toHTMLNode("div", false)
 				.setAttribute("class", HTML_CLASS);
 
 		result.createChild("button")

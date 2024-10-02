@@ -24,9 +24,9 @@ import tui.test.TClient;
 import tui.test.TestWithBackend;
 import tui.ui.TablePickerTest;
 import tui.ui.components.Page;
-import tui.ui.components.Panel;
 import tui.ui.components.Paragraph;
 import tui.ui.components.TablePicker;
+import tui.ui.components.layout.Panel;
 
 import java.util.Collection;
 import java.util.List;

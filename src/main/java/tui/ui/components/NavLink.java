@@ -34,7 +34,7 @@ public class NavLink extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("a");
+		final HTMLNode result = super.toHTMLNode("a", false);
 		result.setAttribute("href", m_target);
 		result.setText(m_label);
 		return result;

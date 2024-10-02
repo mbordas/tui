@@ -15,8 +15,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.Style;
 import tui.utils.TUIUtils;
 
 import java.util.Collection;
@@ -29,12 +31,30 @@ public abstract class UIComponent {
 
 	private final long m_tuid = m_counter.incrementAndGet();
 
+	private Style.Padding m_customPadding = null;
+
 	public abstract HTMLNode toHTMLNode();
 
 	public abstract JsonMap toJsonMap();
 
+	protected HTMLNode toHTMLNode(String name, boolean withTUID) {
+		final HTMLNode result = new HTMLNode(name);
+		if(withTUID) {
+			result.setAttribute("id", HTMLConstants.toId(getTUID()));
+		}
+		if(m_customPadding != null) {
+			result.setStyleProperty("padding", String.format("%dpx %dpx %dpx %dpx",
+					m_customPadding.top_px(), m_customPadding.right_px(), m_customPadding.bottom_px(), m_customPadding.left_px()));
+		}
+		return result;
+	}
+
 	public long getTUID() {
 		return m_tuid;
+	}
+
+	public void customStylePadding(int top, int right, int bottom, int left) {
+		m_customPadding = new Style.Padding(top, right, bottom, left);
 	}
 
 	public static String getTUIsSeparatedByComa(Collection<? extends UIComponent> components) {
@@ -43,4 +63,5 @@ public abstract class UIComponent {
 				.iterator();
 		return TUIUtils.toTUIDsSeparatedByComa(tuidIterator);
 	}
+
 }

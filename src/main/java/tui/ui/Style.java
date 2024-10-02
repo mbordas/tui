@@ -52,4 +52,7 @@ public class Style {
 		return m_tableStyle;
 	}
 
+	public record Padding(int top_px, int right_px, int bottom_px, int left_px) {
+	}
+
 }

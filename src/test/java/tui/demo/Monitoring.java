@@ -20,11 +20,11 @@ import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.UI;
 import tui.ui.components.Page;
-import tui.ui.components.Panel;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.layout.Grid;
 import tui.ui.components.layout.Layouts;
+import tui.ui.components.layout.Panel;
 import tui.ui.components.layout.VerticalScroll;
 import tui.ui.components.monitoring.MonitorField;
 import tui.ui.components.monitoring.MonitorFieldGreenRed;
@@ -78,6 +78,7 @@ public class Monitoring {
 		RefreshButton result = new RefreshButton("view");
 		result.setKey(field.getName());
 		result.connectListener(paragraph);
+		result.customStylePadding(0, 5, 0, 5);
 		return result;
 	}
 

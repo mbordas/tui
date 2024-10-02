@@ -24,10 +24,10 @@ import tui.http.TUIWebService;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
-import tui.ui.components.Panel;
 import tui.ui.components.Paragraph;
 import tui.ui.components.TablePicker;
 import tui.ui.components.TableTest;
+import tui.ui.components.layout.Panel;
 
 import java.util.Collection;
 import java.util.List;
