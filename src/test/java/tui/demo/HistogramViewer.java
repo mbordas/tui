@@ -21,18 +21,56 @@ import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.layout.Layouts;
+import tui.ui.components.svg.CoordinatesComputer;
 import tui.ui.components.svg.SVG;
-import tui.ui.components.svg.SVGRectangle;
+import tui.ui.components.svg.SVGPath;
 import tui.utils.TestUtils;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistogramViewer {
 
-	private static SVG buildSVG(int width_px, int height_px) {
+	private static SVG buildSVG(int width_px, int height_px, List<Double> values, int padding_px) {
+		assert !values.isEmpty();
 		final SVG result = new SVG(width_px, height_px);
 
-		result.add(new SVGRectangle(0, 0, width_px, height_px).withStrokeColor(Color.BLACK));
+		final CoordinatesComputer.Range range_x = new CoordinatesComputer.Range(0.0, 1.0 * values.size());
+		final CoordinatesComputer.Range range_y = CoordinatesComputer.getRange(values);
+		final CoordinatesComputer computer = new CoordinatesComputer(width_px, height_px, padding_px, range_x, range_y);
+
+		final SVGPath pathArea = new SVGPath(computer.getX_px(0.0), computer.getY_px(0.0));
+
+		double firstValue = values.get(0);
+		int prevX_px = computer.getX_px(1.0);
+		int prevY_px = computer.getY_px(firstValue);
+		pathArea.lineAbsolute(computer.getX_px(0.0), prevY_px);
+
+		final SVGPath pathCurve = new SVGPath(computer.getX_px(0.0), prevY_px);
+		pathCurve.lineAbsolute(computer.getX_px(1.0), prevY_px);
+		pathArea.lineAbsolute(prevX_px, prevY_px);
+
+		for(int i = 1; i < values.size(); i++) {
+			final double value = values.get(i);
+			int newX_px = computer.getX_px(1.0 * (i + 1));
+			int newY_px = computer.getY_px(value);
+
+			pathCurve.lineAbsolute(prevX_px, newY_px);
+			pathCurve.lineAbsolute(newX_px, newY_px);
+
+			pathArea.lineAbsolute(prevX_px, newY_px);
+			pathArea.lineAbsolute(newX_px, newY_px);
+
+			prevX_px = newX_px;
+		}
+		pathArea.lineAbsolute(computer.getX_px(1.0 * values.size()), computer.getY_px(0.0));
+
+		pathCurve.withStrokeColor(Color.BLUE).withStrokeWidth(2).withFillOpacity(0.0);
+		pathArea.withStrokeOpacity(0.0).withFillColor(Color.LIGHT_GRAY);
+
+		result.add(pathArea);
+		result.add(pathCurve);
 
 		return result;
 	}
@@ -41,7 +79,11 @@ public class HistogramViewer {
 		final Page page = new Page("Histogram", "/index");
 		page.setReadingWidth(Layouts.Width.NORMAL);
 
-		page.append(buildSVG(400, 300));
+		final List<Double> values = new ArrayList<>();
+		for(int i = 0; i < 100; i++) {
+			values.add(-20.0 + Math.random() * 100.0);
+		}
+		page.append(buildSVG(600, 500, values, 20));
 
 		page.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(Layouts.TextAlign.LEFT));
 
