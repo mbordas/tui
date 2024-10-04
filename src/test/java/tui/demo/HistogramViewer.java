@@ -40,37 +40,46 @@ public class HistogramViewer {
 		final CoordinatesComputer.Range range_y = CoordinatesComputer.getRange(values);
 		final CoordinatesComputer computer = new CoordinatesComputer(width_px, height_px, padding_px, range_x, range_y);
 
-		final SVGPath pathArea = new SVGPath(computer.getX_px(0.0), computer.getY_px(0.0));
+		final SVGPath xAxis = new SVGPath(0, computer.getY_px(0.0))
+				.lineAbsolute(width_px, computer.getY_px(0.0));
+		xAxis.withStrokeColor(Color.BLACK).withFillOpacity(0.0);
+		final SVGPath yAxis = new SVGPath(computer.getX_px(0.0), height_px)
+				.lineAbsolute(computer.getX_px(0.0), 0);
+		yAxis.withStrokeColor(Color.BLACK).withFillOpacity(0.0);
+
+		final SVGPath area = new SVGPath(computer.getX_px(0.0), computer.getY_px(0.0));
 
 		double firstValue = values.get(0);
 		int prevX_px = computer.getX_px(1.0);
 		int prevY_px = computer.getY_px(firstValue);
-		pathArea.lineAbsolute(computer.getX_px(0.0), prevY_px);
+		area.lineAbsolute(computer.getX_px(0.0), prevY_px);
 
-		final SVGPath pathCurve = new SVGPath(computer.getX_px(0.0), prevY_px);
-		pathCurve.lineAbsolute(computer.getX_px(1.0), prevY_px);
-		pathArea.lineAbsolute(prevX_px, prevY_px);
+		final SVGPath curve = new SVGPath(computer.getX_px(0.0), prevY_px);
+		curve.lineAbsolute(computer.getX_px(1.0), prevY_px);
+		area.lineAbsolute(prevX_px, prevY_px);
 
 		for(int i = 1; i < values.size(); i++) {
 			final double value = values.get(i);
 			int newX_px = computer.getX_px(1.0 * (i + 1));
 			int newY_px = computer.getY_px(value);
 
-			pathCurve.lineAbsolute(prevX_px, newY_px);
-			pathCurve.lineAbsolute(newX_px, newY_px);
+			curve.lineAbsolute(prevX_px, newY_px);
+			curve.lineAbsolute(newX_px, newY_px);
 
-			pathArea.lineAbsolute(prevX_px, newY_px);
-			pathArea.lineAbsolute(newX_px, newY_px);
+			area.lineAbsolute(prevX_px, newY_px);
+			area.lineAbsolute(newX_px, newY_px);
 
 			prevX_px = newX_px;
 		}
-		pathArea.lineAbsolute(computer.getX_px(1.0 * values.size()), computer.getY_px(0.0));
+		area.lineAbsolute(computer.getX_px(1.0 * values.size()), computer.getY_px(0.0));
 
-		pathCurve.withStrokeColor(Color.BLUE).withStrokeWidth(2).withFillOpacity(0.0);
-		pathArea.withStrokeOpacity(0.0).withFillColor(Color.LIGHT_GRAY);
+		curve.withStrokeColor(Color.BLUE).withStrokeWidth(2).withFillOpacity(0.0);
+		area.withStrokeOpacity(0.0).withFillColor(Color.LIGHT_GRAY);
 
-		result.add(pathArea);
-		result.add(pathCurve);
+		result.add(area);
+		result.add(xAxis);
+		result.add(yAxis);
+		result.add(curve);
 
 		return result;
 	}
