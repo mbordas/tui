@@ -16,10 +16,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.svg;
 
 import tui.json.JsonMap;
+import tui.ui.components.svg.defs.SVGMarker;
 
 public class SVGPath extends SVGComponent {
 
 	private StringBuilder m_drawing = new StringBuilder();
+	private SVGMarker m_markerAtStart = null;
+	private SVGMarker m_markerAtMiddle = null;
+	private SVGMarker m_markerAtEnd = null;
 
 	public SVGPath(long startX, long startY) {
 		m_drawing.append(String.format("M%d,%d", startX, startY));
@@ -40,9 +44,39 @@ public class SVGPath extends SVGComponent {
 		return this;
 	}
 
+	public SVGPath withMarkerAtStart(SVGMarker marker) {
+		m_markerAtStart = marker;
+		return this;
+	}
+
+	public SVGPath withMarkerAtMiddle(SVGMarker marker) {
+		m_markerAtMiddle = marker;
+		return this;
+	}
+
+	public SVGPath withMarkerAtEnd(SVGMarker marker) {
+		m_markerAtEnd = marker;
+		return this;
+	}
+
 	public SVGPath close() {
 		m_drawing.append(" Z");
 		return this;
+	}
+
+	@Override
+	public String computeStyleAttribute() {
+		String result = super.computeStyleAttribute();
+		if(m_markerAtStart != null) {
+			result += String.format("marker-start:url(#%s);", m_markerAtStart.getId());
+		}
+		if(m_markerAtMiddle != null) {
+			result += String.format("marker-middle:url(#%s);", m_markerAtMiddle.getId());
+		}
+		if(m_markerAtEnd != null) {
+			result += String.format("marker-end:url(#%s);", m_markerAtEnd.getId());
+		}
+		return result;
 	}
 
 	@Override

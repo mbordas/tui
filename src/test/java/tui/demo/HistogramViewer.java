@@ -24,6 +24,8 @@ import tui.ui.components.layout.Layouts;
 import tui.ui.components.svg.CoordinatesComputer;
 import tui.ui.components.svg.SVG;
 import tui.ui.components.svg.SVGPath;
+import tui.ui.components.svg.SVGText;
+import tui.ui.components.svg.defs.SVGMarker;
 import tui.utils.TestUtils;
 
 import java.awt.*;
@@ -40,12 +42,24 @@ public class HistogramViewer {
 		final CoordinatesComputer.Range range_y = CoordinatesComputer.getRange(values);
 		final CoordinatesComputer computer = new CoordinatesComputer(width_px, height_px, padding_px, range_x, range_y);
 
+		final SVGMarker arrow = new SVGMarker("arrow", 10, 8)
+				.withRef(0, 4);
+		arrow.add(new SVGPath(0, 1)
+				.lineAbsolute(9, 4)
+				.lineAbsolute(0, 7)
+				.lineAbsolute(0, 1)
+				.withStrokeWidth(1)
+				.withFillColor(Color.BLACK));
+		result.addMarker(arrow);
+
 		final SVGPath xAxis = new SVGPath(0, computer.getY_px(0.0))
-				.lineAbsolute(width_px, computer.getY_px(0.0));
+				.lineAbsolute(width_px - padding_px / 2, computer.getY_px(0.0));
 		xAxis.withStrokeColor(Color.BLACK).withFillOpacity(0.0);
+		xAxis.withMarkerAtEnd(arrow);
 		final SVGPath yAxis = new SVGPath(computer.getX_px(0.0), height_px)
-				.lineAbsolute(computer.getX_px(0.0), 0);
+				.lineAbsolute(computer.getX_px(0.0), padding_px / 2);
 		yAxis.withStrokeColor(Color.BLACK).withFillOpacity(0.0);
+		yAxis.withMarkerAtEnd(arrow);
 
 		final SVGPath area = new SVGPath(computer.getX_px(0.0), computer.getY_px(0.0));
 
@@ -81,6 +95,8 @@ public class HistogramViewer {
 		result.add(yAxis);
 		result.add(curve);
 
+		result.add(new SVGText(computer.getX_px(0.0), computer.getY_px(0.0), "Origin", SVGText.Anchor.MIDDLE));
+
 		return result;
 	}
 
@@ -89,7 +105,7 @@ public class HistogramViewer {
 		page.setReadingWidth(Layouts.Width.NORMAL);
 
 		final List<Double> values = new ArrayList<>();
-		for(int i = 0; i < 100; i++) {
+		for(int i = 0; i < 50; i++) {
 			values.add(-20.0 + Math.random() * 100.0);
 		}
 		page.append(buildSVG(600, 500, values, 20));

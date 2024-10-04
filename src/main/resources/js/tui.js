@@ -485,8 +485,10 @@ function updateSVG(svgElement, json) {
 
 function copySVGAttributes(svgJson, svgElement) {
     for(let key in svgJson) {
-        if(svgJson.hasOwnProperty(key) && key != 'type' && key != 'components') {
+        if(svgJson.hasOwnProperty(key) && key != 'type' && key != 'innerText' && key != 'components') {
             svgElement.setAttribute(key, svgJson[key]);
+        } else if(svgJson.hasOwnProperty(key) && key == 'innerText') {
+            svgElement.innerText = svgJson[key];
         }
     }
 }

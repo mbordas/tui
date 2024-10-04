@@ -24,8 +24,10 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonValue;
 import tui.ui.components.UIRefreshableComponent;
+import tui.ui.components.svg.defs.SVGMarker;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -34,9 +36,12 @@ public class SVG extends UIRefreshableComponent {
 	private static final Logger LOG = LoggerFactory.getLogger(SVG.class);
 
 	public static final String JSON_TYPE = "svg";
+	public static final String JSON_ATTIRBUTE_INNER_TEXT = "innerText";
+	public static final String JSON_KEY_SUBCOMPONENTS = "components";
 
 	public static final String HTML_CLASS_CONTAINER = "tui-container-svg";
 
+	private final List<SVGMarker> m_markers = new ArrayList<>();
 	private final List<SVGComponent> m_components = new ArrayList<>();
 	private int m_width_px;
 	private int m_height_px;
@@ -48,6 +53,11 @@ public class SVG extends UIRefreshableComponent {
 	public SVG(int width_px, int height_px) {
 		m_width_px = width_px;
 		m_height_px = height_px;
+	}
+
+	public SVGMarker addMarker(SVGMarker marker) {
+		m_markers.add(marker);
+		return marker;
 	}
 
 	public void add(SVGComponent component) {
@@ -74,7 +84,7 @@ public class SVG extends UIRefreshableComponent {
 			}
 		}
 
-		for(JsonObject component : jsonMap.getArray("components").getItems()) {
+		for(JsonObject component : jsonMap.getArray(JSON_KEY_SUBCOMPONENTS).getItems()) {
 			svgElement.addChild(toHTMLNode(component));
 		}
 
@@ -88,13 +98,21 @@ public class SVG extends UIRefreshableComponent {
 
 		if(json instanceof JsonMap map) {
 			for(Map.Entry<String, JsonValue<?>> attribute : map.getAttributes().entrySet()) {
-				result.setAttribute(attribute.getKey(), attribute.getValue().toString());
+				final String key = attribute.getKey();
+				if(JSON_ATTIRBUTE_INNER_TEXT.equals(key)) {
+					result.setText(attribute.getValue().toString());
+				} else {
+					result.setAttribute(key, attribute.getValue().toString());
+				}
 			}
 			for(Map.Entry<String, JsonMap> submap : map.getMaps().entrySet()) {
 				result.addChild(toHTMLNode(submap.getValue()));
 			}
 			for(Map.Entry<String, JsonArray> subarray : map.getArrays().entrySet()) {
-				result.addChild(toHTMLNode(subarray.getValue()));
+				final JsonArray array = subarray.getValue();
+				for(JsonObject item : array.getItems()) {
+					result.addChild(toHTMLNode(item));
+				}
 			}
 		} else if(json instanceof JsonArray array) {
 			final HTMLNode child = result.createChild(array.getType());
@@ -118,9 +136,21 @@ public class SVG extends UIRefreshableComponent {
 		if(m_viewBox != null) {
 			result.setAttribute("viewBox", String.format("%d %d %d %d", m_viewBox.x, m_viewBox.y, m_viewBox.width, m_viewBox.height));
 		}
-		final JsonArray components = result.createArray("components");
+		final JsonArray components = result.createArray(JSON_KEY_SUBCOMPONENTS);
+		if(!m_markers.isEmpty()) {
+			components.add(createDefs(m_markers));
+		}
 		for(SVGComponent component : m_components) {
 			components.add(component.toJsonMap());
+		}
+		return result;
+	}
+
+	private static JsonMap createDefs(Collection<? extends SVGComponent> reusables) {
+		final JsonMap result = new JsonMap("defs");
+		final JsonArray components = result.createArray(JSON_KEY_SUBCOMPONENTS);
+		for(SVGComponent reusable : reusables) {
+			components.add(reusable.toJsonMap());
 		}
 		return result;
 	}
