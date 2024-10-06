@@ -48,8 +48,8 @@ public class HorizontalFlow extends AFlow {
 			final HTMLNode div = new HTMLNode("div");
 			div.setStyleProperty("display", "inline");
 			div.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "horizontal-spacing"));
-			div.addChild(component.toHTMLNode());
-			flowContent.addChild(div);
+			div.append(component.toHTMLNode());
+			flowContent.append(div);
 		}
 
 		giveMarginReadingProperties(result.createChild("p"));

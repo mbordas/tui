@@ -15,19 +15,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import org.jetbrains.annotations.Nullable;
+import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 
 public abstract class FormInput implements Comparable<FormInput> {
 
-	protected final String m_type;
+	protected final String m_jsonType;
+	protected final String m_htmlType;
 	protected final String m_label;
 	protected final String m_name;
+	protected String m_placeHolder = null;
 
-	public FormInput(String type, String label, String name) {
-		m_type = type;
+	public FormInput(String jsonType, String htmlType, String label, String name) {
+		m_jsonType = jsonType;
+		m_htmlType = htmlType;
 		m_label = label;
 		m_name = name;
+	}
+
+	public void setPlaceHolder(@Nullable String placeHolder) {
+		m_placeHolder = placeHolder;
 	}
 
 	public String getLabel() {
@@ -38,10 +47,23 @@ public abstract class FormInput implements Comparable<FormInput> {
 		return m_name;
 	}
 
+	public HTMLNode toHTMLNode() {
+		final HTMLNode result = new HTMLNode("input");
+		result.setAttribute("type", m_htmlType);
+		result.setAttribute("name", m_name);
+		if(m_placeHolder != null) {
+			result.setAttribute("placeholder", m_placeHolder);
+		}
+		return result;
+	}
+
 	public JsonObject toJsonObject() {
-		final JsonMap result = new JsonMap(m_type);
+		final JsonMap result = new JsonMap(m_jsonType);
 		result.setAttribute("label", m_label);
 		result.setAttribute("name", m_name);
+		if(m_placeHolder != null) {
+			result.setAttribute("placeholder", m_placeHolder);
+		}
 		return result;
 	}
 

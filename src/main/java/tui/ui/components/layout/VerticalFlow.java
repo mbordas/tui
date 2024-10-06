@@ -60,8 +60,8 @@ public class VerticalFlow extends AFlow {
 			final HTMLNode div = new HTMLNode("div");
 			div.setStyleProperty("text-align", "center");
 			div.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "vertical-spacing"));
-			div.addChild(htmlNode);
-			flowContent.addChild(div);
+			div.append(htmlNode);
+			flowContent.append(div);
 		}
 
 		giveMarginReadingProperties(result.createChild("p"));

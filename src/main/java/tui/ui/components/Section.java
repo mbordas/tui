@@ -68,7 +68,7 @@ public class Section extends UIComponent {
 			} else {
 				child = component.toHTMLNode();
 			}
-			result.addChild(child);
+			result.append(child);
 		}
 		return result;
 	}

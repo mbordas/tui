@@ -13,58 +13,14 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components.layout;
+package tui.ui.components.form;
 
-import tui.html.HTMLConstants;
-import tui.html.HTMLNode;
-import tui.json.JsonMap;
-import tui.ui.components.UIComponent;
+public class FormInputPassword extends FormInput {
 
-import java.util.ArrayList;
-import java.util.List;
+	public static final String HTML_TYPE = "password";
+	public static final String JSON_TYPE = "from_input_password";
 
-public class VerticalScroll extends UIComponent {
-
-	public static final String HTML_CLASS = "tui-vertical-scroll";
-
-	public static final String JSON_TYPE = "verticalScroll";
-
-	private final int m_height_px;
-	private final List<UIComponent> m_content = new ArrayList<>();
-
-	public VerticalScroll(int height_px, UIComponent... components) {
-		m_height_px = height_px;
-		for(UIComponent component : components) {
-			append(component);
-		}
-	}
-
-	public <C extends UIComponent> C append(C component) {
-		m_content.add(component);
-		return component;
-	}
-
-	public List<UIComponent> getContent() {
-		return m_content;
-	}
-
-	@Override
-	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("div")
-				.setAttribute("id", HTMLConstants.toId(getTUID()))
-				.setAttribute("class", HTML_CLASS)
-				.setStyleProperty("height", String.format("%dpx;", m_height_px));
-
-		for(UIComponent component : getContent()) {
-			result.append(component.toHTMLNode());
-		}
-		return result;
-	}
-
-	@Override
-	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
-		result.createArray("content", m_content, UIComponent::toJsonMap);
-		return result;
+	public FormInputPassword(String label, String name) {
+		super(JSON_TYPE, HTML_TYPE, label, name);
 	}
 }

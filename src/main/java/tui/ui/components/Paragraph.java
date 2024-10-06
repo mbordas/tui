@@ -101,7 +101,7 @@ public class Paragraph extends UIRefreshableComponent {
 		paragraphElement.addClass(m_withBorder ? HTML_CLASS_BORDER_ON : HTML_CLASS_BORDER_OFF);
 		for(Fragment fragment : m_fragments) {
 			if(Style.NORMAL == fragment.style()) {
-				paragraphElement.addChild(new HTMLText(fragment.text()));
+				paragraphElement.append(new HTMLText(fragment.text()));
 			} else {
 				paragraphElement.createChild(fragment.style().htmlNodeName)
 						.setText(fragment.text());

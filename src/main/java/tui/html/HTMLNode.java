@@ -98,13 +98,10 @@ public class HTMLNode {
 
 	public HTMLNode createChild(String name) {
 		final HTMLNode result = new HTMLNode(name);
-		if("div".equals(name)) {
-			result.setText(" "); // Will force to create a closing tag in DOM
-		}
-		return addChild(result);
+		return append(result);
 	}
 
-	public HTMLNode addChild(HTMLNode node) {
+	public HTMLNode append(HTMLNode node) {
 		m_children.add(node);
 		node.setPrettyPrintDepth(m_prettyPrintDepth + 1);
 		return node;
@@ -159,8 +156,13 @@ public class HTMLNode {
 				&& !"script".equals(m_name) // script node must have both opening and closing xml tags https://www.w3.org/TR/xhtml1/#h-4.8
 		) {
 			// Empty node
-			result.append("/>");
-			endOfTag(result);
+			if("div".equals(m_name)) {
+				result.append("></div>");
+				endOfTag(result);
+			} else {
+				result.append("/>");
+				endOfTag(result);
+			}
 		} else {
 			// Node with content
 			result.append(">"); // ending node's opening tag

@@ -100,7 +100,7 @@ public class Page extends APage {
 
 		if(m_header != null) {
 			final HTMLNode header = body.createChild("header");
-			header.addChild(m_header.toHTMLNode());
+			header.append(m_header.toHTMLNode());
 		}
 
 		final HTMLNode main = body.createChild("main");
@@ -108,11 +108,11 @@ public class Page extends APage {
 		final VerticalFlow flow = new VerticalFlow();
 		flow.setWidth(m_width);
 		flow.appendAll(getContent());
-		main.addChild(flow.toHTMLNode());
+		main.append(flow.toHTMLNode());
 
 		if(m_footer != null) {
 			final HTMLNode footer = body.createChild("footer");
-			footer.addChild(m_footer.toHTMLNode());
+			footer.append(m_footer.toHTMLNode());
 		}
 
 		if(m_header != null || m_footer != null) {

@@ -27,10 +27,10 @@ public class HTMLNodeTest {
 		final HTMLNode node = new HTMLNode("div");
 
 		node.setStyleProperty("display", "grid");
-		assertEquals("<div style=\"display: grid;\"/>", node.toHTML());
+		assertEquals("<div style=\"display: grid;\"></div>", node.toHTML());
 
 		node.setStyleProperty("width", "100%");
-		assertEquals("<div style=\"display: grid;width: 100%;\"/>", node.toHTML());
+		assertEquals("<div style=\"display: grid;width: 100%;\"></div>", node.toHTML());
 	}
 
 }

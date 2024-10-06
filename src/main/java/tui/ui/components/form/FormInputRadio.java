@@ -13,58 +13,58 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components.layout;
+package tui.ui.components.form;
 
-import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.ui.components.UIComponent;
+import tui.json.JsonObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class VerticalScroll extends UIComponent {
+public class FormInputRadio extends FormInput {
 
-	public static final String HTML_CLASS = "tui-vertical-scroll";
+	public static final String HTML_TYPE = "radio";
+	public static final String JSON_TYPE = "from_input_radio";
 
-	public static final String JSON_TYPE = "verticalScroll";
+	private final Map<String, String> m_options = new LinkedHashMap<>();
 
-	private final int m_height_px;
-	private final List<UIComponent> m_content = new ArrayList<>();
-
-	public VerticalScroll(int height_px, UIComponent... components) {
-		m_height_px = height_px;
-		for(UIComponent component : components) {
-			append(component);
-		}
+	public FormInputRadio(String label, String name) {
+		super(JSON_TYPE, HTML_TYPE, label, name);
 	}
 
-	public <C extends UIComponent> C append(C component) {
-		m_content.add(component);
-		return component;
-	}
-
-	public List<UIComponent> getContent() {
-		return m_content;
+	public FormInputRadio addOption(String label, String value) {
+		m_options.put(label, value);
+		return this;
 	}
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("div")
-				.setAttribute("id", HTMLConstants.toId(getTUID()))
-				.setAttribute("class", HTML_CLASS)
-				.setStyleProperty("height", String.format("%dpx;", m_height_px));
+		final HTMLNode result = new HTMLNode("div");
+		for(Map.Entry<String, String> optionEntry : m_options.entrySet()) {
+			final String label = optionEntry.getKey();
+			final String value = optionEntry.getValue();
 
-		for(UIComponent component : getContent()) {
-			result.append(component.toHTMLNode());
+			final HTMLNode inputDiv = result.append(new HTMLNode("div"));
+			inputDiv.append(new HTMLNode("input")
+					.setAttribute("type", HTML_TYPE)
+					.setAttribute("name", m_name)
+					.setAttribute("value", value));
+			inputDiv.append(new HTMLNode("label")
+					.setAttribute("for", m_name)
+					.setText(label));
 		}
 		return result;
 	}
 
 	@Override
-	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
-		result.createArray("content", m_content, UIComponent::toJsonMap);
+	public JsonObject toJsonObject() {
+		final JsonMap result = new JsonMap(m_jsonType);
+		result.setAttribute("label", m_label);
+		result.setAttribute("name", m_name);
+		final JsonMap options = new JsonMap(null);
+		m_options.forEach(options::setAttribute);
+		result.setChild("options", options);
 		return result;
 	}
 }

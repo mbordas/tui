@@ -55,7 +55,7 @@ public class Grid extends UIRefreshableComponent {
 
 		gridElement.setStyleProperty("grid-template-rows", "1fr ".repeat(m_components.length));
 		gridElement.setStyleProperty("grid-template-columns", computeGridTemplateColumns());
-		
+
 		for(final UIComponent[] row : m_components) {
 			for(final UIComponent cell : row) {
 				final HTMLNode childElement;
@@ -64,7 +64,7 @@ public class Grid extends UIRefreshableComponent {
 				} else {
 					childElement = new Paragraph("").toHTMLNode();
 				}
-				gridElement.addChild(childElement);
+				gridElement.append(childElement);
 			}
 		}
 

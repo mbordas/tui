@@ -17,10 +17,12 @@ package tui.ui.components.form;
 
 public class FormInputString extends FormInput {
 
+	public static final String HTML_TYPE = "text";
 	public static final String JSON_TYPE = "from_input_string";
 
 	public FormInputString(String label, String name) {
-		super(JSON_TYPE, label, name);
+		super(JSON_TYPE, HTML_TYPE, label, name);
+		setPlaceHolder("Text");
 	}
 
 }

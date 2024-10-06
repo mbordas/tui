@@ -40,19 +40,21 @@ public class FormTest extends TestWithBackend {
 		HTMLNode.PRETTY_PRINT = true;
 		assertEquals("""
 				<form class="tui-form" action method="post" enctype="multipart/form-data">
-				  <div class="fetch-error-message"> </div>
+				  <div class="fetch-error-message"></div>
 				  <fieldset>
 				    <legend>test form</legend>
-				    <p>
+				    <div class="tui-form-input">
 				      <label for="input1">string</label>
-				      <input name="input1" placeholder="Text input" type="text"/>
-				    </p>
-				    <p>
+				      <input type="text" name="input1" placeholder="Text"/>
+				    </div>
+				    <div class="tui-form-input">
 				      <label for="input2">number</label>
-				      <input name="input2" placeholder="Number" type="number"/>
+				      <input type="number" name="input2"/>
+				    </div>
+				    <p class="tui-align-right tui-border-off">
+				      <button type="submit">Submit</button>
 				    </p>
 				  </fieldset>
-				  <button type="submit">Submit</button>
 				</form>
 				""", html.toHTML());
 	}

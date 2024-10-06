@@ -36,7 +36,7 @@ public class Panel extends UIComponent {
 				.setAttribute("class", HTML_CLASS);
 
 		for(UIComponent component : getContent()) {
-			result.addChild(component.toHTMLNode());
+			result.append(component.toHTMLNode());
 		}
 		return result;
 	}

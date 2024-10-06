@@ -85,7 +85,7 @@ public class SVG extends UIRefreshableComponent {
 		}
 
 		for(JsonObject component : jsonMap.getArray(JSON_KEY_SUBCOMPONENTS).getItems()) {
-			svgElement.addChild(toHTMLNode(component));
+			svgElement.append(toHTMLNode(component));
 		}
 
 		return containedElement.getHigherNode();
@@ -106,18 +106,18 @@ public class SVG extends UIRefreshableComponent {
 				}
 			}
 			for(Map.Entry<String, JsonMap> submap : map.getMaps().entrySet()) {
-				result.addChild(toHTMLNode(submap.getValue()));
+				result.append(toHTMLNode(submap.getValue()));
 			}
 			for(Map.Entry<String, JsonArray> subarray : map.getArrays().entrySet()) {
 				final JsonArray array = subarray.getValue();
 				for(JsonObject item : array.getItems()) {
-					result.addChild(toHTMLNode(item));
+					result.append(toHTMLNode(item));
 				}
 			}
 		} else if(json instanceof JsonArray array) {
 			final HTMLNode child = result.createChild(array.getType());
 			for(JsonObject item : array.getItems()) {
-				child.addChild(toHTMLNode(item));
+				child.append(toHTMLNode(item));
 			}
 		}
 

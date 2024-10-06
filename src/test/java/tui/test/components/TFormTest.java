@@ -94,7 +94,7 @@ public class TFormTest extends TestWithBackend {
 	}
 
 	public static Collection<WebElement> getFields(WebElement formElement) {
-		return formElement.findElements(By.tagName("p"));
+		return formElement.findElements(By.className(Form.HTML_CLASS_FIELD));
 	}
 
 	static String getFieldLabel(WebElement fieldElement) {

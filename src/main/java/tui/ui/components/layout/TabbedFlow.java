@@ -62,7 +62,7 @@ public class TabbedFlow extends UIComponent {
 			flowNode.setStyleProperty("display", index == 1 ? "block" : "none");
 			flowNode.setStyleProperty("width", "100%");
 			flowNode.addClass("tui-tab");
-			result.addChild(flowNode);
+			result.append(flowNode);
 
 			index++;
 		}

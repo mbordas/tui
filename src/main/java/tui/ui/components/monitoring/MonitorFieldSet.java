@@ -83,7 +83,7 @@ public class MonitorFieldSet extends UIComponent {
 		}
 
 		for(MonitorField field : getFields()) {
-			result.addChild(field.toHTMLNode());
+			result.append(field.toHTMLNode());
 		}
 		return result;
 	}
