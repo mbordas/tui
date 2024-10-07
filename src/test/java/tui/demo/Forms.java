@@ -33,7 +33,7 @@ public class Forms {
 		final VerticalFlow tabRegularForm = tabbedFlow.createTab("Regular form");
 
 		final Form formRegular = tabRegularForm.append(new Form("Regular", "/forms/regular"));
-		formRegular.createInputCheckbox("checkbox", "checkbox");
+		formRegular.createInputCheckbox("Checkbox", "checkbox");
 		formRegular.createInputString("String", "string");
 		formRegular.createInputNumber("Number", "number");
 		formRegular.createInputDay("Day", "day");

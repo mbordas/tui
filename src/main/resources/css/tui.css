@@ -131,13 +131,24 @@ p {
 
 form {
     margin: 10px 0px 10px 0px;
+    width: 400px;
 }
 fieldset {
     border: 1px solid var(--global-color-border);
 }
-fieldset>label {
-    display: inline;
+.tui-form-input {
+    margin-top: 10px;
+}
+.tui-form-input>label {
+display: block;
+    width: 100%;
+    text-align: left;
     vertical-align: top;
+}
+.tui-form-input>input {
+    width: 100%;
+    padding-left: 15px;
+    box-sizing: border-box;
 }
 .tui-form-input-invalid {
     border: 2px solid var(--global-color-red-state);
