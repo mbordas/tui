@@ -20,9 +20,12 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,17 +35,45 @@ public class RequestReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RequestReader.class);
 
-	final Map<String, String[]> m_parameterMap;
-	final Map<String, String> m_postContentMap;
+	public static final String FORM_ENCTYPE = "multipart/form-data";
 
-	public RequestReader(HttpServletRequest request) throws IOException {
-		m_parameterMap = request.getParameterMap();
-		m_postContentMap = getPostContentAsMap(request);
+	private record FileInput(String name, InputStream inputStream) {
+	}
+
+	private final Map<String, String> m_parameters = new HashMap<>();
+	private final Map<String, FileInput> m_files = new HashMap<>();
+
+	public RequestReader(HttpServletRequest request) {
+		final String contentType = request.getContentType();
+		try {
+			if(contentType != null && contentType.startsWith("multipart/")) {
+				MultipartConfigElement multipartConfigElement =
+						new MultipartConfigElement("target/test-classes/tmp", 1024, 1024, 256);
+				request.setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
+
+				for(Part part : request.getParts()) {
+					final String name = part.getName();
+
+					if(name.startsWith("_file_")) {
+						m_files.put(name.substring("_file_".length()),
+								new FileInput(part.getSubmittedFileName(), part.getInputStream()));
+					} else {
+						m_parameters.put(name, new String(part.getInputStream().readAllBytes()));
+					}
+				}
+			} else {
+				for(Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
+					m_parameters.put(entry.getKey(), entry.getValue()[0]);
+				}
+				m_parameters.putAll(getPostContentAsMap(request));
+			}
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public String getStringParameter(String key) {
-		return m_parameterMap.containsKey(key) ? m_parameterMap.get(key)[0]
-				: m_postContentMap.getOrDefault(key, null);
+		return m_parameters.containsKey(key) ? m_parameters.get(key) : m_parameters.getOrDefault(key, null);
 	}
 
 	public Integer getIntegerParameter(String key) {
@@ -66,6 +97,10 @@ public class RequestReader {
 		} else {
 			return result;
 		}
+	}
+
+	public InputStream getFileInputStream(String key) {
+		return m_files.containsKey(key) ? m_files.get(key).inputStream : null;
 	}
 
 	static Map<String, String> getPostContentAsMap(HttpServletRequest request) throws IOException {

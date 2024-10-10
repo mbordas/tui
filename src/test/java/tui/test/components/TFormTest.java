@@ -18,7 +18,7 @@ package tui.test.components;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import tui.http.FormRequest;
+import tui.http.RequestReader;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
@@ -49,8 +49,9 @@ public class TFormTest extends TestWithBackend {
 		final AtomicReference<String> submittedName = new AtomicReference<>();
 		final AtomicReference<Integer> submittedAge = new AtomicReference<>();
 		registerWebService("/form", (uri, request, response) -> {
-			final String name = FormRequest.getStringField(request, "name");
-			final Integer age = FormRequest.getIntegerField(request, "age");
+			final RequestReader reader = new RequestReader(request);
+			final String name = reader.getStringParameter("name");
+			final Integer age = reader.getIntegerParameter("age");
 			submittedName.set(name);
 			submittedAge.set(age);
 			return Form.getSuccessfulSubmissionResponse();

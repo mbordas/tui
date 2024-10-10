@@ -44,7 +44,7 @@ public class TClient {
 	}
 
 	public void open(String endPoint) throws HttpException {
-		final String json = m_httpClient.callBackend(endPoint, Map.of("format", "json"));
+		final String json = m_httpClient.callBackend(endPoint, Map.of("format", "json"), false);
 		final JsonMap jsonMap = JsonParser.parseMap(json);
 		try {
 			m_currentPage = ATPage.parse(jsonMap, this);
@@ -117,8 +117,11 @@ public class TClient {
 		return (TForm) forms.get(0);
 	}
 
-	public String callBackend(String target, Map<String, Object> parameters) throws HttpException {
-		return m_httpClient.callBackend(target, parameters);
+	/**
+	 * @param multipart Should be set for form submission
+	 */
+	public String callBackend(String target, Map<String, Object> parameters, boolean multipart) throws HttpException {
+		return m_httpClient.callBackend(target, parameters, multipart);
 	}
 
 	public TComponent find(long tuid) {

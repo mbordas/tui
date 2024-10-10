@@ -21,7 +21,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.html.HTMLNode;
-import tui.http.FormRequest;
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
@@ -124,10 +124,11 @@ public class SVGTest extends TestWithBackend {
 		final TUIBackend backend = new TUIBackend(ui);
 
 		backend.registerWebService(form.getTarget(), (uri, request, response) -> {
-			final int x = FormRequest.getIntegerField(request, "x");
-			final int y = FormRequest.getIntegerField(request, "y");
-			final int width = FormRequest.getIntegerField(request, "width");
-			final int height = FormRequest.getIntegerField(request, "height");
+			final RequestReader reader = new RequestReader(request);
+			final int x = reader.getIntegerParameter("x");
+			final int y = reader.getIntegerParameter("y");
+			final int width = reader.getIntegerParameter("width");
+			final int height = reader.getIntegerParameter("height");
 			svg.add(new SVGRectangle(x, y, width, height).withFillColor(Color.ORANGE).withFillOpacity(0.5));
 			return Form.getSuccessfulSubmissionResponse();
 		});

@@ -17,7 +17,7 @@ package tui.ui.components.form;
 
 import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
-import tui.http.FormRequest;
+import tui.http.RequestReader;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -139,7 +139,7 @@ public class Form extends UIComponent {
 				.setAttribute("class", HTML_CLASS)
 				.setAttribute("action", m_target)
 				.setAttribute("method", "post")
-				.setAttribute("enctype", FormRequest.ENCTYPE);
+				.setAttribute("enctype", RequestReader.FORM_ENCTYPE);
 
 		HTMLFetchErrorMessage.addErrorMessageChild(result);
 

@@ -17,7 +17,7 @@ package tui.test;
 
 import org.junit.After;
 import org.junit.Test;
-import tui.http.FormRequest;
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.components.TForm;
 import tui.test.components.TTable;
@@ -79,7 +79,8 @@ public class TClientTest {
 			dataTable.append(Map.of(columnName, "John Doe"));
 			m_backend.registerWebService(endPointGetTable, (uri, request, response) -> dataTable.toJsonMap());
 			m_backend.registerWebService(endPointAppendTable, (uri, request, response) -> {
-				final String nameValue = FormRequest.getStringField(request, parameterName);
+				final RequestReader reader = new RequestReader(request);
+				final String nameValue = reader.getStringParameter(parameterName);
 				assert nameValue != null;
 				dataTable.append(Map.of(columnName, nameValue));
 				return Form.getSuccessfulSubmissionResponse();

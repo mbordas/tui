@@ -19,6 +19,7 @@ import tui.ui.components.Table;
 import tui.ui.components.form.Form;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -173,6 +174,19 @@ public class Browser {
 		}
 	}
 
+	public void selectFile(String formTitle, String name, File localFile) {
+		final Optional<WebElement> anyFieldName = getFields(formTitle).stream()
+				.filter((field) -> name.equals(getFieldName(field)))
+				.findAny();
+
+		if(anyFieldName.isPresent()) {
+			WebElement inputElement = anyFieldName.get().findElement(By.tagName("input"));
+			inputElement.sendKeys(localFile.getAbsolutePath());
+		} else {
+			throw new RuntimeException("Field input element not found: " + name);
+		}
+	}
+
 	public void submit(String formTitle) {
 		final WebElement formElement = getForm(formTitle);
 		final Optional<WebElement> anySubmitButton = formElement.findElements(By.tagName("button")).stream()
@@ -204,5 +218,4 @@ public class Browser {
 	public static WebElement getParent(WebElement element) {
 		return element.findElement(By.xpath("parent::*"));
 	}
-
 }

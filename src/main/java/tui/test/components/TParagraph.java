@@ -43,7 +43,7 @@ public class TParagraph extends TRefreshableComponent {
 
 	@Override
 	public void refresh(Map<String, Object> data) throws HttpException {
-		final String response = m_client.callBackend(m_source, data);
+		final String response = m_client.callBackend(m_source, data, false);
 		final JsonMap map = JsonParser.parseMap(response);
 
 		final TParagraph paragraph = parse(map, null);

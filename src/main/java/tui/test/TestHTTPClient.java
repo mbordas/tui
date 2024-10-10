@@ -27,6 +27,8 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
@@ -38,8 +40,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ProxySelector;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -112,7 +116,7 @@ public class TestHTTPClient {
 		}
 	}
 
-	public String callBackend(String target, Map<String, Object> parameters) throws HttpException {
+	public String callBackend(String target, Map<String, Object> parameters, boolean multipart) throws HttpException {
 		final String uri = String.format("http://%s:%d/%s", m_host, m_port,
 				target.startsWith("/") ? target.substring(1) : target);
 		final HttpPost httpRequest = new HttpPost(uri);
@@ -120,13 +124,32 @@ public class TestHTTPClient {
 		final String result;
 		try {
 			if(parameters != null) {
-				final ArrayList<NameValuePair> postParameters = new ArrayList<>();
-				for(Map.Entry<String, Object> entry : parameters.entrySet()) {
-					postParameters.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
+				if(multipart) {
+					final MultipartEntityBuilder meb = MultipartEntityBuilder.create();
+					meb.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+					meb.setCharset(StandardCharsets.UTF_8);
+
+					for(Map.Entry<String, Object> entry : parameters.entrySet()) {
+						final Object value = entry.getValue();
+						if(value instanceof File file) {
+							meb.addBinaryBody(file.getName(), file);
+						} else {
+							meb.addTextBody(entry.getKey(), entry.getValue().toString(),
+									ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), StandardCharsets.UTF_8));
+						}
+					}
+					httpRequest.setEntity(meb.build());
+				} else {
+					final ArrayList<NameValuePair> postParameters = new ArrayList<>();
+					for(Map.Entry<String, Object> entry : parameters.entrySet()) {
+						postParameters.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
+					}
+					httpRequest.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
 				}
-				httpRequest.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
 			}
+
 			result = m_httpClient.execute(httpRequest, m_responseHandler);
+
 		} catch(IOException e) {
 			throw new HttpException(e.getMessage(), e);
 		} finally {

@@ -18,11 +18,19 @@ package tui.ui.components.form;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import tui.html.HTMLNode;
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.UI;
 import tui.ui.components.Page;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -74,6 +82,52 @@ public class FormTest extends TestWithBackend {
 
 		assertTrue(browser.isOnError(formElement));
 		assertEquals("Error: HTTP error, status = 500", browser.getErrorMessage(formElement));
+	}
+
+	@Test
+	public void uploadFile() throws FileNotFoundException {
+		final Form form = new Form("Error will occur on submit", "/form");
+		form.createInputString("Name", "name");
+		form.createInputFile("File", "file");
+		final Page page = new Page("Upload", "/upload");
+		page.append(form);
+
+		final File fileToUpload = new File("target/test-classes/form/file_to_upload.txt");
+		final File folderWhereToUpload = new File("target/test-classes/temp");
+		folderWhereToUpload.mkdir();
+
+		final Browser browser = startAndBrowse(page).browser();
+
+		registerWebService(form.getTarget(), (uri, request, response) -> {
+			System.out.println("URI = " + uri);
+			final RequestReader reader = new RequestReader(request);
+
+			final String newName = reader.getStringParameter("name");
+			final InputStream inputStream = reader.getFileInputStream("file");
+
+			File uploadedFile = new File(folderWhereToUpload, newName);
+			try(FileOutputStream fos = new FileOutputStream(uploadedFile)) {
+				fos.write(inputStream.readAllBytes());
+			}
+
+			return Form.getSuccessfulSubmissionResponse();
+		});
+
+		browser.typeField(form.getTitle(), "name", "UploadedName.txt");
+		browser.selectFile(form.getTitle(), "file", fileToUpload);
+		browser.submit(form.getTitle());
+		wait_s(1);
+
+		File expectedUploadedFile = new File(folderWhereToUpload, "UploadedName.txt");
+		assertTrue(expectedUploadedFile.exists());
+
+		String testedContent;
+		try(FileInputStream fis = new FileInputStream(expectedUploadedFile)) {
+			testedContent = new String(fis.readAllBytes());
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+		assertEquals("Uploaded content.", testedContent);
 	}
 
 	public static void main(String[] args) throws Exception {

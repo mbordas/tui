@@ -16,7 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.form;
 
 import tui.html.HTMLNode;
-import tui.http.FormRequest;
+import tui.http.RequestReader;
 import tui.ui.components.UIComponent;
 
 import java.util.Collection;
@@ -52,7 +52,7 @@ public class ModalForm extends Form {
 		final HTMLNode htmlForm = dialog.createChild("form")
 				.setAttribute("action", getTarget())
 				.setAttribute("method", "post")
-				.setAttribute("enctype", FormRequest.ENCTYPE);
+				.setAttribute("enctype", RequestReader.FORM_ENCTYPE);
 
 		final Collection<UIComponent> refreshListeners = getRefreshListeners();
 		if(!refreshListeners.isEmpty()) {

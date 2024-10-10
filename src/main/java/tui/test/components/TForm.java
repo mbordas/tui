@@ -79,7 +79,7 @@ public class TForm extends TComponent {
 	public void submit() throws HttpException {
 		final Map<String, Object> parameters = new HashMap<>();
 		m_fields.forEach((field) -> parameters.put(field.name, field.enteredValue));
-		final String jsonResponse = m_client.callBackend(m_target, parameters);
+		final String jsonResponse = m_client.callBackend(m_target, parameters, true);
 		if(!Form.isSuccessfulSubmissionResponse(jsonResponse)) {
 			throw new HttpException("Unexpected web service response");
 		}

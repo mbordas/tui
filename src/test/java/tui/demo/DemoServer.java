@@ -18,7 +18,7 @@ package tui.demo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.html.HTMLNode;
-import tui.http.FormRequest;
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.json.JsonObject;
 import tui.test.Browser;
@@ -110,8 +110,9 @@ public class DemoServer {
 
 		// Called when form is submitted
 		backend.registerWebService(form.getTarget(), (uri, request, response) -> {
-			final String serialNumber = FormRequest.getStringField(request, inputSerialNumber.getName());
-			final String vendor = FormRequest.getStringField(request, inputVendor.getName());
+			final RequestReader reader = new RequestReader(request);
+			final String serialNumber = reader.getStringParameter(inputSerialNumber.getName());
+			final String vendor = reader.getStringParameter(inputVendor.getName());
 			Map<String, Object> row = new LinkedHashMap<>();
 			row.put(columnVendor, vendor);
 			row.put(columnSerialNumber, serialNumber);
@@ -123,7 +124,8 @@ public class DemoServer {
 		backend.registerWebService(table.getSource(), (uri, request, response) -> table.toJsonMap());
 
 		backend.registerWebService(modalForm.getTarget(), (uri, request, response) -> {
-			final String nameValue = FormRequest.getStringField(request, modalFormFieldName.getName());
+			final RequestReader reader = new RequestReader(request);
+			final String nameValue = reader.getStringParameter(modalFormFieldName.getName());
 			LOG.info("Modal form submitted with parameter name=" + nameValue);
 			if(nameValue.isEmpty()) {
 				Map<String, String> errors = new HashMap<>();

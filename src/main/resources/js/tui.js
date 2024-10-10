@@ -229,12 +229,11 @@ function instrumentForms() {
             e.preventDefault();
 
             const url = form.action;
-            const data = new FormData(e.target);
 
             fetch(url, {
                     method: form.method,
                     enctype: 'multipart/form-data',
-                    body: new URLSearchParams(data)
+                    body: prepareFormData(form) // new URLSearchParams(data)
                 })
                 .then(response => {
                      if(!response.ok) {
@@ -276,12 +275,11 @@ function instrumentModalForms() {
         form.addEventListener('submit', e => {
             e.preventDefault();
             const url = form.action;
-            const data = new FormData(e.target);
 
             fetch(url, {
                     method: form.method,
                     enctype: 'multipart/form-data',
-                    body: new URLSearchParams(data)
+                    body: prepareFormData(form)
                 })
                 .then(response => {
                     if(!response.ok) {
@@ -323,6 +321,23 @@ function instrumentModalForms() {
         });
 
     });
+}
+
+/*
+    Builds the body to be sent to backend with the following rules:
+    - A file input is renamed with prefixed '_file_' so it can be easily detected by the backend.
+    - Any other type of input is added without modification
+*/
+function prepareFormData(formElement) {
+    const data = new FormData();
+    formElement.querySelectorAll('input').forEach(function(inputElement) {
+        if(inputElement.type == 'file') {
+            data.append('_file_' + inputElement.name, inputElement.files[0], inputElement.files[0].name);
+        } else {
+            data.append(inputElement.name, inputElement.value);
+        }
+    });
+    return data;
 }
 
 function instrumentFormWithErrorMessage(formElement) {
