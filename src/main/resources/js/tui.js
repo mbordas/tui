@@ -331,7 +331,7 @@ function instrumentModalForms() {
 function prepareFormData(formElement) {
     const data = new FormData();
     formElement.querySelectorAll('input').forEach(function(inputElement) {
-        if(inputElement.type == 'file') {
+        if(inputElement.type == 'file' && inputElement.files[0] != null) {
             data.append('_file_' + inputElement.name, inputElement.files[0], inputElement.files[0].name);
         } else {
             data.append(inputElement.name, inputElement.value);
