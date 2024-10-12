@@ -333,6 +333,10 @@ function prepareFormData(formElement) {
     formElement.querySelectorAll('input').forEach(function(inputElement) {
         if(inputElement.type == 'file' && inputElement.files[0] != null) {
             data.append('_file_' + inputElement.name, inputElement.files[0], inputElement.files[0].name);
+        } else if(inputElement.type == 'radio') {
+            if(inputElement.checked) {
+                data.append(inputElement.name, inputElement.value);
+            }
         } else {
             data.append(inputElement.name, inputElement.value);
         }

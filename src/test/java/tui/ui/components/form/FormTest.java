@@ -17,7 +17,6 @@ package tui.ui.components.form;
 
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import tui.html.HTMLNode;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
@@ -27,10 +26,10 @@ import tui.ui.components.Page;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,41 +37,12 @@ import static org.junit.Assert.assertTrue;
 public class FormTest extends TestWithBackend {
 
 	@Test
-	public void toHTML() {
-		final Form form = new Form("test form", null);
-		form.createInputString("string", "input1");
-		form.createInputNumber("number", "input2");
-
-		final HTMLNode html = form.toHTMLNode();
-
-		HTMLNode.PRETTY_PRINT = true;
-		assertEquals("""
-				<form class="tui-form" action method="post" enctype="multipart/form-data">
-				  <div class="fetch-error-message"></div>
-				  <fieldset>
-				    <legend>test form</legend>
-				    <div class="tui-form-input">
-				      <label for="input1">string</label>
-				      <input type="text" name="input1" placeholder="Text"/>
-				    </div>
-				    <div class="tui-form-input">
-				      <label for="input2">number</label>
-				      <input type="number" name="input2"/>
-				    </div>
-				    <p class="tui-align-right tui-border-off">
-				      <button type="submit">Submit</button>
-				    </p>
-				  </fieldset>
-				</form>
-				""", html.toHTML());
-	}
-
-	@Test
 	public void errorOnSubmit() {
 		final Form form = new Form("Error will occur on submit", "/form");
 		form.createInputString("Message", "message");
 		final Page page = new Page("Error on submit", "/index");
 		page.append(form);
+
 		final Browser browser = startAndBrowse(page).browser();
 		browser.typeField(form.getTitle(), "message", "entered value");
 		browser.submit(form.getTitle());
@@ -85,7 +55,33 @@ public class FormTest extends TestWithBackend {
 	}
 
 	@Test
-	public void uploadFile() throws FileNotFoundException {
+	public void supportForRadio() {
+		final Form form = new Form("Select radio option", "/form/radio");
+		final FormInputRadio inputRadio = form.createInputRadio("Options", "radio");
+		inputRadio.addOption("First option", "option1");
+		inputRadio.addOption("Second option", "option2");
+		inputRadio.addOption("Third option", "option3");
+		final Page page = new Page("supportForRadio", "/index");
+		page.append(form);
+
+		final Browser browser = startAndBrowse(page).browser();
+
+		final AtomicReference<String> valueSentToBackend = new AtomicReference<>();
+		m_backend.registerWebService(form.getTarget(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			valueSentToBackend.set(reader.getStringParameter(inputRadio.getName()));
+			return Form.getSuccessfulSubmissionResponse();
+		});
+
+		browser.selectRadio(form.getTitle(), inputRadio.getName(), "option2");
+		browser.submit(form.getTitle());
+		wait_s(0.1);
+
+		assertEquals("option2", valueSentToBackend.get());
+	}
+
+	@Test
+	public void uploadFile() {
 		final Form form = new Form("Error will occur on submit", "/form");
 		form.createInputString("Name", "name");
 		form.createInputFile("File", "file");

@@ -41,7 +41,8 @@ public class Forms {
 		formRegular.createInputPassword("Password", "password");
 		formRegular.createInputRadio("Radio", "radio")
 				.addOption("Option 1", "option1")
-				.addOption("Option 2", "option2");
+				.addOption("Option 2", "option2")
+				.addOption("Option 3", "option3");
 		formRegular.createInputEmail("Email", "email");
 		formRegular.createInputFile("File", "file");
 

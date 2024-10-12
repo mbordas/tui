@@ -35,6 +35,10 @@ public abstract class FormInput implements Comparable<FormInput> {
 		m_name = name;
 	}
 
+	public String getHTMLType() {
+		return m_htmlType;
+	}
+
 	public void setPlaceHolder(@Nullable String placeHolder) {
 		m_placeHolder = placeHolder;
 	}

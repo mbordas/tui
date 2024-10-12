@@ -138,9 +138,10 @@ fieldset {
 }
 .tui-form-input {
     margin-top: 10px;
+    text-align: left;
 }
 .tui-form-input>label {
-display: block;
+    display: block;
     width: 100%;
     text-align: left;
     vertical-align: top;
@@ -149,6 +150,16 @@ display: block;
     width: 100%;
     padding-left: 15px;
     box-sizing: border-box;
+}
+.tui-form-input>.label-checkbox {
+    display: inline;
+    width: auto;
+}
+.tui-form-input>input[type='checkbox'] {
+    display: inline;
+    width: auto;
+    text-align: left;
+    margin-left: 15px;
 }
 .tui-form-input-invalid {
     border: 2px solid var(--global-color-red-state);

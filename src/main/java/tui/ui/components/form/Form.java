@@ -151,12 +151,17 @@ public class Form extends UIComponent {
 		final HTMLNode fieldset = result.createChild("fieldset");
 		fieldset.createChild("legend").setText(getTitle());
 		for(FormInput input : getInputs()) {
+			// We must use a unique id for the input to be linked to its label with the 'for' attribute.
+			final String inputId = String.format("%s-%s", getTUID(), input.getName());
 			final HTMLNode inputDiv = fieldset.createChild("div").addClass(HTML_CLASS_FIELD);
 			inputDiv.createChild("label")
-					.setAttribute("for", input.getName())
+					.addClass("label-" + input.getHTMLType())
+					.setAttribute("for", inputId)
 					.setText(input.getLabel());
 
-			inputDiv.append(input.toHTMLNode());
+			final HTMLNode inputNode = input.toHTMLNode();
+			inputNode.setAttribute("id", inputId);
+			inputDiv.append(inputNode);
 		}
 
 		final HTMLNode formFooter = fieldset.append(new Paragraph().setAlign(Layouts.TextAlign.RIGHT).toHTMLNode());

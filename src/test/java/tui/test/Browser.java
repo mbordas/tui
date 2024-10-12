@@ -174,6 +174,25 @@ public class Browser {
 		}
 	}
 
+	public void selectRadio(String formTitle, String name, String option) {
+		final Optional<WebElement> anyFieldName = getFields(formTitle).stream()
+				.filter((field) -> name.equals(getFieldName(field)))
+				.findAny();
+
+		if(anyFieldName.isPresent()) {
+			final Optional<WebElement> anyInput = anyFieldName.get().findElements(By.tagName("input")).stream()
+					.filter((input) -> input.getAttribute("value").equals(option))
+					.findAny();
+			if(anyInput.isEmpty()) {
+				throw new RuntimeException(String.format("Option '%s' not found in radio '%s'", option, name));
+			} else {
+				anyInput.get().click();
+			}
+		} else {
+			throw new RuntimeException("Field input element not found: " + name);
+		}
+	}
+
 	public void selectFile(String formTitle, String name, File localFile) {
 		final Optional<WebElement> anyFieldName = getFields(formTitle).stream()
 				.filter((field) -> name.equals(getFieldName(field)))
