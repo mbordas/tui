@@ -357,11 +357,15 @@ function instrumentFormWithErrorMessage(formElement) {
 }
 
 function startFormPending(formElement) {
-    formElement.querySelector('fieldset').classList.add('form-pending');
+    const fieldset = formElement.querySelector('fieldset');
+    fieldset.classList.add('form-pending');
+    fieldset.disabled = true;
 }
 
 function stopFormPending(formElement) {
-    formElement.querySelector('fieldset').classList.remove('form-pending');
+    const fieldset = formElement.querySelector('fieldset');
+    fieldset.classList.remove('form-pending');
+    fieldset.disabled = false;
 }
 
 function showFetchErrorInElement(element, error) {
