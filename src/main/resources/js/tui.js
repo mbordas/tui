@@ -230,12 +230,14 @@ function instrumentForms() {
 
             const url = form.action;
 
+            startFormPending(form);
             fetch(url, {
                     method: form.method,
                     enctype: 'multipart/form-data',
                     body: prepareFormData(form) // new URLSearchParams(data)
                 })
                 .then(response => {
+                    stopFormPending(form);
                      if(!response.ok) {
                         throw new Error(`HTTP error, status = ${response.status}`);
                     }
@@ -249,6 +251,7 @@ function instrumentForms() {
                     }
                 })
                 .catch(error => {
+                    stopFormPending(form);
                     form.classList.add("fetch-error");
                     console.log(error);
                     showFetchErrorInElement(form, error)
@@ -275,7 +278,7 @@ function instrumentModalForms() {
         form.addEventListener('submit', e => {
             e.preventDefault();
             const url = form.action;
-
+            startFormPending(form);
             fetch(url, {
                     method: form.method,
                     enctype: 'multipart/form-data',
@@ -287,9 +290,11 @@ function instrumentModalForms() {
                     }
                     hideFetchErrorInElement(form);
                     form.classList.remove("fetch-error");
+                    stopFormPending(form);
                     return response.json();
                 })
                 .then((json) => {
+                    stopFormPending(form);
                     if(json['status'] == 'ok') {
                         const fields = form.querySelectorAll('input');
                         fields.forEach(function (field) {
@@ -315,6 +320,7 @@ function instrumentModalForms() {
                     }
                 })
                 .catch(error => {
+                    stopFormPending(form);
                     form.classList.add("fetch-error");
                     showFetchErrorInElement(form, error);
                 });
@@ -348,6 +354,14 @@ function instrumentFormWithErrorMessage(formElement) {
      const errorMessageElement = document.createElement('div');
      errorMessageElement.setAttribute('class', 'fetch-error-message');
      formElement.insertBefore(errorMessageElement,formElement.firstChild);
+}
+
+function startFormPending(formElement) {
+    formElement.querySelector('fieldset').classList.add('form-pending');
+}
+
+function stopFormPending(formElement) {
+    formElement.querySelector('fieldset').classList.remove('form-pending');
 }
 
 function showFetchErrorInElement(element, error) {

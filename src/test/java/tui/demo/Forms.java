@@ -51,7 +51,14 @@ public class Forms {
 		ui.add(page);
 		final TUIBackend backend = new TUIBackend(ui);
 
-		backend.registerWebService(formRegular.getTarget(), (uri, request, response) -> Form.getSuccessfulSubmissionResponse());
+		backend.registerWebService(formRegular.getTarget(), (uri, request, response) -> {
+			try {
+				Thread.sleep(3000);
+				return Form.getSuccessfulSubmissionResponse();
+			} catch(InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		});
 
 		backend.start();
 

@@ -135,6 +135,35 @@ form {
 }
 fieldset {
     border: 1px solid var(--global-color-border);
+    background: var(--global-color-background);
+    position: relative;
+}
+/* https://www.youtube.com/watch?v=ezP4kbOvs_E */
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+.form-pending::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+    padding: 3px;
+    background: linear-gradient(var(--angle), var(--global-color-background) 0%, var(--global-color-background) 50%, var(--global-color-action) 100%);
+    animation: 1s spin linear infinite;
+}
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+    to {
+        --angle: 360deg;
+    }
 }
 .tui-form-input {
     margin-top: 10px;
