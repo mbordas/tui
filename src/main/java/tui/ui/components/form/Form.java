@@ -135,7 +135,7 @@ public class Form extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = super.toHTMLNode("form", false)
+		final HTMLNode result = super.toHTMLNode("form", true)
 				.addClass(HTML_CLASS)
 				.setAttribute("action", m_target)
 				.setAttribute("method", "post")
@@ -153,7 +153,7 @@ public class Form extends UIComponent {
 		return result;
 	}
 
-	protected HTMLNode createFieldSet(HTMLNode formNode, boolean withCancelButton) {
+	protected HTMLNode createFieldSet(HTMLNode formNode, boolean isModal) {
 		final HTMLNode result = formNode.createChild("fieldset");
 		result.createChild("legend").setText(getTitle());
 		for(FormInput input : getInputs()) {
@@ -170,18 +170,32 @@ public class Form extends UIComponent {
 			inputDiv.append(inputNode);
 		}
 
-		final HTMLNode formFooter = result.append(new Paragraph().setAlign(Layouts.TextAlign.RIGHT).toHTMLNode());
+		result.createChild("div")
+				.setAttribute("id", String.format("form-message-%s", getTUID()))
+				.addClass("tui-form-message")
+				.setText(" ") // Prevents the following elements to be created under this div
+				.setStyleProperty("width", "100%");
 
-		if(withCancelButton) {
+		final HTMLNode formFooter = result.append(new Paragraph().setAlign(Layouts.TextAlign.RIGHT).toHTMLNode());
+		if(isModal) {
 			formFooter.createChild("button")
-					.setAttribute("class", "tui-modal-form-cancel-button")
+					.addClass("tui-modal-form-cancel-button")
 					.setAttribute("type", "button")
 					.setText("Cancel");
 		}
-
+		formFooter.createChild("button")
+				.setAttribute("type", "reset")
+				.addClass("tui-modal-form-reset-button")
+				.setText("Reset");
 		formFooter.createChild("button")
 				.setAttribute("type", "submit")
 				.setText("Submit");
+		if(isModal) {
+			formFooter.createChild("button")
+					.addClass("tui-modal-form-close-button")
+					.setAttribute("type", "button")
+					.setText("Ok");
+		}
 
 		return result;
 	}

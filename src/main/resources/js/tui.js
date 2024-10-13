@@ -225,16 +225,24 @@ function instrumentForms() {
     const forms = document.querySelectorAll('.tui-form');
     forms.forEach(function(form, i) {
         instrumentFormWithErrorMessage(form);
+
+        const resetButton = form.querySelector('.tui-modal-form-reset-button');
+        resetButton.addEventListener('click', () => {
+            hideSuccessMessage(form);
+            hideFetchErrorInElement(form);
+            form.reset();
+        });
+
         form.addEventListener('submit', e => {
             e.preventDefault();
 
             const url = form.action;
-
+            hideSuccessMessage(form);
             startFormPending(form);
             fetch(url, {
                     method: form.method,
                     enctype: 'multipart/form-data',
-                    body: prepareFormData(form) // new URLSearchParams(data)
+                    body: prepareFormData(form)
                 })
                 .then(response => {
                     stopFormPending(form);
@@ -249,6 +257,10 @@ function instrumentForms() {
                                 refreshComponent(id);
                             })
                     }
+                    return response.json();
+                })
+                .then((json) => {
+                    showSuccessMessage(form, json['message']);
                 })
                 .catch(error => {
                     stopFormPending(form);
@@ -268,16 +280,34 @@ function instrumentModalForms() {
         const form = dialog.querySelector('form');
         const cancelButton = form.querySelector('.tui-modal-form-cancel-button');
         const submitButton = form.querySelector('.tui-modal-form-submit-button');
+        const closeButton = form.querySelector('.tui-modal-form-close-button');
+        closeButton.style.display = 'none';
 
         openButton.addEventListener('click', () => {
             dialog.showModal();
         });
         cancelButton.addEventListener('click', () => {
+            hideSuccessMessage(form);
+            closeButton.style.display = 'none';
             dialog.close();
+        });
+        closeButton.addEventListener('click', () => {
+            hideSuccessMessage(form);
+            dialog.close();
+            form.reset();
+            closeButton.style.display = 'none';
+        });
+        form.addEventListener('reset', e => {
+            hideSuccessMessage(form);
+            hideFetchErrorInElement(form);
+            closeButton.style.display = 'none';
+            form.reset();
         });
         form.addEventListener('submit', e => {
             e.preventDefault();
             const url = form.action;
+            hideFetchErrorInElement(form);
+            hideSuccessMessage(form);
             startFormPending(form);
             fetch(url, {
                     method: form.method,
@@ -301,13 +331,13 @@ function instrumentModalForms() {
                             field.removeAttribute('title');
                             field.classList.remove("tui-form-input-invalid");
                         });
+                        showSuccessMessage(form, json['message']);
                         if(formContainer.hasAttribute('refresh-listeners')) {
                             formContainer.getAttribute('refresh-listeners').split(",")
                                 .forEach(function(id, i) {
                                     refreshComponent(id);
                                 })
                         }
-                        dialog.close();
                     } else {
                         Object.keys(json['errors']).forEach(function(key) {
                             const field = form.querySelector("[name='" + key + "']");
@@ -315,14 +345,15 @@ function instrumentModalForms() {
                             field.setAttribute('title', message);
                             field.classList.add("tui-form-input-invalid");
                         });
-
                         throw new Error(json['message']);
                     }
+                    closeButton.style.display = 'inline';
                 })
                 .catch(error => {
                     stopFormPending(form);
                     form.classList.add("fetch-error");
                     showFetchErrorInElement(form, error);
+                    closeButton.style.display = 'inline';
                 });
         });
 
@@ -356,6 +387,11 @@ function instrumentFormWithErrorMessage(formElement) {
      formElement.insertBefore(errorMessageElement,formElement.firstChild);
 }
 
+function instrumentFormCloseButton(formElement) {
+    const buttonElement = formElement.querySelector('#form-button-close-' + formElement.id);
+    buttonElement.style.display = 'none';
+}
+
 function startFormPending(formElement) {
     const fieldset = formElement.querySelector('fieldset');
     fieldset.classList.add('form-pending');
@@ -368,14 +404,27 @@ function stopFormPending(formElement) {
     fieldset.disabled = false;
 }
 
-function showFetchErrorInElement(element, error) {
-    const errorDiv = element.querySelectorAll('.fetch-error-message')[0];
+function showSuccessMessage(formElement, message) {
+    const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+    messageElement.classList.add('tui-monitor-field-value-green');
+    messageElement.textContent = message;
+}
+
+function hideSuccessMessage(formElement) {
+    const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+    messageElement.textContent = ' ';
+}
+
+function showFetchErrorInElement(formElement, error) {
+    formElement.classList.add('fetch-error');
+    const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
     errorDiv.innerText = error;
     errorDiv.style.display = 'block';
 }
 
-function hideFetchErrorInElement(element) {
-    const errorDiv = element.querySelectorAll('.fetch-error-message')[0];
+function hideFetchErrorInElement(formElement) {
+    formElement.classList.remove('fetch-error');
+    const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
     errorDiv.innerText = '';
     errorDiv.style.display = 'none';
 }

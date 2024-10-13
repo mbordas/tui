@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
 import tui.http.RequestReader;
@@ -52,7 +53,8 @@ public class ModalForm extends Form {
 		final HTMLNode htmlForm = dialog.createChild("form")
 				.setAttribute("action", getTarget())
 				.setAttribute("method", "post")
-				.setAttribute("enctype", RequestReader.FORM_ENCTYPE);
+				.setAttribute("enctype", RequestReader.FORM_ENCTYPE)
+				.setAttribute("id", HTMLConstants.toId(getTUID()));
 
 		HTMLFetchErrorMessage.addErrorMessageChild(htmlForm);
 

@@ -193,6 +193,10 @@ fieldset {
 .tui-form-input-invalid {
     border: 2px solid var(--global-color-red-state);
 }
+.tui-form-message {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
 .modal {
     max-width: 50ch;
 }
