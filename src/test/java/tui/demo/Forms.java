@@ -20,37 +20,28 @@ import tui.test.Browser;
 import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.form.Form;
+import tui.ui.components.form.ModalForm;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
 
 public class Forms {
 
-	public static void main(String[] args) throws Exception {
-		final Page page = new Page("Forms");
-		page.setSource("/index");
+	private static void createModalForm(TUIBackend backend, VerticalFlow tabRegularForm) {
+		final Form formModal = tabRegularForm.append(new ModalForm("Modal", "Open", "/forms/modal"));
+		createInputs(formModal);
+		backend.registerWebService(formModal.getTarget(), (uri, request, response) -> {
+			try {
+				Thread.sleep(3000);
+				return Form.getSuccessfulSubmissionResponse();
+			} catch(InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		});
+	}
 
-		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
-		final VerticalFlow tabRegularForm = tabbedFlow.createTab("Regular form");
-
+	private static void createRegularForm(TUIBackend backend, VerticalFlow tabRegularForm) {
 		final Form formRegular = tabRegularForm.append(new Form("Regular", "/forms/regular"));
-		formRegular.createInputCheckbox("Checkbox", "checkbox");
-		formRegular.createInputString("String", "string");
-		formRegular.createInputNumber("Number", "number");
-		formRegular.createInputDay("Day", "day");
-		formRegular.createInputDayHHmm("Day HH:mm", "dayHHmm");
-		formRegular.createInputPassword("Password", "password");
-		formRegular.createInputRadio("Radio", "radio")
-				.addOption("Option 1", "option1")
-				.addOption("Option 2", "option2")
-				.addOption("Option 3", "option3");
-		formRegular.createInputEmail("Email", "email");
-		formRegular.createInputFile("File", "file");
-
-		final UI ui = new UI();
-		ui.setHTTPBackend("http://localhost", 8080);
-		ui.add(page);
-		final TUIBackend backend = new TUIBackend(ui);
-
+		createInputs(formRegular);
 		backend.registerWebService(formRegular.getTarget(), (uri, request, response) -> {
 			try {
 				Thread.sleep(3000);
@@ -59,6 +50,36 @@ public class Forms {
 				throw new RuntimeException(e);
 			}
 		});
+	}
+
+	private static void createInputs(Form form) {
+		form.createInputCheckbox("Checkbox", "checkbox");
+		form.createInputString("String", "string");
+		form.createInputNumber("Number", "number");
+		form.createInputDay("Day", "day");
+		form.createInputDayHHmm("Day HH:mm", "dayHHmm");
+		form.createInputPassword("Password", "password");
+		form.createInputRadio("Radio", "radio")
+				.addOption("Option 1", "option1")
+				.addOption("Option 2", "option2")
+				.addOption("Option 3", "option3");
+		form.createInputEmail("Email", "email");
+		form.createInputFile("File", "file");
+	}
+
+	public static void main(String[] args) throws Exception {
+		final Page page = new Page("Forms");
+		page.setSource("/index");
+
+		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
+
+		final UI ui = new UI();
+		ui.setHTTPBackend("http://localhost", 8080);
+		ui.add(page);
+		final TUIBackend backend = new TUIBackend(ui);
+
+		createRegularForm(backend, tabbedFlow.createTab("Regular form"));
+		createModalForm(backend, tabbedFlow.createTab("Modal form"));
 
 		backend.start();
 

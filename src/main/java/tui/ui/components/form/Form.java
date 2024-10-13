@@ -136,7 +136,7 @@ public class Form extends UIComponent {
 	@Override
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = super.toHTMLNode("form", false)
-				.setAttribute("class", HTML_CLASS)
+				.addClass(HTML_CLASS)
 				.setAttribute("action", m_target)
 				.setAttribute("method", "post")
 				.setAttribute("enctype", RequestReader.FORM_ENCTYPE);
@@ -148,12 +148,18 @@ public class Form extends UIComponent {
 			result.setAttribute("refresh-listeners", getTUIsSeparatedByComa(refreshListeners));
 		}
 
-		final HTMLNode fieldset = result.createChild("fieldset");
-		fieldset.createChild("legend").setText(getTitle());
+		createFieldSet(result, false);
+
+		return result;
+	}
+
+	protected HTMLNode createFieldSet(HTMLNode formNode, boolean withCancelButton) {
+		final HTMLNode result = formNode.createChild("fieldset");
+		result.createChild("legend").setText(getTitle());
 		for(FormInput input : getInputs()) {
 			// We must use a unique id for the input to be linked to its label with the 'for' attribute.
 			final String inputId = String.format("%s-%s", getTUID(), input.getName());
-			final HTMLNode inputDiv = fieldset.createChild("div").addClass(HTML_CLASS_FIELD);
+			final HTMLNode inputDiv = result.createChild("div").addClass(HTML_CLASS_FIELD);
 			inputDiv.createChild("label")
 					.addClass("label-" + input.getHTMLType())
 					.setAttribute("for", inputId)
@@ -164,7 +170,15 @@ public class Form extends UIComponent {
 			inputDiv.append(inputNode);
 		}
 
-		final HTMLNode formFooter = fieldset.append(new Paragraph().setAlign(Layouts.TextAlign.RIGHT).toHTMLNode());
+		final HTMLNode formFooter = result.append(new Paragraph().setAlign(Layouts.TextAlign.RIGHT).toHTMLNode());
+
+		if(withCancelButton) {
+			formFooter.createChild("button")
+					.setAttribute("class", "tui-modal-form-cancel-button")
+					.setAttribute("type", "button")
+					.setText("Cancel");
+		}
+
 		formFooter.createChild("button")
 				.setAttribute("type", "submit")
 				.setText("Submit");
