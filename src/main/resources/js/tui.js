@@ -226,17 +226,17 @@ function instrumentForms() {
     forms.forEach(function(form, i) {
         instrumentFormWithErrorMessage(form);
 
-        const resetButton = form.querySelector('.tui-modal-form-reset-button');
+        const resetButton = form.querySelector('.tui-form-reset-button');
         resetButton.addEventListener('click', () => {
-            hideSuccessMessage(form);
-            hideFetchErrorInElement(form);
             form.reset();
+            completeFormReset(form);
         });
 
         form.addEventListener('submit', e => {
             e.preventDefault();
 
             const url = form.action;
+            hideFetchErrorInElement(form);
             hideSuccessMessage(form);
             startFormPending(form);
             fetch(url, {
@@ -245,27 +245,18 @@ function instrumentForms() {
                     body: prepareFormData(form)
                 })
                 .then(response => {
-                    stopFormPending(form);
-                     if(!response.ok) {
+                    if(!response.ok) {
                         throw new Error(`HTTP error, status = ${response.status}`);
                     }
                     hideFetchErrorInElement(form);
-                    form.classList.remove('fetch-error');
-                    if(form.hasAttribute('refresh-listeners')) {
-                        form.getAttribute('refresh-listeners').split(",")
-                            .forEach(function(id, i) {
-                                refreshComponent(id);
-                            })
-                    }
+                    stopFormPending(form);
                     return response.json();
                 })
                 .then((json) => {
-                    showSuccessMessage(form, json['message']);
+                    onFormResponse(form, json);
                 })
                 .catch(error => {
                     stopFormPending(form);
-                    form.classList.add("fetch-error");
-                    console.log(error);
                     showFetchErrorInElement(form, error)
                 });
         })
@@ -278,9 +269,9 @@ function instrumentModalForms() {
         const openButton = formContainer.querySelector('button');
         const dialog = formContainer.querySelector('dialog');
         const form = dialog.querySelector('form');
-        const cancelButton = form.querySelector('.tui-modal-form-cancel-button');
-        const submitButton = form.querySelector('.tui-modal-form-submit-button');
-        const closeButton = form.querySelector('.tui-modal-form-close-button');
+        const cancelButton = form.querySelector('.tui-form-cancel-button');
+        const submitButton = form.querySelector('.tui-form-submit-button');
+        const closeButton = form.querySelector('.tui-form-close-button');
         closeButton.style.display = 'none';
 
         openButton.addEventListener('click', () => {
@@ -292,16 +283,15 @@ function instrumentModalForms() {
             dialog.close();
         });
         closeButton.addEventListener('click', () => {
-            hideSuccessMessage(form);
             dialog.close();
             form.reset();
+            completeFormReset(form);
             closeButton.style.display = 'none';
         });
         form.addEventListener('reset', e => {
-            hideSuccessMessage(form);
-            hideFetchErrorInElement(form);
             closeButton.style.display = 'none';
             form.reset();
+            completeFormReset(form);
         });
         form.addEventListener('submit', e => {
             e.preventDefault();
@@ -319,39 +309,15 @@ function instrumentModalForms() {
                         throw new Error(`HTTP error, status = ${response.status}`);
                     }
                     hideFetchErrorInElement(form);
-                    form.classList.remove("fetch-error");
                     stopFormPending(form);
                     return response.json();
                 })
                 .then((json) => {
-                    stopFormPending(form);
-                    if(json['status'] == 'ok') {
-                        const fields = form.querySelectorAll('input');
-                        fields.forEach(function (field) {
-                            field.removeAttribute('title');
-                            field.classList.remove("tui-form-input-invalid");
-                        });
-                        showSuccessMessage(form, json['message']);
-                        if(formContainer.hasAttribute('refresh-listeners')) {
-                            formContainer.getAttribute('refresh-listeners').split(",")
-                                .forEach(function(id, i) {
-                                    refreshComponent(id);
-                                })
-                        }
-                    } else {
-                        Object.keys(json['errors']).forEach(function(key) {
-                            const field = form.querySelector("[name='" + key + "']");
-                            const message = json['errors'][key];
-                            field.setAttribute('title', message);
-                            field.classList.add("tui-form-input-invalid");
-                        });
-                        throw new Error(json['message']);
-                    }
+                    onFormResponse(form, json);
                     closeButton.style.display = 'inline';
                 })
                 .catch(error => {
                     stopFormPending(form);
-                    form.classList.add("fetch-error");
                     showFetchErrorInElement(form, error);
                     closeButton.style.display = 'inline';
                 });
@@ -404,10 +370,50 @@ function stopFormPending(formElement) {
     fieldset.disabled = false;
 }
 
-function showSuccessMessage(formElement, message) {
-    const messageElement = formElement.querySelector('#form-message-' + formElement.id);
-    messageElement.classList.add('tui-monitor-field-value-green');
-    messageElement.textContent = message;
+function completeFormReset(formElement) {
+    hideSuccessMessage(formElement);
+    hideFetchErrorInElement(formElement);
+    hideInputsErrors(formElement);
+}
+
+function hideInputsErrors(formElement) {
+    const fields = formElement.querySelectorAll('input');
+    fields.forEach(function (field) {
+        field.removeAttribute('title');
+        field.classList.remove("tui-form-input-invalid");
+        const errorElement = field.parentElement.querySelector('.tui-input-error');
+        if(errorElement != null) { // input elements of type radio option do not have an error element.
+            errorElement.textContent = '';
+        }
+    });
+}
+
+function onFormResponse(formElement, json) {
+    hideFetchErrorInElement(formElement);
+    stopFormPending(formElement);
+
+    if(json['status'] == 'ok') {
+        hideInputsErrors(formElement);
+
+        // Show success message
+        const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+        messageElement.classList.add('tui-monitor-field-value-green');
+        messageElement.textContent = json['message'];
+
+        if(formElement.hasAttribute('refresh-listeners')) {
+            formElement.getAttribute('refresh-listeners').split(",")
+                .forEach(function(id, i) {
+                    refreshComponent(id);
+                })
+        }
+    } else {
+         Object.keys(json['errors']).forEach(function(key) {
+            const field = formElement.querySelector("[name='" + key + "']");
+            field.classList.add("tui-form-input-invalid");
+            const errorElement = field.parentElement.querySelector('.tui-input-error');
+            errorElement.textContent = json['errors'][key];
+        });
+    }
 }
 
 function hideSuccessMessage(formElement) {
@@ -416,6 +422,7 @@ function hideSuccessMessage(formElement) {
 }
 
 function showFetchErrorInElement(formElement, error) {
+    console.log(error);
     formElement.classList.add('fetch-error');
     const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
     errorDiv.innerText = error;

@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.demo;
 
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.UI;
@@ -24,28 +25,33 @@ import tui.ui.components.form.ModalForm;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
 
+import java.util.Map;
+
 public class Forms {
 
 	private static void createModalForm(TUIBackend backend, VerticalFlow tabRegularForm) {
 		final Form formModal = tabRegularForm.append(new ModalForm("Modal", "Open", "/forms/modal"));
 		createInputs(formModal);
-		backend.registerWebService(formModal.getTarget(), (uri, request, response) -> {
-			try {
-				Thread.sleep(3000);
-				return Form.getSuccessfulSubmissionResponse();
-			} catch(InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		});
+		registerWebService(backend, formModal);
 	}
 
 	private static void createRegularForm(TUIBackend backend, VerticalFlow tabRegularForm) {
 		final Form formRegular = tabRegularForm.append(new Form("Regular", "/forms/regular"));
 		createInputs(formRegular);
-		backend.registerWebService(formRegular.getTarget(), (uri, request, response) -> {
+		registerWebService(backend, formRegular);
+	}
+
+	private static void registerWebService(TUIBackend backend, Form form) {
+		backend.registerWebService(form.getTarget(), (uri, request, response) -> {
 			try {
-				Thread.sleep(3000);
-				return Form.getSuccessfulSubmissionResponse();
+				Thread.sleep(1000);
+				final RequestReader reader = new RequestReader(request);
+				final String password = reader.getStringParameter("password");
+				if(password == null || password.isEmpty()) {
+					return Form.getFailedSubmissionResponse("Form rejected", Map.of("password", "Password can't be empty"));
+				} else {
+					return Form.getSuccessfulSubmissionResponse();
+				}
 			} catch(InterruptedException e) {
 				throw new RuntimeException(e);
 			}
@@ -58,7 +64,7 @@ public class Forms {
 		form.createInputNumber("Number", "number");
 		form.createInputDay("Day", "day");
 		form.createInputDayHHmm("Day HH:mm", "dayHHmm");
-		form.createInputPassword("Password", "password");
+		form.createInputPassword("Password *", "password");
 		form.createInputRadio("Radio", "radio")
 				.addOption("Option 1", "option1")
 				.addOption("Option 2", "option2")

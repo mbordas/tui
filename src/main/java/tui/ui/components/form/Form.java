@@ -168,6 +168,8 @@ public class Form extends UIComponent {
 			final HTMLNode inputNode = input.toHTMLNode();
 			inputNode.setAttribute("id", inputId);
 			inputDiv.append(inputNode);
+
+			inputDiv.createChild("span").addClass("tui-input-error");
 		}
 
 		result.createChild("div")
@@ -177,22 +179,23 @@ public class Form extends UIComponent {
 				.setStyleProperty("width", "100%");
 
 		final HTMLNode formFooter = result.append(new Paragraph().setAlign(Layouts.TextAlign.RIGHT).toHTMLNode());
+		formFooter.addClass("tui-form-footer");
 		if(isModal) {
 			formFooter.createChild("button")
-					.addClass("tui-modal-form-cancel-button")
+					.addClass("tui-form-cancel-button")
 					.setAttribute("type", "button")
 					.setText("Cancel");
 		}
 		formFooter.createChild("button")
 				.setAttribute("type", "reset")
-				.addClass("tui-modal-form-reset-button")
+				.addClass("tui-form-reset-button")
 				.setText("Reset");
 		formFooter.createChild("button")
 				.setAttribute("type", "submit")
 				.setText("Submit");
 		if(isModal) {
 			formFooter.createChild("button")
-					.addClass("tui-modal-form-close-button")
+					.addClass("tui-form-close-button")
 					.setAttribute("type", "button")
 					.setText("Ok");
 		}
