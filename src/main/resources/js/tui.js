@@ -269,27 +269,17 @@ function instrumentModalForms() {
         const openButton = formContainer.querySelector('button');
         const dialog = formContainer.querySelector('dialog');
         const form = dialog.querySelector('form');
-        const cancelButton = form.querySelector('.tui-form-cancel-button');
-        const submitButton = form.querySelector('.tui-form-submit-button');
         const closeButton = form.querySelector('.tui-form-close-button');
-        closeButton.style.display = 'none';
+        const submitButton = form.querySelector('.tui-form-submit-button');
 
         openButton.addEventListener('click', () => {
             dialog.showModal();
         });
-        cancelButton.addEventListener('click', () => {
-            hideSuccessMessage(form);
-            closeButton.style.display = 'none';
-            dialog.close();
-        });
         closeButton.addEventListener('click', () => {
+            hideSuccessMessage(form);
             dialog.close();
-            form.reset();
-            completeFormReset(form);
-            closeButton.style.display = 'none';
         });
         form.addEventListener('reset', e => {
-            closeButton.style.display = 'none';
             form.reset();
             completeFormReset(form);
         });
@@ -314,12 +304,10 @@ function instrumentModalForms() {
                 })
                 .then((json) => {
                     onFormResponse(form, json);
-                    closeButton.style.display = 'inline';
                 })
                 .catch(error => {
                     stopFormPending(form);
                     showFetchErrorInElement(form, error);
-                    closeButton.style.display = 'inline';
                 });
         });
 
@@ -351,11 +339,6 @@ function instrumentFormWithErrorMessage(formElement) {
      const errorMessageElement = document.createElement('div');
      errorMessageElement.setAttribute('class', 'fetch-error-message');
      formElement.insertBefore(errorMessageElement,formElement.firstChild);
-}
-
-function instrumentFormCloseButton(formElement) {
-    const buttonElement = formElement.querySelector('#form-button-close-' + formElement.id);
-    buttonElement.style.display = 'none';
 }
 
 function startFormPending(formElement) {

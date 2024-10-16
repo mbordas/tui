@@ -182,9 +182,9 @@ public class Form extends UIComponent {
 		formFooter.addClass("tui-form-footer");
 		if(isModal) {
 			formFooter.createChild("button")
-					.addClass("tui-form-cancel-button")
+					.addClass("tui-form-close-button")
 					.setAttribute("type", "button")
-					.setText("Cancel");
+					.setText("Close");
 		}
 		formFooter.createChild("button")
 				.setAttribute("type", "reset")
@@ -193,12 +193,6 @@ public class Form extends UIComponent {
 		formFooter.createChild("button")
 				.setAttribute("type", "submit")
 				.setText("Submit");
-		if(isModal) {
-			formFooter.createChild("button")
-					.addClass("tui-form-close-button")
-					.setAttribute("type", "button")
-					.setText("Ok");
-		}
 
 		return result;
 	}

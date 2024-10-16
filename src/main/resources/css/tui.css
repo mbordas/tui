@@ -205,7 +205,7 @@ fieldset {
     margin-top: 5px;
     margin-bottom: 5px;
 }
-.tui-form-cancel-button, .tui-form-reset-button {
+.tui-form-close-button, .tui-form-reset-button {
       background: none;
       padding-left: 5px;
       padding-right: 5px;
