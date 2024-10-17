@@ -129,7 +129,7 @@ p {
 
 /* FORM */
 
-form {
+tui-form {
     margin: 10px 0px 10px 0px;
     width: 400px;
 }
@@ -224,7 +224,7 @@ fieldset {
 
 /* BUTTON */
 
-button {
+button,tui-navbutton {
     border-radius: 2px;
     padding: 5px 20px 5px 20px;
     text-align: center;
@@ -236,6 +236,12 @@ button {
 button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button {
     background-color: var(--global-color-action);
     color: var(--global-color-action-contrast);
+}
+
+/* NAV BUTTON */
+
+.tui-navbutton {
+    display: inline;
 }
 
 /* MONITORING */

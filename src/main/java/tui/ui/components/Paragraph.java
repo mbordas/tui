@@ -79,6 +79,11 @@ public class Paragraph extends UIRefreshableComponent {
 		return this;
 	}
 
+	public Paragraph clear() {
+		m_fragments.clear();
+		return this;
+	}
+
 	public Paragraph appendNormal(String text) {
 		return append(Style.NORMAL, text);
 	}

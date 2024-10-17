@@ -25,6 +25,7 @@ import tui.html.HTMLConstants;
 import tui.json.JsonObject;
 import tui.ui.UI;
 import tui.ui.components.APage;
+import tui.ui.components.Page;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +49,7 @@ public class TUIBackend {
 	private Server m_server;
 
 	private final Map<String, TUIWebService> m_webServices = new HashMap<>();
+	private final Map<String, TUIPageService> m_pageServices = new HashMap<>();
 
 	public TUIBackend(UI ui) {
 		m_ui = ui;
@@ -67,7 +69,21 @@ public class TUIBackend {
 				final String uri = request.getRequestURI();
 				LOG.info("URI: {}", uri);
 
-				if(m_webServices.containsKey(uri)) {
+				if(m_pageServices.containsKey(uri)) {
+					final TUIPageService pageService = m_pageServices.get(uri);
+					try {
+						final Page page = pageService.handle(uri, request);
+						final String html = page.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
+						response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
+						response.getWriter().write(html);
+						response.setStatus(200);
+						request.setHandled(true);
+					} catch(Throwable t) {
+						LOG.error(t.getMessage(), t);
+						response.setStatus(500);
+						request.setHandled(true);
+					}
+				} else if(m_webServices.containsKey(uri)) {
 					final TUIWebService webService = m_webServices.get(uri);
 					try {
 						final JsonObject node = webService.handle(uri, request, response);
@@ -166,6 +182,10 @@ public class TUIBackend {
 
 	public void registerWebService(String path, TUIWebService service) {
 		m_webServices.put(path, service);
+	}
+
+	public void registerPageService(String path, TUIPageService service) {
+		m_pageServices.put(path, service);
 	}
 
 }
