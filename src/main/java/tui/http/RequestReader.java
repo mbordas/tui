@@ -99,6 +99,17 @@ public class RequestReader {
 		}
 	}
 
+	public boolean getCheckboxParameter(String key) {
+		final String valueStr = getStringParameter(key);
+		if("on".equals(valueStr)) {
+			return true;
+		} else if("off".equals(valueStr)) {
+			return false;
+		} else {
+			throw new IllegalArgumentException(String.format("Unexpected request parameter value for checkbox '%s': %s", key, valueStr));
+		}
+	}
+
 	public InputStream getFileInputStream(String key) {
 		return m_files.containsKey(key) ? m_files.get(key).inputStream : null;
 	}

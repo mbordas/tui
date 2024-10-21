@@ -18,7 +18,7 @@ package tui.ui.components.form;
 public class FormInputDayHHmm extends FormInput {
 
 	public static final String HTML_TYPE = "datetime-local";
-	public static final String JSON_TYPE = "from_input_day";
+	public static final String JSON_TYPE = HTML_TYPE;
 
 	public FormInputDayHHmm(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);

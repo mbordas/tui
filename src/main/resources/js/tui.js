@@ -328,8 +328,16 @@ function prepareFormData(formElement) {
             if(inputElement.checked) {
                 data.append(inputElement.name, inputElement.value);
             }
-        } else {
-            data.append(inputElement.name, inputElement.value);
+        } else if(inputElement.type == 'checkbox') {
+             if(inputElement.checked) {
+                 data.append(inputElement.name, 'on');
+             } else {
+                 data.append(inputElement.name, 'off');
+             }
+         } else {
+            if(inputElement.value != '') {
+                data.append(inputElement.name, inputElement.value);
+            }
         }
     });
     return data;
@@ -389,6 +397,27 @@ function onFormResponse(formElement, json) {
                     refreshComponent(id);
                 })
         }
+
+        if(json['formUpdate'] != null) {
+            const formUpdate = json['formUpdate'];
+            if(formUpdate['type'] != 'form') {
+                console.error('Unexpected type: ' + formUpdate['type']);
+            } else {
+                formElement.setAttribute('action', formUpdate['target']); // Updating target
+                formElement.querySelector("button[type='submit']").textContent = formUpdate['submitLabel']; // Updating submit label
+
+                const fieldset = formElement.querySelector('fieldset');
+                const legend = fieldset.querySelector('legend'); // Updating title
+                legend.textContent = formUpdate['title'];
+
+                const formTUID = formElement['id'];
+                const newInputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
+                formUpdate['inputs'].forEach(function(input) {
+                    createFormInput(newInputsDiv, input, formTUID);
+                });
+                fieldset.querySelector('div').replaceWith(newInputsDiv);
+            }
+        }
     } else {
          Object.keys(json['errors']).forEach(function(key) {
             const field = formElement.querySelector("[name='" + key + "']");
@@ -396,6 +425,25 @@ function onFormResponse(formElement, json) {
             const errorElement = field.parentElement.querySelector('.tui-input-error');
             errorElement.textContent = json['errors'][key];
         });
+    }
+}
+
+function createFormInput(fieldsetElement, json, formTUID) {
+    const inputDiv = document.createElement('div');
+    fieldsetElement.append(inputDiv);
+    inputDiv.classList.add('tui-form-input');
+    const inputId = formTUID + '-' + json['name'];
+    const inputLabel = document.createElement('label');
+    inputDiv.append(inputLabel);
+    inputLabel.setAttribute('for', inputId);
+    inputLabel.textContent = json['label'];
+
+    if(json['type'] != 'from_input_checkbox') {
+        inputLabel.classList.add('label-checkbox');
+        const inputElement = document.createElement('input');
+        inputDiv.append(inputElement);
+        inputElement.setAttribute('type', json['type']);
+        inputElement.setAttribute('name', json['name']);
     }
 }
 

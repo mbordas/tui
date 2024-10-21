@@ -18,7 +18,7 @@ package tui.ui.components.form;
 public class FormInputNumber extends FormInput {
 
 	public static final String HTML_TYPE = "number";
-	public static final String JSON_TYPE = "from_input_number";
+	public static final String JSON_TYPE = HTML_TYPE;
 
 	public FormInputNumber(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);

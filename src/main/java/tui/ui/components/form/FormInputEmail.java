@@ -18,7 +18,7 @@ package tui.ui.components.form;
 public class FormInputEmail extends FormInput {
 
 	public static final String HTML_TYPE = "email";
-	public static final String JSON_TYPE = "from_input_email";
+	public static final String JSON_TYPE = HTML_TYPE;
 
 	public FormInputEmail(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);

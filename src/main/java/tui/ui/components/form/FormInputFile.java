@@ -18,7 +18,7 @@ package tui.ui.components.form;
 public class FormInputFile extends FormInput {
 
 	public static final String HTML_TYPE = "file";
-	public static final String JSON_TYPE = "from_input_file";
+	public static final String JSON_TYPE = HTML_TYPE;
 
 	public FormInputFile(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);

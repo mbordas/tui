@@ -85,6 +85,7 @@ public class Paragraph extends UIRefreshableComponent {
 	}
 
 	public Paragraph appendNormal(String text) {
+		assert text != null;
 		return append(Style.NORMAL, text);
 	}
 

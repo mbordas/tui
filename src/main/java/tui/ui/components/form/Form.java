@@ -45,7 +45,7 @@ public class Form extends UIComponent {
 	public static final String JSON_TYPE_FORM_SUBMISSION_RESPONSE = "formSubmissionResponse";
 
 	private final String m_title;
-
+	private String m_submitLabel = "Submit";
 	private final String m_target; // Web service path
 
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
@@ -70,6 +70,10 @@ public class Form extends UIComponent {
 
 	public Collection<UIComponent> getRefreshListeners() {
 		return m_refreshListeners;
+	}
+
+	public void setSubmitLabel(String label) {
+		m_submitLabel = label;
 	}
 
 	public FormInputCheckbox createInputCheckbox(String label, String name) {
@@ -155,11 +159,13 @@ public class Form extends UIComponent {
 
 	protected HTMLNode createFieldSet(HTMLNode formNode, boolean isModal) {
 		final HTMLNode result = formNode.createChild("fieldset");
-		result.createChild("legend").setText(getTitle());
+		result.createChild("legend").setText(m_title);
+
+		final HTMLNode inputsDiv = result.createChild("div");
 		for(FormInput input : getInputs()) {
 			// We must use a unique id for the input to be linked to its label with the 'for' attribute.
 			final String inputId = String.format("%s-%s", getTUID(), input.getName());
-			final HTMLNode inputDiv = result.createChild("div").addClass(HTML_CLASS_FIELD);
+			final HTMLNode inputDiv = inputsDiv.createChild("div").addClass(HTML_CLASS_FIELD);
 			inputDiv.createChild("label")
 					.addClass("label-" + input.getHTMLType())
 					.setAttribute("for", inputId)
@@ -192,7 +198,7 @@ public class Form extends UIComponent {
 				.setText("Reset");
 		formFooter.createChild("button")
 				.setAttribute("type", "submit")
-				.setText("Submit");
+				.setText(m_submitLabel);
 
 		return result;
 	}
@@ -204,6 +210,7 @@ public class Form extends UIComponent {
 		result.setAttribute("target", m_target);
 		result.createArray("refreshListeners", m_refreshListeners, (listener) -> new JsonString(JsonConstants.toId(listener.getTUID())));
 		result.createArray("inputs", m_inputs, FormInput::toJsonObject);
+		result.setAttribute("submitLabel", m_submitLabel);
 		return result;
 	}
 
@@ -232,6 +239,14 @@ public class Form extends UIComponent {
 		return new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
 				.setAttribute("message", "form submitted");
+	}
+
+	public static JsonObject getFormUpdateSubmissionResponse(Form updatedForm) {
+		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
+				.setAttribute("status", "ok")
+				.setAttribute("message", "form submitted");
+		result.setChild("formUpdate", updatedForm.toJsonMap());
+		return result;
 	}
 
 	public static JsonObject getFailedSubmissionResponse(String message, Map<String, String> errorMessageByFieldName) {

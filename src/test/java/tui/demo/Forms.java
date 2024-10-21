@@ -20,6 +20,8 @@ import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.UI;
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
+import tui.ui.components.UIRefreshableComponent;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.ModalForm;
 import tui.ui.components.layout.TabbedFlow;
@@ -39,6 +41,43 @@ public class Forms {
 		final Form formRegular = tabRegularForm.append(new Form("Regular", "/forms/regular"));
 		createInputs(formRegular);
 		registerWebService(backend, formRegular);
+	}
+
+	static class InfoSubmittedWithWizard {
+		String string;
+		String day;
+		Boolean checkbox;
+		Integer number;
+	}
+
+	static final InfoSubmittedWithWizard m_infoSubmittedWithWizard = new InfoSubmittedWithWizard();
+
+	private static void createWizardForm(TUIBackend backend, VerticalFlow tabWizardForm, UIRefreshableComponent componentToRefresh) {
+		final Form formWizard1 = tabWizardForm.append(new Form("Wizard 1/2", "/forms/wizard/1"));
+		formWizard1.createInputString("String", "string");
+		formWizard1.createInputDay("Day", "day");
+		formWizard1.setSubmitLabel("Next");
+		formWizard1.registerRefreshListener(componentToRefresh);
+
+		// formWizard2 instance will not be part of the page, it used sent in json to the frontend, where formWizard1 will be updated
+		final Form formWizard2 = new Form("Wizard 2/2", "/forms/wizard/2");
+		formWizard2.createInputCheckbox("Checkbox", "checkbox");
+		formWizard2.createInputNumber("Number", "number");
+		formWizard2.setSubmitLabel("Validate");
+
+		backend.registerWebService(formWizard1.getTarget(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			m_infoSubmittedWithWizard.string = reader.getStringParameter("string");
+			m_infoSubmittedWithWizard.day = reader.getStringParameter("day");
+			return Form.getFormUpdateSubmissionResponse(formWizard2);
+		});
+
+		backend.registerWebService(formWizard2.getTarget(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			m_infoSubmittedWithWizard.checkbox = reader.getCheckboxParameter("checkbox");
+			m_infoSubmittedWithWizard.number = reader.getIntegerParameter("number");
+			return Form.getSuccessfulSubmissionResponse();
+		});
 	}
 
 	private static void registerWebService(TUIBackend backend, Form form) {
@@ -73,6 +112,10 @@ public class Forms {
 		form.createInputFile("File", "file");
 	}
 
+	static String emptyWhenNull(String input) {
+		return input == null ? "" : input;
+	}
+
 	public static void main(String[] args) throws Exception {
 		final Page page = new Page("Forms");
 		page.setSource("/index");
@@ -86,6 +129,19 @@ public class Forms {
 
 		createRegularForm(backend, tabbedFlow.createTab("Regular form"));
 		createModalForm(backend, tabbedFlow.createTab("Modal form"));
+
+		final VerticalFlow wizardTab = tabbedFlow.createTab("Wizard form");
+		final Paragraph wizardParagraph = wizardTab.append(new Paragraph("No information submitted yet."));
+		wizardParagraph.setSource("/forms/wizard/paragraph");
+		backend.registerWebService(wizardParagraph.getSource(), (uri, request, response) -> {
+			wizardParagraph.clear();
+			wizardParagraph.appendStrong("String: ").appendNormal(emptyWhenNull(m_infoSubmittedWithWizard.string));
+			wizardParagraph.appendStrong("Day: ").appendNormal(emptyWhenNull(m_infoSubmittedWithWizard.day));
+			wizardParagraph.appendStrong("Checkbox: ").appendNormal(emptyWhenNull(String.valueOf(m_infoSubmittedWithWizard.checkbox)));
+			wizardParagraph.appendStrong("Number: ").appendNormal(emptyWhenNull(String.valueOf(m_infoSubmittedWithWizard.number)));
+			return wizardParagraph.toJsonMap();
+		});
+		createWizardForm(backend, wizardTab, wizardParagraph);
 
 		backend.start();
 
