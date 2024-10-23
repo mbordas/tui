@@ -137,13 +137,13 @@ public class Page extends APage {
 
 	static String generateSessionParametersInitialization(String mapName, Map<String, String> parameters) {
 		final StringBuilder result = new StringBuilder();
-		result.append(String.format("const %s = new Map([", mapName));
+		result.append(String.format("const %s={", mapName));
 		final List<String> parameterAssignations = new ArrayList<>();
 		for(Map.Entry<String, String> entry : parameters.entrySet()) {
-			parameterAssignations.add(String.format("['%s','%s']", entry.getKey(), entry.getValue()));
+			parameterAssignations.add(String.format("%s:'%s'", entry.getKey(), entry.getValue()));
 		}
 		result.append(String.join(",", parameterAssignations));
-		result.append("]);");
+		result.append("};");
 		return result.toString();
 	}
 

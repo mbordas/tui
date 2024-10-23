@@ -132,14 +132,16 @@ public class RequestReader {
 		final Map<String, String> result = new LinkedHashMap<>();
 		try {
 			final JSONArray object = new JSONArray(json);
-			int index = 0;
-			JSONArray entry = object.getJSONArray(index);
-			while(entry != null) {
-				result.put(entry.get(0).toString(), entry.get(1).toString());
-				try {
-					entry = object.getJSONArray(++index);
-				} catch(JSONException e) {
-					break;
+			if(object.length() > 0) {
+				int index = 0;
+				JSONArray entry = object.getJSONArray(index);
+				while(entry != null) {
+					result.put(entry.get(0).toString(), entry.get(1).toString());
+					try {
+						entry = object.getJSONArray(++index);
+					} catch(JSONException e) {
+						break;
+					}
 				}
 			}
 		} catch(Exception e) {

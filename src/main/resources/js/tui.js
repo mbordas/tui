@@ -43,10 +43,23 @@ async function refreshComponent(id, data) {
     const component = document.getElementById(id);
     const sourcePath = component.getAttribute('tui-source');
     console.log('refreshing component ' + id + ' with source: ' + sourcePath);
-    const jsonBody = data === undefined ? ''
-        : (data instanceof Map) ?
-            JSON.stringify(Array.from(data.entries()))
-            : JSON.stringify(Array.from(Object.entries(data)));
+
+    var jsonBody;
+    if(data === undefined) {
+        jsonBody = '';
+    } else {
+        if(data instanceof Map) {
+            for(let key in SESSION_PARAMS) {
+                data[key] = SESSION_PARAMS[key];
+            }
+            jsonBody = JSON.stringify(Array.from(data.entries()));
+        } else {
+            for(let key in SESSION_PARAMS) {
+                data[key] = SESSION_PARAMS[key];
+            }
+            jsonBody = JSON.stringify(Array.from(Object.entries(data)));
+        }
+    }
 
     fetch(sourcePath, {
             method: 'POST',
@@ -92,7 +105,11 @@ function setFetchData(element, data) {
     Gives the parameters map that are linked to the element. These parameters must be added to any refreshing Ajax request.
 */
 function getFetchData(element) {
-    return (typeof element.fetch_data === 'undefined') ? {} : element.fetch_data;
+    const result = (typeof element.fetch_data === 'undefined') ? {} : element.fetch_data;
+    for(let key in SESSION_PARAMS) {
+        data[key] = SESSION_PARAMS[key];
+    }
+    return result;
 }
 
 function createComponent(json) {
@@ -318,9 +335,17 @@ function instrumentModalForms() {
     Builds the body to be sent to backend with the following rules:
     - A file input is renamed with prefixed '_file_' so it can be easily detected by the backend.
     - Any other type of input is added without modification
+    - Any session parameter is added, but may be overridden by input with same name
 */
 function prepareFormData(formElement) {
     const data = new FormData();
+
+    // Session parameters
+    for(let key in SESSION_PARAMS) {
+        data[key] = SESSION_PARAMS[key];
+    }
+
+    // Form inputs
     formElement.querySelectorAll('input').forEach(function(inputElement) {
         if(inputElement.type == 'file' && inputElement.files[0] != null) {
             data.append('_file_' + inputElement.name, inputElement.files[0], inputElement.files[0].name);

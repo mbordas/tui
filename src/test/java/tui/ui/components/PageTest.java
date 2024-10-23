@@ -36,7 +36,7 @@ public class PageTest {
 		params.put("keyA", "valueA");
 		params.put("keyB", "valueB");
 
-		assertEquals("const testMap = new Map([['keyA','valueA'],['keyB','valueB']]);",
+		assertEquals("const testMap={keyA:'valueA',keyB:'valueB'};",
 				Page.generateSessionParametersInitialization("testMap", params));
 	}
 
