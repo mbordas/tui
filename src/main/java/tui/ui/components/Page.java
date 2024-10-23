@@ -23,6 +23,7 @@ import tui.ui.components.layout.Layouts;
 import tui.ui.components.layout.VerticalFlow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +31,15 @@ public class Page extends APage {
 
 	public static final String JSON_TYPE = "page";
 
+	public static final String SESSION_PARAMS_MAP_NAME = "SESSION_PARAMS";
+
 	private Layouts.Width m_width = Layouts.Width.NORMAL;
 	private final List<UIComponent> m_content = new ArrayList<>();
 	private UIComponent m_header = null;
 	private UIComponent m_footer = null;
+
+	// These parameters will be sent to the backend in every request. They could be used to manage user's session.
+	private final Map<String /* name */, String /* value */> m_sessionParameters = new HashMap<>();
 
 	public Page(String title) {
 		super(title);
@@ -41,6 +47,10 @@ public class Page extends APage {
 
 	public Page(String title, String source) {
 		super(title, source);
+	}
+
+	public void setSessionParameter(String name, String value) {
+		m_sessionParameters.put(name, value);
 	}
 
 	public void setHeader(UIComponent header) {
@@ -86,6 +96,8 @@ public class Page extends APage {
 					.setAttribute("rel", "stylesheet")
 					.setAttribute("href", pathToCSS);
 		}
+		head.createChild("script")
+				.setText(generateSessionParametersInitialization(SESSION_PARAMS_MAP_NAME, m_sessionParameters));
 		if(pathToScript != null) {
 			head.createChild("script")
 					.setAttribute("type", HTMLConstants.JAVASCRIPT_CONTENT_TYPE)
@@ -121,6 +133,18 @@ public class Page extends APage {
 		}
 
 		return result;
+	}
+
+	static String generateSessionParametersInitialization(String mapName, Map<String, String> parameters) {
+		final StringBuilder result = new StringBuilder();
+		result.append(String.format("const %s = new Map([", mapName));
+		final List<String> parameterAssignations = new ArrayList<>();
+		for(Map.Entry<String, String> entry : parameters.entrySet()) {
+			parameterAssignations.add(String.format("['%s','%s']", entry.getKey(), entry.getValue()));
+		}
+		result.append(String.join(",", parameterAssignations));
+		result.append("]);");
+		return result.toString();
 	}
 
 	private Map<String, String> computeBodyStyleProperties() {

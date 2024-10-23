@@ -117,7 +117,7 @@ public class DemoServer {
 			row.put(columnVendor, vendor);
 			row.put(columnSerialNumber, serialNumber);
 			table.append(row);
-			return Form.getSuccessfulSubmissionResponse();
+			return Form.buildSuccessfulSubmissionResponse();
 		});
 
 		// Called when table is refreshed
@@ -130,9 +130,9 @@ public class DemoServer {
 			if(nameValue.isEmpty()) {
 				Map<String, String> errors = new HashMap<>();
 				errors.put(modalFormFieldName.getName(), "Value cannot be empty");
-				return Form.getFailedSubmissionResponse("Errors found in form data", errors);
+				return Form.buildFailedSubmissionResponse("Errors found in form data", errors);
 			} else {
-				return Form.getSuccessfulSubmissionResponse();
+				return Form.buildSuccessfulSubmissionResponse();
 			}
 		});
 

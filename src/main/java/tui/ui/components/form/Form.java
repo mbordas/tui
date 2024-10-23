@@ -47,6 +47,7 @@ public class Form extends UIComponent {
 	private final String m_title;
 	private String m_submitLabel = "Submit";
 	private final String m_target; // Web service path
+	private String m_opensPageSource = null; // Optional page to open when form is successfully submitted.
 
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
@@ -74,6 +75,13 @@ public class Form extends UIComponent {
 
 	public void setSubmitLabel(String label) {
 		m_submitLabel = label;
+	}
+
+	/**
+	 * The page will open when the form is successfully submitted.
+	 */
+	public void opensPage(String source) {
+		m_opensPageSource = source;
 	}
 
 	public FormInputCheckbox createInputCheckbox(String label, String name) {
@@ -144,6 +152,9 @@ public class Form extends UIComponent {
 				.setAttribute("action", m_target)
 				.setAttribute("method", "post")
 				.setAttribute("enctype", RequestReader.FORM_ENCTYPE);
+		if(m_opensPageSource != null) {
+			result.setAttribute("tui-opens-page", m_opensPageSource);
+		}
 
 		HTMLFetchErrorMessage.addErrorMessageChild(result);
 
@@ -235,13 +246,28 @@ public class Form extends UIComponent {
 		return true;
 	}
 
-	public static JsonObject getSuccessfulSubmissionResponse() {
+	public static JsonObject buildSuccessfulSubmissionResponse() {
 		return new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
 				.setAttribute("message", "form submitted");
 	}
 
-	public static JsonObject getFormUpdateSubmissionResponse(Form updatedForm) {
+	/**
+	 * @param parameters Parameters to send back to frontend. It will be used if the form is set to open a page after submission.
+	 *                   These parameters will be ignored when the form does not open page. See {@link #opensPage(String)}.
+	 */
+	public static JsonObject buildSuccessfulSubmissionResponse(Map<String, String> parameters) {
+		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
+				.setAttribute("status", "ok")
+				.setAttribute("message", "form submitted");
+		final JsonMap parametersMap = result.setChild("parameters", new JsonMap(null));
+		for(Map.Entry<String, String> entry : parameters.entrySet()) {
+			parametersMap.setAttribute(entry.getKey(), entry.getValue());
+		}
+		return result;
+	}
+
+	public static JsonObject buildFormUpdateSubmissionResponse(Form updatedForm) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
 				.setAttribute("message", "form submitted");
@@ -249,7 +275,7 @@ public class Form extends UIComponent {
 		return result;
 	}
 
-	public static JsonObject getFailedSubmissionResponse(String message, Map<String, String> errorMessageByFieldName) {
+	public static JsonObject buildFailedSubmissionResponse(String message, Map<String, String> errorMessageByFieldName) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "nok")
 				.setAttribute("message", message);
@@ -264,4 +290,5 @@ public class Form extends UIComponent {
 		result.setChild("errors", fieldsErrorsMap);
 		return result;
 	}
+
 }

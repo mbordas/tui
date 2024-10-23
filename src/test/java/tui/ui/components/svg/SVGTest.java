@@ -130,7 +130,7 @@ public class SVGTest extends TestWithBackend {
 			final int width = reader.getIntegerParameter("width");
 			final int height = reader.getIntegerParameter("height");
 			svg.add(new SVGRectangle(x, y, width, height).withFillColor(Color.ORANGE).withFillOpacity(0.5));
-			return Form.getSuccessfulSubmissionResponse();
+			return Form.buildSuccessfulSubmissionResponse();
 		});
 
 		backend.registerWebService(svg.getSource(), (uri, request, response) -> svg.toJsonMap());

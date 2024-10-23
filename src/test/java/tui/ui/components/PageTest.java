@@ -13,7 +13,7 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.components;
 
 import org.junit.Test;
 import tui.json.JsonMap;
@@ -21,13 +21,24 @@ import tui.json.JsonObject;
 import tui.test.components.TComponent;
 import tui.test.components.TComponentFactory;
 import tui.test.components.TPage;
-import tui.ui.components.Page;
-import tui.ui.components.Section;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PageTest {
+
+	@Test
+	public void generateSessionParametersInitialization() {
+		final Map<String, String> params = new TreeMap<>();
+		params.put("keyA", "valueA");
+		params.put("keyB", "valueB");
+
+		assertEquals("const testMap = new Map([['keyA','valueA'],['keyB','valueB']]);",
+				Page.generateSessionParametersInitialization("testMap", params));
+	}
 
 	@Test
 	public void toJsonAndTPage() {

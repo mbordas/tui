@@ -109,9 +109,10 @@ public class JsonMap extends JsonObject {
 		return result;
 	}
 
-	public void setChild(String name, JsonObject child) {
+	public <J extends JsonObject> J setChild(String name, J child) {
 		m_children.put(name, child);
 		child.setPrettyPrintDepth(m_prettyPrintDepth + 1);
+		return child;
 	}
 
 	public void setArray(String name, JsonArray array) {

@@ -54,7 +54,7 @@ public class TFormTest extends TestWithBackend {
 			final Integer age = reader.getIntegerParameter("age");
 			submittedName.set(name);
 			submittedAge.set(age);
-			return Form.getSuccessfulSubmissionResponse();
+			return Form.buildSuccessfulSubmissionResponse();
 		});
 
 		// Opening the page

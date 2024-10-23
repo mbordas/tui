@@ -70,7 +70,7 @@ public class FormTest extends TestWithBackend {
 		m_backend.registerWebService(form.getTarget(), (uri, request, response) -> {
 			final RequestReader reader = new RequestReader(request);
 			valueSentToBackend.set(reader.getStringParameter(inputRadio.getName()));
-			return Form.getSuccessfulSubmissionResponse();
+			return Form.buildSuccessfulSubmissionResponse();
 		});
 
 		browser.selectRadio(form.getTitle(), inputRadio.getName(), "option2");
@@ -106,7 +106,7 @@ public class FormTest extends TestWithBackend {
 				fos.write(inputStream.readAllBytes());
 			}
 
-			return Form.getSuccessfulSubmissionResponse();
+			return Form.buildSuccessfulSubmissionResponse();
 		});
 
 		browser.typeField(form.getTitle(), "name", "UploadedName.txt");

@@ -83,7 +83,7 @@ public class TClientTest {
 				final String nameValue = reader.getStringParameter(parameterName);
 				assert nameValue != null;
 				dataTable.append(Map.of(columnName, nameValue));
-				return Form.getSuccessfulSubmissionResponse();
+				return Form.buildSuccessfulSubmissionResponse();
 			});
 			m_backend.start();
 		}

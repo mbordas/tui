@@ -69,14 +69,14 @@ public class Forms {
 			final RequestReader reader = new RequestReader(request);
 			m_infoSubmittedWithWizard.string = reader.getStringParameter("string");
 			m_infoSubmittedWithWizard.day = reader.getStringParameter("day");
-			return Form.getFormUpdateSubmissionResponse(formWizard2);
+			return Form.buildFormUpdateSubmissionResponse(formWizard2);
 		});
 
 		backend.registerWebService(formWizard2.getTarget(), (uri, request, response) -> {
 			final RequestReader reader = new RequestReader(request);
 			m_infoSubmittedWithWizard.checkbox = reader.getCheckboxParameter("checkbox");
 			m_infoSubmittedWithWizard.number = reader.getIntegerParameter("number");
-			return Form.getSuccessfulSubmissionResponse();
+			return Form.buildSuccessfulSubmissionResponse();
 		});
 	}
 
@@ -87,9 +87,9 @@ public class Forms {
 				final RequestReader reader = new RequestReader(request);
 				final String password = reader.getStringParameter("password");
 				if(password == null || password.isEmpty()) {
-					return Form.getFailedSubmissionResponse("Form rejected", Map.of("password", "Password can't be empty"));
+					return Form.buildFailedSubmissionResponse("Form rejected", Map.of("password", "Password can't be empty"));
 				} else {
-					return Form.getSuccessfulSubmissionResponse();
+					return Form.buildSuccessfulSubmissionResponse();
 				}
 			} catch(InterruptedException e) {
 				throw new RuntimeException(e);
