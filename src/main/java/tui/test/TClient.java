@@ -38,6 +38,10 @@ public class TClient {
 	private ATPage m_currentPage;
 	private TestHTTPClient m_httpClient;
 
+	/**
+	 * @param host Host name without protocol (ex: localhost).
+	 * @param port The HTTP port
+	 */
 	public TClient(String host, int port) {
 		m_currentPage = null;
 		m_httpClient = new TestHTTPClient(host, port);

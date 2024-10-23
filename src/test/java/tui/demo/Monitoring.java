@@ -18,7 +18,6 @@ package tui.demo;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
@@ -114,10 +113,8 @@ public class Monitoring {
 		mainGrid.set(0, 0, new VerticalScroll(800, leftGrid));
 		mainGrid.set(0, 1, rightPanel);
 
-		final UI ui = new UI();
-		ui.setHTTPBackend("http://localhost", 8080);
-		ui.add(page);
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 
 		backend.registerWebService(fieldSet.getSource(), (uri, request, response) -> {
 			updateRandomScores();

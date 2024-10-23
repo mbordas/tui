@@ -20,7 +20,6 @@ import tui.html.HTMLNode;
 import tui.http.TUIBackend;
 import tui.json.JsonObject;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.layout.Panel;
 
 import static org.junit.Assert.assertEquals;
@@ -58,7 +57,6 @@ public class ParagraphTest {
 	}
 
 	public static void main(String[] args) throws Exception {
-		final UI ui = new UI();
 		final Page page = new Page("Home", "/index");
 		final Panel panel = new Panel();
 		final RefreshButton refreshButton = panel.append(new RefreshButton("Refresh"));
@@ -70,10 +68,9 @@ public class ParagraphTest {
 		refreshButton.connectListener(paragraph);
 
 		page.append(panel);
-		ui.add(page);
-		ui.setHTTPBackend("localhost", 8080);
 
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 		backend.registerWebService(paragraph.getSource(), (uri, request, response) -> {
 			final Paragraph result = new Paragraph()
 					.appendNormal("Current time is ")

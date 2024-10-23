@@ -24,7 +24,6 @@ import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.TablePickerTest;
-import tui.ui.UI;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -175,7 +174,6 @@ public class TableTest extends TestWithBackend {
 	public static void main(String[] args) throws Exception {
 		final Collection<TablePickerTest.Item> items = buildItems(30);
 
-		final UI ui = new UI();
 		final Page page = new Page("Home", "/index");
 
 		final Table table = new Table("Table", List.of("Id", "Name"));
@@ -184,10 +182,9 @@ public class TableTest extends TestWithBackend {
 		putItemsInTable(items, table);
 
 		page.append(table);
-		ui.add(page);
-		ui.setHTTPBackend("localhost", 8080);
 
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 		backend.registerWebService(table.getSource(), buildWebServiceTableLoad(table.clone()));
 		backend.start();
 

@@ -18,7 +18,6 @@ package tui.demo;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.UIRefreshableComponent;
@@ -122,10 +121,8 @@ public class Forms {
 
 		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
 
-		final UI ui = new UI();
-		ui.setHTTPBackend("http://localhost", 8080);
-		ui.add(page);
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 
 		createRegularForm(backend, tabbedFlow.createTab("Regular form"));
 		createModalForm(backend, tabbedFlow.createTab("Modal form"));

@@ -22,7 +22,6 @@ import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.json.JsonObject;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Section;
 import tui.ui.components.Table;
@@ -55,15 +54,11 @@ public class DemoServer {
 
 		// Building UI
 
-		final UI ui = new UI();
-		ui.setHTTPBackend("localhost", 8080);
-
 		Page page = new Page("Demo", "/index");
 		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
 		final VerticalFlow panel1 = tabbedFlow.createTab("Table and form");
 		panel1.append(new Section("Tables"))
 				.createParagraph("Use the form to add row to the table.");
-		ui.add(page);
 
 		final String columnVendor = "Vendor";
 		final String columnSerialNumber = "Serial number";
@@ -106,7 +101,8 @@ public class DemoServer {
 
 		// Building server with backend web services
 
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 
 		// Called when form is submitted
 		backend.registerWebService(form.getTarget(), (uri, request, response) -> {

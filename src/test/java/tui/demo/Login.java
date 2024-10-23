@@ -18,7 +18,6 @@ package tui.demo;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.form.Form;
@@ -43,11 +42,10 @@ public class Login {
 		loginForm.createInputPassword("Password", "password");
 		loginForm.opensPage("/session"); // When the form is successfully submitted, this page will open
 
-		final UI ui = new UI();
-		ui.add(loginPage);
-		ui.setHTTPBackend("http://localhost", 8080);
-		final TUIBackend backend = new TUIBackend(ui);
-		backend.start();
+		final TUIBackend backend = new TUIBackend(8080);
+
+		// Login page
+		backend.registerPage(loginPage);
 
 		// Login form validation
 		backend.registerWebService(loginForm.getTarget(),
@@ -75,6 +73,8 @@ public class Login {
 			return result;
 		});
 
+		backend.start();
+		
 		final Browser browser = new Browser(backend.getPort());
 		browser.open(loginPage.getSource());
 	}

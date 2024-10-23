@@ -17,7 +17,6 @@ package tui.demo;
 
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.layout.Layouts;
@@ -112,10 +111,8 @@ public class HistogramViewer {
 
 		page.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(Layouts.TextAlign.LEFT));
 
-		final UI ui = new UI();
-		ui.setHTTPBackend("http://localhost", 8080);
-		ui.add(page);
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 		backend.start();
 
 		final Browser browser = new Browser(backend.getPort());

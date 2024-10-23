@@ -21,7 +21,6 @@ import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
-import tui.ui.UI;
 import tui.ui.components.Page;
 
 import java.io.File;
@@ -127,16 +126,14 @@ public class FormTest extends TestWithBackend {
 	}
 
 	public static void main(String[] args) throws Exception {
-		final UI ui = new UI();
 		final Page page = new Page("Home", "/index");
 
 		final Form form = new Form("Error will occur on submit", "/form");
 		form.createInputString("Message", "message");
 		page.append(form);
 
-		final TUIBackend backend = new TUIBackend(ui);
-		ui.add(page);
-		ui.setHTTPBackend("localhost", getRandomAvailablePort());
+		final TUIBackend backend = new TUIBackend(getRandomAvailablePort());
+		backend.registerPage(page);
 		backend.start();
 
 		final Browser browser = new Browser(backend.getPort());

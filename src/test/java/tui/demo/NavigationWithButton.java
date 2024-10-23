@@ -18,7 +18,6 @@ package tui.demo;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.NavButton;
 import tui.ui.components.Page;
 import tui.ui.components.Section;
@@ -44,10 +43,8 @@ public class NavigationWithButton {
 		buttons.append(new NavButton("Next >", page.getSource())
 				.setParameter("direction", "next"));
 
-		final UI ui = new UI();
-		ui.setHTTPBackend("localhost", 8080);
-		ui.add(page);
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 
 		backend.registerPageService(page.getSource(), (uri, request) -> {
 			final RequestReader reader = new RequestReader(request);

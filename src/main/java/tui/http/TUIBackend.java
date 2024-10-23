@@ -23,8 +23,7 @@ import org.slf4j.LoggerFactory;
 import tui.html.CSSBuilder;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
-import tui.ui.UI;
-import tui.ui.components.APage;
+import tui.ui.Style;
 import tui.ui.components.Page;
 
 import javax.servlet.ServletOutputStream;
@@ -45,23 +44,31 @@ public class TUIBackend {
 	public static final String PATH_TO_SCRIPT = "/js/tui.js";
 	public static final String SCRIPT_ONLOAD_FUNCTION_CALL = "onload()";
 
-	private final UI m_ui;
 	private Server m_server;
+	private Style m_style = new Style();
+	private int m_httpPort;
 
 	private final Map<String, TUIWebService> m_webServices = new HashMap<>();
 	private final Map<String, TUIPageService> m_pageServices = new HashMap<>();
 
-	public TUIBackend(UI ui) {
-		m_ui = ui;
+	public TUIBackend() {
+	}
+
+	public TUIBackend(int port) {
+		m_httpPort = port;
 	}
 
 	public int getPort() {
-		return m_ui.getHTTPPort();
+		return m_httpPort;
+	}
+
+	public void start(int port) throws Exception {
+		m_httpPort = port;
+		start();
 	}
 
 	public void start() throws Exception {
-		int port = m_ui.getHTTPPort();
-		m_server = new Server(port);
+		m_server = new Server(m_httpPort);
 		m_server.setHandler(new AbstractHandler() {
 			@Override
 			public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse response)
@@ -72,10 +79,21 @@ public class TUIBackend {
 				if(m_pageServices.containsKey(uri)) {
 					final TUIPageService pageService = m_pageServices.get(uri);
 					try {
+						final String format = httpServletRequest.getParameter("format");
 						final Page page = pageService.handle(uri, request);
-						final String html = page.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
-						response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
-						response.getWriter().write(html);
+						if(page == null) {
+							throw new FileNotFoundException("No page found at: " + uri);
+						}
+						if("json".equals(format)) {
+							final String json = page.toJsonMap().toJson();
+							response.setContentType(HTMLConstants.JSON_CONTENT_TYPE);
+							response.getWriter().write(json);
+						} else {
+							final String html = page.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
+							response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
+							response.getWriter().write(html);
+						}
+
 						response.setStatus(200);
 						request.setHandled(true);
 					} catch(Throwable t) {
@@ -101,29 +119,13 @@ public class TUIBackend {
 					respondWithTextResource(request, response, "js/tui.js", HTMLConstants.JAVASCRIPT_CONTENT_TYPE);
 				} else if(PATH_TO_CSS.equals(uri)) {
 					response.setContentType(HTMLConstants.CSS_CONTENT_TYPE);
-					response.getWriter().write(CSSBuilder.toCSS(m_ui.getStyle()));
+					response.getWriter().write(CSSBuilder.toCSS(m_style));
 					response.setStatus(200);
 					request.setHandled(true);
 				} else if("/favicon.ico".equals(uri)) {
 					respondWithBinaryResource(request, response, "favicon.ico", HTMLConstants.PNG_CONTENT_TYPE);
 				} else {
-					final String format = httpServletRequest.getParameter("format");
-					final APage page = m_ui.getPage(uri);
-					if(page == null) {
-						throw new FileNotFoundException("No page found at: " + uri);
-					}
-					if("json".equals(format)) {
-						final String json = page.toJsonMap().toJson();
-						response.setContentType(HTMLConstants.JSON_CONTENT_TYPE);
-						response.getWriter().write(json);
-					} else {
-						final String html = page.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
-						response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
-						response.getWriter().write(html);
-					}
-
-					response.setStatus(200);
-					request.setHandled(true);
+					throw new FileNotFoundException("No page found at: " + uri);
 				}
 			}
 
@@ -162,9 +164,9 @@ public class TUIBackend {
 				}
 			}
 		});
-		LOG.info("Starting WebServer @port " + port);
+		LOG.info("Starting WebServer @port " + m_httpPort);
 		m_server.start();
-		LOG.info("Web server listening on :{}", port);
+		LOG.info("Web server listening on :{}", m_httpPort);
 	}
 
 	public void stop() throws Exception {
@@ -186,6 +188,10 @@ public class TUIBackend {
 
 	public void registerPageService(String path, TUIPageService service) {
 		m_pageServices.put(path, service);
+	}
+
+	public void registerPage(Page page) {
+		registerPageService(page.getSource(), (uri, request) -> page);
 	}
 
 }

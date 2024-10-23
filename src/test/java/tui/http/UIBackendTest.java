@@ -18,7 +18,6 @@ package tui.http;
 import org.junit.Ignore;
 import org.junit.Test;
 import tui.html.HTMLNode;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Section;
 
@@ -28,17 +27,14 @@ public class UIBackendTest {
 	@Test
 	public void defaultPage() throws Exception {
 		HTMLNode.PRETTY_PRINT = true;
-		final UI ui = new UI();
 		final Page page = new Page("Server default page", "/index");
 		final Section subSection = page.createSection("Title 1").createSubSection("Title 2");
 		subSection.createParagraph("Lorem ipsum");
 
-		ui.add(page);
-		ui.setHTTPBackend("localhost", 8080);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 
-		final TUIBackend server = new TUIBackend(ui);
-
-		server.start();
+		backend.start();
 
 		Thread.sleep(60_000);
 	}

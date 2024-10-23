@@ -18,8 +18,7 @@ package tui.test;
 import org.junit.After;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
-import tui.ui.UI;
-import tui.ui.components.APage;
+import tui.ui.components.Page;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -42,19 +41,17 @@ public class TestWithBackend {
 		}
 	}
 
-	protected void startBackend(APage page) {
+	protected void startBackend(Page page) {
 		try {
-			final UI ui = new UI();
-			ui.add(page);
-			ui.setHTTPBackend("localhost", getRandomAvailablePort());
-			m_backend = new TUIBackend(ui);
+			m_backend = new TUIBackend(getRandomAvailablePort());
+			m_backend.registerPage(page);
 			m_backend.start();
 		} catch(Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
-	protected BackendAndBrowser startAndBrowse(APage page) {
+	protected BackendAndBrowser startAndBrowse(Page page) {
 		startBackend(page);
 		startBrowser();
 		m_browser.open(page.getSource());

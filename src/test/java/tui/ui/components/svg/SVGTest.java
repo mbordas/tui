@@ -25,7 +25,6 @@ import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.form.Form;
@@ -91,7 +90,6 @@ public class SVGTest extends TestWithBackend {
 	}
 
 	public static void main(String[] args) throws Exception {
-		final UI ui = new UI();
 		final Page page = new Page("Home", "/index");
 
 		final Form form = new Form("New rectangle", "/addRectangle");
@@ -118,10 +116,8 @@ public class SVGTest extends TestWithBackend {
 				.withFillOpacity(0.5));
 		page.append(svg);
 
-		ui.add(page);
-		ui.setHTTPBackend("localhost", 8080);
-
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 
 		backend.registerWebService(form.getTarget(), (uri, request, response) -> {
 			final RequestReader reader = new RequestReader(request);

@@ -17,7 +17,6 @@ package tui.demo;
 
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.NavLink;
 import tui.ui.components.Page;
 import tui.ui.components.layout.Grid;
@@ -40,8 +39,6 @@ public class Navigation {
 	}
 
 	public static void main(String[] args) throws Exception {
-		final UI ui = new UI();
-		ui.setHTTPBackend("localhost", 8080);
 
 		final Page pageHome = new Page("Home", "/index");
 		final Page page1 = new Page("Page 1", "/page/1");
@@ -50,12 +47,11 @@ public class Navigation {
 
 		computeHeader(pageHome, List.of(page1, page2, page3));
 
-		ui.add(pageHome);
-		ui.add(page1);
-		ui.add(page2);
-		ui.add(page3);
-
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(pageHome);
+		backend.registerPage(page1);
+		backend.registerPage(page2);
+		backend.registerPage(page3);
 		backend.start();
 
 		final Browser browser = new Browser(backend.getPort());

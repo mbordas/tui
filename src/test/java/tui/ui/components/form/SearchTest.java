@@ -22,7 +22,6 @@ import tui.html.HTMLNode;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Table;
 
@@ -58,10 +57,7 @@ public class SearchTest {
 			items.add(item);
 		}
 
-		final UI ui = new UI();
-		ui.setHTTPBackend("localhost", 8080);
 		final Page page = new Page("Search", "/index");
-		ui.add(page);
 
 		final Search search = new Search("Search items", "Search");
 		page.append(search);
@@ -75,7 +71,7 @@ public class SearchTest {
 		page.append(table);
 		search.connectListener(table);
 
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
 		backend.registerWebService(table.getSource(), (uri, request, response) -> {
 			final RequestReader requestReader = new RequestReader(request);
 			final String searched = requestReader.getStringParameter(Search.PARAMETER_NAME);

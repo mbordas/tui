@@ -107,7 +107,6 @@ public class TablePickerTest extends TestWithBackend {
 	public static void main(String[] args) throws Exception {
 		final Collection<Item> items = TableTest.buildItems(3);
 
-		final UI ui = new UI();
 		final Page page = new Page("Home", "/index");
 		final Panel panel = new Panel();
 		final Paragraph paragraph = panel.append(new Paragraph("Reloadable panel"));
@@ -119,10 +118,9 @@ public class TablePickerTest extends TestWithBackend {
 
 		page.append(tablePicker);
 		page.append(panel);
-		ui.add(page);
-		ui.setHTTPBackend("localhost", 8080);
 
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 		backend.registerWebService(paragraph.getSource(), buildWebServiceParagraphLoad(items));
 		backend.start();
 

@@ -21,7 +21,6 @@ import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.components.TForm;
 import tui.test.components.TTable;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Table;
 import tui.ui.components.form.Form;
@@ -54,27 +53,10 @@ public class TClientTest {
 		final String columnName = "Name";
 		final String parameterName = "name";
 
-		// Building frontend
-
-		final UI ui = new UI();
-		ui.setHTTPBackend("localhost", 90);
-		{
-			final Page page = new Page("Test case", "/index");
-			ui.add(page);
-			final Table uiTable = new Table("My table", List.of(columnName));
-			uiTable.setSource(endPointGetTable);
-			page.append(uiTable);
-
-			final Form form = new Form("My form", endPointAppendTable);
-			form.createInputString(columnName, parameterName);
-			page.append(form);
-			uiTable.connectForRefresh(form);
-		}
-
 		// Building backend
 
 		{
-			m_backend = new TUIBackend(ui);
+			m_backend = new TUIBackend(90);
 			final Table dataTable = new Table("My table", List.of(columnName));
 			dataTable.append(Map.of(columnName, "John Doe"));
 			m_backend.registerWebService(endPointGetTable, (uri, request, response) -> dataTable.toJsonMap());
@@ -88,12 +70,28 @@ public class TClientTest {
 			m_backend.start();
 		}
 
+		// Building frontend
+
+		{
+			final Page page = new Page("Test case", "/index");
+			final Table uiTable = new Table("My table", List.of(columnName));
+			uiTable.setSource(endPointGetTable);
+			page.append(uiTable);
+
+			final Form form = new Form("My form", endPointAppendTable);
+			form.createInputString(columnName, parameterName);
+			page.append(form);
+			uiTable.connectForRefresh(form);
+
+			m_backend.registerPage(page);
+		}
+
 		// Testing with TestClient
 
 		{
-			final TClient client = new TClient(ui.getHTTPHost(), ui.getHTTPPort());
+			final TClient client = new TClient("localhost", m_backend.getPort());
 
-			client.open("index");
+			client.open("/index");
 
 			final TTable myTable = client.getTable("My table");
 			final TForm myForm = client.getForm("My form");

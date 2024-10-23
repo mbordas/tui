@@ -17,7 +17,6 @@ package tui.demo;
 
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
@@ -77,10 +76,8 @@ public class LayoutsDemo {
 		createTab(tabbedFlow, tui.ui.components.layout.Layouts.Width.NORMAL, tui.ui.components.layout.Layouts.Spacing.NORMAL);
 		createTab(tabbedFlow, tui.ui.components.layout.Layouts.Width.NORMAL, tui.ui.components.layout.Layouts.Spacing.LARGE);
 
-		final UI ui = new UI();
-		ui.add(page);
-		ui.setHTTPBackend("http://localhost", 8080);
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 		backend.start();
 
 		final Browser browser = new Browser(backend.getPort());

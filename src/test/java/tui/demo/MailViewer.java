@@ -18,7 +18,6 @@ package tui.demo;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.UI;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.TablePicker;
@@ -41,13 +40,10 @@ public class MailViewer {
 			emails.add((new Email(String.valueOf(i), String.format("%d days ago", i + 1), "Subject " + i, "content ".repeat(i + 1))));
 		}
 
-		final UI ui = new UI();
-		ui.setHTTPBackend("localhost", 8080);
 		final Page page = new Page("Home", "/index");
 		page.setReadingWidth(Layouts.Width.NORMAL);
 		page.setHeader(new Paragraph("Header").setAlign(Layouts.TextAlign.CENTER));
 		page.setFooter(new Paragraph().appendNormal("Example footer text").setAlign(Layouts.TextAlign.RIGHT));
-		ui.add(page);
 
 		final TablePicker mailSelector = new TablePicker("Inbox", List.of("id", "date", "subject"));
 		mailSelector.hideColumn("id");
@@ -62,7 +58,8 @@ public class MailViewer {
 		mailSelector.connectListener(mailView);
 		page.append(mailView);
 
-		final TUIBackend backend = new TUIBackend(ui);
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
 		backend.registerWebService(mailView.getSource(), (uri, request, response) -> {
 			final RequestReader requestReader = new RequestReader(request);
 			final String id = requestReader.getStringParameter("id");
