@@ -25,6 +25,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function onload() {
     instrumentForms();
     instrumentModalForms();
+    instrumentNavButtons();
     instrumentTables();
     instrumentMonitorFields();
     instrumentRefreshButtons();
@@ -506,6 +507,20 @@ function hideFetchErrorInElement(formElement) {
     const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
     errorDiv.innerText = '';
     errorDiv.style.display = 'none';
+}
+
+// NAV BUTTONS
+function instrumentNavButtons() {
+    const navbuttons = document.querySelectorAll('.tui-navbutton');
+    navbuttons.forEach(function(navbutton, i) {
+        for(let key in SESSION_PARAMS) {
+            const parameterInput = document.createElement('input');
+            parameterInput.setAttribute('type', 'hidden');
+            parameterInput.setAttribute('name', key);
+            parameterInput.setAttribute('value', SESSION_PARAMS[key]);
+            navbutton.appendChild(parameterInput);
+        }
+    });
 }
 
 // TABLES

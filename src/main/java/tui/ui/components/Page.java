@@ -53,12 +53,14 @@ public class Page extends APage {
 		m_sessionParameters.put(name, value);
 	}
 
-	public void setHeader(UIComponent header) {
+	public <C extends UIComponent> C setHeader(C header) {
 		m_header = header;
+		return header;
 	}
 
-	public void setFooter(UIComponent footer) {
+	public <C extends UIComponent> C setFooter(C footer) {
 		m_footer = footer;
+		return footer;
 	}
 
 	public <C extends UIComponent> C append(C component) {
