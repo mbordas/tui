@@ -32,6 +32,7 @@ public abstract class UIComponent {
 	private final long m_tuid = m_counter.incrementAndGet();
 
 	private Style.Padding m_customPadding = null;
+	private Style.Margin m_customMargin = null;
 	private Integer m_customWidth_px = null;
 
 	public abstract HTMLNode toHTMLNode();
@@ -46,6 +47,10 @@ public abstract class UIComponent {
 		if(m_customWidth_px != null) {
 			result.setStyleProperty("width", String.format("%dpx", m_customWidth_px));
 		}
+		if(m_customMargin != null) {
+			result.setStyleProperty("margin", String.format("%dpx %dpx %dpx %dpx",
+					m_customMargin.top_px(), m_customMargin.right_px(), m_customMargin.bottom_px(), m_customMargin.left_px()));
+		}
 		if(m_customPadding != null) {
 			result.setStyleProperty("padding", String.format("%dpx %dpx %dpx %dpx",
 					m_customPadding.top_px(), m_customPadding.right_px(), m_customPadding.bottom_px(), m_customPadding.left_px()));
@@ -59,6 +64,10 @@ public abstract class UIComponent {
 
 	public void customStylePadding(int top, int right, int bottom, int left) {
 		m_customPadding = new Style.Padding(top, right, bottom, left);
+	}
+
+	public void customStyleMargin(int top, int right, int bottom, int left) {
+		m_customMargin = new Style.Margin(top, right, bottom, left);
 	}
 
 	public void customStyleWidth_px(int width_px) {

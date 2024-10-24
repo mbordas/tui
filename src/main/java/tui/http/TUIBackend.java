@@ -123,7 +123,7 @@ public class TUIBackend {
 					response.setStatus(200);
 					request.setHandled(true);
 				} else if("/favicon.ico".equals(uri)) {
-					respondWithBinaryResource(request, response, "favicon.ico", HTMLConstants.PNG_CONTENT_TYPE);
+					respondWithBinaryResource(request, response, "favicon.ico", HTMLConstants.FAVICON_CONTENT_TYPE);
 				} else {
 					throw new FileNotFoundException("No page found at: " + uri);
 				}

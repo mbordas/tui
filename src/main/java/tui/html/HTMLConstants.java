@@ -21,6 +21,7 @@ public class HTMLConstants {
 	public static final String HTML_CONTENT_TYPE = "text/html;charset=" + RESPONSE_CHARSET;
 	public static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript";
 	public static final String PNG_CONTENT_TYPE = "image/png";
+	public static final String FAVICON_CONTENT_TYPE = "image/x-icon";
 	public static final String CSS_CONTENT_TYPE = "text/css";
 	public static final String JSON_CONTENT_TYPE = "application/json";
 

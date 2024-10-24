@@ -55,4 +55,7 @@ public class Style {
 	public record Padding(int top_px, int right_px, int bottom_px, int left_px) {
 	}
 
+	public record Margin(int top_px, int right_px, int bottom_px, int left_px) {
+	}
+
 }
