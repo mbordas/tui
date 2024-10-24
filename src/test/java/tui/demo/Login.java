@@ -38,9 +38,11 @@ public class Login {
 		final VerticalFlow vFlow = loginPage.append(new VerticalFlow());
 		vFlow.setWidth(Layouts.Width.NORMAL);
 		final Form loginForm = vFlow.append(new Form("Login", "/login/validate")); // This web service will validate the login form
-		loginForm.createInputString("Login", "login");
+		loginForm.createInputString("Identifier", "login").setPlaceHolder("your login");
 		loginForm.createInputPassword("Password", "password");
 		loginForm.opensPage("/session"); // When the form is successfully submitted, this page will open
+		loginForm.customStyleWidth_px(400);
+		loginForm.customStylePadding(300, 0, 0, 0);
 
 		final TUIBackend backend = new TUIBackend(8080);
 
@@ -74,7 +76,7 @@ public class Login {
 		});
 
 		backend.start();
-		
+
 		final Browser browser = new Browser(backend.getPort());
 		browser.open(loginPage.getSource());
 	}

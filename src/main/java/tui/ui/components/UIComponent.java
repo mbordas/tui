@@ -32,6 +32,7 @@ public abstract class UIComponent {
 	private final long m_tuid = m_counter.incrementAndGet();
 
 	private Style.Padding m_customPadding = null;
+	private Integer m_customWidth_px = null;
 
 	public abstract HTMLNode toHTMLNode();
 
@@ -41,6 +42,9 @@ public abstract class UIComponent {
 		final HTMLNode result = new HTMLNode(name);
 		if(withTUID) {
 			result.setAttribute("id", HTMLConstants.toId(getTUID()));
+		}
+		if(m_customWidth_px != null) {
+			result.setStyleProperty("width", String.format("%dpx", m_customWidth_px));
 		}
 		if(m_customPadding != null) {
 			result.setStyleProperty("padding", String.format("%dpx %dpx %dpx %dpx",
@@ -55,6 +59,10 @@ public abstract class UIComponent {
 
 	public void customStylePadding(int top, int right, int bottom, int left) {
 		m_customPadding = new Style.Padding(top, right, bottom, left);
+	}
+
+	public void customStyleWidth_px(int width_px) {
+		m_customWidth_px = width_px;
 	}
 
 	public static String getTUIsSeparatedByComa(Collection<? extends UIComponent> components) {
