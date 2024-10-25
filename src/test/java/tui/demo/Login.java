@@ -41,8 +41,8 @@ public class Login {
 		loginForm.createInputString("Identifier", "login").setPlaceHolder("your login");
 		loginForm.createInputPassword("Password", "password");
 		loginForm.opensPage("/session"); // When the form is successfully submitted, this page will open
-		loginForm.customStyleWidth_px(400);
-		loginForm.customStylePadding(300, 0, 0, 0);
+		loginForm.customStyle().setWidth_px(400);
+		loginForm.customStyle().setPadding(300, 0, 0, 0);
 
 		final TUIBackend backend = new TUIBackend(8080);
 

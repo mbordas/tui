@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.html;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,14 +147,8 @@ public class HTMLNode {
 		}
 
 		if(!m_styleProperties.isEmpty()) {
-			final StringBuilder stylePropertiesStr = new StringBuilder();
-			for(Map.Entry<String, String> styleProperty : m_styleProperties.entrySet()) {
-				stylePropertiesStr.append(
-								styleProperty.getKey()).append(": ")
-						.append(styleProperty.getValue()).append(";");
-			}
 			result.append(" style");
-			result.append("=\"").append(stylePropertiesStr).append("\"");
+			result.append("=\"").append(computeStyleAttribute()).append("\"");
 		}
 
 		if(m_text.isEmpty()
@@ -188,6 +184,16 @@ public class HTMLNode {
 			endOfTag(result);
 		}
 		return result.toString();
+	}
+
+	public @NotNull String computeStyleAttribute() {
+		final StringBuilder stylePropertiesStr = new StringBuilder();
+		for(Map.Entry<String, String> styleProperty : m_styleProperties.entrySet()) {
+			stylePropertiesStr.append(
+							styleProperty.getKey()).append(":")
+					.append(styleProperty.getValue()).append(";");
+		}
+		return stylePropertiesStr.toString();
 	}
 
 	private StringBuilder prettyPrintTab(StringBuilder builder) {

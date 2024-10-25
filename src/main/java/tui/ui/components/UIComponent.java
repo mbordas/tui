@@ -18,7 +18,7 @@ package tui.ui.components;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.ui.Style;
+import tui.ui.StyleSet;
 import tui.utils.TUIUtils;
 
 import java.util.Collection;
@@ -31,9 +31,7 @@ public abstract class UIComponent {
 
 	private final long m_tuid = m_counter.incrementAndGet();
 
-	private Style.Padding m_customPadding = null;
-	private Style.Margin m_customMargin = null;
-	private Integer m_customWidth_px = null;
+	private StyleSet m_customStyle = null;
 
 	public abstract HTMLNode toHTMLNode();
 
@@ -44,17 +42,7 @@ public abstract class UIComponent {
 		if(withTUID) {
 			result.setAttribute("id", HTMLConstants.toId(getTUID()));
 		}
-		if(m_customWidth_px != null) {
-			result.setStyleProperty("width", String.format("%dpx", m_customWidth_px));
-		}
-		if(m_customMargin != null) {
-			result.setStyleProperty("margin", String.format("%dpx %dpx %dpx %dpx",
-					m_customMargin.top_px(), m_customMargin.right_px(), m_customMargin.bottom_px(), m_customMargin.left_px()));
-		}
-		if(m_customPadding != null) {
-			result.setStyleProperty("padding", String.format("%dpx %dpx %dpx %dpx",
-					m_customPadding.top_px(), m_customPadding.right_px(), m_customPadding.bottom_px(), m_customPadding.left_px()));
-		}
+		applyCustomStyle(result);
 		return result;
 	}
 
@@ -62,16 +50,17 @@ public abstract class UIComponent {
 		return m_tuid;
 	}
 
-	public void customStylePadding(int top, int right, int bottom, int left) {
-		m_customPadding = new Style.Padding(top, right, bottom, left);
+	public StyleSet customStyle() {
+		if(m_customStyle == null) {
+			m_customStyle = new StyleSet();
+		}
+		return m_customStyle;
 	}
 
-	public void customStyleMargin(int top, int right, int bottom, int left) {
-		m_customMargin = new Style.Margin(top, right, bottom, left);
-	}
-
-	public void customStyleWidth_px(int width_px) {
-		m_customWidth_px = width_px;
+	protected void applyCustomStyle(HTMLNode result) {
+		if(m_customStyle != null) {
+			m_customStyle.apply(result);
+		}
 	}
 
 	public static String getTUIsSeparatedByComa(Collection<? extends UIComponent> components) {

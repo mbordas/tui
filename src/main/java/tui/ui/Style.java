@@ -45,17 +45,26 @@ public class Style {
 	public record TableColors(Color rowHover) {
 	}
 
-	private final TableColors m_tableStyle = new TableColors(
-			new Color(192, 240, 252)
-	);
-
-	public Style() {
-	}
-
 	public record Padding(int top_px, int right_px, int bottom_px, int left_px) {
 	}
 
 	public record Margin(int top_px, int right_px, int bottom_px, int left_px) {
+	}
+
+	private final TableColors m_tableStyle = new TableColors(
+			new Color(192, 240, 252)
+	);
+
+	private final StyleSet m_header = new StyleSet();
+
+	public Style() {
+		m_header.setBackgroundColor("var(--global-color-background)");
+		m_header.setTextColor("var(--global-color-background-contrast)");
+		m_header.setPadding(10, 10, 10, 10);
+	}
+
+	public StyleSet header() {
+		return m_header;
 	}
 
 	public String toCSS() {
@@ -80,9 +89,10 @@ public class Style {
 				}
 				
 				header {
-				    color: var(--global-color-background-contrast);
-				    background-color: var(--global-color-background);
-				    padding: 10px;
+				""");
+		result.append(m_header.toCSS()).append("\n");
+		result.append("""
+				    vertical-align: middle;
 				    border-bottom: solid 1px;
 				}
 				header a {
@@ -94,7 +104,6 @@ public class Style {
 				      padding-left: 5px;
 				      padding-right: 5px;
 				      border: none;
-				      color: var(--global-color-background-contrast);
 				      text-decoration: underline;
 				      cursor: pointer;
 				}
@@ -298,7 +307,7 @@ public class Style {
 				
 				/* BUTTON */
 				
-				button,tui-navbutton {
+				button,.tui-navbutton {
 				    border-radius: 2px;
 				    padding: 5px 20px 5px 20px;
 				    text-align: center;
@@ -377,7 +386,7 @@ public class Style {
 				td {
 				    text-align: left;
 				    padding: 2px 10px 2px 10px;
-				    vertical-align: center;
+				    vertical-align: middle;
 				}
 				.tui-hidden-column {
 				    display: none;
@@ -447,7 +456,7 @@ public class Style {
 	/**
 	 * This code has been found <a href="https://stackoverflow.com/questions/1855884/determine-font-color-based-on-background-color">here</a>
 	 */
-	static Color computeContrastColor(Color color) {
+	public static Color computeContrastColor(Color color) {
 		double perceptiveLuminance = (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
 		if(perceptiveLuminance > 0.5) {
 			return Color.BLACK; // bright colors - black font

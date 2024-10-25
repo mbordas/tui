@@ -16,6 +16,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.html;
 
 import org.junit.Test;
+import tui.ui.StyleSet;
+
+import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,10 +30,22 @@ public class HTMLNodeTest {
 		final HTMLNode node = new HTMLNode("div");
 
 		node.setStyleProperty("display", "grid");
-		assertEquals("<div style=\"display: grid;\"></div>", node.toHTML());
+		assertEquals("<div style=\"display:grid;\"></div>", node.toHTML());
 
 		node.setStyleProperty("width", "100%");
-		assertEquals("<div style=\"display: grid;width: 100%;\"></div>", node.toHTML());
+		assertEquals("<div style=\"display:grid;width:100%;\"></div>", node.toHTML());
+	}
+
+	@Test
+	public void customStyle() {
+		HTMLNode.PRETTY_PRINT = false;
+		final HTMLNode node = new HTMLNode("div");
+
+		StyleSet styleset = new StyleSet();
+		styleset.setBackgroundColor(Color.WHITE);
+		styleset.apply(node);
+
+		assertEquals("<div style=\"background-color:#ffffff;color:#000000;\"></div>", node.toHTML());
 	}
 
 }

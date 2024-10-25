@@ -56,9 +56,11 @@ public class NavButton extends UIComponent {
 					.setAttribute("value", value);
 		}
 
-		result.createChild("button")
+		final HTMLNode button = result.createChild("button")
 				.setAttribute("type", "submit")
 				.setText(m_label);
+
+		applyCustomStyle(button);
 
 		return result;
 	}

@@ -51,10 +51,10 @@ public abstract class UIRefreshableComponent extends UIComponent {
 		if(hasSource()) {
 			final HTMLNode container = new HTMLNode("div");
 			container.setAttribute("class", containerClass);
+			applyCustomStyle(container);
 			if(hasSource()) {
 				HTMLFetchErrorMessage.addErrorMessageChild(container);
 			}
-
 			final HTMLNode element = container.createChild(tagName);
 			if(hasSource()) {
 				element.setAttribute("id", HTMLConstants.toId(getTUID()));
@@ -62,7 +62,9 @@ public abstract class UIRefreshableComponent extends UIComponent {
 			}
 			return new ContainedElement(container, element);
 		} else {
-			return new ContainedElement(null, new HTMLNode(tagName));
+			final HTMLNode element = new HTMLNode(tagName);
+			applyCustomStyle(element);
+			return new ContainedElement(null, element);
 		}
 	}
 }
