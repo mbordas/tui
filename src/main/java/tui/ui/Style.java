@@ -52,14 +52,6 @@ public class Style {
 	public Style() {
 	}
 
-	public GlobalColors getGlobalColors() {
-		return m_globalColors;
-	}
-
-	public TableColors getTableStyle() {
-		return m_tableStyle;
-	}
-
 	public record Padding(int top_px, int right_px, int bottom_px, int left_px) {
 	}
 
@@ -69,43 +61,380 @@ public class Style {
 	public String toCSS() {
 		final StringBuilder result = new StringBuilder();
 
-		result.append(":root{\n");
+		appendGlobalVariables(result);
 
-		appendGlobalColor(result, "global-color-background", Color.WHITE);
-
-		appendGlobalColor(result, "global-color-text", m_globalColors.text());
-		appendGlobalColor(result, "global-color-border", m_globalColors.borders());
-		appendGlobalColor(result, "global-color-action", m_globalColors.action());
-		appendGlobalColor(result, "global-color-cancel", m_globalColors.cancel());
-		appendGlobalColor(result, "global-color-delete", m_globalColors.delete());
-
-		appendGlobalColor(result, "global-color-neutral-state", m_globalColors.neutralState());
-		appendGlobalColor(result, "global-color-green-state", m_globalColors.greenState());
-		appendGlobalColor(result, "global-color-red-state", m_globalColors.redState());
-
-		appendGlobalColor(result, "global-color-fetch-error", Color.ORANGE);
-
-		result.append("\n");
-		appendGlobalColor(result, "table-color-row-hover", m_tableStyle.rowHover());
-
-		result.append("}\n");
-
-		try {
-			result.append(getResourceFileContent("css/tui.css"));
-		} catch(IOException e) {
-			LOG.error(String.format("Error creating CSS: %s", e.getMessage()), e);
-			return "";
-		}
+		result.append("""
+				* {
+				    color: var(--global-color-text);
+				}
+				
+				body {
+				    min-height: 100vh;
+				    padding: 0px;
+				    margin: 0px;
+				    font-family: Arial, sans-serif;
+				}
+				
+				main {
+				    justify-self: stretch;
+				}
+				
+				header {
+				    color: var(--global-color-background-contrast);
+				    background-color: var(--global-color-background);
+				    padding: 10px;
+				    border-bottom: solid 1px;
+				}
+				header a {
+				    text-align: center;
+				    text-decoration: none;
+				}
+				header button[type='submit'] {
+				      background: none;
+				      padding-left: 5px;
+				      padding-right: 5px;
+				      border: none;
+				      color: var(--global-color-background-contrast);
+				      text-decoration: underline;
+				      cursor: pointer;
+				}
+				
+				footer {
+				    color: var(--global-color-background-contrast);
+				    background-color: var(--global-color-background);
+				    padding: 10px;
+				    border-top: solid 1px;
+				}
+				
+				p {
+				    margin: 0px;
+				    padding: 0px;
+				}
+				
+				.tui-border-on {
+				    border: 1px solid var(--global-color-border);
+				}
+				
+				.tui-reading-normal-area {
+				    width: 70em;
+				}
+				
+				.tui-reading-wide-margin {
+				   width: 20px;
+				}
+				
+				.tui-align-left {
+				    text-align: left;
+				}
+				
+				.tui-align-right {
+				    text-align: right;
+				}
+				
+				.tui-align-center {
+				    text-align: center;
+				}
+				
+				.tui-align-stretch {
+				    text-align: justify;
+				}
+				
+				/* TABS */
+				
+				.tui-tabnav {
+				    display: flex;
+				    justify-content: left;
+				    align-items: center;
+				}
+				.tui-tablink {
+				    font-size: 1em;
+				    padding-left: 30px;
+				    padding-right: 30px;
+				    cursor: pointer;
+				    background: none;
+				    border-radius: 0px;
+				    border-left: none;
+				    border-top: none;
+				    border-right: none;
+				    border-bottom: 1px solid var(--global-color-border);
+				}
+				.tui-tablink-active {
+				    border-bottom: 3px solid var(--global-color-action);
+				}
+				
+				/* LAYOUTS */
+				
+				.tui-vertical-spacing-fit {
+				    padding-top: 0px;
+				}
+				.tui-vertical-spacing-compact {
+				    padding-top: 10px;
+				}
+				.tui-vertical-spacing-normal {
+				    padding-top: 20px;
+				}
+				.tui-vertical-spacing-large {
+				    padding-top: 30px;
+				}
+				
+				.tui-horizontal-spacing-fit {
+				    padding-right: 0px;
+				}
+				.tui-horizontal-spacing-compact {
+				    padding-right: 10px;
+				}
+				.tui-horizontal-spacing-normal {
+				    padding-right: 20px;
+				}
+				.tui-horizontal-spacing-large {
+				    padding-right: 30px;
+				}
+				
+				.tui-grid {
+				    display: grid;
+				    margin: 0px;
+				    padding: 0px;
+				    justify-items: stretch;
+				}
+				
+				.tui-vertical-scroll {
+				    overflow-y: auto;
+				}
+				
+				/* FORM */
+				
+				tui-form {
+				    margin: 10px 0px 10px 0px;
+				    width: 400px;
+				}
+				fieldset {
+				    border: 1px solid var(--global-color-border);
+				    background: var(--global-color-background);
+				    position: relative;
+				}
+				/* https://www.youtube.com/watch?v=ezP4kbOvs_E */
+				@property --angle {
+				    syntax: "<angle>";
+				    initial-value: 0deg;
+				    inherits: false;
+				}
+				.form-pending::after {
+				    content: '';
+				    position: absolute;
+				    height: 100%;
+				    width: 100%;
+				    top: 50%;
+				    left: 50%;
+				    translate: -50% -50%;
+				    z-index: -1;
+				    padding: 3px;
+				    /* background: linear-gradient(var(--angle), var(--global-color-background) 0%, var(--global-color-background) 50%, var(--global-color-action) 100%); */
+				    background-image: conic-gradient(from var(--angle), var(--global-color-background) 0% 50%, var(--global-color-action) 50% 100%);
+				    animation: 1s spin linear infinite;
+				}
+				@keyframes spin {
+				    from {
+				        --angle: 0deg;
+				    }
+				    to {
+				        --angle: 360deg;
+				    }
+				}
+				.tui-form-input {
+				    margin-top: 10px;
+				    text-align: left;
+				}
+				.tui-form-input>label {
+				    display: block;
+				    width: 100%;
+				    text-align: left;
+				    vertical-align: top;
+				}
+				.tui-form-input>input {
+				    width: 100%;
+				    padding-left: 15px;
+				    box-sizing: border-box;
+				}
+				.tui-form-input>.label-checkbox {
+				    display: inline;
+				    width: auto;
+				}
+				.tui-form-input>input[type='checkbox'] {
+				    display: inline;
+				    width: auto;
+				    text-align: left;
+				    margin-left: 15px;
+				}
+				.tui-form-input-invalid {
+				    border: 2px solid var(--global-color-red-state);
+				}
+				.tui-input-error {
+				    color: red;
+				    font-size: smaller;
+				}
+				.tui-form-footer {
+				    margin-top: 15px;
+				}
+				.tui-form-message {
+				    margin-top: 5px;
+				    margin-bottom: 5px;
+				}
+				.tui-form-close-button, .tui-form-reset-button {
+				      background: none;
+				      padding-left: 5px;
+				      padding-right: 5px;
+				      border: none;
+				      color: var(--global-color-background-contrast);
+				      text-decoration: underline;
+				      cursor: pointer;
+				}
+				.modal {
+				    max-width: 50ch;
+				}
+				.modal::backdrop {
+				    background: var(--global-color-background-contrast);
+				    opacity: .5
+				}
+				
+				/* BUTTON */
+				
+				button,tui-navbutton {
+				    border-radius: 2px;
+				    padding: 5px 20px 5px 20px;
+				    text-align: center;
+				    cursor: pointer;
+				    background-color: var(--global-color-cancel);
+				    color: var(--global-color-cancel-contrast);
+				    border: 1px solid var(--global-color-border);
+				}
+				button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button {
+				    background-color: var(--global-color-action);
+				    color: var(--global-color-action-contrast);
+				}
+				
+				/* NAV BUTTON */
+				
+				.tui-navbutton {
+				    display: inline;
+				}
+				
+				/* MONITORING */
+				
+				.tui-monitor-fieldset {
+				    border-radius: 2px;
+				    display: grid;
+				    border: 1px solid var(--global-color-border);
+				}
+				.tui-monitor-field {
+				}
+				.tui-monitor-field-label {
+				    display: inline-block;
+				    width: 150px;
+				    text-align: right;
+				    padding-left: 10px;
+				    padding-right: 10px;
+				    margin: 2px;
+				}
+				.tui-monitor-field-value {
+				    display: inline-block;
+				    width: 80px;
+				    text-align: center;
+				    padding-left: 10px;
+				    padding-right: 10px;
+				    margin: 1px;
+				    border: 1px solid var(--global-color-border);
+				}
+				.tui-monitor-field-value-neutral {
+				    background-color: var(--global-color-neutral-state);
+				    color: var(--global-color-neutral-state-contrast);
+				}
+				.tui-monitor-field-value-green {
+				    background-color: var(--global-color-green-state);
+				    color: var(--global-color-green-state-contrast);
+				}
+				.tui-monitor-field-value-red {
+				    background-color: var(--global-color-red-state);
+				    color: var(--global-color-red-state-contrast);
+				}
+				
+				/* TABLE */
+				
+				table {
+				    width: 100%;
+				    border-collapse: collapse;
+				    border-radius: 2px;
+				    border: 1px solid var(--global-color-border);
+				    margin: 10px 0px 10px 0px;
+				}
+				th, td {
+				    border: 1px solid var(--global-color-border);;
+				}
+				th {
+				    text-align: center;
+				    padding: 5px 10px 5px 10px;
+				    font-weight: bold;
+				}
+				td {
+				    text-align: left;
+				    padding: 2px 10px 2px 10px;
+				    vertical-align: center;
+				}
+				.tui-hidden-column {
+				    display: none;
+				}
+				.tui-hidden-head {
+				    display: none;
+				}
+				tr:hover {
+				    background-color: var(--table-color-row-hover);
+				}
+				.tui-tablepicker td {
+				    cursor: pointer;
+				}
+				.tui-table-navigation {
+				    padding-top: 5px;
+				    padding-bottom: 5px;
+				}
+				
+				/* FETCH ERRORS */
+				
+				.fetch-error {
+				    border: 2px solid var(--global-color-fetch-error);
+				}
+				.fetch-error-message {
+				    font-size: 0.7em;
+				    background-color: var(--global-color-fetch-error);
+				    color: var(--global-color-fetch-error-contrast);
+				}""");
 		return result.toString();
 	}
 
-	private static void appendGlobalColor(StringBuilder builder, String name, Color value) {
-		appendGlobalVar(builder, name, toCSSHex(value));
-		appendGlobalVar(builder, name + "-contrast", toCSSHex(computeContrastColor(value)));
+	/**
+	 * Defines main theme colors as global variables.
+	 */
+	private void appendGlobalVariables(StringBuilder cssContentBuilder) {
+		cssContentBuilder.append(":root{\n");
+		appendGlobalColor(cssContentBuilder, "global-color-background", Color.WHITE);
+		appendGlobalColor(cssContentBuilder, "global-color-text", m_globalColors.text());
+		appendGlobalColor(cssContentBuilder, "global-color-border", m_globalColors.borders());
+		appendGlobalColor(cssContentBuilder, "global-color-action", m_globalColors.action());
+		appendGlobalColor(cssContentBuilder, "global-color-cancel", m_globalColors.cancel());
+		appendGlobalColor(cssContentBuilder, "global-color-delete", m_globalColors.delete());
+		appendGlobalColor(cssContentBuilder, "global-color-neutral-state", m_globalColors.neutralState());
+		appendGlobalColor(cssContentBuilder, "global-color-green-state", m_globalColors.greenState());
+		appendGlobalColor(cssContentBuilder, "global-color-red-state", m_globalColors.redState());
+		appendGlobalColor(cssContentBuilder, "global-color-fetch-error", Color.ORANGE);
+		appendGlobalColor(cssContentBuilder, "table-color-row-hover", m_tableStyle.rowHover());
+		cssContentBuilder.append("}\n");
 	}
 
-	private static void appendGlobalVar(StringBuilder builder, String name, String value) {
-		builder.append(String.format("--%s: %s;\n", name, value));
+	private static void appendGlobalColor(StringBuilder cssContentBuilder, String name, Color value) {
+		appendGlobalVar(cssContentBuilder, name, toCSSHex(value));
+		appendGlobalVar(cssContentBuilder, name + "-contrast", toCSSHex(computeContrastColor(value)));
+	}
+
+	private static void appendGlobalVar(StringBuilder cssContentBuilder, String name, String value) {
+		cssContentBuilder.append(String.format("--%s: %s;\n", name, value));
 	}
 
 	public static String toCSSHex(Color color) {
