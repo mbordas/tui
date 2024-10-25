@@ -6,24 +6,33 @@
 
 package tui.ui.components.layout;
 
+import org.jetbrains.annotations.NotNull;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.components.UIComponent;
+import tui.ui.components.UIRefreshableComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Panel extends UIComponent {
+public class Panel extends UIRefreshableComponent {
 
 	public static final String HTML_CLASS = "tui-panel";
+	public static final String HTML_CLASS_CONTAINER = "tui-container-panel";
 
 	public static final String JSON_TYPE = "panel";
 
 	private final List<UIComponent> m_content = new ArrayList<>();
+	private Layouts.TextAlign m_textAlign = Layouts.TextAlign.LEFT;
 
 	public <C extends UIComponent> C append(C component) {
 		m_content.add(component);
 		return component;
+	}
+
+	public Panel setAlign(@NotNull Layouts.TextAlign textAlign) {
+		m_textAlign = textAlign;
+		return this;
 	}
 
 	public List<UIComponent> getContent() {
@@ -32,18 +41,21 @@ public class Panel extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = super.toHTMLNode("div", true)
-				.setAttribute("class", HTML_CLASS);
+		final ContainedElement containedElement = createContainedNode("div", HTML_CLASS_CONTAINER);
+		containedElement.element().addClass(HTML_CLASS);
+		containedElement.element().addClass(m_textAlign.getHTMLClass());
 
+		final HTMLNode node = containedElement.element();
 		for(UIComponent component : getContent()) {
-			result.append(component.toHTMLNode());
+			node.append(component.toHTMLNode());
 		}
-		return result;
+		return containedElement.getHigherNode();
 	}
 
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		result.setAttribute("textAlign", m_textAlign.name());
 		result.createArray("content", m_content, UIComponent::toJsonMap);
 		return result;
 	}

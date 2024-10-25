@@ -65,8 +65,8 @@ public class Paragraph extends UIRefreshableComponent {
 	public Paragraph() {
 	}
 
-	public Paragraph(String text) {
-		appendNormal(text);
+	public Paragraph(String format, Object... args) {
+		appendNormal(String.format(format, args));
 	}
 
 	public Paragraph setAlign(@NotNull Layouts.TextAlign textAlign) {
@@ -84,17 +84,20 @@ public class Paragraph extends UIRefreshableComponent {
 		return this;
 	}
 
-	public Paragraph appendNormal(String text) {
-		assert text != null;
-		return append(Style.NORMAL, text);
+	public Paragraph appendNormal(String format, Object... args) {
+		assert format != null;
+		return append(Style.NORMAL, format, args);
 	}
 
 	public Paragraph appendStrong(String text) {
+		assert text != null;
 		return append(Style.STRONG, text);
 	}
 
-	private Paragraph append(Style style, String text) {
-		m_fragments.add(new Fragment(style, text));
+	private Paragraph append(Style style, @NotNull String format, Object... args) {
+		if(!format.isEmpty()) {
+			m_fragments.add(new Fragment(style, String.format(format, args)));
+		}
 		return this;
 	}
 

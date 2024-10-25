@@ -27,7 +27,9 @@ public class StyleSet {
 	private String m_fontSize = null;
 	private String m_textTransform = null;
 	private String m_backgroundColor = null;
-	private String m_border = null;
+	private String m_borderStyle = null;
+	private String m_borderColor = null;
+	private String m_borderWidth = null;
 
 	private Style.Padding m_padding = null;
 	private Style.Margin m_margin = null;
@@ -38,7 +40,18 @@ public class StyleSet {
 	}
 
 	public StyleSet setNoBorder() {
-		m_border = "none";
+		m_borderStyle = "none";
+		return this;
+	}
+
+	public StyleSet setBorderColor(Color color) {
+		m_borderColor = Style.toCSSHex(color);
+		m_borderStyle = "solid";
+		return this;
+	}
+
+	public StyleSet setBorderWidth_px(int width_px) {
+		m_borderWidth = String.format("%dpx", width_px);
 		return this;
 	}
 
@@ -109,7 +122,9 @@ public class StyleSet {
 		setStylePropertyIfDefined(node, "font-size", m_fontSize);
 		setStylePropertyIfDefined(node, "text-transform", m_textTransform);
 		setStylePropertyIfDefined(node, "background-color", m_backgroundColor);
-		setStylePropertyIfDefined(node, "border", m_border);
+		setStylePropertyIfDefined(node, "border-style", m_borderStyle);
+		setStylePropertyIfDefined(node, "border-color", m_borderColor);
+		setStylePropertyIfDefined(node, "border-width", m_borderWidth);
 		setStylePropertyIfDefined(node, "width", m_width);
 		setStylePropertyIfDefined(node, "height", m_height);
 

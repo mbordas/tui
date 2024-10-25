@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import tui.html.HTMLNode;
+import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.components.BadComponentException;
 
@@ -75,7 +76,15 @@ public class RefreshButton extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		return null;
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute("label", m_label);
+		if(m_key != null) {
+			result.setAttribute("key", m_key);
+		}
+		if(!m_connectedComponents.isEmpty()) {
+			result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
+		}
+		return result;
 	}
 
 }

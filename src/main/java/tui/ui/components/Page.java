@@ -33,6 +33,9 @@ public class Page extends APage {
 
 	public static final String SESSION_PARAMS_MAP_NAME = "SESSION_PARAMS";
 
+	public enum FetchType {JSON, FORM_DATA}
+
+	private FetchType m_fetchType = FetchType.JSON;
 	private Layouts.Width m_width = Layouts.Width.NORMAL;
 	private final List<UIComponent> m_content = new ArrayList<>();
 	private UIComponent m_header = null;
@@ -47,6 +50,10 @@ public class Page extends APage {
 
 	public Page(String title, String source) {
 		super(title, source);
+	}
+
+	public void setFetchType(FetchType type) {
+		m_fetchType = type;
 	}
 
 	public void setSessionParameter(String name, String value) {
@@ -105,6 +112,7 @@ public class Page extends APage {
 		}
 		final HTMLNode script = head.createChild("script")
 				.setText(generateSessionParametersInitialization(SESSION_PARAMS_MAP_NAME, m_sessionParameters));
+		script.appendText("const FETCH_TYPE='%s'", m_fetchType.name());
 
 		if(scriptResource != null) {
 			if(scriptResource.isExternal()) {

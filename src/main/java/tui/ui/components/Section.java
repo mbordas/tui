@@ -45,6 +45,11 @@ public class Section extends UIComponent {
 		return result;
 	}
 
+	public <C extends UIComponent> C append(C component) {
+		m_content.add(component);
+		return component;
+	}
+
 	public String getTitle() {
 		return m_title;
 	}

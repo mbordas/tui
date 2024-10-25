@@ -45,29 +45,36 @@ async function refreshComponent(id, data) {
     const sourcePath = component.getAttribute('tui-source');
     console.log('refreshing component ' + id + ' with source: ' + sourcePath);
 
-    var jsonBody;
-    if(data === undefined) {
-        jsonBody = '';
-    } else {
-        if(data instanceof Map) {
-            for(let key in SESSION_PARAMS) {
-                data[key] = SESSION_PARAMS[key];
-            }
-            jsonBody = JSON.stringify(Array.from(data.entries()));
-        } else {
-            for(let key in SESSION_PARAMS) {
-                data[key] = SESSION_PARAMS[key];
-            }
-            jsonBody = JSON.stringify(Array.from(Object.entries(data)));
+     if(data === undefined) {
+        data = new Map(SESSION_PARAMS);
+     } else {
+        for(let key in SESSION_PARAMS) {
+            data[key] = SESSION_PARAMS[key];
         }
+     }
+
+    var body;
+    var headers;
+
+    if(FETCH_TYPE == 'JSON') {
+        if(data instanceof Map) {
+            body = JSON.stringify(Array.from(data.entries()));
+        } else {
+            body = JSON.stringify(Array.from(Object.entries(data)));
+        }
+        headers = { 'Content-Type': 'application/json' };
+    } else if(FETCH_TYPE == 'FORM_DATA') {
+        body = new FormData();
+        for(let key in data) {
+            body.append(key, data[key]);
+        }
+        headers = {};
     }
 
     fetch(sourcePath, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: jsonBody,
+            headers: headers,
+            body: body,
         })
         .then(response => {
             if(!response.ok) {
@@ -86,6 +93,8 @@ async function refreshComponent(id, data) {
                 updateSVG(component, json);
             } else if(type == 'grid') {
                 updateGrid(component, json);
+            } else if(type == 'panel') {
+                updatePanel(component, json);
             } else {
                 console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
             }
@@ -113,21 +122,85 @@ function getFetchData(element) {
     return result;
 }
 
-function createComponent(json) {
+function updatePanel(panelElement, json, idMap) {
+    panelElement.innerHTML = '';
+    setTextAlignClass(panelElement, json['textAlign']);
+    if(idMap == null) {
+        idMap = new Map();
+    }
+    idMap.set(json['tuid'], panelElement.id);
+    for(var child of json['content']) {
+        const element = createComponent(child, idMap);
+        if(element == null) {
+            console.error('Unable to create component from type: ' + child['type']);
+        } else {
+            panelElement.appendChild(element);
+        }
+    }
+}
+
+function setTextAlignClass(element, textAlign) {
+    element.classList.remove('tui-align-left');
+    element.classList.remove('tui-align-center');
+    element.classList.remove('tui-align-right');
+    element.classList.remove('tui-align-stretch');
+    element.classList.add('tui-align-' + textAlign.toLowerCase());
+}
+
+/*
+    idMap (optional) gives some TUID given by backend to be replaced in order to match the frontend current ids.
+    This map should be passed to any element that contains other elements.
+*/
+function createComponent(json, idMap) {
     const type = json['type'];
     var result;
-    if(type == 'paragraph') {
+    if(type == 'panel') {
+        result = document.createElement('div');
+        result.id = json['tuid'];
+        updatePanel(result, json, idMap);
+    } else if(type == 'paragraph') {
         result = document.createElement('p');
         updateParagraph(result, json);
     } else if(type == 'grid') {
         result = document.createElement('div');
         result.classList.add('tui-grid');
-        updateGrid(result, json);
-    } else {
+        updateGrid(result, json, idMap);
+    } else if(type == 'refreshButton') {
+        result = document.createElement('button');
+        result.classList.add('tui-refresh-button');
+        result.setAttribute('type', 'button');
+        result.setAttribute('tui-key', json['key']);
+        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
+        result.textContent = json['label'];
+        instrumentRefreshButton(result);
+     } else {
         result = null;
     }
 
     return result;
+}
+
+/*
+    Replaces 'idsSeparatedByComa' where ids are found in 'idMap'.
+*/
+function adaptRefreshListeners(idsSeparatedByComa, idMap) {
+    if(idMap == null) {
+        return idsSeparatedByComa;
+    } else {
+        var result = '';
+        idsSeparatedByComa.split(",").forEach(function(id, i) {
+            if(idMap.has(id)) {
+                result = result + idMap.get(id) + ',';
+            } else {
+                result = result + id + ',';
+            }
+        });
+        if(result.endsWith(',')) {
+            return result.slice(0, -1);
+        } else {
+            return result;
+        }
+    }
 }
 
 function showFetchError(element, error) {
@@ -148,7 +221,7 @@ function hideFetchError(element) {
 
 // GRIDS
 
-function updateGrid(gridElement, json) {
+function updateGrid(gridElement, json, idMap) {
     const rows = parseInt(json['rows']);
     const columns = parseInt(json['columns']);
     gridElement.style.gridTemplateRows = 'auto '.repeat(rows);
@@ -160,7 +233,7 @@ function updateGrid(gridElement, json) {
             const childName = '' + row + '_' + column;
             var childElement;
             if(Object.hasOwn(json, childName)) {
-                childElement = createComponent(json[childName]);
+                childElement = createComponent(json[childName], idMap);
             } else {
                 childElement = document.createElement('p');
             }
@@ -211,12 +284,16 @@ function updateParagraph(element, json) {
 function instrumentRefreshButtons() {
     const refreshButtons = document.querySelectorAll('.tui-refresh-button');
     refreshButtons.forEach(function(button, i) {
-        button.addEventListener('click', function() {
-            const data = button.hasAttribute('tui-key') ? { key: button.getAttribute('tui-key')} : {};
-            button.getAttribute('tui-refresh-listeners').split(",")
-            .forEach(function(id, i) {
-                refreshComponent(id, data);
-            });
+       instrumentRefreshButton(button);
+    });
+}
+
+function instrumentRefreshButton(buttonElement) {
+     buttonElement.addEventListener('click', function() {
+        const data = buttonElement.hasAttribute('tui-key') ? { key: buttonElement.getAttribute('tui-key')} : {};
+        buttonElement.getAttribute('tui-refresh-listeners').split(",")
+        .forEach(function(id, i) {
+            refreshComponent(id, data);
         });
     });
 }

@@ -227,7 +227,7 @@ public class Form extends UIComponent {
 
 	public static Set<Long> getRefreshListenersIds(JsonMap map) {
 		final Set<Long> result = new TreeSet<>();
-		final JsonArray refreshListeners = map.getArray("refreshListeners");
+		final JsonArray refreshListeners = map.getArray(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS);
 		final Iterator<JsonObject> iterator = refreshListeners.iterator();
 		while(iterator.hasNext()) {
 			final JsonString listenerId = (JsonString) iterator.next();

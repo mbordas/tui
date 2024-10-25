@@ -18,6 +18,7 @@ package tui.json;
 public class JsonConstants {
 
 	public static final String ATTRIBUTE_TUID = "tuid";
+	public static final String ATTRIBUTE_REFRESH_LISTENERS = "refreshListeners";
 
 	public static String toId(long tuid) {
 		return String.valueOf(tuid);

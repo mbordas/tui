@@ -23,7 +23,7 @@ public class HorizontalFlow extends AFlow {
 
 	public static final String HTML_CLASS = "tui-horizontal-flow";
 
-	public static final String JSON_TYPE = "horizontal_flow";
+	public static final String JSON_TYPE = "horizontalFlow";
 
 	private Layouts.TextAlign m_componentAlign = Layouts.TextAlign.CENTER;
 
@@ -59,6 +59,8 @@ public class HorizontalFlow extends AFlow {
 
 	@Override
 	public JsonMap toJsonMap() {
-		return null;
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.createArray("content", m_content, UIComponent::toJsonMap);
+		return result;
 	}
 }

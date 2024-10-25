@@ -98,8 +98,9 @@ public class HTMLNode {
 		return this;
 	}
 
-	public void appendText(String text) {
-		m_text.append(text);
+	public HTMLNode appendText(String format, Object... args) {
+		m_text.append(String.format(format, args));
+		return this;
 	}
 
 	public HTMLNode createChild(String name) {
