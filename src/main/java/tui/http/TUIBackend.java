@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
 import tui.ui.Style;
+import tui.ui.components.APage;
 import tui.ui.components.Page;
 
 import javax.servlet.ServletOutputStream;
@@ -41,7 +42,6 @@ public class TUIBackend {
 
 	public static final String PATH_TO_CSS = "/css/tui.css";
 	public static final String PATH_TO_SCRIPT = "/js/tui.js";
-	public static final String SCRIPT_ONLOAD_FUNCTION_CALL = "onload()";
 
 	private Server m_server;
 	private Style m_style = new Style();
@@ -88,7 +88,8 @@ public class TUIBackend {
 							response.setContentType(HTMLConstants.JSON_CONTENT_TYPE);
 							response.getWriter().write(json);
 						} else {
-							final String html = page.toHTMLNode(PATH_TO_CSS, PATH_TO_SCRIPT, SCRIPT_ONLOAD_FUNCTION_CALL).toHTML();
+							final String html = page.toHTMLNode(new APage.Resource(true, PATH_TO_CSS),
+									new APage.Resource(true, PATH_TO_SCRIPT)).toHTML();
 							response.setContentType(HTMLConstants.HTML_CONTENT_TYPE);
 							response.getWriter().write(html);
 						}

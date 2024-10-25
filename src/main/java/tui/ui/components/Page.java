@@ -84,7 +84,7 @@ public class Page extends APage {
 		return this;
 	}
 
-	public HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall) {
+	public HTMLNode toHTMLNode(Resource cssResource, Resource scriptResource) {
 		final HTMLNode result = new HTMLNode("html");
 		result.setRoot(true);
 
@@ -93,24 +93,32 @@ public class Page extends APage {
 		head.createChild("meta").setAttribute("name", "viewport")
 				.setAttribute("content", "width=device-width, initial-scale=1");
 		head.createChild("title").setText(getTitle());
-		if(pathToCSS != null) {
-			head.createChild("link")
-					.setAttribute("rel", "stylesheet")
-					.setAttribute("href", pathToCSS);
+		if(cssResource != null) {
+			if(cssResource.isExternal()) {
+				head.createChild("link")
+						.setAttribute("rel", "stylesheet")
+						.setAttribute("href", cssResource.contentOrLink());
+			} else {
+				head.createChild("style")
+						.setText(cssResource.contentOrLink());
+			}
 		}
-		head.createChild("script")
+		final HTMLNode script = head.createChild("script")
 				.setText(generateSessionParametersInitialization(SESSION_PARAMS_MAP_NAME, m_sessionParameters));
-		if(pathToScript != null) {
-			head.createChild("script")
-					.setAttribute("type", HTMLConstants.JAVASCRIPT_CONTENT_TYPE)
-					.setAttribute("src", pathToScript)
-					.setAttribute("defer", null); // the script is meant to be executed after the document has been parsed
+
+		if(scriptResource != null) {
+			if(scriptResource.isExternal()) {
+				head.createChild("script")
+						.setAttribute("type", HTMLConstants.JAVASCRIPT_CONTENT_TYPE)
+						.setAttribute("src", scriptResource.contentOrLink())
+						.setAttribute("defer", null); // the script is meant to be executed after the document has been parsed
+			} else {
+				script.appendText(scriptResource.contentOrLink());
+			}
 		}
 
 		final HTMLNode body = result.createChild("body");
-		if(onLoadFunctionCall != null) {
-			body.setAttribute("onload", onLoadFunctionCall);
-		}
+		body.setAttribute("onload", "onload()");
 
 		if(m_header != null) {
 			final HTMLNode header = body.createChild("header");
@@ -164,7 +172,7 @@ public class Page extends APage {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		return toHTMLNode(null, null, null);
+		return toHTMLNode(null, null);
 	}
 
 }

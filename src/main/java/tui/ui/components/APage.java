@@ -10,7 +10,8 @@ import tui.html.HTMLNode;
 
 public abstract class APage extends UIComponent {
 
-	public abstract HTMLNode toHTMLNode(String pathToCSS, String pathToScript, String onLoadFunctionCall);
+	public record Resource(boolean isExternal, String contentOrLink) {
+	}
 
 	protected final String m_title;
 	private String m_source;
@@ -23,6 +24,8 @@ public abstract class APage extends UIComponent {
 		m_title = title;
 		m_source = source;
 	}
+
+	public abstract HTMLNode toHTMLNode(Resource cssResource, Resource scriptResource);
 
 	public String getTitle() {
 		return m_title;

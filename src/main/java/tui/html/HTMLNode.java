@@ -96,6 +96,10 @@ public class HTMLNode {
 		return this;
 	}
 
+	public void appendText(String text) {
+		m_text.append(text);
+	}
+
 	public HTMLNode createChild(String name) {
 		final HTMLNode result = new HTMLNode(name);
 		return append(result);
