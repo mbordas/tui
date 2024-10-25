@@ -37,6 +37,7 @@ public class Table extends UIRefreshableComponent {
 	public static final String HTML_CLASS_NAVIGATION = "tui-table-navigation";
 	public static final String JSON_TYPE = "table";
 	public static final String ATTRIBUTE_SOURCE = "source";
+	public static final String ATTRIBUTE_HIDDEN_TITLE = "hiddenTitle";
 	public static final String ATTRIBUTE_HIDDEN_HEAD = "hiddenHead";
 	public static final String ATTRIBUTE_HIDDEN_COLUMNS = "hiddenColumns";
 	public static final String PARAMETER_PAGE_NUMBER = "page_number";
@@ -49,6 +50,7 @@ public class Table extends UIRefreshableComponent {
 	private Integer m_pageSize = null;
 	private Set<String> m_hiddenColumns = new HashSet<>();
 	private boolean m_hiddenHead = false;
+	private boolean m_hiddenTitle = false;
 
 	public Table(String title, Collection<String> columns) {
 		m_title = title;
@@ -65,6 +67,10 @@ public class Table extends UIRefreshableComponent {
 
 	public void hideHead() {
 		m_hiddenHead = true;
+	}
+
+	public void hideTitle() {
+		m_hiddenTitle = true;
 	}
 
 	public void setSource(String path) {
@@ -152,7 +158,10 @@ public class Table extends UIRefreshableComponent {
 			}
 		}
 
-		tableElement.createChild("caption").setText(getTitle());
+		final HTMLNode caption = tableElement.createChild("caption").setText(getTitle());
+		if(m_hiddenTitle) {
+			caption.setStyleProperty("display", "none");
+		}
 
 		final HTMLNode head = tableElement.createChild("thead");
 		final HTMLNode headRow = head.createChild("tr");
@@ -213,6 +222,9 @@ public class Table extends UIRefreshableComponent {
 		}
 		if(m_hiddenHead) {
 			result.setAttribute(ATTRIBUTE_HIDDEN_HEAD, "true");
+		}
+		if(m_hiddenTitle) {
+			result.setAttribute(ATTRIBUTE_HIDDEN_TITLE, "true");
 		}
 		if(!m_hiddenColumns.isEmpty()) {
 			result.createArray(ATTRIBUTE_HIDDEN_COLUMNS,

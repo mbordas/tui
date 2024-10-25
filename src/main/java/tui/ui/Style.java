@@ -27,22 +27,16 @@ public class Style {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Style.class);
 
-	public record GlobalColors(Color text, Color borders, Color action, Color cancel, Color delete,
-							   Color neutralState, Color greenState, Color redState) {
-	}
-
-	private final GlobalColors m_globalColors = new GlobalColors(
-			new Color(46, 46, 46), // text
-			new Color(180, 180, 180), // borders
-			new Color(0, 198, 252), // action
-			new Color(222, 222, 222), // cancel
-			new Color(252, 40, 3), // delete / rollback
-			new Color(230, 230, 230), // neutral state
-			new Color(115, 250, 70), // green state
-			new Color(252, 40, 3) // red state
-	);
-
-	public record TableColors(Color rowHover) {
+	static class GlobalColors {
+		Color text = new Color(46, 46, 46);
+		Color borders = new Color(180, 180, 180);
+		Color action = new Color(0, 198, 252);
+		Color cancel = new Color(222, 222, 222);
+		Color delete = new Color(252, 40, 3);
+		Color neutral = new Color(230, 230, 230);
+		Color greenState = new Color(115, 250, 70);
+		Color redState = new Color(252, 40, 3);
+		Color tableRowHover = new Color(192, 240, 252);
 	}
 
 	public record Padding(int top_px, int right_px, int bottom_px, int left_px) {
@@ -51,16 +45,21 @@ public class Style {
 	public record Margin(int top_px, int right_px, int bottom_px, int left_px) {
 	}
 
-	private final TableColors m_tableStyle = new TableColors(
-			new Color(192, 240, 252)
-	);
-
+	private final GlobalColors m_globalColors = new GlobalColors();
 	private final StyleSet m_header = new StyleSet();
 
 	public Style() {
 		m_header.setBackgroundColor("var(--global-color-background)");
 		m_header.setTextColor("var(--global-color-background-contrast)");
 		m_header.setPadding(10, 10, 10, 10);
+	}
+
+	public void setColorForAction(Color color) {
+		m_globalColors.action = color;
+	}
+
+	public void setColorForTableRowHover(Color color) {
+		m_globalColors.tableRowHover = color;
 	}
 
 	public StyleSet header() {
@@ -319,6 +318,7 @@ public class Style {
 				button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button {
 				    background-color: var(--global-color-action);
 				    color: var(--global-color-action-contrast);
+				    border-color: var(--global-color-action);
 				}
 				
 				/* NAV BUTTON */
@@ -424,16 +424,16 @@ public class Style {
 	private void appendGlobalVariables(StringBuilder cssContentBuilder) {
 		cssContentBuilder.append(":root{\n");
 		appendGlobalColor(cssContentBuilder, "global-color-background", Color.WHITE);
-		appendGlobalColor(cssContentBuilder, "global-color-text", m_globalColors.text());
-		appendGlobalColor(cssContentBuilder, "global-color-border", m_globalColors.borders());
-		appendGlobalColor(cssContentBuilder, "global-color-action", m_globalColors.action());
-		appendGlobalColor(cssContentBuilder, "global-color-cancel", m_globalColors.cancel());
-		appendGlobalColor(cssContentBuilder, "global-color-delete", m_globalColors.delete());
-		appendGlobalColor(cssContentBuilder, "global-color-neutral-state", m_globalColors.neutralState());
-		appendGlobalColor(cssContentBuilder, "global-color-green-state", m_globalColors.greenState());
-		appendGlobalColor(cssContentBuilder, "global-color-red-state", m_globalColors.redState());
+		appendGlobalColor(cssContentBuilder, "global-color-text", m_globalColors.text);
+		appendGlobalColor(cssContentBuilder, "global-color-border", m_globalColors.borders);
+		appendGlobalColor(cssContentBuilder, "global-color-action", m_globalColors.action);
+		appendGlobalColor(cssContentBuilder, "global-color-cancel", m_globalColors.cancel);
+		appendGlobalColor(cssContentBuilder, "global-color-delete", m_globalColors.delete);
+		appendGlobalColor(cssContentBuilder, "global-color-neutral-state", m_globalColors.neutral);
+		appendGlobalColor(cssContentBuilder, "global-color-green-state", m_globalColors.greenState);
+		appendGlobalColor(cssContentBuilder, "global-color-red-state", m_globalColors.redState);
 		appendGlobalColor(cssContentBuilder, "global-color-fetch-error", Color.ORANGE);
-		appendGlobalColor(cssContentBuilder, "table-color-row-hover", m_tableStyle.rowHover());
+		appendGlobalColor(cssContentBuilder, "table-color-row-hover", m_globalColors.tableRowHover);
 		cssContentBuilder.append("}\n");
 	}
 
