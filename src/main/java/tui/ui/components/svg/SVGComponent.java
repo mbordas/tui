@@ -15,9 +15,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg;
 
-import tui.html.CSSBuilder;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.Style;
 
 import java.awt.*;
 import java.util.Locale;
@@ -68,9 +68,9 @@ public abstract class SVGComponent {
 
 	public String computeStyleAttribute() {
 		String result = String.format(Locale.US, "stroke:%s;stroke-width:%d;stroke-opacity:%.2f;fill:%s;fill-opacity:%.2f;",
-				m_strokeColor == null ? "none" : CSSBuilder.toCSS(m_strokeColor),
+				m_strokeColor == null ? "none" : Style.toCSSHex(m_strokeColor),
 				m_strokeWidth, m_strokeOpacity,
-				m_fillColor == null ? "none" : CSSBuilder.toCSS(m_fillColor),
+				m_fillColor == null ? "none" : Style.toCSSHex(m_fillColor),
 				m_fillOpacity);
 
 		if(m_strokeDashArray != null) {

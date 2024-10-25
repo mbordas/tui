@@ -24,6 +24,15 @@ header a {
     text-align: center;
     text-decoration: none;
 }
+header button[type='submit'] {
+      background: none;
+      padding-left: 5px;
+      padding-right: 5px;
+      border: none;
+      color: var(--global-color-background-contrast);
+      text-decoration: underline;
+      cursor: pointer;
+}
 
 footer {
     color: var(--global-color-background-contrast);

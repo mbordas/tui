@@ -20,7 +20,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tui.html.CSSBuilder;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
 import tui.ui.Style;
@@ -119,7 +118,7 @@ public class TUIBackend {
 					respondWithTextResource(request, response, "js/tui.js", HTMLConstants.JAVASCRIPT_CONTENT_TYPE);
 				} else if(PATH_TO_CSS.equals(uri)) {
 					response.setContentType(HTMLConstants.CSS_CONTENT_TYPE);
-					response.getWriter().write(CSSBuilder.toCSS(m_style));
+					response.getWriter().write(m_style.toCSS());
 					response.setStatus(200);
 					request.setHandled(true);
 				} else if("/favicon.ico".equals(uri)) {
