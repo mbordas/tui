@@ -36,7 +36,7 @@ function onload() {
 
 /*
     Calls the backend web service defined as 'source' in the component's attributes.
-    Optional 'data' is a Map which contains parameters as (key, value) strings that will be sent as content (HTTP POST).
+    Optional 'data' is a regular Object which contains attributes as (key, value) strings that will be sent as content (HTTP POST).
 */
 async function refreshComponent(id, data) {
     const element = document.getElementById(id);
@@ -662,10 +662,10 @@ function instrumentTablePicker(tablePickerElement) {
         for(const row of tablePickerElement.querySelectorAll("tbody tr")) {
             const values = Array.from(row.querySelectorAll("td")).map(cell => cell.textContent);
 
-            const data = new Map();
+            const data = {};
             var colIndex = 0;
             for(const column of columns) {
-                data.set(column, values[colIndex++]);
+                data[column] = values[colIndex++];
             }
 
             row.addEventListener("click", function () {
@@ -718,14 +718,10 @@ function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastIte
 // SVG
 
 function updateSVG(svgElement, json) {
-
     const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg"); // Creating the SVG tag with same id
-    copySVGAttributes(json, newElement);  // Setting attributes given by backend
-    const source = json['tui-source']; // Overriding with original attributes that are consistent with page structure
-    if(source != '') {
-        newElement.setAttribute('tui-source', source);
-    }
     newElement.setAttribute('id', svgElement.getAttribute('id'));
+    newElement.setAttribute('tui-source', svgElement.getAttribute('tui-source')); // keeping source
+    copySVGAttributes(json, newElement);  // Setting attributes given by backend
 
     const svgContainer = svgElement.parentElement;
     svgContainer.removeChild(svgElement);

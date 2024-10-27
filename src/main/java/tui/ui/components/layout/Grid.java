@@ -41,9 +41,9 @@ public class Grid extends UIRefreshableComponent {
 		return this;
 	}
 
-	public Grid set(int rowIndex, int columnIndex, UIComponent component) {
+	public <C extends UIComponent> C set(int rowIndex, int columnIndex, C component) {
 		m_components[rowIndex][columnIndex] = component;
-		return this;
+		return component;
 	}
 
 	@Override
