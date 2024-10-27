@@ -173,8 +173,20 @@ function createComponent(json, idMap) {
         result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
         result.textContent = json['label'];
         instrumentRefreshButton(result);
-     } else {
+    } else if(type == 'svg') {
+        const containedElement = createElementWithContainer('svg', 'tui-container-svg');
+        updateSVG(containedElement.element, json);
+        result = containedElement.container;
+    } else {
         result = null;
+    }
+
+    if(result != null && json['style'] != null) {
+        var style = '';
+        Object.entries(json['style']).forEach(([key, value]) => {
+            style += key + ':' + value + ';';
+        });
+        result.setAttribute('style', style);
     }
 
     return result;
@@ -201,6 +213,23 @@ function adaptRefreshListeners(idsSeparatedByComa, idMap) {
             return result;
         }
     }
+}
+
+function createElementWithContainer(name, containerClass) {
+    const containerElement = document.createElement('div');
+    containerElement.classList.add(containerClass);
+    const newElement = document.createElement(name);
+    containerElement.append(newElement);
+
+    instrumentWithErrorMessage(containerElement);
+
+    return {container: containerElement, element: newElement};
+}
+
+function instrumentWithErrorMessage(element) {
+     const errorMessageElement = document.createElement('div');
+     errorMessageElement.setAttribute('class', 'fetch-error-message');
+     element.insertBefore(errorMessageElement,element.firstChild);
 }
 
 function showFetchError(element, error) {
@@ -319,7 +348,7 @@ function instrumentSearchForms() {
 function instrumentForms() {
     const forms = document.querySelectorAll('.tui-form');
     forms.forEach(function(form, i) {
-        instrumentFormWithErrorMessage(form);
+        instrumentWithErrorMessage(form);
 
         const resetButton = form.querySelector('.tui-form-reset-button');
         resetButton.addEventListener('click', () => {
@@ -446,11 +475,7 @@ function prepareFormData(formElement) {
     return data;
 }
 
-function instrumentFormWithErrorMessage(formElement) {
-     const errorMessageElement = document.createElement('div');
-     errorMessageElement.setAttribute('class', 'fetch-error-message');
-     formElement.insertBefore(errorMessageElement,formElement.firstChild);
-}
+
 
 function startFormPending(formElement) {
     const fieldset = formElement.querySelector('fieldset');

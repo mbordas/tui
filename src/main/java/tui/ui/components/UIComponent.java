@@ -57,9 +57,15 @@ public abstract class UIComponent {
 		return m_customStyle;
 	}
 
-	protected void applyCustomStyle(HTMLNode result) {
+	protected void applyCustomStyle(HTMLNode htmlNode) {
 		if(m_customStyle != null) {
-			m_customStyle.apply(result);
+			m_customStyle.apply(htmlNode);
+		}
+	}
+
+	protected void applyCustomStyle(JsonMap jsonMap) {
+		if(m_customStyle != null) {
+			m_customStyle.apply(jsonMap);
 		}
 	}
 

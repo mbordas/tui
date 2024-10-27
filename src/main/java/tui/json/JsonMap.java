@@ -135,6 +135,15 @@ public class JsonMap extends JsonObject {
 		}
 	}
 
+	public void setStyleProperty(String name, String value) {
+		JsonMap style = getMap("style");
+		if(style == null) {
+			style = new JsonMap(null);
+			setChild("style", style);
+		}
+		style.setAttribute(name, value);
+	}
+
 	@Override
 	public String toJson() {
 		StringBuilder result = new StringBuilder();

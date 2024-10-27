@@ -65,6 +65,7 @@ public class Panel extends UIRefreshableComponent {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("textAlign", m_textAlign.name());
 		result.createArray("content", m_content, UIComponent::toJsonMap);
+		applyCustomStyle(result);
 		return result;
 	}
 

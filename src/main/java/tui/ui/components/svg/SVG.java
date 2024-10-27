@@ -143,6 +143,8 @@ public class SVG extends UIRefreshableComponent {
 		for(SVGComponent component : m_components) {
 			components.add(component.toJsonMap());
 		}
+
+		applyCustomStyle(result);
 		return result;
 	}
 

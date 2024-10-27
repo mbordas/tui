@@ -18,8 +18,10 @@ package tui.ui;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tui.html.HTMLNode;
+import tui.json.JsonMap;
 
 import java.awt.*;
+import java.util.function.BiConsumer;
 
 public class StyleSet {
 
@@ -111,6 +113,11 @@ public class StyleSet {
 		return this;
 	}
 
+	public StyleSet setWidth_percent(int width_percent) {
+		m_width = String.format("%d%%", width_percent);
+		return this;
+	}
+
 	public StyleSet setHeight_px(int height_px) {
 		m_height = String.format("%dpx", height_px);
 		return this;
@@ -123,29 +130,41 @@ public class StyleSet {
 	}
 
 	public void apply(HTMLNode node) {
-		setStylePropertyIfDefined(node, "color", m_color);
-		setStylePropertyIfDefined(node, "font-size", m_fontSize);
-		setStylePropertyIfDefined(node, "text-transform", m_textTransform);
-		setStylePropertyIfDefined(node, "background-color", m_backgroundColor);
-		setStylePropertyIfDefined(node, "border-style", m_borderStyle);
-		setStylePropertyIfDefined(node, "border-color", m_borderColor);
-		setStylePropertyIfDefined(node, "border-width", m_borderWidth);
-		setStylePropertyIfDefined(node, "width", m_width);
-		setStylePropertyIfDefined(node, "height", m_height);
+		apply(node, (htmlNode, property) -> htmlNode.setStyleProperty(property.name, property.value));
+	}
+
+	public void apply(JsonMap node) {
+		apply(node, (map, property) -> map.setStyleProperty(property.name, property.value));
+	}
+
+	private record Property(String name, String value) {
+	}
+
+	public <T> void apply(T node, BiConsumer<T, Property> setter) {
+		setStylePropertyIfDefined(node, "color", m_color, setter);
+		setStylePropertyIfDefined(node, "font-size", m_fontSize, setter);
+		setStylePropertyIfDefined(node, "text-transform", m_textTransform, setter);
+		setStylePropertyIfDefined(node, "background-color", m_backgroundColor, setter);
+		setStylePropertyIfDefined(node, "border-style", m_borderStyle, setter);
+		setStylePropertyIfDefined(node, "border-color", m_borderColor, setter);
+		setStylePropertyIfDefined(node, "border-width", m_borderWidth, setter);
+		setStylePropertyIfDefined(node, "width", m_width, setter);
+		setStylePropertyIfDefined(node, "height", m_height, setter);
 
 		if(m_margin != null) {
 			setStylePropertyIfDefined(node, "margin", String.format("%dpx %dpx %dpx %dpx",
-					m_margin.top_px(), m_margin.right_px(), m_margin.bottom_px(), m_margin.left_px()));
+					m_margin.top_px(), m_margin.right_px(), m_margin.bottom_px(), m_margin.left_px()), setter);
 		}
 		if(m_padding != null) {
 			setStylePropertyIfDefined(node, "padding", String.format("%dpx %dpx %dpx %dpx",
-					m_padding.top_px(), m_padding.right_px(), m_padding.bottom_px(), m_padding.left_px()));
+					m_padding.top_px(), m_padding.right_px(), m_padding.bottom_px(), m_padding.left_px()), setter);
 		}
 	}
 
-	private void setStylePropertyIfDefined(@NotNull HTMLNode node, @NotNull String name, @Nullable String value) {
+	private <T> void setStylePropertyIfDefined(@NotNull T node, @NotNull String name, @Nullable String value,
+			BiConsumer<T, Property> setter) {
 		if(value != null) {
-			node.setStyleProperty(name, value);
+			setter.accept(node, new Property(name, value));
 		}
 	}
 
