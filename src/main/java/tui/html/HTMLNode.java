@@ -109,6 +109,7 @@ public class HTMLNode {
 	}
 
 	public HTMLNode append(HTMLNode node) {
+		assert node != this;
 		m_children.add(node);
 		node.setPrettyPrintDepth(m_prettyPrintDepth + 1);
 		return node;

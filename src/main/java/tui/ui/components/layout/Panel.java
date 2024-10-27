@@ -24,6 +24,7 @@ public class Panel extends UIRefreshableComponent {
 
 	private final List<UIComponent> m_content = new ArrayList<>();
 	private Layouts.TextAlign m_textAlign = Layouts.TextAlign.LEFT;
+	protected Layouts.Spacing m_spacing = Layouts.Spacing.NORMAL;
 
 	public <C extends UIComponent> C append(C component) {
 		m_content.add(component);
@@ -32,6 +33,11 @@ public class Panel extends UIRefreshableComponent {
 
 	public Panel setAlign(@NotNull Layouts.TextAlign textAlign) {
 		m_textAlign = textAlign;
+		return this;
+	}
+
+	public Panel setSpacing(Layouts.Spacing spacing) {
+		m_spacing = spacing;
 		return this;
 	}
 
@@ -47,7 +53,9 @@ public class Panel extends UIRefreshableComponent {
 
 		final HTMLNode node = containedElement.element();
 		for(UIComponent component : getContent()) {
-			node.append(component.toHTMLNode());
+			final HTMLNode componentNode = component.toHTMLNode();
+			componentNode.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "horizontal-spacing"));
+			node.append(componentNode);
 		}
 		return containedElement.getHigherNode();
 	}

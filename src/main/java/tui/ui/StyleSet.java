@@ -50,6 +50,11 @@ public class StyleSet {
 		return this;
 	}
 
+	public StyleSet setBorderWidth_px(int top, int right, int bottom, int left) {
+		m_borderWidth = String.format("%dpx %dpx %dpx %dpx", top, right, bottom, left);
+		return this;
+	}
+
 	public StyleSet setBorderWidth_px(int width_px) {
 		m_borderWidth = String.format("%dpx", width_px);
 		return this;

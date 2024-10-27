@@ -21,8 +21,8 @@ import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Table;
-import tui.ui.components.layout.HorizontalFlow;
 import tui.ui.components.layout.Layouts;
+import tui.ui.components.layout.Panel;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
 import tui.utils.TestUtils;
@@ -50,7 +50,8 @@ public class LayoutsDemo {
 		tabFlow.setSpacing(spacing);
 
 		tabFlow.append(new Paragraph(TestUtils.LOREM_IPSUM));
-		final HorizontalFlow buttons = tabFlow.append(new HorizontalFlow());
+		//		final HorizontalFlow buttons = tabFlow.append(new HorizontalFlow());
+		final Panel buttons = tabFlow.append(new Panel());
 		buttons.setSpacing(spacing);
 		buttons.setAlign(Layouts.TextAlign.LEFT);
 		buttons.append(new RefreshButton("Button 1"));

@@ -47,11 +47,17 @@ public class Style {
 
 	private final GlobalColors m_globalColors = new GlobalColors();
 	private final StyleSet m_header = new StyleSet();
+	private final StyleSet m_footer = new StyleSet();
 
 	public Style() {
 		m_header.setBackgroundColor("var(--global-color-background)");
 		m_header.setTextColor("var(--global-color-background-contrast)");
 		m_header.setPadding(10, 10, 10, 10);
+
+		m_footer.setBackgroundColor("var(--global-color-background)");
+		m_footer.setTextColor("var(--global-color-background-contrast)");
+		m_footer.setPadding(10, 10, 10, 10);
+		m_footer.setBorderWidth_px(1, 0, 0, 0);
 	}
 
 	public void setColorForAction(Color color) {
@@ -64,6 +70,10 @@ public class Style {
 
 	public StyleSet header() {
 		return m_header;
+	}
+
+	public StyleSet footer() {
+		return m_footer;
 	}
 
 	public String toCSS() {
@@ -108,10 +118,9 @@ public class Style {
 				}
 				
 				footer {
-				    color: var(--global-color-background-contrast);
-				    background-color: var(--global-color-background);
-				    padding: 10px;
-				    border-top: solid 1px;
+				""");
+		result.append(m_footer.toCSS()).append("\n");
+		result.append("""
 				}
 				
 				p {
@@ -186,16 +195,16 @@ public class Style {
 				}
 				
 				.tui-horizontal-spacing-fit {
-				    padding-right: 0px;
+				    margin-right: 0px;
 				}
 				.tui-horizontal-spacing-compact {
-				    padding-right: 10px;
+				    margin-right: 10px;
 				}
 				.tui-horizontal-spacing-normal {
-				    padding-right: 20px;
+				    margin-right: 20px;
 				}
 				.tui-horizontal-spacing-large {
-				    padding-right: 30px;
+				    margin-right: 30px;
 				}
 				
 				.tui-grid {
@@ -306,7 +315,7 @@ public class Style {
 				
 				/* BUTTON */
 				
-				button,.tui-navbutton {
+				button {
 				    border-radius: 2px;
 				    padding: 5px 20px 5px 20px;
 				    text-align: center;
@@ -325,6 +334,11 @@ public class Style {
 				
 				.tui-navbutton {
 				    display: inline;
+				}
+				/* Overriding some style of submit buttons */
+				.tui-navbutton>button {
+					background-color: var(--global-color-cancel);
+					border: 1px solid var(--global-color-border);
 				}
 				
 				/* MONITORING */
