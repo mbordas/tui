@@ -26,7 +26,7 @@ public class TUIUtils {
 		return toStringSeparatedByComa(tuidIterator);
 	}
 
-	public static String toStringSeparatedByComa(Iterator<? extends Object> values) {
+	public static String toStringSeparatedByComa(Iterator<?> values) {
 		final StringBuilder result = new StringBuilder();
 		while(values.hasNext()) {
 			result.append(values.next().toString());
@@ -39,7 +39,7 @@ public class TUIUtils {
 
 	public static Set<Long> parseTUIDsSeparatedByComa(String input) {
 		return Arrays.stream(input.split(","))
-				.map((longStr) -> Long.valueOf(longStr))
+				.map(Long::valueOf)
 				.collect(Collectors.toSet());
 	}
 }
