@@ -24,21 +24,39 @@ import tui.ui.components.UIRefreshableComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Search extends UIComponent {
 
 	public static final String JSON_TYPE = "search_form";
 	public static final String HTML_CLASS_FORM_SEARCH = "tui-search-form";
 
-	public static final String PARAMETER_NAME = "search";
-
 	private final String m_title;
 	private final String m_label;
+	private final String m_parameterName;
+	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Collection<UIComponent> m_connectedComponents = new ArrayList<>();
+	private boolean m_hideButton = false;
 
-	public Search(String title, String label) {
+	public Search(String title, String label, String parameterName) {
 		m_title = title;
 		m_label = label;
+		m_parameterName = parameterName;
+	}
+
+	public String getParameterName() {
+		return m_parameterName;
+	}
+
+	public Search addParameter(String name, String value) {
+		m_parameters.put(name, value);
+		return this;
+	}
+
+	public Search hideButton() {
+		m_hideButton = true;
+		return this;
 	}
 
 	public UIRefreshableComponent connectListener(UIRefreshableComponent component) {
@@ -55,14 +73,26 @@ public class Search extends UIComponent {
 				.setClass(HTML_CLASS_FORM_SEARCH);
 
 		result.createChild("label")
-				.setAttribute("for", PARAMETER_NAME)
+				.setAttribute("for", m_parameterName)
 				.setText(m_title);
 		result.createChild("input")
 				.setAttribute("type", "search")
-				.setAttribute("name", PARAMETER_NAME)
+				.setAttribute("name", m_parameterName)
 				.setAttribute("placeholder", m_title);
-		result.createChild("button")
+		final HTMLNode button = result.createChild("button")
 				.setText(m_label);
+		if(m_hideButton) {
+			button.setStyleProperty("display", "none");
+		}
+
+		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
+			final String name = entry.getKey();
+			final String value = entry.getValue();
+			result.createChild("input")
+					.setAttribute("type", "hidden")
+					.setAttribute("name", name)
+					.setAttribute("value", value);
+		}
 
 		if(!m_connectedComponents.isEmpty()) {
 			result.setAttribute(RefreshButton.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));

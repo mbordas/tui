@@ -45,7 +45,7 @@ public class NavigationWithTablePicker {
 		page.setHeader(new Paragraph("Header").setAlign(Layouts.TextAlign.CENTER));
 		page.setFooter(new Paragraph().appendNormal("Example footer text").setAlign(Layouts.TextAlign.RIGHT));
 
-		final Search search = new Search("Search in subject", "Subject contains");
+		final Search search = new Search("Search in subject", "Subject contains", "subjectContains");
 		page.append(search);
 
 		final Grid mailNavigationGrid = new Grid(1, 2).setFirstColumnWidth_px(200);
@@ -73,7 +73,7 @@ public class NavigationWithTablePicker {
 
 		backend.registerWebService(mailSelector.getSource(), (uri, request, response) -> {
 			final RequestReader requestReader = new RequestReader(request);
-			final String searched = requestReader.getStringParameter(Search.PARAMETER_NAME);
+			final String searched = requestReader.getStringParameter(search.getParameterName());
 			final TablePicker table = new TablePicker(mailSelector.getTitle(), mailSelector.getColumns());
 			emails.stream()
 					.filter((email) -> email.subject().contains(searched))

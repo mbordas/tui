@@ -35,7 +35,7 @@ public class SearchTest {
 
 	@Test
 	public void toHTML() {
-		final Search search = new Search("Test title", "Test label");
+		final Search search = new Search("Test title", "Test label", "search");
 
 		HTMLNode.PRETTY_PRINT = true;
 		LOG.info(search.toHTMLNode().toHTML());
@@ -59,7 +59,7 @@ public class SearchTest {
 
 		final Page page = new Page("Search", "/index");
 
-		final Search search = new Search("Search items", "Search");
+		final Search search = new Search("Search items", "Search", "search");
 		page.append(search);
 
 		final Table table = new Table("Found items", List.of("S/N", "Manufacturer", "code", "label", "Price (€)"));
@@ -74,7 +74,7 @@ public class SearchTest {
 		final TUIBackend backend = new TUIBackend(8080);
 		backend.registerWebService(table.getSource(), (uri, request, response) -> {
 			final RequestReader requestReader = new RequestReader(request);
-			final String searched = requestReader.getStringParameter(Search.PARAMETER_NAME);
+			final String searched = requestReader.getStringParameter(search.getParameterName());
 			final List<Item> foundItems = items.stream()
 					.filter((item) -> searched == null
 							|| searched.isEmpty()
