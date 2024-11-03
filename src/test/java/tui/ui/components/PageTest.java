@@ -18,15 +18,11 @@ package tui.ui.components;
 import org.junit.Test;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.test.components.TComponent;
-import tui.test.components.TComponentFactory;
-import tui.test.components.TPage;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class PageTest {
 
@@ -38,18 +34,6 @@ public class PageTest {
 
 		assertEquals("const testMap={keyA:'valueA',keyB:'valueB'};",
 				Page.generateSessionParametersInitialization("testMap", params));
-	}
-
-	@Test
-	public void toJsonAndTPage() {
-		Page page = new Page("Empty page");
-		page.createSection("section A");
-
-		final JsonMap jsonMap = page.toJsonMap();
-
-		final TComponent _page = TComponentFactory.parse(jsonMap, null);
-
-		assertTrue(_page instanceof TPage);
 	}
 
 	@Test
@@ -70,8 +54,8 @@ public class PageTest {
 
 		assertEquals(
 				String.format(
-						"{\"type\": \"page\",\"tuid\": \"%d\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"%d\",\"title\": \"section A\",\"content\": []}]}",
-						page.getTUID(), section.getTUID()),
+						"{\"type\": \"page\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"%d\",\"title\": \"section A\",\"content\": []}]}",
+						section.getTUID()),
 				json);
 
 	}

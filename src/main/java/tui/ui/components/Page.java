@@ -27,13 +27,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Page extends APage {
+public class Page {
 
 	public static final String JSON_TYPE = "page";
 
 	public static final String SESSION_PARAMS_MAP_NAME = "SESSION_PARAMS";
 
 	public enum FetchType {JSON, FORM_DATA}
+
+	public record Resource(boolean isExternal, String contentOrLink) {
+	}
 
 	private FetchType m_fetchType = FetchType.JSON;
 	private Layouts.Width m_width = Layouts.Width.NORMAL;
@@ -44,12 +47,28 @@ public class Page extends APage {
 	// These parameters will be sent to the backend in every request. They could be used to manage user's session.
 	private final Map<String /* name */, String /* value */> m_sessionParameters = new HashMap<>();
 
+	protected final String m_title;
+	private String m_source;
+
 	public Page(String title) {
-		super(title);
+		m_title = title;
 	}
 
 	public Page(String title, String source) {
-		super(title, source);
+		m_title = title;
+		m_source = source;
+	}
+
+	public String getTitle() {
+		return m_title;
+	}
+
+	public void setSource(String source) {
+		m_source = source;
+	}
+
+	public String getSource() {
+		return m_source;
 	}
 
 	public void setFetchType(FetchType type) {
@@ -170,15 +189,13 @@ public class Page extends APage {
 				"grid-template-rows", "min-content auto min-content");
 	}
 
-	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		final JsonMap result = new JsonMap(JSON_TYPE);
 		result.setAttribute("title", m_title);
 		result.createArray("content", m_content, UIComponent::toJsonMap);
 		return result;
 	}
 
-	@Override
 	public HTMLNode toHTMLNode() {
 		return toHTMLNode(null, null);
 	}

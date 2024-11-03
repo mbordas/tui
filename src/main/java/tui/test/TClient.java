@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
-import tui.test.components.ATPage;
 import tui.test.components.TComponent;
 import tui.test.components.TForm;
+import tui.test.components.TPage;
 import tui.test.components.TPanel;
 import tui.test.components.TTable;
 import tui.test.components.TTablePicker;
@@ -35,7 +35,7 @@ public class TClient {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TClient.class);
 
-	private ATPage m_currentPage;
+	private TPage m_currentPage;
 	private TestHTTPClient m_httpClient;
 
 	/**
@@ -51,7 +51,7 @@ public class TClient {
 		final String json = m_httpClient.callBackend(endPoint, Map.of("format", "json"), false);
 		final JsonMap jsonMap = JsonParser.parseMap(json);
 		try {
-			m_currentPage = ATPage.parse(jsonMap, this);
+			m_currentPage = TPage.parse(jsonMap, this);
 		} catch(Exception e) {
 			LOG.error("Error when opening page '{}': {}", endPoint, e.getMessage());
 			LOG.debug("JsonMap:\n{}", jsonMap.toJson());
@@ -129,11 +129,7 @@ public class TClient {
 	}
 
 	public TComponent find(long tuid) {
-		if(m_currentPage.getTUID() == tuid) {
-			return m_currentPage;
-		} else {
-			return m_currentPage.find(tuid);
-		}
+		return m_currentPage.find(tuid);
 	}
 
 	/**

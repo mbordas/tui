@@ -16,7 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import tui.json.JsonArray;
-import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.test.TClient;
@@ -26,19 +25,31 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class TPage extends ATPage {
+public class TPage {
 
+	private final String m_title;
 	private List<TComponent> m_content;
 
-	TPage(long tuid, String title, TClient tClient) {
-		super(tuid, title, tClient);
+	TPage(String title, TClient tClient) {
+		m_title = title;
 		m_content = new ArrayList<>();
+	}
+
+	public String getTitle() {
+		return m_title;
+	}
+
+	public Collection<TComponent> getReachableSubComponents() {
+		return new ArrayList<>(m_content);
+	}
+
+	public TComponent find(long tuid) {
+		return TComponent.find(tuid, m_content);
 	}
 
 	public static TPage parse(JsonMap jsonMap, TClient client) {
 		final String title = jsonMap.getAttribute("title");
-		final long tuid = JsonConstants.readTUID(jsonMap);
-		TPage result = new TPage(tuid, title, client);
+		TPage result = new TPage(title, client);
 		final JsonArray content = jsonMap.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {
@@ -46,14 +57,5 @@ public class TPage extends ATPage {
 			result.m_content.add(TComponentFactory.parse(componentJson, client));
 		}
 		return result;
-	}
-
-	public Collection<TComponent> getReachableSubComponents() {
-		return new ArrayList<>(m_content);
-	}
-
-	@Override
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
 	}
 }

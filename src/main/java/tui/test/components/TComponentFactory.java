@@ -19,7 +19,6 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.test.TClient;
-import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.Section;
 import tui.ui.components.Table;
@@ -33,7 +32,6 @@ public class TComponentFactory {
 	public static TComponent parse(String json, TClient client) {
 		final JsonMap map = JsonParser.parseMap(json);
 		return switch(map.getType()) {
-			case Page.JSON_TYPE -> TPage.parse(map, client);
 			case TabbedFlow.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
 			case Panel.JSON_TYPE -> TPanel.parse(map, client);
 			case Paragraph.JSON_TYPE -> TParagraph.parse(map, client);
