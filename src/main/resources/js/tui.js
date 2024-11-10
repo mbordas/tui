@@ -190,6 +190,11 @@ function createComponent(json, idMap) {
         button.textContent = json['label'];
         result.appendChild(button);
         instrumentNavButton(result);
+    } else if(type == 'navlink') {
+        result = document.createElement('a');
+        result.classList.add('tui-navlink');
+        result.setAttribute('href', json['target']);
+        result.textContent = json['label'];
     } else if(type == 'svg') {
         const containedElement = createElementWithContainer('svg', 'tui-container-svg');
         updateSVG(containedElement.element, json);

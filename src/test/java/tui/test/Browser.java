@@ -15,6 +15,7 @@ import tui.html.HTMLFetchErrorMessage;
 import tui.test.components.TFormTest;
 import tui.test.components.TTableTest;
 import tui.ui.components.NavButton;
+import tui.ui.components.NavLink;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Table;
 import tui.ui.components.form.Form;
@@ -68,6 +69,12 @@ public class Browser {
 			button = anyButton.get();
 		}
 		button.click();
+	}
+
+	// NAVLINKS
+
+	public List<WebElement> getNavLinks() {
+		return m_driver.findElements(By.className(NavLink.HTML_CLASS));
 	}
 
 	// NAVBUTTONS
