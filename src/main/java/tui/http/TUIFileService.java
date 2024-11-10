@@ -13,22 +13,14 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.html;
+package tui.http;
 
-public class HTMLConstants {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-	public static final String RESPONSE_CHARSET = "utf-8";
-	public static final String HTML_CONTENT_TYPE = "text/html;charset=" + RESPONSE_CHARSET;
-	public static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript";
-	public static final String PNG_CONTENT_TYPE = "image/png";
-	public static final String JPG_CONTENT_TYPE = "image/jpg";
-	public static final String FAVICON_CONTENT_TYPE = "image/x-icon";
-	public static final String CSS_CONTENT_TYPE = "text/css";
-	public static final String JSON_CONTENT_TYPE = "application/json";
+public interface TUIFileService {
 
-	public static final String ATTRIBUTE_ID = "id";
+	void handle(String uri, HttpServletRequest request, HttpServletResponse response) throws IOException;
 
-	public static String toId(long tuid) {
-		return String.valueOf(tuid);
-	}
 }

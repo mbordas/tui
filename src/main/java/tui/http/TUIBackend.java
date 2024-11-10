@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class TUIBackend {
 
 	private final Map<String, TUIWebService> m_webServices = new HashMap<>();
 	private final Map<String, TUIPageService> m_pageServices = new HashMap<>();
+	private final Map<String, TUIFileService> m_fileServices = new HashMap<>();
 
 	public TUIBackend() {
 	}
@@ -74,7 +76,18 @@ public class TUIBackend {
 				final String uri = request.getRequestURI();
 				LOG.info("URI: {}", uri);
 
-				if(m_pageServices.containsKey(uri)) {
+				if(m_fileServices.containsKey(uri)) {
+					try {
+						final TUIFileService fileService = m_fileServices.get(uri);
+						fileService.handle(uri, request, response);
+						response.setStatus(200);
+						request.setHandled(true);
+					} catch(Throwable t) {
+						LOG.error(t.getMessage(), t);
+						response.setStatus(500);
+						request.setHandled(true);
+					}
+				} else if(m_pageServices.containsKey(uri)) {
 					final TUIPageService pageService = m_pageServices.get(uri);
 					try {
 						final String format = httpServletRequest.getParameter("format");
@@ -187,6 +200,18 @@ public class TUIBackend {
 
 	public void registerPageService(String path, TUIPageService service) {
 		m_pageServices.put(path, service);
+	}
+
+	public void registerResourceFileService(String path, String resourcePath, String contentType) throws IOException {
+		m_fileServices.put(path, (uri, request, response) -> {
+			try(InputStream input = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);) {
+				try(OutputStream out = response.getOutputStream()) {
+					assert input != null;
+					input.transferTo(out);
+				}
+			}
+			response.setContentType(contentType);
+		});
 	}
 
 	public void registerPage(Page page) {
