@@ -177,6 +177,10 @@ function createComponent(json, idMap) {
         const containedElement = createElementWithContainer('svg', 'tui-container-svg');
         updateSVG(containedElement.element, json);
         result = containedElement.container;
+    } else if(type == 'image') {
+        result = document.createElement('img');
+        result.setAttribute('src', json['source']);
+        result.setAttribute('alt', json['text']);
     } else {
         result = null;
     }

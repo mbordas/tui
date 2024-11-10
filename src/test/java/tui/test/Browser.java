@@ -142,6 +142,12 @@ public class Browser {
 		return TFormTest.getFields(formElement);
 	}
 
+	// IMAGES
+
+	public List<WebElement> getImages() {
+		return m_driver.findElements(By.tagName("img"));
+	}
+
 	// FORMS
 
 	public WebElement getForm(String title) {
@@ -237,4 +243,5 @@ public class Browser {
 	public static WebElement getParent(WebElement element) {
 		return element.findElement(By.xpath("parent::*"));
 	}
+
 }

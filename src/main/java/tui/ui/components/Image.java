@@ -54,6 +54,7 @@ public class Image extends UIComponent {
 		if(m_text != null) {
 			result.setAttribute("text", m_text);
 		}
+		applyCustomStyle(result);
 		return result;
 	}
 }
