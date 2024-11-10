@@ -173,6 +173,23 @@ function createComponent(json, idMap) {
         result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
         result.textContent = json['label'];
         instrumentRefreshButton(result);
+    } else if (type == 'navbutton') {
+        result = document.createElement('form');
+        result.classList.add('tui-navbutton');
+        result.setAttribute('method', 'POST');
+        result.setAttribute('action', json['target']);
+        Object.entries(json['parameters']).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', key);
+            input.setAttribute('value', value);
+            result.appendChild(input);
+        });
+        const button = document.createElement('button');
+        button.setAttribute('type', 'submit');
+        button.textContent = json['label'];
+        result.appendChild(button);
+        instrumentNavButton(result);
     } else if(type == 'svg') {
         const containedElement = createElementWithContainer('svg', 'tui-container-svg');
         updateSVG(containedElement.element, json);
@@ -624,17 +641,22 @@ function hideFetchErrorInElement(formElement) {
 }
 
 // NAV BUTTONS
+
 function instrumentNavButtons() {
     const navbuttons = document.querySelectorAll('.tui-navbutton');
     navbuttons.forEach(function(navbutton, i) {
-        for(let key in SESSION_PARAMS) {
-            const parameterInput = document.createElement('input');
-            parameterInput.setAttribute('type', 'hidden');
-            parameterInput.setAttribute('name', key);
-            parameterInput.setAttribute('value', SESSION_PARAMS[key]);
-            navbutton.appendChild(parameterInput);
-        }
+        instrumentNavButton(navbutton);
     });
+}
+
+function instrumentNavButton(element) {
+     for(let key in SESSION_PARAMS) {
+        const parameterInput = document.createElement('input');
+        parameterInput.setAttribute('type', 'hidden');
+        parameterInput.setAttribute('name', key);
+        parameterInput.setAttribute('value', SESSION_PARAMS[key]);
+        element.appendChild(parameterInput);
+    }
 }
 
 // TABLES

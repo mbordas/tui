@@ -62,6 +62,10 @@ public class TUIBackend {
 		return m_httpPort;
 	}
 
+	public String sourceToURI(String source) {
+		return String.format("http://localhost:%d%s", getPort(), source);
+	}
+
 	public void start(int port) throws Exception {
 		m_httpPort = port;
 		start();
