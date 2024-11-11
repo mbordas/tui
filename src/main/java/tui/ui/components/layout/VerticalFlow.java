@@ -98,7 +98,7 @@ public class VerticalFlow extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("width", m_width.name());
 		result.setAttribute("spacing", m_spacing.name());
 		result.createArray("content", m_content, UIComponent::toJsonMap);

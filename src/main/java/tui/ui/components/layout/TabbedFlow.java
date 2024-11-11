@@ -17,6 +17,7 @@ package tui.ui.components.layout;
 
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
+import tui.json.JsonArray;
 import tui.json.JsonMap;
 import tui.ui.components.UIComponent;
 
@@ -25,8 +26,11 @@ import java.util.Map;
 
 public class TabbedFlow extends UIComponent {
 
+	public static final String JSON_TYPE = "tabbedFlow";
 	public static final String TABBED_PANEL_JSON_TYPE = "tab";
 
+	public static final String HTML_CLASS = "tui-tabbedflow";
+	public static final String HTML_CLASS_TAB = "tui-tab";
 	public static final String HTML_CLASS_TABNAV = "tui-tabnav";
 	public static final String HTML_CLASS_TABLINK = "tui-tablink";
 	public static final String HTML_CLASS_TABLINK_ACTIVE = "tui-tablink-active";
@@ -42,7 +46,8 @@ public class TabbedFlow extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = new HTMLNode("div");
+		final HTMLNode result = new HTMLNode("div")
+				.addClass(HTML_CLASS);
 		final HTMLNode tabsNav = result.createChild("div")
 				.setAttribute("class", HTML_CLASS_TABNAV);
 
@@ -61,7 +66,7 @@ public class TabbedFlow extends UIComponent {
 			flowNode.setAttribute("id", HTMLConstants.toId(flow.getTUID())); // Needed by the function selectTab
 			flowNode.setStyleProperty("display", index == 1 ? "block" : "none");
 			flowNode.setStyleProperty("width", "100%");
-			flowNode.addClass("tui-tab");
+			flowNode.addClass(HTML_CLASS_TAB);
 			result.append(flowNode);
 
 			index++;
@@ -71,7 +76,17 @@ public class TabbedFlow extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		return null;
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonArray tabsArray = result.createArray("tabs");
+		for(Map.Entry<String, VerticalFlow> tabEntry : m_content.entrySet()) {
+			final String title = tabEntry.getKey();
+			final VerticalFlow flow = tabEntry.getValue();
+			final JsonMap tab = new JsonMap(TABBED_PANEL_JSON_TYPE);
+			tab.setAttribute("title", title);
+			tab.setChild("content", flow.toJsonMap());
+			tabsArray.add(tab);
+		}
+		return result;
 	}
 
 }

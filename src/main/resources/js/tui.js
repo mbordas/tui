@@ -170,6 +170,10 @@ function createComponent(json, idMap) {
         result.classList.add('tui-vertical-flow');
         result.classList.add('tui-grid');
         updateVerticalFlow(result, json, idMap);
+    } else if(type == 'tabbedFlow') {
+        result = document.createElement('div');
+        result.classList.add('tui-tabbedflow');
+        updateTabbedFlow(result, json, idMap);
     } else if(type == 'refreshButton') {
         result = document.createElement('button');
         result.classList.add('tui-refresh-button');
@@ -332,18 +336,50 @@ function updateVerticalFlow(flowElement, json, idMap) {
 }
 
 function giveCenterReadingProperties(centerContainer, width) {
-    if(width == 'NORMAL')
+    if(width == 'NORMAL') {
         pElement.classList.add('tui-reading-normal-area');
     }
 }
 
 function giveMarginReadingProperties(pElement, width) {
-    if(width == 'WIDE')
+    if(width == 'WIDE') {
         pElement.classList.add('tui-reading-wide-margin');
     }
 }
 
 // TABS
+
+function updateTabbedFlow(tabbedFlowElement, json, idMap) {
+    const tabsNav = document.createElement('div');
+    tabbedFlowElement.appendChild(tabsNav);
+    tabsNav.classList.add('tui-tabnav');
+
+    var index = 1;
+    for(var tab of json['tabs']) {
+        const flowTUID = tab['content']['tuid'];
+        const flow = createComponent(tab['content'], idMap);
+        flow.setAttribute('id', flowTUID);
+        flow.style.width = '100%';
+        flow.classList.add('tui-tab');
+        tabbedFlowElement.appendChild(flow);
+
+        const button = document.createElement('button');
+        button.classList.add('tui-tablink');
+        tabsNav.appendChild(button);
+        if(index == 1) {
+            button.classList.add('tui-tablink-active');
+            flow.style.display = 'block';
+        } else {
+            flow.style.display = 'none';
+        }
+        button.textContent = tab['title'];
+        button.onclick = function() {
+            selectTab(flowTUID, this);
+        };
+
+        index++;
+    }
+}
 
 function selectTab(tabId, tabLink) {
     const tabs = tabLink
