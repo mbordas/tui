@@ -15,15 +15,42 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.layout;
 
+import org.jetbrains.annotations.NotNull;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.components.UIComponent;
 
-public class VerticalFlow extends AFlow {
+import java.util.ArrayList;
+import java.util.List;
+
+public class VerticalFlow extends UIComponent {
 
 	public static final String HTML_CLASS = "tui-vertical-flow";
+	public static final String JSON_TYPE = "verticalFlow";
 
-	public static final String JSON_TYPE = "vertical_flow";
+	protected Layouts.Width m_width = Layouts.Width.NORMAL;
+	protected Layouts.Spacing m_spacing = Layouts.Spacing.NORMAL;
+
+	protected final List<UIComponent> m_content = new ArrayList<>();
+
+	public VerticalFlow setWidth(@NotNull Layouts.Width width) {
+		m_width = width;
+		return this;
+	}
+
+	public VerticalFlow setSpacing(Layouts.Spacing spacing) {
+		m_spacing = spacing;
+		return this;
+	}
+
+	public <C extends UIComponent> C append(C component) {
+		m_content.add(component);
+		return component;
+	}
+
+	public void appendAll(List<UIComponent> components) {
+		m_content.addAll(components);
+	}
 
 	public VerticalFlow appendUnitedBlock(UIComponent... components) {
 		final VerticalFlow unitedBlock = createUnitedBlock(components);
@@ -75,7 +102,21 @@ public class VerticalFlow extends AFlow {
 		result.setAttribute("width", m_width.name());
 		result.setAttribute("spacing", m_spacing.name());
 		result.createArray("content", m_content, UIComponent::toJsonMap);
+		applyCustomStyle(result);
 		return result;
+	}
+
+	protected HTMLNode giveCenterReadingProperties(HTMLNode node) {
+		switch(m_width) {
+		case NORMAL -> node.addClass("tui-reading-normal-area");
+		}
+		return node;
+	}
+
+	protected void giveMarginReadingProperties(HTMLNode node) {
+		switch(m_width) {
+		case WIDE -> node.addClass("tui-reading-wide-margin");
+		}
 	}
 
 	public static VerticalFlow createUnitedBlock(UIComponent... components) {
