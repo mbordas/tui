@@ -21,6 +21,7 @@ import tui.ui.components.Table;
 import tui.ui.components.form.Form;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
+import tui.ui.components.layout.VerticalScroll;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -249,6 +250,12 @@ public class Browser {
 
 	public List<WebElement> getVerticalFlows() {
 		return m_driver.findElements(By.className(VerticalFlow.HTML_CLASS));
+	}
+
+	// VerticalScroll
+
+	public List<WebElement> getVerticalScrolls() {
+		return m_driver.findElements(By.className(VerticalScroll.HTML_CLASS));
 	}
 
 	// TabbedFlow

@@ -174,6 +174,10 @@ function createComponent(json, idMap) {
         result = document.createElement('div');
         result.classList.add('tui-tabbedflow');
         updateTabbedFlow(result, json, idMap);
+    } else if(type == 'verticalScroll') {
+        result = document.createElement('div');
+        result.classList.add('tui-vertical-scroll');
+        updateVerticalScroll(result, json, idMap);
     } else if(type == 'refreshButton') {
         result = document.createElement('button');
         result.classList.add('tui-refresh-button');
@@ -344,6 +348,14 @@ function giveCenterReadingProperties(centerContainer, width) {
 function giveMarginReadingProperties(pElement, width) {
     if(width == 'WIDE') {
         pElement.classList.add('tui-reading-wide-margin');
+    }
+}
+
+function updateVerticalScroll(scrollElement, json, idMap) {
+    scrollElement.style.height = '' + json['height_px'] + 'px';
+    for(var child of json['content']) {
+        const childElement = createComponent(child, idMap);
+        scrollElement.appendChild(childElement);
     }
 }
 
