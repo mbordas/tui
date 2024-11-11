@@ -19,12 +19,15 @@ import tui.ui.components.NavLink;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Table;
 import tui.ui.components.form.Form;
+import tui.ui.components.layout.VerticalFlow;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 
 import static tui.test.components.TFormTest.getFieldName;
@@ -238,6 +241,14 @@ public class Browser {
 		}
 	}
 
+	// LAYOUTS
+
+	// VerticalFlow
+
+	public List<WebElement> getVerticalFlows() {
+		return m_driver.findElements(By.className(VerticalFlow.HTML_CLASS));
+	}
+
 	// ERRORS
 
 	public boolean isOnError(WebElement element) {
@@ -256,6 +267,17 @@ public class Browser {
 
 	public static WebElement getParent(WebElement element) {
 		return element.findElement(By.xpath("parent::*"));
+	}
+
+	public static Map<String, String> parseStyleProperties(WebElement element) {
+		final Map<String, String> result = new TreeMap<>();
+		final String styleStr = element.getAttribute("style");
+		final String[] propertiesStrings = styleStr.split(";");
+		for(String propertiesString : propertiesStrings) {
+			final String[] propertiesWords = propertiesString.split(":");
+			result.put(propertiesWords[0].trim(), propertiesWords[1].trim());
+		}
+		return result;
 	}
 
 }

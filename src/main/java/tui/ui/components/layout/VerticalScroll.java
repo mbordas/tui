@@ -64,6 +64,7 @@ public class VerticalScroll extends UIComponent {
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		result.setAttribute("height_px", m_height_px);
 		result.createArray("content", m_content, UIComponent::toJsonMap);
 		return result;
 	}

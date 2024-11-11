@@ -165,6 +165,11 @@ function createComponent(json, idMap) {
         result = document.createElement('div');
         result.classList.add('tui-grid');
         updateGrid(result, json, idMap);
+    } else if(type == 'verticalFlow') {
+        result = document.createElement('div');
+        result.classList.add('tui-vertical-flow');
+        result.classList.add('tui-grid');
+        updateVerticalFlow(result, json, idMap);
     } else if(type == 'refreshButton') {
         result = document.createElement('button');
         result.classList.add('tui-refresh-button');
@@ -294,6 +299,47 @@ function updateGrid(gridElement, json, idMap) {
             }
             gridElement.appendChild(childElement);
         }
+    }
+}
+
+// FLOWS
+
+function updateVerticalFlow(flowElement, json, idMap) {
+    flowElement.style.placeItems = 'center';
+    flowElement.style.gridTemplateRows = 'auto';
+    switch(json['width']) {
+        case 'MAX': flowElement.style.gridTemplateColumns = '0% 100% 0%'; break;
+        case 'WIDE': flowElement.style.gridTemplateColumns = 'min-content 1fr min-content'; break;
+        case 'NORMAL': flowElement.style.gridTemplateColumns = '1fr min-content 1fr'; break;
+    }
+    const preParagraph = document.createElement('p');
+    giveMarginReadingProperties(preParagraph, json['width']);
+    flowElement.appendChild(preParagraph);
+    const flowContainer = document.createElement('div');
+    flowElement.appendChild(flowContainer);
+    flowContainer.style.display = 'grid';
+    flowContainer.style.gridTemplateRows = 'auto';
+    for(var child of json['content']) {
+        const childContainer = document.createElement('div');
+        flowContainer.appendChild(childContainer);
+        childContainer.style.textAlign = 'center';
+        const childElement = createComponent(child, idMap);
+        childContainer.appendChild(childElement);
+    }
+    const postParagraph = document.createElement('p');
+    giveMarginReadingProperties(postParagraph, json['width']);
+    flowElement.appendChild(postParagraph);
+}
+
+function giveCenterReadingProperties(centerContainer, width) {
+    if(width == 'NORMAL')
+        pElement.classList.add('tui-reading-normal-area');
+    }
+}
+
+function giveMarginReadingProperties(pElement, width) {
+    if(width == 'WIDE')
+        pElement.classList.add('tui-reading-wide-margin');
     }
 }
 
