@@ -41,9 +41,19 @@ public class TestWithBackend {
 		}
 	}
 
+	private void constructBackendWhenNeeded() {
+		if(m_backend == null) {
+			try {
+				m_backend = new TUIBackend(getRandomAvailablePort());
+			} catch(IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
 	protected void startBackend(Page page) {
 		try {
-			m_backend = new TUIBackend(getRandomAvailablePort());
+			constructBackendWhenNeeded();
 			m_backend.registerPage(page);
 			m_backend.start();
 		} catch(Exception e) {
@@ -59,6 +69,7 @@ public class TestWithBackend {
 	}
 
 	protected void registerWebService(String path, TUIWebService webservice) {
+		constructBackendWhenNeeded();
 		m_backend.registerWebService(path, webservice);
 	}
 

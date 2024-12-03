@@ -46,12 +46,16 @@ async function refreshComponent(id, data) {
     console.log('refreshing component ' + id + ' with source: ' + sourcePath);
 
      if(data === undefined) {
-        data = new Map(SESSION_PARAMS);
+         data = new Map();
+         Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
+            data.set(key, value);
+            console.log(`${key}: ${value}`);
+         });
      } else {
-        for(let key in SESSION_PARAMS) {
+         for(let key in SESSION_PARAMS) {
             data[key] = SESSION_PARAMS[key];
-        }
-     }
+         }
+    }
 
     var body;
     var headers;

@@ -36,6 +36,41 @@ import static org.junit.Assert.assertTrue;
 public class FormTest extends TestWithBackend {
 
 	@Test
+	public void update() {
+		final Page page = new Page("Form update", "/index");
+		final Form form1 = page.append(new Form("Update 1/2", "/form1"));
+		form1.createInputString("login", "login");
+
+		final Form form2 = new Form("Update 2/2", "/form2");
+		form2.createInputEmail("email", "email");
+
+		final AtomicReference<String> param1 = new AtomicReference<>();
+		final AtomicReference<String> param2 = new AtomicReference<>();
+		registerWebService(form1.getTarget(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			param1.set(reader.getStringParameter("login"));
+			return Form.buildFormUpdateSubmissionResponse(form2);
+		});
+		registerWebService(form2.getTarget(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			param2.set(reader.getStringParameter("email"));
+			return Form.buildSuccessfulSubmissionResponse();
+		});
+
+		final Browser browser = startAndBrowse(page).browser();
+		browser.typeField(form1.getTitle(), "login", "test login");
+		browser.submit(form1.getTitle());
+		wait_s(0.1);
+
+		browser.typeField(form2.getTitle(), "email", "test@email.fr");
+		browser.submit(form2.getTitle());
+		wait_s(0.1);
+
+		assertEquals("test login", param1.get());
+		assertEquals("test@email.fr", param2.get());
+	}
+
+	@Test
 	public void errorOnSubmit() {
 		final Form form = new Form("Error will occur on submit", "/form");
 		form.createInputString("Message", "message");
