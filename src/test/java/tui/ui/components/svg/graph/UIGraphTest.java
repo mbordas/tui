@@ -13,38 +13,39 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components.svg;
+package tui.ui.components.svg.graph;
 
-import tui.json.JsonMap;
+import tui.http.TUIBackend;
+import tui.test.Browser;
+import tui.ui.components.Page;
 
-public class SVGText extends SVGComponent {
+import java.awt.*;
 
-	public enum Anchor {START, MIDDLE, END}
+public class UIGraphTest {
 
-	private long m_x;
-	private long m_y;
-	private String m_text;
-	private final Anchor m_anchor;
+	public static void main(String[] args) throws Exception {
+		final UIGraph graph = new UIGraph()
+				.withSerieColor(Color.BLUE)
+				.withAxisColor(Color.DARK_GRAY);
+		graph.addPoint(-1.0, -0.05);
+		graph.addPoint(-0.8, 0.0, "-0.8 , 0.0");
+		graph.addPoint(-0.5, 1.3);
+		graph.addPoint(0.0, 1.0);
+		graph.addPoint(1.0, 0.5);
+		graph.addPoint(2.0, 0.0);
 
-	public SVGText(long x, long y, String text, Anchor anchor) {
-		m_x = x;
-		m_y = y;
-		m_text = text;
-		m_anchor = anchor;
-	}
+		for(int i = -3; i < 3; i++) {
+			graph.addXLabel(1.0 * i, Integer.valueOf(i).toString());
+			graph.addYLabel(1.0 * i, Integer.valueOf(i).toString());
+		}
 
-	@Override
-	public String computeStyleAttribute() {
-		return super.computeStyleAttribute() + String.format("text-anchor:%s;", m_anchor.name().toLowerCase());
-	}
+		final Page page = new Page("Graph", "/index");
 
-	@Override
-	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap("text");
-		result.setAttribute("x", String.valueOf(m_x));
-		result.setAttribute("y", String.valueOf(m_y));
-		result.setAttribute(SVG.JSON_ATTRIBUTE_INNER_TEXT, m_text);
-		setStyleAttribute(result);
-		return result;
+		page.append(graph.toSVG(600, 400));
+		final TUIBackend backend = new TUIBackend(8080);
+		backend.registerPage(page);
+		backend.start();
+		final Browser browser = new Browser(backend.getPort());
+		browser.open("/index");
 	}
 }

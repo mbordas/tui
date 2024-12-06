@@ -17,33 +17,22 @@ package tui.ui.components.svg;
 
 import tui.json.JsonMap;
 
-public class SVGText extends SVGComponent {
+public class SVGCircle extends SVGComponent {
 
-	public enum Anchor {START, MIDDLE, END}
+	private final long m_cx, m_cy, m_radius;
 
-	private long m_x;
-	private long m_y;
-	private String m_text;
-	private final Anchor m_anchor;
-
-	public SVGText(long x, long y, String text, Anchor anchor) {
-		m_x = x;
-		m_y = y;
-		m_text = text;
-		m_anchor = anchor;
-	}
-
-	@Override
-	public String computeStyleAttribute() {
-		return super.computeStyleAttribute() + String.format("text-anchor:%s;", m_anchor.name().toLowerCase());
+	public SVGCircle(long cx, long cy, long radius) {
+		m_cx = cx;
+		m_cy = cy;
+		m_radius = radius;
 	}
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap("text");
-		result.setAttribute("x", String.valueOf(m_x));
-		result.setAttribute("y", String.valueOf(m_y));
-		result.setAttribute(SVG.JSON_ATTRIBUTE_INNER_TEXT, m_text);
+		final JsonMap result = toJsonMap("circle");
+		result.setAttribute("cx", m_cx);
+		result.setAttribute("cy", m_cy);
+		result.setAttribute("r", m_radius);
 		setStyleAttribute(result);
 		return result;
 	}

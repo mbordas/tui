@@ -71,7 +71,7 @@ public class SVGPath extends SVGComponent {
 			result += String.format("marker-start:url(#%s);", m_markerAtStart.getId());
 		}
 		if(m_markerAtMiddle != null) {
-			result += String.format("marker-middle:url(#%s);", m_markerAtMiddle.getId());
+			result += String.format("marker-mid:url(#%s);", m_markerAtMiddle.getId());
 		}
 		if(m_markerAtEnd != null) {
 			result += String.format("marker-end:url(#%s);", m_markerAtEnd.getId());

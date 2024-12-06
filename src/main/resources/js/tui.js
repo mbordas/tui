@@ -900,10 +900,14 @@ function updateSVG(svgElement, json) {
 
 function copySVGAttributes(svgJson, svgElement) {
     for(let key in svgJson) {
-        if(svgJson.hasOwnProperty(key) && key != 'type' && key != 'innerText' && key != 'components') {
-            svgElement.setAttribute(key, svgJson[key]);
+        if(svgJson.hasOwnProperty(key) && key == 'title') {
+            const title = document.createElement('title');
+            title.innerText = svgJson[key];
+            svgElement.appendChild(title);
         } else if(svgJson.hasOwnProperty(key) && key == 'innerText') {
             svgElement.innerText = svgJson[key];
+        } else if(svgJson.hasOwnProperty(key) && key != 'type' && key != 'components') {
+            svgElement.setAttribute(key, svgJson[key]);
         }
     }
 }

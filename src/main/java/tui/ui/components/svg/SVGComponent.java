@@ -30,11 +30,25 @@ public abstract class SVGComponent {
 	private StrokeDashArray m_strokeDashArray = null;
 	private Color m_fillColor = Color.BLACK;
 	private double m_fillOpacity = 1.0;
+	private String m_title = null;
 
 	record StrokeDashArray(int length, int space) {
 	}
 
 	public abstract JsonMap toJsonMap();
+
+	protected JsonMap toJsonMap(String type) {
+		final JsonMap result = new JsonMap(type);
+		if(m_title != null) {
+			result.setAttribute(SVG.JSON_ATTRIBUTE_TITLE, m_title);
+		}
+		return result;
+	}
+
+	public SVGComponent withTitle(String title) {
+		m_title = title;
+		return this;
+	}
 
 	public SVGComponent withStrokeColor(Color color) {
 		m_strokeColor = color;

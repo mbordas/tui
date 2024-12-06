@@ -36,7 +36,8 @@ public class SVG extends UIRefreshableComponent {
 	private static final Logger LOG = LoggerFactory.getLogger(SVG.class);
 
 	public static final String JSON_TYPE = "svg";
-	public static final String JSON_ATTIRBUTE_INNER_TEXT = "innerText";
+	public static final String JSON_ATTRIBUTE_INNER_TEXT = "innerText";
+	public static final String JSON_ATTRIBUTE_TITLE = "title";
 	public static final String JSON_KEY_SUBCOMPONENTS = "components";
 
 	public static final String HTML_CLASS_CONTAINER = "tui-container-svg";
@@ -99,8 +100,10 @@ public class SVG extends UIRefreshableComponent {
 		if(json instanceof JsonMap map) {
 			for(Map.Entry<String, JsonValue<?>> attribute : map.getAttributes().entrySet()) {
 				final String key = attribute.getKey();
-				if(JSON_ATTIRBUTE_INNER_TEXT.equals(key)) {
+				if(JSON_ATTRIBUTE_INNER_TEXT.equals(key)) {
 					result.setText(attribute.getValue().toString());
+				} else if(JSON_ATTRIBUTE_TITLE.equals(key)) {
+					result.append(new HTMLNode("title").setText(attribute.getValue().toString()));
 				} else {
 					result.setAttribute(key, attribute.getValue().toString());
 				}
