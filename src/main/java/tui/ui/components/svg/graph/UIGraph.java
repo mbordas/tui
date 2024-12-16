@@ -41,6 +41,7 @@ public class UIGraph {
 	private final Collection<Point> m_points = new ArrayList<>();
 	private final Map<Double, String> m_xLabels = new TreeMap<>();
 	private final Map<Double, String> m_yLabels = new TreeMap<>();
+	private boolean m_drawArrowsOnAxis = false;
 
 	public void addPoint(double x, double y) {
 		addPoint(x, y, null);
@@ -102,10 +103,12 @@ public class UIGraph {
 	}
 
 	private void drawYAxis(CoordinatesComputer coordinatesComputer, CoordinatesComputer.Range rangeX, CoordinatesComputer.Range rangeY,
-			SVGMarker arrowMarker, SVG result, int padding_px) {
+			SVGMarker endMarker, SVG result, int padding_px) {
 		final SVGPath yAxis = new SVGPath(coordinatesComputer.getX_px(rangeX.min()), coordinatesComputer.getY_px(rangeY.min()))
 				.lineAbsolute(coordinatesComputer.getX_px(rangeX.min()), coordinatesComputer.getY_px(rangeY.max()));
-		yAxis.withMarkerAtEnd(arrowMarker);
+		if(m_drawArrowsOnAxis) {
+			yAxis.withMarkerAtEnd(endMarker);
+		}
 		yAxis.withStrokeColor(m_axisColor);
 		result.add(yAxis);
 		final int axisX_px = coordinatesComputer.getX_px(rangeX.min());
@@ -119,10 +122,12 @@ public class UIGraph {
 	}
 
 	private void drawXAxis(CoordinatesComputer coordinatesComputer, CoordinatesComputer.Range rangeX, CoordinatesComputer.Range rangeY,
-			SVGMarker arrowMarker, SVG result, int padding_px) {
+			SVGMarker endMarker, SVG result, int padding_px) {
 		final SVGPath xAxis = new SVGPath(coordinatesComputer.getX_px(rangeX.min()), coordinatesComputer.getY_px(rangeY.min()))
 				.lineAbsolute(coordinatesComputer.getX_px(rangeX.max()), coordinatesComputer.getY_px(rangeY.min()));
-		xAxis.withMarkerAtEnd(arrowMarker);
+		if(m_drawArrowsOnAxis) {
+			xAxis.withMarkerAtEnd(endMarker);
+		}
 		xAxis.withStrokeColor(m_axisColor);
 		result.add(xAxis);
 		final int axisY_px = coordinatesComputer.getY_px(rangeY.min());
