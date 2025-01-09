@@ -818,7 +818,20 @@ function instrumentTables() {
 }
 
 function instrumentTablePicker(tablePickerElement) {
-    if(tablePickerElement.hasAttribute('tui-refresh-listeners')) {
+
+    // Getting optional refresh listeners ids, either from table attributes or in table's container attributes.
+    var refreshListenersAttribute = null;
+    if(tablePickerElement.hasAttribute('tui-refresh-listeners')) { // table has the attribute
+        refreshListenersAttribute = tablePickerElement.getAttribute('tui-refresh-listeners');
+    } else {
+        var optionalContainerElement = tablePickerElement.parentElement;
+        if(optionalContainerElement) { // table is in a container that has the attribute
+            refreshListenersAttribute = optionalContainerElement.getAttribute('tui-refresh-listeners');
+        }
+    }
+
+    if(refreshListenersAttribute != null) {
+    /* if(tablePickerElement.hasAttribute('tui-refresh-listeners')) {  */
         const columns = Array.from(tablePickerElement.querySelectorAll("th")).map(cell => cell.textContent);
 
         for(const row of tablePickerElement.querySelectorAll("tbody tr")) {
@@ -831,7 +844,7 @@ function instrumentTablePicker(tablePickerElement) {
             }
 
             row.addEventListener("click", function () {
-                tablePickerElement.getAttribute('tui-refresh-listeners').split(",")
+                refreshListenersAttribute.split(",")
                     .forEach(function(id, i) {
                         refreshComponent(id, data);
                     })
@@ -900,14 +913,16 @@ function updateSVG(svgElement, json) {
 
 function copySVGAttributes(svgJson, svgElement) {
     for(let key in svgJson) {
-        if(svgJson.hasOwnProperty(key) && key == 'title') {
-            const title = document.createElement('title');
-            title.innerText = svgJson[key];
-            svgElement.appendChild(title);
-        } else if(svgJson.hasOwnProperty(key) && key == 'innerText') {
-            svgElement.innerText = svgJson[key];
-        } else if(svgJson.hasOwnProperty(key) && key != 'type' && key != 'components') {
-            svgElement.setAttribute(key, svgJson[key]);
+        if(svgJson.hasOwnProperty(key)) {
+            if(key == 'title') {
+                const title = document.createElementNS("http://www.w3.org/2000/svg", 'title');
+                title.textContent = svgJson[key];
+                svgElement.appendChild(title);
+            } else if(key == 'innerText') {
+                svgElement.textContent = svgJson[key];
+            } else if(key != 'type' && key != 'components') {
+                svgElement.setAttribute(key, svgJson[key]);
+            }
         }
     }
 }

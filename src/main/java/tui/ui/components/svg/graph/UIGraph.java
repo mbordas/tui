@@ -69,6 +69,11 @@ public class UIGraph {
 		return this;
 	}
 
+	public UIGraph withArrowOnAxis(boolean enabled) {
+		m_drawArrowsOnAxis = enabled;
+		return this;
+	}
+
 	public SVG toSVG(int width_px, int height_px) {
 		final int padding_px = 30;
 		final SVG result = new SVG(width_px, height_px);
