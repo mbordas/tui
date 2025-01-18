@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,53 +15,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import tui.json.JsonArray;
-import tui.json.JsonConstants;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
-import tui.test.TClient;
+import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+public class TGridTest {
 
-public class TSection extends TComponent {
+	@Test
+	public void parse() {
 
-	private String m_title;
-
-	private List<TComponent> m_content;
-
-	TSection(long tuid, String title, TClient client) {
-		super(tuid, client);
-		m_title = title;
-		m_content = new ArrayList<>();
-	}
-
-	public String getTitle() {
-		return m_title;
-	}
-
-	public static TSection parse(JsonMap jsonMap, TClient tClient) {
-		final String title = jsonMap.getAttribute("title");
-		final long tuid = JsonConstants.readTUID(jsonMap);
-		TSection result = new TSection(tuid, title, tClient);
-		final JsonArray content = jsonMap.getArray("content");
-		final Iterator<JsonObject> contentIterator = content.iterator();
-		while(contentIterator.hasNext()) {
-			final JsonObject componentJson = contentIterator.next();
-			result.m_content.add(TComponentFactory.parse(componentJson, tClient));
-		}
-		return result;
-	}
-
-	@Override
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
-	}
-
-	@Override
-	protected Collection<TComponent> getChildrenComponents() {
-		return new ArrayList<>(m_content);
 	}
 }

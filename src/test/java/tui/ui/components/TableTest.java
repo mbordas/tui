@@ -58,24 +58,25 @@ public class TableTest extends TestWithBackend {
 		Table table = new Table("Test table", List.of("A", "B"));
 		table.append(Map.of("A", "test & co"));
 
-		assertEquals("""
-				{
-				  "type": "table",
-				  "tuid": " """ + table.getTUID() + """
-				",
-				  "title": "Test table",
-				  "tableSize": "1",
-				  "thead": [
-				    "A",
-				    "B"
-				  ],
-				  "tbody": [
-				    [
-				      "test & co",
-				      ""
-				    ]
-				  ]
-				}""", table.toJsonMap().toJson());
+		assertEquals(String.format("""
+								{
+								  "type": "table",
+								  "tuid": %d,
+								  "title": "Test table",
+								  "tableSize": "1",
+								  "thead": [
+								    "A",
+								    "B"
+								  ],
+								  "tbody": [
+								    [
+								      "test & co",
+								      ""
+								    ]
+								  ]
+								}""",
+						table.getTUID()),
+				table.toJsonMap().toJson());
 	}
 
 	@Test

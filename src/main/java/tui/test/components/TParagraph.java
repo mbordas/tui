@@ -24,6 +24,7 @@ import tui.test.TClient;
 import tui.ui.components.Paragraph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,11 @@ public class TParagraph extends TRefreshableComponent {
 	@Override
 	public TComponent find(long tuid) {
 		return null;
+	}
+
+	@Override
+	protected Collection<TComponent> getChildrenComponents() {
+		return List.of();
 	}
 
 	public static TParagraph parse(JsonMap map, TClient client) {

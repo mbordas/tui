@@ -43,6 +43,7 @@ public class Form extends UIComponent {
 
 	public static final String JSON_TYPE = "form";
 	public static final String JSON_TYPE_FORM_SUBMISSION_RESPONSE = "formSubmissionResponse";
+	public static final String JSON_ATTRIBUTE_OPENS_PAGE_SOURCE = "opensPageSource";
 
 	private final String m_title;
 	private String m_submitLabel = "Submit";
@@ -222,6 +223,9 @@ public class Form extends UIComponent {
 		result.createArray("refreshListeners", m_refreshListeners, (listener) -> new JsonString(JsonConstants.toId(listener.getTUID())));
 		result.createArray("inputs", m_inputs, FormInput::toJsonObject);
 		result.setAttribute("submitLabel", m_submitLabel);
+		if(m_opensPageSource != null) {
+			result.setAttribute(JSON_ATTRIBUTE_OPENS_PAGE_SOURCE, m_opensPageSource);
+		}
 		return result;
 	}
 

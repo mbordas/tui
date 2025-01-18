@@ -126,6 +126,11 @@ public class TTable extends TRefreshableComponent {
 	}
 
 	@Override
+	protected Collection<TComponent> getChildrenComponents() {
+		return List.of();
+	}
+
+	@Override
 	public void refresh(Map<String, Object> data) throws HttpException {
 		final String json = m_client.callBackend(m_sourcePath, data, false);
 		parseUpdate(json);

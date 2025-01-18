@@ -39,9 +39,16 @@ public class JsonParser {
 				if(!JsonObject.KEY_TYPE.equals(key)) {
 					result.setAttribute(key, jsonString);
 				}
+			} else if(_object instanceof Integer intValue) {
+				result.setAttribute(key, intValue);
+			} else if(_object instanceof Long longValue) {
+				result.setAttribute(key, longValue);
 			} else if(_object instanceof JSONArray jsonArray) {
 				final JsonArray array = toArray(jsonArray);
 				result.setArray(key, array);
+			} else if(_object instanceof JSONObject jsonMap) {
+				final JsonMap map = toMap(jsonMap);
+				result.setChild(key, map);
 			}
 		}
 		return result;

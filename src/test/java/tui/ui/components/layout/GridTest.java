@@ -15,13 +15,55 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.layout;
 
+import org.junit.Test;
 import tui.http.TUIBackend;
+import tui.json.JsonMap;
+import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class GridTest extends TestWithBackend {
+
+	@Test
+	public void toJson() {
+		final Grid grid = new Grid(2, 3);
+		final Paragraph paragraph = grid.set(0, 0, new Paragraph("paragraph text"));
+
+		final JsonMap jsonMap = grid.toJsonMap();
+
+		assertTrue(jsonMap.hasAttribute("rows"));
+		assertEquals("2", jsonMap.getAttribute("rows"));
+
+		JsonObject.PRETTY_PRINT = true;
+		final String expectedJson = String.format(
+				"""
+						{
+						  "type": "grid",
+						  "tuid": %d,
+						  "rows": 2,
+						  "columns": 3,
+						  "0_0": {
+						    "type": "paragraph",
+						    "tuid": %d,
+						    "textAlign": "LEFT",
+						    "border": "off",
+						    "content": [
+						      [
+						        "text",
+						        "paragraph text"
+						      ]
+						    ]
+						}
+						}""",
+				grid.getTUID(), paragraph.getTUID(),
+				paragraph.toJsonMap().toJson());
+		assertEquals(expectedJson, jsonMap.toJson());
+	}
 
 	public static void main(String[] args) throws Exception {
 		final Page page = new Page("Home", "/index");

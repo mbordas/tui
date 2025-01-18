@@ -50,8 +50,8 @@ public class ParagraphTest {
 				.appendNormal(" fragment.");
 
 		JsonObject.PRETTY_PRINT = false;
-		assertEquals("{\"type\": \"paragraph\",\"tuid\": \"" + paragraph.getTUID()
-						+ "\",\"textAlign\": \"LEFT\",\"border\": \"off\",\"content\": [[\"text\",\"Normal text \"],"
+		assertEquals("{\"type\": \"paragraph\",\"tuid\": " + paragraph.getTUID()
+						+ ",\"textAlign\": \"LEFT\",\"border\": \"off\",\"content\": [[\"text\",\"Normal text \"],"
 						+ "[\"strong\",\"with strong\"],[\"text\",\" fragment.\"]]}",
 				paragraph.toJsonMap().toJson());
 	}

@@ -31,7 +31,7 @@ public class JsonMap extends JsonObject {
 
 	public JsonMap(String type, long tuid) {
 		super(type);
-		setAttribute(JsonConstants.ATTRIBUTE_TUID, JsonConstants.toId(tuid));
+		setAttribute(JsonConstants.ATTRIBUTE_TUID, tuid);
 	}
 
 	public boolean hasAttribute(String key) {
@@ -61,10 +61,10 @@ public class JsonMap extends JsonObject {
 			return null;
 		}
 		final JsonObject jsonObject = m_children.get(key);
-		if(jsonObject instanceof JsonString jsonString) {
-			return jsonString.getValue();
+		if(jsonObject instanceof JsonValue<?> jsonValue) {
+			return "" + jsonValue.getValue();
 		}
-		throw new JsonException("Child '%s' is not a string", key);
+		throw new JsonException("Child '%s' is not a supported value", key);
 	}
 
 	public Map<String, JsonValue<?>> getAttributes() {

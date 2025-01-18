@@ -76,7 +76,7 @@ public class RefreshButton extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("label", m_label);
 		if(m_key != null) {
 			result.setAttribute("key", m_key);

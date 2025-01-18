@@ -76,7 +76,7 @@ public class TabbedFlow extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		final JsonArray tabsArray = result.createArray("tabs");
 		for(Map.Entry<String, VerticalFlow> tabEntry : m_content.entrySet()) {
 			final String title = tabEntry.getKey();

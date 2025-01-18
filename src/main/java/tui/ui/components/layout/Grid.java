@@ -23,9 +23,9 @@ import tui.ui.components.UIRefreshableComponent;
 
 public class Grid extends UIRefreshableComponent {
 
+	public static final String JSON_TYPE = "grid";
 	public static final String HTML_CLASS_CONTAINER = "tui-container-grid";
 	public static final String HTML_CLASS = "tui-grid";
-	public static final String JSON_TYPE = "grid";
 
 	private final UIComponent[][] m_components;
 	private Integer m_firstColumnWidth_px = null;
@@ -81,7 +81,7 @@ public class Grid extends UIRefreshableComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("rows", m_components.length);
 		result.setAttribute("columns", m_components[0].length);
 		for(int row = 0; row < m_components.length; row++) {

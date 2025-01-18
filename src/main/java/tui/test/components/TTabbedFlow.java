@@ -16,67 +16,49 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import tui.json.JsonArray;
+import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.test.TClient;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.Map;
 
-public class TPage {
+public class TTabbedFlow extends TComponent {
 
-	private final String m_title;
-	private List<TComponent> m_content;
+	private final Map<String /* title */, TVerticalFlow> m_content = new LinkedHashMap<>();
 
-	TPage(String title, TClient tClient) {
-		m_title = title;
-		m_content = new ArrayList<>();
+	/**
+	 * @param tuid   Unique identifier.
+	 * @param client This client object will help acting on some component, and determining if they are reachable.
+	 */
+	protected TTabbedFlow(long tuid, TClient client) {
+		super(tuid, client);
 	}
 
-	public String getTitle() {
-		return m_title;
-	}
-
-	public Collection<TComponent> getReachableSubComponents() {
-		final Collection<TComponent> result = new ArrayList<>();
-		for(TComponent component : m_content) {
-			result.add(component);
-		}
-		return result;
-	}
-
-	public Optional<TComponent> findReachableSubComponent(Predicate<TComponent> condition) {
-		for(TComponent childComponent : m_content) {
-			if(childComponent.isReachable()) {
-				if(condition.test(childComponent)) {
-					return Optional.of(childComponent);
-				} else {
-					final Optional<TComponent> anyFoundComponent = childComponent.findReachableSubComponent(condition);
-					if(anyFoundComponent.isPresent()) {
-						return anyFoundComponent;
-					}
-				}
-			}
-		}
-		return Optional.empty();
-	}
-
+	@Override
 	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
+		return null;
 	}
 
-	public static TPage parse(JsonMap jsonMap, TClient client) {
-		final String title = jsonMap.getAttribute("title");
-		TPage result = new TPage(title, client);
-		final JsonArray content = jsonMap.getArray("content");
-		final Iterator<JsonObject> contentIterator = content.iterator();
+	@Override
+	protected Collection<TComponent> getChildrenComponents() {
+		return List.of();
+	}
+
+	public static TTabbedFlow parse(JsonMap jsonMap, TClient tClient) {
+		final long tuid = JsonConstants.readTUID(jsonMap);
+		final TTabbedFlow result = new TTabbedFlow(tuid, tClient);
+		final JsonArray tabs = jsonMap.getArray("tabs");
+		final Iterator<JsonObject> contentIterator = tabs.iterator();
 		while(contentIterator.hasNext()) {
-			final JsonObject componentJson = contentIterator.next();
-			result.m_content.add(TComponentFactory.parse(componentJson, client));
+			final JsonMap tabEntryJson = (JsonMap) contentIterator.next();
+			final String tabTitle = tabEntryJson.getAttribute("title");
+			final TVerticalFlow tabFlow = TVerticalFlow.parse(tabEntryJson.getMap("content"), tClient);
+			result.m_content.put(tabTitle, tabFlow);
 		}
 		return result;
 	}

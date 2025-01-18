@@ -16,16 +16,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.apache.http.HttpException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
+import tui.json.JsonParser;
+import tui.json.JsonValue;
 import tui.test.TClient;
 import tui.test.TestExecutionException;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInput;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,11 +41,14 @@ import java.util.TreeSet;
 
 public class TForm extends TComponent {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TForm.class);
+
 	private String m_title;
 	private String m_target;
 
 	private final List<TFormField> m_fields = new ArrayList<>();
 	private final Set<Long> m_refreshListeners = new TreeSet<>();
+	private String m_opensPageSource = null;
 
 	private static class TFormField {
 		String name;
@@ -87,11 +95,29 @@ public class TForm extends TComponent {
 		for(long listenerId : m_refreshListeners) {
 			m_client.refresh(listenerId, null);
 		}
+
+		if(m_opensPageSource != null) {
+			final JsonMap response = JsonParser.parseMap(jsonResponse);
+
+			final Map<String, String> params = new HashMap<>();
+			params.put("action", m_opensPageSource);
+			final JsonMap responseParameters = response.getMap("parameters");
+			for(Map.Entry<String, JsonValue<?>> entry : responseParameters.getAttributes().entrySet()) {
+				params.put(entry.getKey(), entry.getValue().toString());
+			}
+			LOG.trace("Form submission opening page {}...", m_opensPageSource);
+			m_client.open(m_opensPageSource, params);
+		}
 	}
 
 	@Override
 	public TComponent find(long tuid) {
 		return null;
+	}
+
+	@Override
+	protected Collection<TComponent> getChildrenComponents() {
+		return List.of();
 	}
 
 	public static TForm parse(JsonMap json, TClient client) {
@@ -112,6 +138,10 @@ public class TForm extends TComponent {
 		}
 
 		result.m_refreshListeners.addAll(Form.getRefreshListenersIds(json));
+
+		if(json.hasAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE)) {
+			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);
+		}
 
 		return result;
 	}

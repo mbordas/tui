@@ -19,6 +19,7 @@ import org.junit.Test;
 import tui.ui.components.Page;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -40,6 +41,30 @@ public class JsonParserTest {
 
 		assertTrue(str1 instanceof JsonString);
 		assertEquals("v1", ((JsonString) str1).getValue());
+	}
+
+	@Test
+	public void parseMapWithMap() {
+		final String json = """
+				{
+				  "type" : "formSubmissionResponse",
+				  "status" : "ok",
+				  "message" : "form submitted",
+				  "parameters" : {
+				    "pass" : "588827b867e01a041aaf5b2922993b84"
+				  }
+				}""";
+
+		//
+		final JsonMap jsonMap = JsonParser.parseMap(json);
+		//
+
+		assertTrue(jsonMap.hasAttribute("status"));
+		assertTrue(jsonMap.hasAttribute("message"));
+		assertNotNull(jsonMap.getMap("parameters"));
+
+		assertTrue(jsonMap.getMap("parameters").hasAttribute("pass"));
+		assertEquals("588827b867e01a041aaf5b2922993b84", jsonMap.getMap("parameters").getAttribute("pass"));
 	}
 
 	@Test

@@ -19,6 +19,8 @@ import tui.test.TClient;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Any component of a page on client-side is a {@link TComponent}. It gives convenient methods for test.
@@ -27,6 +29,7 @@ public abstract class TComponent {
 
 	private final long m_tuid;
 	protected final TClient m_client;
+	protected boolean m_isVisible = true;
 
 	/**
 	 * @param tuid   Unique identifier.
@@ -42,6 +45,26 @@ public abstract class TComponent {
 	}
 
 	public abstract TComponent find(long tuid);
+
+	protected abstract Collection<TComponent> getChildrenComponents();
+
+	public Optional<TComponent> findReachableSubComponent(Predicate<TComponent> condition) {
+		if(m_isVisible) {
+			for(TComponent childComponent : getChildrenComponents()) {
+				if(childComponent.m_isVisible) {
+					if(condition.test(childComponent)) {
+						return Optional.of(childComponent);
+					} else {
+						final Optional<TComponent> anyFoundComponent = childComponent.findReachableSubComponent(condition);
+						if(anyFoundComponent.isPresent()) {
+							return anyFoundComponent;
+						}
+					}
+				}
+			}
+		}
+		return Optional.empty();
+	}
 
 	public boolean isReachable() {
 		return m_client.find(getTUID()) != null;

@@ -22,6 +22,7 @@ import tui.json.JsonObject;
 import tui.test.TClient;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,5 +61,10 @@ public class TTabbedPanel extends TComponent {
 	@Override
 	public TComponent find(long tuid) {
 		return TComponent.find(tuid, m_content);
+	}
+
+	@Override
+	protected Collection<TComponent> getChildrenComponents() {
+		return new ArrayList<>(m_content);
 	}
 }

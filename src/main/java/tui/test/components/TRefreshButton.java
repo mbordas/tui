@@ -15,69 +15,52 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import tui.json.JsonArray;
+import tui.json.JsonConstants;
 import tui.json.JsonMap;
-import tui.json.JsonObject;
 import tui.test.TClient;
+import tui.ui.components.RefreshButton;
+import tui.utils.TUIUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class TPage {
+public class TRefreshButton extends TComponent {
 
-	private final String m_title;
-	private List<TComponent> m_content;
+	private String m_label;
+	private String m_key;
+	private final Set<Long> m_refreshListeners = new TreeSet<>();
 
-	TPage(String title, TClient tClient) {
-		m_title = title;
-		m_content = new ArrayList<>();
+	/**
+	 * @param tuid   Unique identifier.
+	 * @param client This client object will help acting on some component, and determining if they are reachable.
+	 */
+	protected TRefreshButton(long tuid, TClient client) {
+		super(tuid, client);
 	}
 
-	public String getTitle() {
-		return m_title;
-	}
-
-	public Collection<TComponent> getReachableSubComponents() {
-		final Collection<TComponent> result = new ArrayList<>();
-		for(TComponent component : m_content) {
-			result.add(component);
-		}
-		return result;
-	}
-
-	public Optional<TComponent> findReachableSubComponent(Predicate<TComponent> condition) {
-		for(TComponent childComponent : m_content) {
-			if(childComponent.isReachable()) {
-				if(condition.test(childComponent)) {
-					return Optional.of(childComponent);
-				} else {
-					final Optional<TComponent> anyFoundComponent = childComponent.findReachableSubComponent(condition);
-					if(anyFoundComponent.isPresent()) {
-						return anyFoundComponent;
-					}
-				}
-			}
-		}
-		return Optional.empty();
-	}
-
+	@Override
 	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
+		return null;
 	}
 
-	public static TPage parse(JsonMap jsonMap, TClient client) {
-		final String title = jsonMap.getAttribute("title");
-		TPage result = new TPage(title, client);
-		final JsonArray content = jsonMap.getArray("content");
-		final Iterator<JsonObject> contentIterator = content.iterator();
-		while(contentIterator.hasNext()) {
-			final JsonObject componentJson = contentIterator.next();
-			result.m_content.add(TComponentFactory.parse(componentJson, client));
+	@Override
+	protected Collection<TComponent> getChildrenComponents() {
+		return List.of();
+	}
+
+	public static TRefreshButton parse(JsonMap jsonMap, TClient tClient) {
+		final long tuid = JsonConstants.readTUID(jsonMap);
+		final TRefreshButton result = new TRefreshButton(tuid, tClient);
+
+		result.m_label = jsonMap.getAttribute("label");
+		result.m_key = jsonMap.getAttribute("key");
+		final String refreshListenersTUIDs = jsonMap.getAttributeOrNull(RefreshButton.ATTRIBUTE_REFRESH_LISTENERS);
+		if(refreshListenersTUIDs != null) {
+			result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(refreshListenersTUIDs));
 		}
+
 		return result;
 	}
 }

@@ -54,7 +54,7 @@ public class PageTest {
 
 		assertEquals(
 				String.format(
-						"{\"type\": \"page\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": \"%d\",\"title\": \"section A\",\"content\": []}]}",
+						"{\"type\": \"page\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": %d,\"title\": \"section A\",\"content\": []}]}",
 						section.getTUID()),
 				json);
 

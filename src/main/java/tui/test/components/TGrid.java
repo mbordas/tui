@@ -15,69 +15,55 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import tui.json.JsonArray;
+import tui.json.JsonConstants;
 import tui.json.JsonMap;
-import tui.json.JsonObject;
 import tui.test.TClient;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
-public class TPage {
+public class TGrid extends TComponent {
 
-	private final String m_title;
-	private List<TComponent> m_content;
+	private TComponent[][] m_components;
 
-	TPage(String title, TClient tClient) {
-		m_title = title;
-		m_content = new ArrayList<>();
+	/**
+	 * @param tuid   Unique identifier.
+	 * @param client This client object will help acting on some component, and determining if they are reachable.
+	 */
+	protected TGrid(long tuid, TClient client) {
+		super(tuid, client);
 	}
 
-	public String getTitle() {
-		return m_title;
+	@Override
+	public TComponent find(long tuid) {
+		return null;
 	}
 
-	public Collection<TComponent> getReachableSubComponents() {
-		final Collection<TComponent> result = new ArrayList<>();
-		for(TComponent component : m_content) {
-			result.add(component);
-		}
-		return result;
+	@Override
+	protected Collection<TComponent> getChildrenComponents() {
+		return List.of();
 	}
 
-	public Optional<TComponent> findReachableSubComponent(Predicate<TComponent> condition) {
-		for(TComponent childComponent : m_content) {
-			if(childComponent.isReachable()) {
-				if(condition.test(childComponent)) {
-					return Optional.of(childComponent);
-				} else {
-					final Optional<TComponent> anyFoundComponent = childComponent.findReachableSubComponent(condition);
-					if(anyFoundComponent.isPresent()) {
-						return anyFoundComponent;
-					}
+	public static TGrid parse(JsonMap jsonMap, TClient tClient) {
+		final long tuid = JsonConstants.readTUID(jsonMap);
+
+		final int rows = Integer.parseInt(jsonMap.getAttribute("rows"));
+		final int columns = Integer.parseInt(jsonMap.getAttribute("columns"));
+
+		final TGrid result = new TGrid(tuid, tClient);
+		result.m_components = new TComponent[rows][columns];
+
+		for(int row = 0; row < rows; row++) {
+			for(int column = 0; column < columns; column++) {
+				final String childName = String.format("%s_%s", row, column);
+				final JsonMap childMap = jsonMap.getMap(childName);
+				if(childMap != null) {
+					final TComponent childComponent = TComponentFactory.parse(childMap, tClient);
+					result.m_components[row][column] = childComponent;
 				}
 			}
 		}
-		return Optional.empty();
-	}
 
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
-	}
-
-	public static TPage parse(JsonMap jsonMap, TClient client) {
-		final String title = jsonMap.getAttribute("title");
-		TPage result = new TPage(title, client);
-		final JsonArray content = jsonMap.getArray("content");
-		final Iterator<JsonObject> contentIterator = content.iterator();
-		while(contentIterator.hasNext()) {
-			final JsonObject componentJson = contentIterator.next();
-			result.m_content.add(TComponentFactory.parse(componentJson, client));
-		}
 		return result;
 	}
 }

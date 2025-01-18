@@ -28,8 +28,10 @@ import tui.test.components.TTable;
 import tui.test.components.TTablePicker;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class TClient {
 
@@ -47,8 +49,23 @@ public class TClient {
 		m_httpClient = new TestHTTPClient(host, port);
 	}
 
+	/**
+	 * Builds a client that will browse a local server (serving on http://localhost:<localPort>).
+	 *
+	 * @param localPort The HTTP port
+	 */
+	public TClient(int localPort) {
+		this("localhost", localPort);
+	}
+
 	public void open(String endPoint) throws HttpException {
-		final String json = m_httpClient.callBackend(endPoint, Map.of("format", "json"), false);
+		open(endPoint, Map.of());
+	}
+
+	public void open(String endPoint, Map<String, String> parameters) throws HttpException {
+		Map<String, Object> completedParameters = new HashMap<>(parameters);
+		completedParameters.put("format", "json");
+		final String json = m_httpClient.callBackend(endPoint, completedParameters, false);
 		final JsonMap jsonMap = JsonParser.parseMap(json);
 		try {
 			m_currentPage = TPage.parse(jsonMap, this);
@@ -110,15 +127,13 @@ public class TClient {
 	}
 
 	public TForm getForm(String title) {
-		final List<TComponent> forms = m_currentPage.getReachableSubComponents().stream()
-				.filter((component) -> component instanceof TForm form && title.equals(form.getTitle()))
-				.toList();
-		if(forms.isEmpty()) {
-			throw new TestExecutionException("No form found in current page with title: %s", title);
-		} else if(forms.size() > 1) {
-			throw new TestExecutionException("Multiple forms found in current page with title: %s", title);
+		final Optional<TComponent> anyFoundForm = m_currentPage.findReachableSubComponent(
+				(component) -> component instanceof TForm form && title.equals(form.getTitle()));
+		if(anyFoundForm.isPresent()) {
+			return (TForm) anyFoundForm.get();
+		} else {
+			throw new NullPointerException(String.format("Form '%s' not present in page or not reachable", title));
 		}
-		return (TForm) forms.get(0);
 	}
 
 	/**
