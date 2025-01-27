@@ -60,7 +60,7 @@ public class ModalForm extends Form {
 
 		final Collection<UIComponent> refreshListeners = getRefreshListeners();
 		if(!refreshListeners.isEmpty()) {
-			result.setAttribute("refresh-listeners", getTUIsSeparatedByComa(refreshListeners));
+			htmlForm.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(refreshListeners));
 		}
 
 		createFieldSet(htmlForm, true);

@@ -28,6 +28,7 @@ import tui.test.TClient;
 import tui.test.TestExecutionException;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInput;
+import tui.utils.TUIUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,7 +138,7 @@ public class TForm extends TComponent {
 			result.m_fields.add(new TFormField(name, label, null));
 		}
 
-		result.m_refreshListeners.addAll(Form.getRefreshListenersIds(json));
+		result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
 
 		if(json.hasAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE)) {
 			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);

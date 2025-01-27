@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -29,8 +30,6 @@ public class RefreshButton extends UIComponent {
 	public static final String JSON_TYPE = "refreshButton";
 
 	public static final String HTML_ATTRIBUTE_KEY = "tui-key";
-
-	public static final String ATTRIBUTE_REFRESH_LISTENERS = "tui-refresh-listeners";
 
 	public static final String PARAMETER_NAME = "key";
 
@@ -69,7 +68,7 @@ public class RefreshButton extends UIComponent {
 			result.setAttribute(HTML_ATTRIBUTE_KEY, m_key);
 		}
 		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
+			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
 		return result;
 	}

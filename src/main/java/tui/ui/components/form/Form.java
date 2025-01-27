@@ -15,26 +15,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
 import tui.http.RequestReader;
-import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
-import tui.json.JsonString;
 import tui.ui.components.Paragraph;
 import tui.ui.components.UIComponent;
 import tui.ui.components.layout.Layouts;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class Form extends UIComponent {
 
@@ -161,7 +158,7 @@ public class Form extends UIComponent {
 
 		final Collection<UIComponent> refreshListeners = getRefreshListeners();
 		if(!refreshListeners.isEmpty()) {
-			result.setAttribute("refresh-listeners", getTUIsSeparatedByComa(refreshListeners));
+			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(refreshListeners));
 		}
 
 		createFieldSet(result, false);
@@ -220,22 +217,11 @@ public class Form extends UIComponent {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("title", m_title);
 		result.setAttribute("target", m_target);
-		result.createArray("refreshListeners", m_refreshListeners, (listener) -> new JsonString(JsonConstants.toId(listener.getTUID())));
+		result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));
 		result.createArray("inputs", m_inputs, FormInput::toJsonObject);
 		result.setAttribute("submitLabel", m_submitLabel);
 		if(m_opensPageSource != null) {
 			result.setAttribute(JSON_ATTRIBUTE_OPENS_PAGE_SOURCE, m_opensPageSource);
-		}
-		return result;
-	}
-
-	public static Set<Long> getRefreshListenersIds(JsonMap map) {
-		final Set<Long> result = new TreeSet<>();
-		final JsonArray refreshListeners = map.getArray(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS);
-		final Iterator<JsonObject> iterator = refreshListeners.iterator();
-		while(iterator.hasNext()) {
-			final JsonString listenerId = (JsonString) iterator.next();
-			result.add(Long.parseLong(listenerId.getValue()));
 		}
 		return result;
 	}

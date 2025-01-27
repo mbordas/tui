@@ -651,8 +651,8 @@ function onFormResponse(formElement, json) {
         messageElement.classList.add('tui-monitor-field-value-green');
         messageElement.textContent = json['message'];
 
-        if(formElement.hasAttribute('refresh-listeners')) {
-            formElement.getAttribute('refresh-listeners').split(",")
+        if(formElement.hasAttribute('tui-refresh-listeners')) {
+            formElement.getAttribute('tui-refresh-listeners').split(",")
                 .forEach(function(id, i) {
                     refreshComponent(id);
                 })

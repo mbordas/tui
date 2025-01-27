@@ -15,10 +15,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.test.components.BadComponentException;
-import tui.ui.components.RefreshButton;
 import tui.ui.components.UIComponent;
 import tui.ui.components.UIRefreshableComponent;
 
@@ -95,7 +95,7 @@ public class Search extends UIComponent {
 		}
 
 		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(RefreshButton.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
+			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
 
 		return result;

@@ -18,7 +18,6 @@ package tui.test.components;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.TClient;
-import tui.ui.components.RefreshButton;
 import tui.utils.TUIUtils;
 
 import java.util.Collection;
@@ -56,7 +55,7 @@ public class TRefreshButton extends TComponent {
 
 		result.m_label = jsonMap.getAttribute("label");
 		result.m_key = jsonMap.getAttribute("key");
-		final String refreshListenersTUIDs = jsonMap.getAttributeOrNull(RefreshButton.ATTRIBUTE_REFRESH_LISTENERS);
+		final String refreshListenersTUIDs = jsonMap.getAttributeOrNull(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS);
 		if(refreshListenersTUIDs != null) {
 			result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(refreshListenersTUIDs));
 		}
