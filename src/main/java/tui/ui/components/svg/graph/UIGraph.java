@@ -24,9 +24,7 @@ import tui.ui.components.svg.SVGText;
 import tui.ui.components.svg.defs.SVGMarker;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,20 +33,20 @@ public class UIGraph {
 	record Point(double x, double y, String label) {
 	}
 
-	private Color m_serieColor = Color.BLACK;
 	private Color m_axisColor = Color.BLACK;
 
-	private final Collection<Point> m_points = new ArrayList<>();
+	private LineSerie m_serie = new LineSerie();
+
 	private final Map<Double, String> m_xLabels = new TreeMap<>();
 	private final Map<Double, String> m_yLabels = new TreeMap<>();
 	private boolean m_drawArrowsOnAxis = false;
 
 	public void addPoint(double x, double y) {
-		addPoint(x, y, null);
+		m_serie.addPoint(x, y, null);
 	}
 
 	public void addPoint(double x, double y, String label) {
-		m_points.add(new Point(x, y, label));
+		m_serie.addPoint(x, y, label);
 	}
 
 	public void addXLabel(double x, String label) {
@@ -60,7 +58,7 @@ public class UIGraph {
 	}
 
 	public UIGraph withSerieColor(Color color) {
-		m_serieColor = color;
+		m_serie.setColor(color);
 		return this;
 	}
 
@@ -83,23 +81,7 @@ public class UIGraph {
 		final CoordinatesComputer.Range rangeY = computeYRange();
 		final CoordinatesComputer coordinatesComputer = new CoordinatesComputer(width_px, height_px, padding_px, rangeX, rangeY);
 
-		// Drawing data
-		SVGPath path = null;
-		for(Point point : m_points) {
-			if(path == null) {
-				path = new SVGPath(coordinatesComputer.getX_px(point.x), coordinatesComputer.getY_px(point.y));
-				path.withStrokeColor(m_serieColor);
-				path.withFillOpacity(0.0);
-				result.add(path);
-			} else {
-				path.lineAbsolute(coordinatesComputer.getX_px(point.x), coordinatesComputer.getY_px(point.y));
-			}
-			final SVGCircle circle = new SVGCircle(coordinatesComputer.getX_px(point.x), coordinatesComputer.getY_px(point.y), 3);
-			circle.withTitle(point.label);
-			circle.withStrokeColor(m_serieColor);
-			circle.withFillColor(m_serieColor);
-			result.add(circle);
-		}
+		m_serie.draw(result, coordinatesComputer);
 
 		drawXAxis(coordinatesComputer, rangeX, rangeY, arrowMarker, result, padding_px);
 		drawYAxis(coordinatesComputer, rangeX, rangeY, arrowMarker, result, padding_px);
@@ -146,26 +128,22 @@ public class UIGraph {
 	}
 
 	private CoordinatesComputer.Range computeXRange() {
-		final List<Double> xValues = new ArrayList<>(m_points.stream()
-				.map((point -> point.x))
-				.toList());
-		xValues.addAll(m_xLabels.keySet());
-		return computeRange(xValues);
+		final CoordinatesComputer.Range xSerieRange = m_serie.getXRange();
+		final CoordinatesComputer.Range xLabelRange = computeRange(m_xLabels.keySet());
+		return CoordinatesComputer.getUnion(xSerieRange, xLabelRange);
 	}
 
 	private CoordinatesComputer.Range computeYRange() {
-		final List<Double> yValues = new ArrayList<>(m_points.stream()
-				.map((point -> point.y))
-				.toList());
-		yValues.addAll(m_yLabels.keySet());
-		return computeRange(yValues);
+		final CoordinatesComputer.Range ySerieRange = m_serie.getYRange();
+		final CoordinatesComputer.Range yLabelRange = computeRange(m_yLabels.keySet());
+		return CoordinatesComputer.getUnion(ySerieRange, yLabelRange);
 	}
 
-	private static CoordinatesComputer.@NotNull Range computeRange(List<Double> xValues) {
+	private static CoordinatesComputer.@NotNull Range computeRange(Collection<Double> xValues) {
 		if(xValues.isEmpty()) {
 			return new CoordinatesComputer.Range(-1.0, 1.0);
 		} else if(xValues.size() == 1) {
-			final double uniqueValue = xValues.get(0);
+			final double uniqueValue = xValues.iterator().next();
 			return new CoordinatesComputer.Range(uniqueValue - 1.0, uniqueValue + 1.0);
 		} else {
 			return CoordinatesComputer.getRange(xValues);

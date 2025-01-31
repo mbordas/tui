@@ -64,6 +64,12 @@ public class CoordinatesComputer {
 		return new Range(min, max);
 	}
 
+	public static Range getUnion(Range rangeA, Range rangeB) {
+		double min = Math.min(rangeA.min(), rangeB.min());
+		double max = Math.max(rangeA.max(), rangeB.max());
+		return new Range(min, max);
+	}
+
 	public static AffineTransformation computeAffineTransformation(double srcMin, double srcMax, double dstMin, double dstMax) {
 		double a = (dstMax - dstMin) / (srcMax - srcMin);
 		double b = dstMin + srcMin * ((dstMin - dstMax) / (srcMax - srcMin));
