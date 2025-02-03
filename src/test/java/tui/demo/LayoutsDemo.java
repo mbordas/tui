@@ -68,6 +68,7 @@ public class LayoutsDemo {
 	public static void main(String[] args) throws Exception {
 
 		final Page page = new Page("Layouts", "/index");
+		page.setReadingWidth(Layouts.Width.MAX);
 
 		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
 

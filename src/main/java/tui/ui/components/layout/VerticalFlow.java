@@ -66,20 +66,20 @@ public class VerticalFlow extends UIComponent {
 	public HTMLNode toHTMLNode(String tagName) {
 		final HTMLNode result = new HTMLNode(tagName);
 		result.addClass(Grid.HTML_CLASS);
-
 		result.setStyleProperty("place-items", "center");
 		result.setStyleProperty("grid-template-rows", "auto");
 		switch(m_width) {
-		case MAX -> result.setStyleProperty("grid-template-columns", "0% 100% 0%");
-		case WIDE -> result.setStyleProperty("grid-template-columns", "min-content 1fr min-content");
-		case NORMAL -> result.setStyleProperty("grid-template-columns", "1fr min-content 1fr");
+		case MAX -> result.setStyleProperty("grid-template-columns", "0px 1fr 0px");
+		case WIDE -> result.setStyleProperty("grid-template-columns", "20px 1fr 20px");
+		case NORMAL -> result.setStyleProperty("grid-template-columns", "1fr 80em 1fr");
 		}
+		result.setStyleProperty("justify-self", "stretch");
 
-		giveMarginReadingProperties(result.createChild("p"));
+		createMargin(result);
 
 		final HTMLNode flowContent = giveCenterReadingProperties(result.createChild("div"));
-		flowContent.setStyleProperty("display", "grid");
-		flowContent.setStyleProperty("grid-template-rows", "auto");
+		flowContent.setClass(Grid.HTML_CLASS);
+		flowContent.setStyleProperty("grid-template-columns", "1fr");
 
 		for(UIComponent component : m_content) {
 			final HTMLNode htmlNode = component.toHTMLNode();
@@ -91,7 +91,7 @@ public class VerticalFlow extends UIComponent {
 			flowContent.append(div);
 		}
 
-		giveMarginReadingProperties(result.createChild("p"));
+		createMargin(result);
 
 		return result;
 	}
@@ -116,6 +116,13 @@ public class VerticalFlow extends UIComponent {
 	protected void giveMarginReadingProperties(HTMLNode node) {
 		switch(m_width) {
 		case WIDE -> node.addClass("tui-reading-wide-margin");
+		}
+	}
+
+	private void createMargin(HTMLNode flowNode) {
+		final HTMLNode p = flowNode.createChild("p");
+		switch(m_width) {
+		case WIDE -> p.addClass("tui-reading-wide-margin");
 		}
 	}
 

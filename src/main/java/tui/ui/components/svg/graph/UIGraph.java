@@ -43,7 +43,7 @@ public class UIGraph {
 	private final Map<Double, String> m_yLabels = new TreeMap<>();
 	private boolean m_drawArrowsOnAxis = false;
 
-	public void add(StepLineSerie serie) {
+	public void add(DataSerie serie) {
 		m_series.add(serie);
 	}
 

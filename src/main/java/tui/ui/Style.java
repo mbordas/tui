@@ -94,7 +94,7 @@ public class Style {
 				}
 				
 				main {
-				    justify-self: stretch;
+				    /* justify-self: stretch; */
 				}
 				
 				header {
@@ -132,11 +132,11 @@ public class Style {
 				    border: 1px solid var(--global-color-border);
 				}
 				
-				.tui-reading-normal-area {
+				.tui-reading-normal-area { /* In NORMAL layout, the width of central area is given. */
 				    width: 70em;
 				}
 				
-				.tui-reading-wide-margin {
+				.tui-reading-wide-margin { /* In WIDE layout, the width of margins are given. */
 				   width: 20px;
 				}
 				
@@ -209,6 +209,7 @@ public class Style {
 				
 				.tui-grid {
 				    display: grid;
+				    width: 100%;
 				    margin: 0px;
 				    padding: 0px;
 				    justify-items: stretch;

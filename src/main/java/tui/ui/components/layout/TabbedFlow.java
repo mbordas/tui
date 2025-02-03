@@ -62,12 +62,12 @@ public class TabbedFlow extends UIComponent {
 					.setAttribute("onclick", onClickCode)
 					.setText(label);
 
-			final HTMLNode flowNode = flow.toHTMLNode();
+			final HTMLNode flowNode = result.createChild("div");
 			flowNode.setAttribute("id", HTMLConstants.toId(flow.getTUID())); // Needed by the function selectTab
 			flowNode.setStyleProperty("display", index == 1 ? "block" : "none");
 			flowNode.setStyleProperty("width", "100%");
 			flowNode.addClass(HTML_CLASS_TAB);
-			result.append(flowNode);
+			flowNode.append(flow.toHTMLNode());
 
 			index++;
 		}
