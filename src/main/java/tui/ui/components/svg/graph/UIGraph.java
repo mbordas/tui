@@ -24,7 +24,9 @@ import tui.ui.components.svg.SVGText;
 import tui.ui.components.svg.defs.SVGMarker;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,18 +37,14 @@ public class UIGraph {
 
 	private Color m_axisColor = Color.BLACK;
 
-	private LineSerie m_serie = new LineSerie();
+	private List<DataSerie> m_series = new ArrayList<>();
 
 	private final Map<Double, String> m_xLabels = new TreeMap<>();
 	private final Map<Double, String> m_yLabels = new TreeMap<>();
 	private boolean m_drawArrowsOnAxis = false;
 
-	public void addPoint(double x, double y) {
-		m_serie.addPoint(x, y, null);
-	}
-
-	public void addPoint(double x, double y, String label) {
-		m_serie.addPoint(x, y, label);
+	public void add(StepLineSerie serie) {
+		m_series.add(serie);
 	}
 
 	public void addXLabel(double x, String label) {
@@ -55,11 +53,6 @@ public class UIGraph {
 
 	public void addYLabel(double y, String label) {
 		m_yLabels.put(y, label);
-	}
-
-	public UIGraph withSerieColor(Color color) {
-		m_serie.setColor(color);
-		return this;
 	}
 
 	public UIGraph withAxisColor(Color color) {
@@ -81,7 +74,9 @@ public class UIGraph {
 		final CoordinatesComputer.Range rangeY = computeYRange();
 		final CoordinatesComputer coordinatesComputer = new CoordinatesComputer(width_px, height_px, padding_px, rangeX, rangeY);
 
-		m_serie.draw(result, coordinatesComputer);
+		for(DataSerie serie : m_series) {
+			serie.draw(result, coordinatesComputer);
+		}
 
 		drawXAxis(coordinatesComputer, rangeX, rangeY, arrowMarker, result, padding_px);
 		drawYAxis(coordinatesComputer, rangeX, rangeY, arrowMarker, result, padding_px);
@@ -128,13 +123,31 @@ public class UIGraph {
 	}
 
 	private CoordinatesComputer.Range computeXRange() {
-		final CoordinatesComputer.Range xSerieRange = m_serie.getXRange();
+		CoordinatesComputer.Range xSerieRange = null;
+		for(DataSerie serie : m_series) {
+			final CoordinatesComputer.Range xRange = serie.getXRange();
+			if(xSerieRange == null) {
+				xSerieRange = xRange;
+			} else {
+				xSerieRange = CoordinatesComputer.getUnion(xSerieRange, xRange);
+			}
+		}
+
 		final CoordinatesComputer.Range xLabelRange = computeRange(m_xLabels.keySet());
 		return CoordinatesComputer.getUnion(xSerieRange, xLabelRange);
 	}
 
 	private CoordinatesComputer.Range computeYRange() {
-		final CoordinatesComputer.Range ySerieRange = m_serie.getYRange();
+		CoordinatesComputer.Range ySerieRange = null;
+		for(DataSerie serie : m_series) {
+			final CoordinatesComputer.Range yRange = serie.getYRange();
+			if(ySerieRange == null) {
+				ySerieRange = yRange;
+			} else {
+				ySerieRange = CoordinatesComputer.getUnion(ySerieRange, yRange);
+			}
+		}
+
 		final CoordinatesComputer.Range yLabelRange = computeRange(m_yLabels.keySet());
 		return CoordinatesComputer.getUnion(ySerieRange, yLabelRange);
 	}

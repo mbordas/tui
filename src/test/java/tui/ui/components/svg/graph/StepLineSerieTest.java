@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,39 +15,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg.graph;
 
-import tui.http.TUIBackend;
-import tui.test.Browser;
-import tui.ui.components.Page;
+import tui.utils.TestUtils;
 
 import java.awt.*;
 
-public class UIGraphTest {
+public class StepLineSerieTest {
 
 	public static void main(String[] args) throws Exception {
-		final UIGraph graph = new UIGraph()
-				.withAxisColor(Color.DARK_GRAY);
 
-		final LineSerie serie = new LineSerie();
-		serie.setColor(Color.BLUE);
-		serie.addPoint(-1.0, -0.05, null);
-		serie.addPoint(-0.8, 0.0, "-0.8 , 0.0");
-		serie.addPoint(-0.5, 1.3, null);
-		serie.addPoint(0.0, 1.0, null);
-		serie.addPoint(1.0, 0.5, null);
-		serie.addPoint(2.0, 0.0, null);
-
-		for(int i = -3; i < 3; i++) {
-			graph.addXLabel(1.0 * i, Integer.valueOf(i).toString());
-			graph.addYLabel(1.0 * i, Integer.valueOf(i).toString());
+		final StepLineSerie serie = new StepLineSerie();
+		serie.setColor(Color.RED);
+		for(int i = 0; i < 15; i++) {
+			final double y = Math.random() * 10.0;
+			if(y < 9.0) {
+				serie.addPoint(i * 1.0, y, String.format("%.2f", y));
+			} else {
+				serie.addPoint(i * 1.0, null, null);
+			}
 		}
 
-		final Page page = new Page("Graph", "/index");
+		final UIGraph graph = new UIGraph();
+		graph.add(serie);
 
-		page.append(graph.toSVG(600, 400));
-		final TUIBackend backend = new TUIBackend(8080);
-		backend.registerPage(page);
-		backend.start();
-		final Browser browser = new Browser(backend.getPort());
-		browser.open("/index");
+		TestUtils.quickShow(graph.toSVG(600, 400));
 	}
 }

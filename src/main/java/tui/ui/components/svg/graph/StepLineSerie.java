@@ -21,50 +21,57 @@ import tui.ui.components.svg.SVGCircle;
 import tui.ui.components.svg.SVGPath;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-public class LineSerie extends DataSerie {
+public class StepLineSerie extends DataSerie {
 
-	private final Collection<UIGraph.Point> m_points = new ArrayList<>();
+	public record Point(double x, Double y, String label) {
+	}
 
-	public void addPoint(double x, double y, String label) {
-		m_points.add(new UIGraph.Point(x, y, label));
+	private final List<Point> m_points = new ArrayList<>();
+
+	public void addPoint(double x, Double y, String label) {
+		m_points.add(new Point(x, y, label));
 	}
 
 	@Override
 	public CoordinatesComputer.Range getXRange() {
-		final List<Double> xValues = new ArrayList<>(m_points.stream()
-				.map(UIGraph.Point::x)
-				.toList());
-		return CoordinatesComputer.getRange(xValues);
+		return CoordinatesComputer.getRange(m_points.stream().map(Point::x).toList());
 	}
 
 	@Override
 	public CoordinatesComputer.Range getYRange() {
-		final List<Double> yValues = new ArrayList<>(m_points.stream()
-				.map(UIGraph.Point::y)
-				.toList());
-		return CoordinatesComputer.getRange(yValues);
+		return CoordinatesComputer.getRange(m_points.stream().filter((point -> point.y != null)).map(Point::y).toList());
 	}
 
 	@Override
 	public void draw(SVG svg, CoordinatesComputer coordinatesComputer) {
-		SVGPath path = null;
-		for(UIGraph.Point point : m_points) {
-			if(path == null) {
-				path = new SVGPath(coordinatesComputer.getX_px(point.x()), coordinatesComputer.getY_px(point.y()));
-				path.withStrokeColor(m_color);
-				path.withFillOpacity(0.0);
-				svg.add(path);
-			} else {
-				path.lineAbsolute(coordinatesComputer.getX_px(point.x()), coordinatesComputer.getY_px(point.y()));
+		Point prevPoint = null;
+		for(Point point : m_points) {
+			if(prevPoint != null && prevPoint.y != null) {
+				final int prevX_px = coordinatesComputer.getX_px(prevPoint.x());
+				final int prevY_px = coordinatesComputer.getY_px(prevPoint.y());
+				final int x_px = coordinatesComputer.getX_px(point.x());
+				svg.add(new SVGPath(prevX_px, prevY_px).lineAbsolute(x_px, prevY_px).withStrokeColor(m_color));
 			}
-			final SVGCircle circle = new SVGCircle(coordinatesComputer.getX_px(point.x()), coordinatesComputer.getY_px(point.y()), 3);
-			circle.withTitle(point.label());
-			circle.withStrokeColor(m_color);
-			circle.withFillColor(m_color);
-			svg.add(circle);
+			
+			if(point.y != null) {
+				final SVGCircle circle = new SVGCircle(coordinatesComputer.getX_px(point.x()), coordinatesComputer.getY_px(point.y()), 3);
+				circle.withTitle(point.label());
+				circle.withStrokeColor(m_color);
+				circle.withFillColor(m_color);
+				svg.add(circle);
+
+				if(prevPoint != null && prevPoint.y != null) {
+					final int prevY_px = coordinatesComputer.getY_px(prevPoint.y());
+					final int x_px = coordinatesComputer.getX_px(point.x());
+					final int y_px = coordinatesComputer.getY_px(point.y());
+					svg.add(new SVGPath(x_px, prevY_px).lineAbsolute(x_px, y_px).withStrokeColor(m_color));
+				}
+			}
+
+			prevPoint = point;
 		}
 	}
+
 }
