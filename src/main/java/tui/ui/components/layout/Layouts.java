@@ -18,9 +18,9 @@ package tui.ui.components.layout;
 public class Layouts {
 
 	public enum Width {
-		NORMAL("tui-reading-normal"),
-		WIDE("tui-reading-wide"),
-		MAX("tui-reading-max");
+		NORMAL("tui-reading-normal"), // Uses a regular width for content.
+		WIDE("tui-reading-wide"), // Has small lateral margins.
+		MAX("tui-reading-max"); // Uses all the width.
 		private final String m_htmlClass;
 
 		Width(String htmlClass) {
@@ -33,7 +33,7 @@ public class Layouts {
 	}
 
 	public enum Spacing {
-		FIT("tui-spacing-fit"),
+		FIT("tui-spacing-fit"), // No space between elements.
 		COMPACT("tui-spacing-compact"),
 		NORMAL("tui-spacing-normal"),
 		LARGE("tui-spacing-large");

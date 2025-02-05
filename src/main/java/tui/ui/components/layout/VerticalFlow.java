@@ -52,6 +52,10 @@ public class VerticalFlow extends UIComponent {
 		m_content.addAll(components);
 	}
 
+	/**
+	 * Given components are added to the flow without any space between them, making them look as grouped.
+	 * This should be used to group a table and a legend for example.
+	 */
 	public VerticalFlow appendUnitedBlock(UIComponent... components) {
 		final VerticalFlow unitedBlock = createUnitedBlock(components);
 		append(unitedBlock);
@@ -70,8 +74,8 @@ public class VerticalFlow extends UIComponent {
 		result.setStyleProperty("grid-template-rows", "auto");
 		switch(m_width) {
 		case MAX -> result.setStyleProperty("grid-template-columns", "0px 1fr 0px");
-		case WIDE -> result.setStyleProperty("grid-template-columns", "20px 1fr 20px");
-		case NORMAL -> result.setStyleProperty("grid-template-columns", "1fr 80em 1fr");
+		case WIDE -> result.setStyleProperty("grid-template-columns", "minmax(0px,35px) 1fr minmax(0px,35px)");
+		case NORMAL -> result.setStyleProperty("grid-template-columns", "minmax(20px,1fr) minmax(65em,1fr) minmax(20px,1fr)");
 		}
 		result.setStyleProperty("justify-self", "stretch");
 
@@ -126,7 +130,7 @@ public class VerticalFlow extends UIComponent {
 		}
 	}
 
-	public static VerticalFlow createUnitedBlock(UIComponent... components) {
+	private static VerticalFlow createUnitedBlock(UIComponent... components) {
 		final VerticalFlow unitedBlock = new VerticalFlow();
 		unitedBlock.setWidth(Layouts.Width.MAX);
 		unitedBlock.setSpacing(Layouts.Spacing.FIT);
