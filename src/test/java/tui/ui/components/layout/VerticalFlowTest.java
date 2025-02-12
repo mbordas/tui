@@ -58,7 +58,7 @@ public class VerticalFlowTest extends TestWithBackend {
 		final Map<String, String> styleProperties = Browser.parseStyleProperties(verticalFlow);
 
 		assertEquals("auto", styleProperties.get("grid-template-rows"));
-		assertEquals("1fr min-content 1fr", styleProperties.get("grid-template-columns"));
+		assertEquals("minmax(20px, 1fr) minmax(65em, 1fr) minmax(20px, 1fr)", styleProperties.get("grid-template-columns"));
 		assertEquals("center", styleProperties.get("place-items"));
 	}
 
