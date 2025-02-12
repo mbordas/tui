@@ -32,6 +32,7 @@ public class CoordinatesComputer {
 	final int m_width_px;
 	final int m_height_px;
 	final int m_padding_px;
+	int m_marginLeft_px = 0;
 
 	final AffineTransformation m_x_transformation;
 	final AffineTransformation m_y_transformation;
@@ -45,8 +46,12 @@ public class CoordinatesComputer {
 		m_y_transformation = computeAffineTransformation(range_Y.min, range_Y.max, m_height_px - m_padding_px, m_padding_px);
 	}
 
+	public void setMarginLeft_px(int marginLeft_px) {
+		m_marginLeft_px = marginLeft_px;
+	}
+
 	public int getX_px(double x) {
-		return (int) m_x_transformation.transform(x);
+		return m_marginLeft_px + (int) m_x_transformation.transform(x);
 	}
 
 	public int getY_px(double y) {

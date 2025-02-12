@@ -17,6 +17,8 @@ package tui.ui.components.svg;
 
 import tui.json.JsonMap;
 
+import java.util.Locale;
+
 public class SVGText extends SVGComponent {
 
 	public enum Anchor {START, MIDDLE, END}
@@ -25,6 +27,7 @@ public class SVGText extends SVGComponent {
 	private long m_y;
 	private String m_text;
 	private final Anchor m_anchor;
+	private float m_fontSize_em = 1;
 
 	public SVGText(long x, long y, String text, Anchor anchor) {
 		m_x = x;
@@ -33,9 +36,14 @@ public class SVGText extends SVGComponent {
 		m_anchor = anchor;
 	}
 
+	public SVGText withFontSize_em(float size_em) {
+		m_fontSize_em = size_em;
+		return this;
+	}
+
 	@Override
 	public String computeStyleAttribute() {
-		return super.computeStyleAttribute() + String.format("text-anchor:%s;", m_anchor.name().toLowerCase());
+		return String.format("text-anchor:%s;", m_anchor.name().toLowerCase());
 	}
 
 	@Override
@@ -44,6 +52,9 @@ public class SVGText extends SVGComponent {
 		result.setAttribute("x", String.valueOf(m_x));
 		result.setAttribute("y", String.valueOf(m_y));
 		result.setAttribute(SVG.JSON_ATTRIBUTE_INNER_TEXT, m_text);
+		result.setAttribute("font-family", "\"Times New Roman\", \"Times\", \"Nimbus Roman 9L\", serif");
+		result.setAttribute("font-style", "normal");
+		result.setAttribute("font-size", String.format(Locale.US, "%.1fem", m_fontSize_em));
 		setStyleAttribute(result);
 		return result;
 	}
