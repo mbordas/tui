@@ -37,9 +37,9 @@ public class HistogramViewer {
 		assert !values.isEmpty();
 		final SVG result = new SVG(width_px, height_px);
 
-		final CoordinatesComputer.Range range_x = new CoordinatesComputer.Range(0.0, 1.0 * values.size());
-		final CoordinatesComputer.Range range_y = CoordinatesComputer.getRange(values);
-		final CoordinatesComputer computer = new CoordinatesComputer(width_px, height_px, padding_px, range_x, range_y);
+		final var range_x = new CoordinatesComputer.Range(0.0, 1.0 * values.size());
+		final var range_y = CoordinatesComputer.getRange(values);
+		final var computer = new CoordinatesComputer(width_px, height_px, padding_px, range_x, range_y);
 
 		final SVGMarker arrow = new SVGMarker("arrow", 10, 8)
 				.withRef(0, 4);
