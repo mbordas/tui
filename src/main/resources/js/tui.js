@@ -162,6 +162,11 @@ function createComponent(json, idMap) {
         result = document.createElement('div');
         result.id = json['tuid'];
         updatePanel(result, json, idMap);
+    } else if(type == 'table') {
+        const containedElement = createElementWithContainer('table', 'tui-table-container');
+        containedElement.element.appendChild(document.createElement('tbody'));
+        updateTable(containedElement.element, json);
+        result = containedElement.container;
     } else if(type == 'paragraph') {
         result = document.createElement('p');
         updateParagraph(result, json);

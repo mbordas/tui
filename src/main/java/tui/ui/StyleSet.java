@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.components.layout.Layouts;
 
 import java.awt.*;
 import java.util.function.BiConsumer;
@@ -28,6 +29,7 @@ public class StyleSet {
 	private String m_color = null;
 	private String m_fontSize = null;
 	private String m_textTransform = null;
+	private Layouts.TextAlign m_textAlign = null;
 	private String m_backgroundColor = null;
 	private String m_borderStyle = null;
 	private String m_borderColor = null;
@@ -131,10 +133,22 @@ public class StyleSet {
 
 	public void apply(HTMLNode node) {
 		apply(node, (htmlNode, property) -> htmlNode.setStyleProperty(property.name, property.value));
+
+		if(m_textAlign != null) {
+			node.addClass(m_textAlign.getHTMLClass());
+		}
 	}
 
 	public void apply(JsonMap node) {
 		apply(node, (map, property) -> map.setStyleProperty(property.name, property.value));
+
+		if(m_textAlign != null) {
+			node.setAttribute("text-align", m_textAlign.getHTMLClass());
+		}
+	}
+
+	public void setTextAlign(Layouts.TextAlign textAlign) {
+		m_textAlign = textAlign;
 	}
 
 	private record Property(String name, String value) {

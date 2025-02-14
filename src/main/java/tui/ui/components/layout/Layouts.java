@@ -54,7 +54,7 @@ public class Layouts {
 
 		private String m_htmlClass;
 
-		private TextAlign(String htmlClass) {
+		TextAlign(String htmlClass) {
 			m_htmlClass = htmlClass;
 		}
 

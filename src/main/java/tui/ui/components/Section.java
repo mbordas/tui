@@ -17,6 +17,7 @@ package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.StyleSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +26,27 @@ public class Section extends UIComponent {
 
 	public static final String JSON_TYPE = "section";
 
-	private final String m_title;
+	public enum DisclosureType {NONE, STARTS_OPENED, STARTS_CLOSED}
 
+	private final String m_title;
+	private StyleSet m_customStyleHeader = null;
+	private DisclosureType m_disclosureType = DisclosureType.NONE;
 	private final List<UIComponent> m_content = new ArrayList<>();
 
 	public Section(String title) {
 		m_title = title;
+	}
+
+	public Section withDisclosureType(DisclosureType type) {
+		m_disclosureType = type;
+		return this;
+	}
+
+	public StyleSet customStyleForHeader() {
+		if(m_customStyleHeader == null) {
+			m_customStyleHeader = new StyleSet();
+		}
+		return m_customStyleHeader;
 	}
 
 	public Section createSubSection(String title) {
@@ -65,7 +81,28 @@ public class Section extends UIComponent {
 
 	private static HTMLNode toHTML(Section section, int depth) {
 		final HTMLNode result = new HTMLNode("section");
-		result.createChild("h" + depth).setText(section.getTitle());
+
+		final HTMLNode containerNodeForTitle;
+		final HTMLNode containerNodeForContent;
+		if(section.m_disclosureType != DisclosureType.NONE) {
+			containerNodeForContent = result.createChild("details");
+			if(section.m_disclosureType == DisclosureType.STARTS_OPENED) {
+				containerNodeForContent.setAttribute("open", null);
+			}
+			containerNodeForTitle = containerNodeForContent.createChild("summary");
+		} else {
+			containerNodeForTitle = result;
+			containerNodeForContent = result;
+		}
+
+		if(section.m_customStyleHeader != null) {
+			section.m_customStyleHeader.apply(containerNodeForTitle);
+		}
+		final HTMLNode header = containerNodeForTitle.createChild("h" + depth).setText(section.getTitle());
+		if(section.m_disclosureType != DisclosureType.NONE) {
+			header.setStyleProperty("display", "inline");
+		}
+
 		for(UIComponent component : section.getContent()) {
 			final HTMLNode child;
 			if(component instanceof Section _section) {
@@ -73,8 +110,11 @@ public class Section extends UIComponent {
 			} else {
 				child = component.toHTMLNode();
 			}
-			result.append(child);
+			containerNodeForContent.append(child);
 		}
+
+		section.applyCustomStyle(result);
+
 		return result;
 	}
 
