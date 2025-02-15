@@ -121,7 +121,7 @@ function setFetchData(element, data) {
 function getFetchData(element) {
     const result = (typeof element.fetch_data === 'undefined') ? {} : element.fetch_data;
     for(let key in SESSION_PARAMS) {
-        data[key] = SESSION_PARAMS[key];
+        result[key] = SESSION_PARAMS[key];
     }
     return result;
 }
