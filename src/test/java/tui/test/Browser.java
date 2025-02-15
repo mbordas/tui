@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test;
 
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -22,12 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.html.HTMLFetchErrorMessage;
 import tui.test.components.TFormTest;
+import tui.test.components.TSearchTest;
 import tui.test.components.TTableTest;
 import tui.ui.components.NavButton;
 import tui.ui.components.NavLink;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Table;
 import tui.ui.components.form.Form;
+import tui.ui.components.form.Search;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
 import tui.ui.components.layout.VerticalScroll;
@@ -177,6 +180,43 @@ public class Browser {
 		return m_driver.findElements(By.tagName("img"));
 	}
 
+	// SEARCH
+
+	public WebElement getSearch(String title) {
+		final Optional<WebElement> anySearchElement = m_driver.findElements(By.className(Search.HTML_CLASS)).stream()
+				.filter(WebElement::isDisplayed)
+				.filter((element) -> title.equals(TSearchTest.getTitle(element)))
+				.findAny();
+
+		if(anySearchElement.isPresent()) {
+			return anySearchElement.get();
+		} else {
+			throw new RuntimeException("Search element not found: " + title);
+		}
+	}
+
+	public void typeSearch(@NotNull String title, @NotNull String parameterName, String value) {
+		final WebElement searchElement = getSearch(title);
+		for(WebElement inputElement : searchElement.findElements(By.tagName("input"))) {
+			if(parameterName.equals(inputElement.getAttribute("name"))) {
+				inputElement.sendKeys(value);
+				return;
+			}
+		}
+		throw new RuntimeException("Search input element not found: " + parameterName);
+	}
+
+	public void submitSearch(@NotNull String title) {
+		final WebElement searchElement = getSearch(title);
+		final Optional<WebElement> anyButton = searchElement.findElements(By.tagName("button")).stream()
+				.findAny();
+		if(anyButton.isPresent()) {
+			anyButton.get().click();
+		} else {
+			throw new RuntimeException("Submit button not found.");
+		}
+	}
+
 	// FORMS
 
 	public WebElement getForm(String title) {
@@ -315,4 +355,7 @@ public class Browser {
 		return result;
 	}
 
+	public WebElement getByTUID(long tuid) {
+		return m_driver.findElement(By.id(String.valueOf(tuid)));
+	}
 }

@@ -22,10 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.test.TClient;
 import tui.test.TestWithBackend;
-import tui.ui.TablePickerTest;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.TablePicker;
+import tui.ui.components.TablePickerTest;
 import tui.ui.components.layout.Panel;
 
 import java.util.Collection;

@@ -30,7 +30,7 @@ import java.util.Map;
 public class Search extends UIComponent {
 
 	public static final String JSON_TYPE = "search_form";
-	public static final String HTML_CLASS_FORM_SEARCH = "tui-search-form";
+	public static final String HTML_CLASS = "tui-search-form";
 
 	private final String m_title;
 	private final String m_label;
@@ -70,7 +70,7 @@ public class Search extends UIComponent {
 	@Override
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = super.toHTMLNode("search", false)
-				.setClass(HTML_CLASS_FORM_SEARCH);
+				.setClass(HTML_CLASS);
 
 		result.createChild("label")
 				.setAttribute("for", m_parameterName)

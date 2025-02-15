@@ -72,8 +72,12 @@ public class RequestReader {
 		}
 	}
 
+	public String getStringParameter(String key, String defaultValue) {
+		return m_parameters.getOrDefault(key, defaultValue);
+	}
+
 	public String getStringParameter(String key) {
-		return m_parameters.containsKey(key) ? m_parameters.get(key) : m_parameters.getOrDefault(key, null);
+		return m_parameters.getOrDefault(key, null);
 	}
 
 	public Integer getIntegerParameter(String key) {

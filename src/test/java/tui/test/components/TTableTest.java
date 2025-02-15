@@ -21,10 +21,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import tui.test.TClient;
 import tui.test.TestWithBackend;
-import tui.ui.TablePickerTest;
 import tui.ui.components.Page;
 import tui.ui.components.Table;
 import tui.ui.components.TableData;
+import tui.ui.components.TablePickerTest;
 import tui.ui.components.TableTest;
 
 import java.util.Collection;

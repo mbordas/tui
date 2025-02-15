@@ -23,7 +23,6 @@ import tui.http.TUIWebService;
 import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
-import tui.ui.TablePickerTest;
 
 import java.util.ArrayList;
 import java.util.Collection;

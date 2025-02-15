@@ -13,7 +13,7 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.components;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -23,14 +23,12 @@ import tui.http.TUIBackend;
 import tui.http.TUIWebService;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
-import tui.ui.components.Page;
-import tui.ui.components.Paragraph;
-import tui.ui.components.TablePicker;
-import tui.ui.components.TableTest;
+import tui.ui.components.form.Search;
 import tui.ui.components.layout.Panel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -38,6 +36,78 @@ import static org.junit.Assert.assertEquals;
 public class TablePickerTest extends TestWithBackend {
 
 	public record Item(String id, String name, String content) {
+	}
+
+	/**
+	 * Here we test a {@link TablePicker} that is filled with filtered rows (using a {@link Search}), and which uses pagination.
+	 */
+	@Test
+	public void refreshWithPagination() throws InterruptedException {
+		final Page page = new Page("Home", "/index");
+		final Search search = page.append(new Search("Filter", "filter", "filter"));
+		final TablePicker tablePicker = page.append(new TablePicker("Table picker", List.of("Id", "Name")));
+		tablePicker.setSource("/tablePicker");
+		tablePicker.setPaging(5);
+		search.connectListener(tablePicker);
+
+		final Paragraph paragraph = page.append(new Paragraph("nothing is selected"));
+		paragraph.setSource("/paragraph");
+		tablePicker.connectListener(paragraph);
+
+		final Collection<Item> items = TableTest.buildItems(50);
+
+		startBackend(page);
+
+		registerWebService(tablePicker.getSource(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			final String filter = reader.getStringParameter("filter", ""); // Filtering parameter
+			final int pageSize = reader.getIntParameter(Table.PARAMETER_PAGE_SIZE, 5); // Pagination parameters
+			final int pageNumber = reader.getIntParameter(Table.PARAMETER_PAGE_NUMBER, 1); // Pagination parameters
+
+			// Getting filtered items
+			final List<Item> filteredItems = items.stream()
+					.filter((item -> item.id.contains(filter)
+							|| item.name.contains(filter)
+							|| item.content.contains(filter)))
+					.toList();
+
+			// Building table with all filtered items
+			final TableData data = new TableData(tablePicker.getColumns(), filteredItems.size());
+			filteredItems.forEach((item -> data.append(Map.of("Id", item.id, "Name", item.name))));
+
+			// Returning only the selected page
+			return data.getPage(pageNumber, pageSize, data.size()).toJsonMap();
+		});
+
+		registerWebService(paragraph.getSource(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			Paragraph result = new Paragraph();
+			result.appendNormal("%s - %s",
+					reader.getStringParameter("Id"),
+					reader.getStringParameter("Name"));
+			return result.toJsonMap();
+		});
+
+		final Browser browser = startBrowser();
+		browser.open(page.getSource());
+
+		browser.typeSearch("Filter", "filter", "2");
+		browser.submitSearch("Filter");
+
+		WebElement table = browser.getTable(tablePicker.getTitle());
+		assertEquals(1 + 5, table.findElements(By.tagName("tr")).size()); // 1 header row + 5 data rows
+		// Expecting 14 filtered items in total: 2, 12, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 32, 42
+		assertEquals("1 - 5 (14)", browser.getTableNavigationLocationText(tablePicker.getTitle()));
+
+		browser.getTableNavigationButtonNext(tablePicker.getTitle()).click(); // Going to next page
+		assertEquals("6 - 10 (14)", browser.getTableNavigationLocationText(tablePicker.getTitle()));
+
+		browser.getTableCellByText(browser.getTable(tablePicker.getTitle()),
+						(value) -> value.equals("Item-23"))
+				.click();
+
+		WebElement paragraphElement = browser.getByTUID(paragraph.getTUID());
+		assertEquals("0023 - Item-23", paragraphElement.getText());
 	}
 
 	/**
