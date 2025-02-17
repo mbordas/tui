@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -13,51 +13,28 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components;
+package tui.docs;
 
-import org.junit.Test;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
+import tui.ui.components.Paragraph;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.awt.*;
 
-import static org.junit.Assert.assertEquals;
+public class CodeParagraph extends Paragraph {
 
-public class PageTest {
+	public static final Color BACKGROUND_COLOR = new Color(240, 240, 240);
+	public static final Color BORDER_COLOR = new Color(200, 200, 200);
 
-	@Test
-	public void generateSessionParametersInitialization() {
-		final Map<String, String> params = new TreeMap<>();
-		params.put("keyA", "valueA");
-		params.put("keyB", "valueB");
-
-		assertEquals("const testMap={keyA:'valueA',keyB:'valueB'};",
-				Page.generateSessionParametersInitialization("testMap", params));
+	public CodeParagraph() {
+		customStyle().setPadding(5, 5, 5, 5);
+		customStyle().setBackgroundColor(BACKGROUND_COLOR);
+		customStyle().setFontFamily("Consolas");
+		customStyle().setLineHeight(1.4);
+		customStyle().setBorderWidth_px(1);
+		customStyle().setBorderColor(BORDER_COLOR);
 	}
 
-	@Test
-	public void toJsonMap() {
-		final Page page = new Page("Empty page");
-		final Section section = page.appendSection("section A");
-
-		//
-		final JsonMap jsonMap = page.toJsonMap();
-		//
-
-		assertEquals(Page.JSON_TYPE, jsonMap.getType());
-
-		//
-		JsonObject.PRETTY_PRINT = false;
-		final String json = jsonMap.toJson();
-		//
-
-		assertEquals(
-				String.format(
-						"{\"type\": \"page\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": %d,\"title\": \"section A\",\"content\": []}]}",
-						section.getTUID()),
-				json);
-
+	public CodeParagraph(String content) {
+		this();
+		appendNormal(content);
 	}
-
 }

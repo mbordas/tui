@@ -42,8 +42,8 @@ public class MailViewer {
 
 		final Page page = new Page("Home", "/index");
 		page.setReadingWidth(Layouts.Width.NORMAL);
-		page.setHeader(new Paragraph("Header").setAlign(Layouts.TextAlign.CENTER));
-		page.setFooter(new Paragraph().appendNormal("Example footer text").setAlign(Layouts.TextAlign.RIGHT));
+		page.setHeader(new Paragraph(Layouts.TextAlign.CENTER).appendNormal("Header"));
+		page.setFooter(new Paragraph(Layouts.TextAlign.RIGHT).appendNormal("Example footer text"));
 
 		final TablePicker mailSelector = new TablePicker("Inbox", List.of("id", "date", "subject"));
 		mailSelector.hideColumn("id");

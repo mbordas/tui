@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -13,51 +13,19 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components;
+package tui.docs;
 
-import org.junit.Test;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
+import tui.ui.components.NavLink;
+import tui.ui.components.Page;
+import tui.ui.components.Section;
 
-import java.util.Map;
-import java.util.TreeMap;
+public class TUIDocsIndex extends Page {
 
-import static org.junit.Assert.assertEquals;
+	public TUIDocsIndex() {
+		super("TUI Index", "index.html");
 
-public class PageTest {
+		final Section toc = appendSection("Table of Content");
 
-	@Test
-	public void generateSessionParametersInitialization() {
-		final Map<String, String> params = new TreeMap<>();
-		params.put("keyA", "valueA");
-		params.put("keyB", "valueB");
-
-		assertEquals("const testMap={keyA:'valueA',keyB:'valueB'};",
-				Page.generateSessionParametersInitialization("testMap", params));
+		toc.append(new NavLink("Overview", TUIDocsOverview.PATH));
 	}
-
-	@Test
-	public void toJsonMap() {
-		final Page page = new Page("Empty page");
-		final Section section = page.appendSection("section A");
-
-		//
-		final JsonMap jsonMap = page.toJsonMap();
-		//
-
-		assertEquals(Page.JSON_TYPE, jsonMap.getType());
-
-		//
-		JsonObject.PRETTY_PRINT = false;
-		final String json = jsonMap.toJson();
-		//
-
-		assertEquals(
-				String.format(
-						"{\"type\": \"page\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": %d,\"title\": \"section A\",\"content\": []}]}",
-						section.getTUID()),
-				json);
-
-	}
-
 }

@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TUIBackend {
+public class TUIBackend implements AutoCloseable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TUIBackend.class);
 
@@ -222,4 +222,8 @@ public class TUIBackend {
 		registerPageService(page.getSource(), (uri, request) -> page);
 	}
 
+	@Override
+	public void close() throws Exception {
+		stop();
+	}
 }

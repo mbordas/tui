@@ -57,12 +57,12 @@ public class LayoutsDemo {
 		buttons.append(new RefreshButton("Button 1"));
 		buttons.append(new RefreshButton("Button 2"));
 		buttons.append(new RefreshButton("Button 3"));
-		tabFlow.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(tui.ui.components.layout.Layouts.TextAlign.RIGHT));
+		tabFlow.append(new Paragraph(Layouts.TextAlign.RIGHT).appendNormal(TestUtils.LOREM_IPSUM));
 
 		tabFlow.appendUnitedBlock(createTable(),
-				new Paragraph("My legend here").setAlign(tui.ui.components.layout.Layouts.TextAlign.CENTER));
+				new Paragraph(Layouts.TextAlign.CENTER).appendNormal("My legend here"));
 
-		tabFlow.append(new Paragraph(TestUtils.LOREM_IPSUM).setAlign(tui.ui.components.layout.Layouts.TextAlign.STRETCH));
+		tabFlow.append(new Paragraph(Layouts.TextAlign.STRETCH).appendNormal(TestUtils.LOREM_IPSUM));
 	}
 
 	public static void main(String[] args) throws Exception {

@@ -17,6 +17,7 @@ package tui.ui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tui.ui.components.layout.Layouts;
 
 import java.awt.*;
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class Style {
 	private final GlobalColors m_globalColors = new GlobalColors();
 	private final StyleSet m_header = new StyleSet();
 	private final StyleSet m_footer = new StyleSet();
+	private final StyleSet m_paragraph = new StyleSet();
 
 	public Style() {
 		m_header.setBackgroundColor("var(--global-color-background)");
@@ -58,6 +60,10 @@ public class Style {
 		m_footer.setTextColor("var(--global-color-background-contrast)");
 		m_footer.setPadding(10, 10, 10, 10);
 		m_footer.setBorderWidth_px(1, 0, 0, 0);
+
+		m_paragraph.setTextAlign(Layouts.TextAlign.LEFT);
+		m_paragraph.setMargin(0, 0, 10, 0);
+		m_paragraph.setPadding(0, 0, 0, 0);
 	}
 
 	public void setColorForAction(Color color) {
@@ -74,6 +80,10 @@ public class Style {
 
 	public StyleSet footer() {
 		return m_footer;
+	}
+
+	public StyleSet paragraph() {
+		return m_paragraph;
 	}
 
 	public String toCSS() {
@@ -95,6 +105,10 @@ public class Style {
 				
 				main {
 				    /* justify-self: stretch; */
+				}
+				
+				a {
+					color: var(--global-color-action);
 				}
 				
 				header {
@@ -123,10 +137,15 @@ public class Style {
 		result.append("""
 				}
 				
-				p {
-				    margin: 0px;
-				    padding: 0px;
+				section {
+					text-align: left;
 				}
+				
+				p {
+				""");
+		result.append(m_paragraph.toCSS());
+		result.append("""
+				 				}
 				
 				.tui-border-on {
 				    border: 1px solid var(--global-color-border);

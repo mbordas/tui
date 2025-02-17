@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.layout;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Layouts {
 
 	public enum Width {
@@ -50,16 +52,16 @@ public class Layouts {
 	}
 
 	public enum TextAlign {
-		LEFT("tui-align-left"), CENTER("tui-align-center"), RIGHT("tui-align-right"), STRETCH("tui-align-stretch");
+		LEFT("left"), CENTER("center"), RIGHT("right"), STRETCH("justify");
 
-		private String m_htmlClass;
+		private final String m_cssValue;
 
-		TextAlign(String htmlClass) {
-			m_htmlClass = htmlClass;
+		TextAlign(String cssValue) {
+			m_cssValue = cssValue;
 		}
 
-		public String getHTMLClass() {
-			return m_htmlClass;
+		public @Nullable String getCSSValue() {
+			return m_cssValue;
 		}
 	}
 }

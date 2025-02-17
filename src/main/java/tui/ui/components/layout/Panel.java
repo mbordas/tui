@@ -49,7 +49,6 @@ public class Panel extends UIRefreshableComponent {
 	public HTMLNode toHTMLNode() {
 		final ContainedElement containedElement = createContainedNode("div", HTML_CLASS_CONTAINER);
 		containedElement.element().addClass(HTML_CLASS);
-		containedElement.element().addClass(m_textAlign.getHTMLClass());
 
 		final HTMLNode node = containedElement.element();
 		for(UIComponent component : getContent()) {
@@ -57,6 +56,9 @@ public class Panel extends UIRefreshableComponent {
 			componentNode.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "horizontal-spacing"));
 			node.append(componentNode);
 		}
+
+		applyCustomStyle(containedElement.element());
+
 		return containedElement.getHigherNode();
 	}
 

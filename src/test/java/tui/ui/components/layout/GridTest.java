@@ -70,14 +70,8 @@ public class GridTest extends TestWithBackend {
 
 		final Grid grid = new Grid(5, 2);
 
-		//		for(int row = 0; row < 5; row++) {
-		//			for(int col = 0; col < 2; col++) {
-		//				grid.set(row, col, new Paragraph(String.format("%d,%d", row, col)));
-		//			}
-		//		}
-
-		grid.set(1, 1, new Paragraph("1,1").setAlign(Layouts.TextAlign.LEFT));
-		grid.set(4, 0, new Paragraph("4,0").setAlign(Layouts.TextAlign.RIGHT));
+		grid.set(1, 1, new Paragraph(Layouts.TextAlign.LEFT).appendNormal("1,1"));
+		grid.set(4, 0, new Paragraph(Layouts.TextAlign.RIGHT).appendNormal("4,0"));
 		page.append(grid);
 
 		final TUIBackend backend = new TUIBackend(8080);

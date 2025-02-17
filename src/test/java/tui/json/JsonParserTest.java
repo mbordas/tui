@@ -70,7 +70,7 @@ public class JsonParserTest {
 	@Test
 	public void parsePageMap() {
 		Page page = new Page("My title");
-		page.createSection("My section");
+		page.appendSection("My section");
 
 		final String json = page.toJsonMap().toJson();
 

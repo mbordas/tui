@@ -98,7 +98,7 @@ public class Page {
 		return m_content;
 	}
 
-	public Section createSection(String title) {
+	public Section appendSection(String title) {
 		final Section result = new Section(title);
 		m_content.add(result);
 		return result;
@@ -126,7 +126,8 @@ public class Page {
 						.setAttribute("href", cssResource.contentOrLink());
 			} else {
 				head.createChild("style")
-						.setText(cssResource.contentOrLink());
+						// line return are removed in order to avoid automatically added <br>
+						.setText(cssResource.contentOrLink().replaceAll("\\n", ""));
 			}
 		}
 		final HTMLNode script = head.createChild("script")
@@ -145,7 +146,9 @@ public class Page {
 		}
 
 		final HTMLNode body = result.createChild("body");
-		body.setAttribute("onload", "onload()");
+		if(scriptResource != null) {
+			body.setAttribute("onload", "onload()");
+		}
 
 		if(m_header != null) {
 			final HTMLNode header = body.createChild("header");

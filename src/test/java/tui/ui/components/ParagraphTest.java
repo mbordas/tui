@@ -27,6 +27,17 @@ import static org.junit.Assert.assertEquals;
 public class ParagraphTest {
 
 	@Test
+	public void htmlMultiLine() {
+		final Paragraph paragraph = new Paragraph("""
+				Multi-line
+				content""");
+
+		HTMLNode.PRETTY_PRINT = false;
+		assertEquals("<p class=\"tui-align-left tui-border-off\">Multi-line<br/>content</p>",
+				paragraph.toHTMLNode().toHTML());
+	}
+
+	@Test
 	public void html() {
 		final Paragraph paragraph = new Paragraph();
 

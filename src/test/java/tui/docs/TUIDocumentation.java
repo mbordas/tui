@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -13,51 +13,51 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components;
+package tui.docs;
 
-import org.junit.Test;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
+import tui.html.HTMLNode;
+import tui.ui.Style;
+import tui.ui.components.Page;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
+public class TUIDocumentation {
 
-public class PageTest {
+	private final Collection<Page> m_pages = new ArrayList<>();
 
-	@Test
-	public void generateSessionParametersInitialization() {
-		final Map<String, String> params = new TreeMap<>();
-		params.put("keyA", "valueA");
-		params.put("keyB", "valueB");
-
-		assertEquals("const testMap={keyA:'valueA',keyB:'valueB'};",
-				Page.generateSessionParametersInitialization("testMap", params));
+	public TUIDocumentation() {
+		m_pages.add(new TUIDocsIndex());
+		m_pages.add(new TUIDocsOverview());
 	}
 
-	@Test
-	public void toJsonMap() {
-		final Page page = new Page("Empty page");
-		final Section section = page.appendSection("section A");
-
-		//
-		final JsonMap jsonMap = page.toJsonMap();
-		//
-
-		assertEquals(Page.JSON_TYPE, jsonMap.getType());
-
-		//
-		JsonObject.PRETTY_PRINT = false;
-		final String json = jsonMap.toJson();
-		//
-
-		assertEquals(
-				String.format(
-						"{\"type\": \"page\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": %d,\"title\": \"section A\",\"content\": []}]}",
-						section.getTUID()),
-				json);
-
+	void save(File dir) {
+		final Style style = new Style();
+		for(Page page : m_pages) {
+			try {
+				save(page, style, dir);
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
+	static void save(Page page, Style style, File dir) throws IOException {
+		final File file = new File(dir, page.getSource());
+		try(FileOutputStream outputStream = new FileOutputStream(file)) {
+			final HTMLNode htmlNode = page.toHTMLNode(new Page.Resource(false, style.toCSS()), null);
+			byte[] strToBytes = htmlNode.toHTML().getBytes();
+			outputStream.write(strToBytes);
+		}
+		System.out.println("Page saved: " + file.getAbsolutePath());
+	}
+
+	public static void main(String[] args) throws IOException {
+		final File dir = new File(args[0]);
+		final TUIDocumentation tuiDocumentation = new TUIDocumentation();
+		tuiDocumentation.save(dir);
+	}
 }

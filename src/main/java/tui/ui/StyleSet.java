@@ -28,6 +28,8 @@ public class StyleSet {
 
 	private String m_color = null;
 	private String m_fontSize = null;
+	private String m_fontFamily = null;
+	private Double m_lineHeight_em = null;
 	private String m_textTransform = null;
 	private Layouts.TextAlign m_textAlign = null;
 	private String m_backgroundColor = null;
@@ -95,6 +97,11 @@ public class StyleSet {
 		return this;
 	}
 
+	public StyleSet setLineHeight(double height_em) {
+		m_lineHeight_em = height_em;
+		return this;
+	}
+
 	public StyleSet setTextUpperCase() {
 		m_textTransform = "uppercase";
 		return this;
@@ -133,22 +140,18 @@ public class StyleSet {
 
 	public void apply(HTMLNode node) {
 		apply(node, (htmlNode, property) -> htmlNode.setStyleProperty(property.name, property.value));
-
-		if(m_textAlign != null) {
-			node.addClass(m_textAlign.getHTMLClass());
-		}
 	}
 
 	public void apply(JsonMap node) {
 		apply(node, (map, property) -> map.setStyleProperty(property.name, property.value));
-
-		if(m_textAlign != null) {
-			node.setAttribute("text-align", m_textAlign.getHTMLClass());
-		}
 	}
 
 	public void setTextAlign(Layouts.TextAlign textAlign) {
 		m_textAlign = textAlign;
+	}
+
+	public void setFontFamily(String fontFamily) {
+		m_fontFamily = fontFamily;
 	}
 
 	private record Property(String name, String value) {
@@ -157,7 +160,10 @@ public class StyleSet {
 	public <T> void apply(T node, BiConsumer<T, Property> setter) {
 		setStylePropertyIfDefined(node, "color", m_color, setter);
 		setStylePropertyIfDefined(node, "font-size", m_fontSize, setter);
+		setStylePropertyIfDefined(node, "font-family", m_fontFamily, setter);
+		setStylePropertyIfDefined(node, "line-height", m_lineHeight_em == null ? null : String.valueOf(m_lineHeight_em), setter);
 		setStylePropertyIfDefined(node, "text-transform", m_textTransform, setter);
+		setStylePropertyIfDefined(node, "text-align", m_textAlign == null ? null : m_textAlign.getCSSValue(), setter);
 		setStylePropertyIfDefined(node, "background-color", m_backgroundColor, setter);
 		setStylePropertyIfDefined(node, "border-style", m_borderStyle, setter);
 		setStylePropertyIfDefined(node, "border-color", m_borderColor, setter);

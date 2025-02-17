@@ -26,6 +26,6 @@ public class HTMLText extends HTMLNode {
 
 	@Override
 	public String toHTML() {
-		return m_text;
+		return m_text.replaceAll("\\n", "<br/>");
 	}
 }

@@ -31,7 +31,7 @@ public class TPageTest extends TestWithBackend {
 	@Test
 	public void parseJson() {
 		Page page = new Page("My page");
-		page.createSection("My section");
+		page.appendSection("My section");
 		final String json = page.toJsonMap().toJson();
 
 		JsonMap jsonMap = JsonParser.parseMap(json);

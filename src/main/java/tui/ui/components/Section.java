@@ -55,7 +55,7 @@ public class Section extends UIComponent {
 		return result;
 	}
 
-	public Paragraph createParagraph(String text) {
+	public Paragraph appendParagraph(String text) {
 		final Paragraph result = new Paragraph(text);
 		m_content.add(result);
 		return result;

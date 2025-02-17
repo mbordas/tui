@@ -28,8 +28,8 @@ public class UIBackendTest {
 	public void defaultPage() throws Exception {
 		HTMLNode.PRETTY_PRINT = true;
 		final Page page = new Page("Server default page", "/index");
-		final Section subSection = page.createSection("Title 1").createSubSection("Title 2");
-		subSection.createParagraph("Lorem ipsum");
+		final Section subSection = page.appendSection("Title 1").createSubSection("Title 2");
+		subSection.appendParagraph("Lorem ipsum");
 
 		final TUIBackend backend = new TUIBackend(8080);
 		backend.registerPage(page);

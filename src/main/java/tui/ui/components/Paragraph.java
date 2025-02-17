@@ -65,6 +65,11 @@ public class Paragraph extends UIRefreshableComponent {
 	public Paragraph() {
 	}
 
+	public Paragraph(Layouts.TextAlign textAlign) {
+		this();
+		setAlign(textAlign);
+	}
+
 	public Paragraph(String format, Object... args) {
 		appendNormal(String.format(format, args));
 	}
@@ -106,7 +111,7 @@ public class Paragraph extends UIRefreshableComponent {
 		final ContainedElement containedElement = createContainedNode("p", HTML_CLASS_CONTAINER);
 
 		final HTMLNode paragraphElement = containedElement.element();
-		paragraphElement.addClass(m_textAlign.getHTMLClass());
+		paragraphElement.addClass(m_textAlign.getCSSValue());
 		paragraphElement.addClass(m_withBorder ? HTML_CLASS_BORDER_ON : HTML_CLASS_BORDER_OFF);
 		for(Fragment fragment : m_fragments) {
 			if(Style.NORMAL == fragment.style()) {

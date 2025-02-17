@@ -58,7 +58,7 @@ public class DemoServer {
 		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
 		final VerticalFlow panel1 = tabbedFlow.createTab("Table and form");
 		panel1.append(new Section("Tables"))
-				.createParagraph("Use the form to add row to the table.");
+				.appendParagraph("Use the form to add row to the table.");
 
 		final String columnVendor = "Vendor";
 		final String columnSerialNumber = "Serial number";
@@ -77,7 +77,7 @@ public class DemoServer {
 
 		final VerticalFlow panel2 = tabbedFlow.createTab("Monitor fields");
 		panel2.append(new Section("Monitoring"))
-				.createParagraph("Monitor fields display live data.");
+				.appendParagraph("Monitor fields display live data.");
 		final MonitorFieldSet monitorFieldSet = new MonitorFieldSet("Live fields");
 		monitorFieldSet.setSource("/monitor/1");
 		monitorFieldSet.setAutoRefreshPeriod_s(5);
@@ -96,7 +96,7 @@ public class DemoServer {
 		final ModalForm modalForm = new ModalForm("Add a new element", "Add", "/modalform/add");
 		final FormInputString modalFormFieldName = modalForm.createInputString("Name", "name");
 		panel3.append(new Section("Modal form"))
-				.createParagraph("Modal forms use dialog elements.");
+				.appendParagraph("Modal forms use dialog elements.");
 		panel3.append(modalForm);
 
 		// Building server with backend web services

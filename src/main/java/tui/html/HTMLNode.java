@@ -170,7 +170,8 @@ public class HTMLNode {
 			result.append(">"); // ending node's opening tag
 
 			if(!m_text.isEmpty()) {
-				result.append(m_text.toString());
+				final String text = m_text.toString();
+				result.append(text.replaceAll("\\n", "<br/>"));
 			} else {
 				endOfTag(result);
 			}

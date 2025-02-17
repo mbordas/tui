@@ -29,13 +29,13 @@ public class NavigationWithButton {
 	public static void main(String[] args) throws Exception {
 		final Page page = new Page("Navigation with button", "/index");
 
-		final Section summary = page.createSection("How it works");
-		summary.createParagraph("The following buttons will reopen this same page. Each of them sends "
+		final Section summary = page.appendSection("How it works");
+		summary.appendParagraph("The following buttons will reopen this same page. Each of them sends "
 				+ "a parameter named 'direction' to the backend when asking for the page.");
-		summary.createParagraph("At the backend side, each time the page is requested, the direction is read from"
+		summary.appendParagraph("At the backend side, each time the page is requested, the direction is read from"
 				+ "parameters and a new paragraph is added with the selected direction.");
 
-		final Section section = page.createSection("Selected directions:");
+		final Section section = page.appendSection("Selected directions:");
 
 		final Panel buttons = section.append(new Panel());
 		buttons.setAlign(Layouts.TextAlign.CENTER);
@@ -51,7 +51,7 @@ public class NavigationWithButton {
 			final RequestReader reader = new RequestReader(request);
 			final String direction = reader.getStringParameter("direction");
 			if(direction != null) {
-				section.createParagraph("selected: " + direction);
+				section.appendParagraph("selected: " + direction);
 			}
 			return page;
 		});
