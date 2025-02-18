@@ -461,16 +461,19 @@ function instrumentRefreshButton(buttonElement) {
 function instrumentSearchForms() {
     const searchForms = document.querySelectorAll('.tui-search-form');
     searchForms.forEach(function(searchElement, i) {
-        const searchInput = searchElement.querySelectorAll("input[type='search']")[0];
         const button = searchElement.querySelector('button');
         button.addEventListener('click', function() {
+            const data = {};
+            searchElement.querySelectorAll("input").forEach(function(inputElement, i) {
+                data[inputElement.getAttribute('name')] = inputElement.value;
+            });
             searchElement.getAttribute('tui-refresh-listeners').split(",")
                 .forEach(function(id, i) {
-                    const data = {};
-                    data[searchInput.getAttribute('name')] = searchInput.value;
                     refreshComponent(id, data);
                 });
         });
+
+        const searchInput = searchElement.querySelectorAll("input[type='search']")[0];
         searchInput.addEventListener('keypress', function(event) {
             if(event.key === 'Enter') {
                 event.preventDefault();

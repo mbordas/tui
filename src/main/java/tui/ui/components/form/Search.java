@@ -25,7 +25,9 @@ import tui.ui.components.UIRefreshableComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Search extends UIComponent {
 
@@ -36,13 +38,18 @@ public class Search extends UIComponent {
 	private final String m_label;
 	private final String m_parameterName;
 	private final Map<String, String> m_parameters = new HashMap<>();
-	private final Collection<UIComponent> m_connectedComponents = new ArrayList<>();
+	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
+	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
 	private boolean m_hideButton = false;
 
 	public Search(String title, String label, String parameterName) {
 		m_title = title;
 		m_label = label;
 		m_parameterName = parameterName;
+	}
+
+	public String getTitle() {
+		return m_title;
 	}
 
 	public String getParameterName() {
@@ -54,6 +61,12 @@ public class Search extends UIComponent {
 		return this;
 	}
 
+	public FormInputDayHHmm createInputDayHHmm(String label, String name) {
+		final FormInputDayHHmm result = new FormInputDayHHmm(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
 	public Search hideButton() {
 		m_hideButton = true;
 		return this;
@@ -63,7 +76,7 @@ public class Search extends UIComponent {
 		if(component.getSource() == null) {
 			throw new BadComponentException("%s must have a source set for reload events.", UIRefreshableComponent.class.getSimpleName());
 		}
-		m_connectedComponents.add(component);
+		m_refreshListeners.add(component);
 		return component;
 	}
 
@@ -79,10 +92,8 @@ public class Search extends UIComponent {
 				.setAttribute("type", "search")
 				.setAttribute("name", m_parameterName)
 				.setAttribute("placeholder", m_title);
-		final HTMLNode button = result.createChild("button")
-				.setText(m_label);
-		if(m_hideButton) {
-			button.setStyleProperty("display", "none");
+		for(FormInput input : m_inputs) {
+			result.append(input.toHTMLNode());
 		}
 
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
@@ -94,8 +105,14 @@ public class Search extends UIComponent {
 					.setAttribute("value", value);
 		}
 
-		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
+		final HTMLNode button = result.createChild("button")
+				.setText(m_label);
+		if(m_hideButton) {
+			button.setStyleProperty("display", "none");
+		}
+
+		if(!m_refreshListeners.isEmpty()) {
+			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));
 		}
 
 		return result;
@@ -108,4 +125,5 @@ public class Search extends UIComponent {
 		//		return result;
 		return null;
 	}
+
 }

@@ -89,6 +89,12 @@ public class Browser {
 		button.click();
 	}
 
+	// PARAGRAPHS
+
+	public List<WebElement> getParagraphs() {
+		return m_driver.findElements(By.tagName("p"));
+	}
+
 	// NAVLINKS
 
 	public List<WebElement> getNavLinks() {
@@ -358,4 +364,5 @@ public class Browser {
 	public WebElement getByTUID(long tuid) {
 		return m_driver.findElement(By.id(String.valueOf(tuid)));
 	}
+
 }

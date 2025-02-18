@@ -16,22 +16,89 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.form;
 
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.html.HTMLNode;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
+import tui.test.TestWithBackend;
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
 import tui.ui.components.Table;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public class SearchTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class SearchTest extends TestWithBackend {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SearchTest.class);
+
+	record Item(long serialNumber, String manufacturer, String code, String label, double price_Euro) {
+	}
+
+	/**
+	 * Here the user enters 'value1' in search single input then submit. The test checks that the paragraphs refreshed with
+	 * the entered value.
+	 */
+	@Test
+	public void refreshWithOneInput() {
+		final Page page = new Page("Search", "/search");
+		final Search search = page.append(new Search("refreshWithOneInput", "One input", "oneInput"));
+		final Paragraph paragraphToBeRefreshed = page.append(new Paragraph());
+		paragraphToBeRefreshed.setSource("/paragraph");
+		search.connectListener(paragraphToBeRefreshed);
+
+		startBackend(page);
+		registerWebService(paragraphToBeRefreshed.getSource(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			final String oneInput = reader.getStringParameter("oneInput");
+			return new Paragraph().appendNormal(oneInput).toJsonMap();
+		});
+
+		final Browser browser = startBrowser();
+		browser.open(page.getSource());
+		browser.typeSearch(search.getTitle(), "oneInput", "value1");
+		browser.submitSearch(search.getTitle());
+
+		assertTrue(browser.getParagraphs().stream().anyMatch((element -> element.getText().equals("value1"))));
+	}
+
+	@Test
+	public void refreshWithAdditionalInputs() {
+		final Page page = new Page("Search", "/search");
+		final Search search = page.append(new Search("refreshWithOneInput", "One input", "firstInput"));
+		search.createInputDayHHmm("Date", "secondInput");
+		final Paragraph paragraphToBeRefreshed = page.append(new Paragraph());
+		paragraphToBeRefreshed.setSource("/paragraph");
+		search.connectListener(paragraphToBeRefreshed);
+
+		startBackend(page);
+		registerWebService(paragraphToBeRefreshed.getSource(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			final String firstValue = reader.getStringParameter("firstInput");
+			final String secondValue = reader.getStringParameter("secondInput");
+			return new Paragraph().appendNormal(firstValue + " - " + secondValue).toJsonMap();
+		});
+
+		final Browser browser = startBrowser();
+		browser.open(page.getSource());
+		browser.typeSearch(search.getTitle(), "firstInput", "value1");
+		browser.typeSearch(search.getTitle(), "secondInput", "18/02/2025 22:37");
+		browser.submitSearch(search.getTitle());
+
+		final Optional<WebElement> anyParagraph = browser.getParagraphs().stream().filter(
+				(element) -> element.getText().startsWith("value1 - ")).findAny();
+
+		assertTrue(anyParagraph.isPresent());
+		assertEquals("value1 - 2025-02-18T22:37", anyParagraph.get().getText());
+	}
 
 	@Test
 	public void toHTML() {
@@ -39,9 +106,6 @@ public class SearchTest {
 
 		HTMLNode.PRETTY_PRINT = true;
 		LOG.info(search.toHTMLNode().toHTML());
-	}
-
-	record Item(long serialNumber, String manufacturer, String code, String label, double price_Euro) {
 	}
 
 	public static void main(String[] args) throws Exception {

@@ -52,16 +52,25 @@ public class Layouts {
 	}
 
 	public enum TextAlign {
-		LEFT("left"), CENTER("center"), RIGHT("right"), STRETCH("justify");
+		LEFT("tui-align-left", "left"),
+		CENTER("tui-align-center", "center"),
+		RIGHT("tui-align-right", "right"),
+		STRETCH("tui-align-stretch", "justify");
 
+		private final String m_htmlClass;
 		private final String m_cssValue;
 
-		TextAlign(String cssValue) {
+		TextAlign(String htmlClass, String cssValue) {
+			m_htmlClass = htmlClass;
 			m_cssValue = cssValue;
 		}
 
 		public @Nullable String getCSSValue() {
 			return m_cssValue;
+		}
+
+		public String getHTMLClass() {
+			return m_htmlClass;
 		}
 	}
 }
