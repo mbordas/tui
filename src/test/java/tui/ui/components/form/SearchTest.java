@@ -138,7 +138,7 @@ public class SearchTest extends TestWithBackend {
 		final TUIBackend backend = new TUIBackend(8080);
 		backend.registerWebService(table.getSource(), (uri, request, response) -> {
 			final RequestReader requestReader = new RequestReader(request);
-			final String searched = requestReader.getStringParameter(search.getParameterName());
+			final String searched = requestReader.getStringParameter("search");
 			final List<Item> foundItems = items.stream()
 					.filter((item) -> searched == null
 							|| searched.isEmpty()

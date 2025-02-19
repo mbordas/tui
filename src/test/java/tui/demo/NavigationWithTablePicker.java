@@ -73,7 +73,7 @@ public class NavigationWithTablePicker {
 
 		backend.registerWebService(mailSelector.getSource(), (uri, request, response) -> {
 			final RequestReader requestReader = new RequestReader(request);
-			final String searched = requestReader.getStringParameter(search.getParameterName());
+			final String searched = requestReader.getStringParameter("subjectContains");
 			final TablePicker table = new TablePicker(mailSelector.getTitle(), mailSelector.getColumns());
 			emails.stream()
 					.filter((email) -> email.subject().contains(searched))

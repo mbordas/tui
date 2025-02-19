@@ -35,25 +35,25 @@ public class Search extends UIComponent {
 	public static final String HTML_CLASS = "tui-search-form";
 
 	private final String m_title;
-	private final String m_label;
-	private final String m_parameterName;
+	private final String m_buttonLabel;
 	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
 	private boolean m_hideButton = false;
 
-	public Search(String title, String label, String parameterName) {
+	public Search(String title, String buttonLabel, String parameterName) {
 		m_title = title;
-		m_label = label;
-		m_parameterName = parameterName;
+		m_buttonLabel = buttonLabel;
+		createInputSearch(buttonLabel, parameterName);
+	}
+
+	public Search(String title, String buttonLabel) {
+		m_title = title;
+		m_buttonLabel = buttonLabel;
 	}
 
 	public String getTitle() {
 		return m_title;
-	}
-
-	public String getParameterName() {
-		return m_parameterName;
 	}
 
 	public Search addParameter(String name, String value) {
@@ -61,8 +61,26 @@ public class Search extends UIComponent {
 		return this;
 	}
 
+	public FormInputSearch createInputSearch(String label, String name) {
+		final FormInputSearch result = new FormInputSearch(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
+	public FormInputString createInputString(String label, String name) {
+		final FormInputString result = new FormInputString(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
 	public FormInputDayHHmm createInputDayHHmm(String label, String name) {
 		final FormInputDayHHmm result = new FormInputDayHHmm(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
+	public FormInputRadio createInputRadio(String label, String name) {
+		final FormInputRadio result = new FormInputRadio(label, name);
 		m_inputs.add(result);
 		return result;
 	}
@@ -85,13 +103,8 @@ public class Search extends UIComponent {
 		final HTMLNode result = super.toHTMLNode("search", false)
 				.setClass(HTML_CLASS);
 
-		result.createChild("label")
-				.setAttribute("for", m_parameterName)
-				.setText(m_title);
-		result.createChild("input")
-				.setAttribute("type", "search")
-				.setAttribute("name", m_parameterName)
-				.setAttribute("placeholder", m_title);
+		result.createChild("label").setText(m_title);
+
 		for(FormInput input : m_inputs) {
 			result.append(input.toHTMLNode());
 		}
@@ -106,7 +119,7 @@ public class Search extends UIComponent {
 		}
 
 		final HTMLNode button = result.createChild("button")
-				.setText(m_label);
+				.setText(m_buttonLabel);
 		if(m_hideButton) {
 			button.setStyleProperty("display", "none");
 		}

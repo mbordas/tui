@@ -40,7 +40,8 @@ function onload() {
 */
 async function refreshComponent(id, data) {
     const element = document.getElementById(id);
-    setFetchData(element, data);
+    addFetchData(element, data); // new data are added to existing
+    data = getFetchData(element); // we must get all data
     const component = document.getElementById(id);
     const sourcePath = component.getAttribute('tui-source');
     console.log('refreshing component ' + id + ' with source: ' + sourcePath);
@@ -111,8 +112,14 @@ async function refreshComponent(id, data) {
 /*
     Links parameters map 'data' to the element so that it will be used to complete the future Ajax requests when refreshing the element.
 */
-function setFetchData(element, data) {
-    element.fetch_data = data;
+function addFetchData(element, data) {
+    if(typeof element.fetch_data === 'undefined') {
+        element.fetch_data = data;
+    } else {
+         for(let key in data) {
+            element.fetch_data[key] = data[key];
+        }
+    }
 }
 
 /*
