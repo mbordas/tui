@@ -28,6 +28,7 @@ public class FormInputRadio extends FormInput {
 	public static final String JSON_TYPE = "from_input_radio";
 
 	private final Map<String, String> m_options = new LinkedHashMap<>();
+	private boolean m_showOptionsOnSameLine = false; // Shows options on the same line
 
 	public FormInputRadio(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);
@@ -35,6 +36,11 @@ public class FormInputRadio extends FormInput {
 
 	public FormInputRadio addOption(String label, String value) {
 		m_options.put(label, value);
+		return this;
+	}
+
+	public FormInputRadio showOptionsOnSameLine(boolean enabled) {
+		m_showOptionsOnSameLine = enabled;
 		return this;
 	}
 
@@ -46,6 +52,9 @@ public class FormInputRadio extends FormInput {
 			final String value = optionEntry.getValue();
 
 			final HTMLNode inputDiv = result.append(new HTMLNode("div"));
+			if(m_showOptionsOnSameLine) {
+				inputDiv.addClass("tui-form-radio-inline");
+			}
 			inputDiv.append(new HTMLNode("input")
 					.setAttribute("type", HTML_TYPE)
 					.setAttribute("name", m_name)

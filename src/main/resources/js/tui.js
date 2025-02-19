@@ -219,6 +219,20 @@ function createComponent(json, idMap) {
         button.textContent = json['label'];
         result.appendChild(button);
         instrumentNavButton(result);
+    } else if (type == 'download_button') {
+        result = document.createElement('button');
+        result.classList.add('tui-download-button');
+        result.textContent = json['label'];
+        result.setAttribute('target', json['target']);
+        result.setAttribute('downloadName', json['downloadName']);
+        Object.entries(json['parameters']).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', key);
+            input.setAttribute('value', value);
+            result.appendChild(input);
+        });
+        result.setAttribute('onClick', 'downloadFromButton(this)');
     } else if(type == 'navlink') {
         result = document.createElement('a');
         result.classList.add('tui-navlink');
@@ -480,12 +494,13 @@ function instrumentSearchForms() {
                 });
         });
 
-        const searchInput = searchElement.querySelectorAll("input[type='search']")[0];
-        searchInput.addEventListener('keypress', function(event) {
-            if(event.key === 'Enter') {
-                event.preventDefault();
-                button.click();
-            }
+        searchElement.querySelectorAll("input[type='search']").forEach(function(searchInput, i) {
+            searchInput.addEventListener('keypress', function(event) {
+                if(event.key === 'Enter') {
+                    event.preventDefault();
+                    button.click();
+                }
+            });
         });
     });
 }
@@ -775,6 +790,61 @@ function instrumentNavButton(element) {
         parameterInput.setAttribute('value', SESSION_PARAMS[key]);
         element.appendChild(parameterInput);
     }
+}
+
+// DOWNLOAD BUTTONS
+
+function downloadFromButton(buttonElement) {
+    const url = buttonElement.getAttribute('target');
+    const downloadName = buttonElement.getAttribute('downloadName');
+
+    const data = {};
+    // Button parameters
+    buttonElement.querySelectorAll('input').forEach(function(input) {
+        data[input.getAttribute('name')] = input.getAttribute('value');
+    });
+    // Session parameters
+    Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
+        data[key] = value;
+    });
+
+    // Preparing headers depends on the fetch type
+    var body;
+    var headers;
+    if(FETCH_TYPE == 'JSON') {
+        body = JSON.stringify(Array.from(Object.entries(data)));
+        headers = { 'Content-Type': 'application/json', };
+    } else if(FETCH_TYPE == 'FORM_DATA') {
+        body = new FormData();
+        for(let key in data) {
+            body.append(key, data[key]);
+        }
+        headers = {};
+    }
+
+    fetch(url, {
+        method: 'POST',
+        headers: headers,
+        responseType: 'blob',
+        body: body,
+    })
+    .then(response => {
+        if(!response.ok) {
+            throw new Error(`HTTP error, status = ${response.status}`);
+        }
+        return response.blob()
+        })
+    .then(blob => {
+        const volatileLink = document.createElement('a');
+        volatileLink.href = window.URL.createObjectURL(blob);
+        volatileLink.download = downloadName;
+        document.body.appendChild(volatileLink);
+        volatileLink.click();
+        document.body.removeChild(volatileLink);
+    })
+    .catch(error => {
+        console.error(error);
+    });
 }
 
 // TABLES

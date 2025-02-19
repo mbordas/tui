@@ -57,8 +57,6 @@ public class Panel extends UIRefreshableComponent {
 			node.append(componentNode);
 		}
 
-		applyCustomStyle(containedElement.element());
-
 		return containedElement.getHigherNode();
 	}
 

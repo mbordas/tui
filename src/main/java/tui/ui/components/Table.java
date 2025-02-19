@@ -192,7 +192,7 @@ public class Table extends UIRefreshableComponent {
 				colIndex++;
 			}
 			rowNumber++;
-			if(m_pageSize != null && rowNumber >= m_pageSize) {
+			if(m_pageSize != null && rowNumber > m_pageSize) {
 				break;
 			}
 		}

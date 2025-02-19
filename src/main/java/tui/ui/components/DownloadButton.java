@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -21,33 +21,33 @@ import tui.json.JsonMap;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NavButton extends UIComponent {
+public class DownloadButton extends UIComponent {
 
-	public static final String HTML_CLASS = "tui-navbutton";
+	public static final String HTML_CLASS = "tui-download-button";
+	public static final String JSON_TYPE = "download_button";
 
-	public static final String JSON_TYPE = "navbutton";
+	private final String m_label;
+	private final String m_target;
+	private final String m_downloadName;
+	private final Map<String, String> m_parameters = new HashMap<>();
 
-	protected final String m_label;
-	protected final String m_target;
-	protected final Map<String, String> m_parameters = new HashMap<>();
-
-	public NavButton(String label, String target) {
+	public DownloadButton(String label, String target, String downloadName) {
 		m_label = label;
 		m_target = target;
+		m_downloadName = downloadName;
 	}
 
-	public NavButton setParameter(String name, String value) {
+	public void setParameter(String name, String value) {
 		m_parameters.put(name, value);
-		return this;
 	}
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = super.toHTMLNode("form", true)
-				.setAttribute("method", "POST")
-				.setAttribute("action", m_target)
-				.setAttribute("target", "_self")
-				.addClass(HTML_CLASS);
+		final HTMLNode result = new HTMLNode("button").addClass(HTML_CLASS);
+		result.setText(m_label);
+		result.setAttribute("target", m_target);
+		result.setAttribute("downloadName", m_downloadName);
+		result.setAttribute("onClick", "downloadFromButton(this)");
 
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
 			final String name = entry.getKey();
@@ -58,12 +58,6 @@ public class NavButton extends UIComponent {
 					.setAttribute("value", value);
 		}
 
-		final HTMLNode button = result.createChild("button")
-				.setAttribute("type", "submit")
-				.setText(m_label);
-
-		applyCustomStyle(button);
-
 		return result;
 	}
 
@@ -72,6 +66,7 @@ public class NavButton extends UIComponent {
 		final JsonMap result = new JsonMap(JSON_TYPE);
 		result.setAttribute("label", m_label);
 		result.setAttribute("target", m_target);
+		result.setAttribute("downloadName", m_downloadName);
 		final JsonMap parameters = result.setChild("parameters", new JsonMap(null));
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
 			parameters.setAttribute(entry.getKey(), entry.getValue());
@@ -79,4 +74,5 @@ public class NavButton extends UIComponent {
 		applyCustomStyle(result);
 		return result;
 	}
+
 }

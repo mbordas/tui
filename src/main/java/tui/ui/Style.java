@@ -317,13 +317,17 @@ public class Style {
 				    margin-bottom: 5px;
 				}
 				.tui-form-close-button, .tui-form-reset-button {
-				      background: none;
-				      padding-left: 5px;
-				      padding-right: 5px;
-				      border: none;
-				      color: var(--global-color-background-contrast);
-				      text-decoration: underline;
-				      cursor: pointer;
+					background: none;
+					padding-left: 5px;
+					padding-right: 5px;
+					border: none;
+					color: var(--global-color-background-contrast);
+					text-decoration: underline;
+					cursor: pointer;
+				}
+				.tui-form-radio-inline {
+					display: inline-block;
+				     margin-right: 10px;
 				}
 				.modal {
 				    max-width: 50ch;
