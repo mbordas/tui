@@ -62,14 +62,14 @@ public class TFormTest extends TestWithBackend {
 		browser.open("/index");
 
 		// Filling the form
-		final Collection<WebElement> fields = browser.getFields("Test form");
+		final Collection<WebElement> fields = browser.getFormFields("Test form");
 		assertEquals(2, fields.size());
 		checkField(fields, "Name", "text", "name");
 		checkField(fields, "Age", "number", "age");
 
-		browser.typeField("Test form", "name", "My name");
-		browser.typeField("Test form", "age", "42");
-		browser.submit("Test form");
+		browser.typeFormField("Test form", "name", "My name");
+		browser.typeFormField("Test form", "age", "42");
+		browser.submitForm("Test form");
 
 		// Testing values received by the backend
 		wait_s(0.1);

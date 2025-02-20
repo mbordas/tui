@@ -18,10 +18,16 @@ package tui.test.components;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.Collection;
+
 public class TSearchTest {
 
 	public static String getTitle(WebElement formElement) {
 		final WebElement label = formElement.findElement(By.tagName("label"));
 		return label.getText();
+	}
+
+	public static Collection<WebElement> getFields(WebElement searchElement) {
+		return searchElement.findElements(By.tagName("input"));
 	}
 }

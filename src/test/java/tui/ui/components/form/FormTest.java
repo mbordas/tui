@@ -58,12 +58,12 @@ public class FormTest extends TestWithBackend {
 		});
 
 		final Browser browser = startAndBrowse(page).browser();
-		browser.typeField(form1.getTitle(), "login", "test login");
-		browser.submit(form1.getTitle());
+		browser.typeFormField(form1.getTitle(), "login", "test login");
+		browser.submitForm(form1.getTitle());
 		wait_s(0.1);
 
-		browser.typeField(form2.getTitle(), "email", "test@email.fr");
-		browser.submit(form2.getTitle());
+		browser.typeFormField(form2.getTitle(), "email", "test@email.fr");
+		browser.submitForm(form2.getTitle());
 		wait_s(0.1);
 
 		assertEquals("test login", param1.get());
@@ -78,8 +78,8 @@ public class FormTest extends TestWithBackend {
 		page.append(form);
 
 		final Browser browser = startAndBrowse(page).browser();
-		browser.typeField(form.getTitle(), "message", "entered value");
-		browser.submit(form.getTitle());
+		browser.typeFormField(form.getTitle(), "message", "entered value");
+		browser.submitForm(form.getTitle());
 		wait_s(0.1);
 
 		final WebElement formElement = browser.getForm(form.getTitle());
@@ -107,8 +107,8 @@ public class FormTest extends TestWithBackend {
 			return Form.buildSuccessfulSubmissionResponse();
 		});
 
-		browser.selectRadio(form.getTitle(), inputRadio.getName(), "option2");
-		browser.submit(form.getTitle());
+		browser.selectFormRadio(form.getTitle(), inputRadio.getName(), "option2");
+		browser.submitForm(form.getTitle());
 		wait_s(0.1);
 
 		assertEquals("option2", valueSentToBackend.get());
@@ -143,9 +143,9 @@ public class FormTest extends TestWithBackend {
 			return Form.buildSuccessfulSubmissionResponse();
 		});
 
-		browser.typeField(form.getTitle(), "name", "UploadedName.txt");
-		browser.selectFile(form.getTitle(), "file", fileToUpload);
-		browser.submit(form.getTitle());
+		browser.typeFormField(form.getTitle(), "name", "UploadedName.txt");
+		browser.selectFormFile(form.getTitle(), "file", fileToUpload);
+		browser.submitForm(form.getTitle());
 		wait_s(1);
 
 		File expectedUploadedFile = new File(folderWhereToUpload, "UploadedName.txt");

@@ -485,8 +485,22 @@ function instrumentSearchForms() {
         const button = searchElement.querySelector('button');
         button.addEventListener('click', function() {
             const data = {};
-            searchElement.querySelectorAll("input").forEach(function(inputElement, i) {
-                data[inputElement.getAttribute('name')] = inputElement.value;
+            searchElement.querySelectorAll('input').forEach(function(inputElement) {
+                if(inputElement.type == 'radio') {
+                    if(inputElement.checked) {
+                        data[inputElement.name] = inputElement.value;
+                    }
+                } else if(inputElement.type == 'checkbox') {
+                    if(inputElement.checked) {
+                        data[inputElement.name] = 'on';
+                    } else {
+                        data[inputElement.name] = 'off';
+                    }
+                } else {
+                    if(inputElement.value != '') {
+                        data[inputElement.name] = inputElement.value;
+                    }
+                }
             });
             searchElement.getAttribute('tui-refresh-listeners').split(",")
                 .forEach(function(id, i) {

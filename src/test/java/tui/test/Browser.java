@@ -175,11 +175,6 @@ public class Browser {
 		return m_driver.findElements(By.className("tui-panel"));
 	}
 
-	public Collection<WebElement> getFields(String formTitle) {
-		final WebElement formElement = getForm(formTitle);
-		return TFormTest.getFields(formElement);
-	}
-
 	// IMAGES
 
 	public List<WebElement> getImages() {
@@ -188,8 +183,12 @@ public class Browser {
 
 	// SEARCH
 
+	public List<WebElement> getSearches() {
+		return m_driver.findElements(By.className(Search.HTML_CLASS));
+	}
+
 	public WebElement getSearch(String title) {
-		final Optional<WebElement> anySearchElement = m_driver.findElements(By.className(Search.HTML_CLASS)).stream()
+		final Optional<WebElement> anySearchElement = getSearches().stream()
 				.filter(WebElement::isDisplayed)
 				.filter((element) -> title.equals(TSearchTest.getTitle(element)))
 				.findAny();
@@ -201,6 +200,11 @@ public class Browser {
 		}
 	}
 
+	public Collection<WebElement> getSearchFields(String searchTitle) {
+		final WebElement searchElement = getSearch(searchTitle);
+		return TSearchTest.getFields(searchElement);
+	}
+
 	public void typeSearch(@NotNull String title, @NotNull String parameterName, String value) {
 		final WebElement searchElement = getSearch(title);
 		for(WebElement inputElement : searchElement.findElements(By.tagName("input"))) {
@@ -210,6 +214,21 @@ public class Browser {
 			}
 		}
 		throw new RuntimeException("Search input element not found: " + parameterName);
+	}
+
+	public void selectSearchRadio(String searchTitle, String name, String option) {
+		final Optional<WebElement> anyInput = getSearchFields(searchTitle).stream()
+				.filter((inputElement) ->
+						name.equals(inputElement.getAttribute("name"))
+								&& inputElement.getAttribute("type").equals("radio")
+								&& inputElement.getAttribute("value").equals(option))
+				.findAny();
+
+		if(anyInput.isEmpty()) {
+			throw new RuntimeException(String.format("Option '%s' not found in radio '%s'", option, name));
+		} else {
+			anyInput.get().click();
+		}
 	}
 
 	public void submitSearch(@NotNull String title) {
@@ -242,8 +261,13 @@ public class Browser {
 		return m_driver.findElements(By.className(Form.HTML_CLASS));
 	}
 
-	public void typeField(String formTitle, String name, String value) {
-		final Optional<WebElement> anyFieldName = getFields(formTitle).stream()
+	public Collection<WebElement> getFormFields(String formTitle) {
+		final WebElement formElement = getForm(formTitle);
+		return TFormTest.getFields(formElement);
+	}
+
+	public void typeFormField(String formTitle, String name, String value) {
+		final Optional<WebElement> anyFieldName = getFormFields(formTitle).stream()
 				.filter((field) -> name.equals(getFieldName(field)))
 				.findAny();
 
@@ -255,8 +279,8 @@ public class Browser {
 		}
 	}
 
-	public void selectRadio(String formTitle, String name, String option) {
-		final Optional<WebElement> anyFieldName = getFields(formTitle).stream()
+	public void selectFormRadio(String formTitle, String name, String option) {
+		final Optional<WebElement> anyFieldName = getFormFields(formTitle).stream()
 				.filter((field) -> name.equals(getFieldName(field)))
 				.findAny();
 
@@ -274,8 +298,8 @@ public class Browser {
 		}
 	}
 
-	public void selectFile(String formTitle, String name, File localFile) {
-		final Optional<WebElement> anyFieldName = getFields(formTitle).stream()
+	public void selectFormFile(String formTitle, String name, File localFile) {
+		final Optional<WebElement> anyFieldName = getFormFields(formTitle).stream()
 				.filter((field) -> name.equals(getFieldName(field)))
 				.findAny();
 
@@ -287,7 +311,7 @@ public class Browser {
 		}
 	}
 
-	public void submit(String formTitle) {
+	public void submitForm(String formTitle) {
 		final WebElement formElement = getForm(formTitle);
 		final Optional<WebElement> anySubmitButton = formElement.findElements(By.tagName("button")).stream()
 				.filter((button) -> "submit".equals(button.getAttribute("type")))

@@ -73,7 +73,7 @@ public class SearchTest extends TestWithBackend {
 	@Test
 	public void refreshWithAdditionalInputs() {
 		final Page page = new Page("Search", "/search");
-		final Search search = page.append(new Search("refreshWithOneInput", "One input", "firstInput"));
+		final Search search = page.append(new Search("refreshWithAdditionalInputs", "One input", "firstInput"));
 		search.createInputDayHHmm("Date", "secondInput");
 		final Paragraph paragraphToBeRefreshed = page.append(new Paragraph());
 		paragraphToBeRefreshed.setSource("/paragraph");
@@ -98,6 +98,39 @@ public class SearchTest extends TestWithBackend {
 
 		assertTrue(anyParagraph.isPresent());
 		assertEquals("value1 - 2025-02-18T22:37", anyParagraph.get().getText());
+	}
+
+	@Test
+	public void supportForRadioButton() {
+		final Page page = new Page("Search", "/search");
+		final Search search = page.append(new Search("supportForRadioButton", "One input", "firstInput"));
+		search.createInputRadio("Radio", "secondInput")
+				.addOption("Option 1", "one")
+				.addOption("Option 2", "two")
+				.addOption("Option 3", "three");
+		final Paragraph paragraphToBeRefreshed = page.append(new Paragraph());
+		paragraphToBeRefreshed.setSource("/paragraph");
+		search.connectListener(paragraphToBeRefreshed);
+
+		startBackend(page);
+		registerWebService(paragraphToBeRefreshed.getSource(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			final String firstValue = reader.getStringParameter("firstInput");
+			final String secondValue = reader.getStringParameter("secondInput");
+			return new Paragraph().appendNormal(firstValue + " - " + secondValue).toJsonMap();
+		});
+
+		final Browser browser = startBrowser();
+		browser.open(page.getSource());
+		browser.typeSearch(search.getTitle(), "firstInput", "value1");
+		browser.selectSearchRadio(search.getTitle(), "secondInput", "three");
+		browser.submitSearch(search.getTitle());
+
+		final Optional<WebElement> anyParagraph = browser.getParagraphs().stream().filter(
+				(element) -> element.getText().startsWith("value1 - ")).findAny();
+
+		assertTrue(anyParagraph.isPresent());
+		assertEquals("value1 - three", anyParagraph.get().getText());
 	}
 
 	@Test
