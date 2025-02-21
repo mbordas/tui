@@ -107,6 +107,29 @@ public class Style {
 				    /* justify-self: stretch; */
 				}
 				
+				h1 {
+					padding-left: 0px;
+					font-size: 2em;
+				}
+				
+				h2 {
+					padding-left: 0px;
+					font-size: 1.5em;
+				}
+				
+				h3 {
+					padding-left: 0px;
+					font-size: 1.2em;
+					font-weight: lighter;
+				}
+				
+				h4 {
+					padding-left: 0px;
+					font-size: 1.1em;
+					font-style: italic;
+					font-weight: lighter;
+				}
+				
 				a {
 					color: var(--global-color-action);
 				}
@@ -139,6 +162,7 @@ public class Style {
 				
 				section {
 					text-align: left;
+					margin-top: 30px;
 				}
 				
 				p {

@@ -37,6 +37,7 @@ public class StyleSet {
 	private String m_borderStyle = null;
 	private String m_borderColor = null;
 	private String m_borderWidth = null;
+	private String m_borderRadius_px = null;
 
 	private Style.Padding m_padding = null;
 	private Style.Margin m_margin = null;
@@ -64,6 +65,11 @@ public class StyleSet {
 
 	public StyleSet setBorderWidth_px(int width_px) {
 		m_borderWidth = String.format("%dpx", width_px);
+		return this;
+	}
+
+	public StyleSet setBorderRadius(Integer radius_px) {
+		m_borderRadius_px = String.format("%dpx", radius_px);
 		return this;
 	}
 
@@ -174,6 +180,7 @@ public class StyleSet {
 		setStylePropertyIfDefined(node, "border-style", m_borderStyle, setter);
 		setStylePropertyIfDefined(node, "border-color", m_borderColor, setter);
 		setStylePropertyIfDefined(node, "border-width", m_borderWidth, setter);
+		setStylePropertyIfDefined(node, "border-radius", m_borderRadius_px, setter);
 		setStylePropertyIfDefined(node, "width", m_width, setter);
 		setStylePropertyIfDefined(node, "height", m_height, setter);
 

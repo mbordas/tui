@@ -51,7 +51,7 @@ public class Paragraph extends UIRefreshableComponent {
 		@Override
 		public HTMLNode toHTMLNode() {
 			final HTMLNode result = new HTMLNode("span");
-			result.setText(m_text);
+			result.setText(m_text.replaceAll("\\n", "<br/>"));
 			applyCustomStyle(result);
 			return result;
 		}
@@ -93,6 +93,11 @@ public class Paragraph extends UIRefreshableComponent {
 
 	public Paragraph clear() {
 		m_content.clear();
+		return this;
+	}
+
+	public Paragraph append(UIComponent component) {
+		m_content.add(component);
 		return this;
 	}
 
