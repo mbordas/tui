@@ -15,10 +15,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
 import tui.ui.components.Page;
+import tui.ui.components.UIRefreshableComponent;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -71,6 +73,20 @@ public class TestWithBackend {
 	protected void registerWebService(String path, TUIWebService webservice) {
 		constructBackendWhenNeeded();
 		m_backend.registerWebService(path, webservice);
+	}
+
+	/**
+	 * Adds a web service that will return the given component as is.
+	 *
+	 * @param component Must be refreshable and have its source set.
+	 */
+	protected WebServiceSpy registerWebServiceSpy(@NotNull UIRefreshableComponent component) {
+		final String source = component.getSource();
+		assert source != null;
+		constructBackendWhenNeeded();
+		final WebServiceSpy result = new WebServiceSpy(component);
+		m_backend.registerWebService(source, result.buildWebService());
+		return result;
 	}
 
 	protected TClient startClient() {
