@@ -19,7 +19,10 @@ import org.junit.Test;
 import tui.html.HTMLNode;
 import tui.http.TUIBackend;
 import tui.test.Browser;
+import tui.ui.Style;
 import tui.ui.components.layout.Panel;
+
+import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -52,10 +55,12 @@ public class ParagraphTest {
 		final TUIBackend backend = new TUIBackend(8080);
 		backend.registerPage(page);
 		backend.registerWebService(paragraph.getSource(), (uri, request, response) -> {
+			final Color backgroundColor = new Color((int) (Math.random() * 250), (int) (Math.random() * 250), (int) (Math.random() * 250));
 			final Paragraph result = new Paragraph()
-					.appendNormal("Current time is ")
-					.appendBold("" + System.currentTimeMillis())
-					.appendNormal(" ms.");
+					.appendNormal("Current time is")
+					.append((style) -> style.setTextColor(Style.computeContrastColor(backgroundColor)).setBackgroundColor(backgroundColor),
+							" " + System.currentTimeMillis() + " ")
+					.appendNormal("ms.");
 			return result.toJsonMap();
 		});
 
