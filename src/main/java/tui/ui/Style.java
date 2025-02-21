@@ -262,6 +262,19 @@ public class Style {
 				    overflow-y: auto;
 				}
 				
+				/* SEARCH */
+				
+				tui-search-form {
+					margin: 10px 0px 10px 0px;
+				}
+				
+				search>div {
+					display: inline-block;
+				}
+				search>label {
+					margin-right: 10px;
+				}
+				
 				/* FORM */
 				
 				tui-form {
@@ -465,6 +478,9 @@ public class Style {
 				.tui-table-navigation {
 				    padding-top: 5px;
 				    padding-bottom: 5px;
+				}
+				.tui-table-navigation>button {
+					margin-right: 5px;
 				}
 				
 				/* FETCH ERRORS */

@@ -51,7 +51,7 @@ public class TUIDocsOverview extends Page {
 				+ " The Style instance is given in a Resource that tells that it is embedded into the HTML content of the page. If we wanted"
 				+ " the style to be served as a CSS file by the backend of our application, then we would have set the Resource as external.");
 
-		creatingAPage.appendParagraph("An other way to provide our page is to use a server application. You may already have your favorite"
+		creatingAPage.appendParagraph("An other way to provide our page is to use a server application. You may already have your favorite "
 				+ "backend solution, but here we will see how it goes using TUI's backend which is initially design for test purpose.");
 		creatingAPage.append(new CodeParagraph("""
 				final TUIBackend backend = new TUIBackend(8000);

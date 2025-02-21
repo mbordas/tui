@@ -206,6 +206,10 @@ public class TUIBackend implements AutoCloseable {
 		m_pageServices.put(path, service);
 	}
 
+	public void setStyle(Style style) {
+		m_style = style;
+	}
+
 	public void registerResourceFileService(String path, String resourcePath, String contentType) throws IOException {
 		m_fileServices.put(path, (uri, request, response) -> {
 			try(InputStream input = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);) {

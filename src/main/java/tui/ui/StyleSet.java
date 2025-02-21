@@ -153,16 +153,19 @@ public class StyleSet {
 		apply(node, (map, property) -> map.setStyleProperty(property.name, property.value));
 	}
 
-	public void setTextAlign(Layouts.TextAlign textAlign) {
+	public StyleSet setTextAlign(Layouts.TextAlign textAlign) {
 		m_textAlign = textAlign;
+		return this;
 	}
 
-	public void setFontFamily(String fontFamily) {
+	public StyleSet setFontFamily(String fontFamily) {
 		m_fontFamily = fontFamily;
+		return this;
 	}
 
-	public void setFontWeight(String fontWeight) {
+	public StyleSet setFontWeight(String fontWeight) {
 		m_fontWeight = fontWeight;
+		return this;
 	}
 
 	private record Property(String name, String value) {

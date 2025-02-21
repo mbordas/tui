@@ -17,6 +17,7 @@ package tui.utils;
 
 import tui.http.TUIBackend;
 import tui.test.Browser;
+import tui.ui.Style;
 import tui.ui.components.Page;
 import tui.ui.components.UIComponent;
 
@@ -40,7 +41,14 @@ public class TestUtils {
 	}
 
 	public static void quickShow(UIComponent component) throws Exception {
+		quickShow(component, null);
+	}
+
+	public static void quickShow(UIComponent component, Style style) throws Exception {
 		final TUIBackend backend = new TUIBackend(8000);
+		if(style != null) {
+			backend.setStyle(style);
+		}
 		final Page page = new Page("TUI Quick show - " + component.getClass().getSimpleName(), "/quickShow");
 		page.append(component);
 		backend.registerPage(page);
