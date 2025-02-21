@@ -16,14 +16,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tui.html.HTMLNode;
-import tui.html.HTMLText;
-import tui.json.JsonArray;
 import tui.json.JsonMap;
+import tui.ui.StyleSet;
 import tui.ui.components.layout.Layouts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Paragraph extends UIRefreshableComponent {
 
@@ -36,31 +37,37 @@ public class Paragraph extends UIRefreshableComponent {
 	public static final String ATTRIBUTE_BORDER = "border";
 	public static final String ATTRIBUTE_TEXT_ALIGN = "textAlign";
 
-	public enum Style {
-		NORMAL(null, "text"), STRONG("strong", "strong");
-		String htmlNodeName;
-		String jsonType;
+	public class Text extends UIComponent {
 
-		Style(String htmlNodeName, String jsonType) {
-			this.htmlNodeName = htmlNodeName;
-			this.jsonType = jsonType;
+		public static final String JSON_TYPE = "text";
+		public static final String JSON_ATTRIBUTE_CONTENT = "content";
+
+		private final String m_text;
+
+		public Text(String format, Object... args) {
+			m_text = String.format(format, args);
 		}
 
-		public static Style parseJsonType(String type) {
-			return switch(type) {
-				case "text" -> NORMAL;
-				case "strong" -> STRONG;
-				default -> throw new IllegalStateException("Unexpected value: " + type);
-			};
+		@Override
+		public HTMLNode toHTMLNode() {
+			final HTMLNode result = new HTMLNode("span");
+			result.setText(m_text);
+			applyCustomStyle(result);
+			return result;
 		}
-	}
 
-	public record Fragment(Style style, String text) {
+		@Override
+		public JsonMap toJsonMap() {
+			final JsonMap result = new JsonMap(JSON_TYPE);
+			result.setAttribute(JSON_ATTRIBUTE_CONTENT, m_text);
+			applyCustomStyle(result);
+			return result;
+		}
 	}
 
 	private boolean m_withBorder = false;
 	private Layouts.TextAlign m_textAlign = Layouts.TextAlign.LEFT;
-	private final List<Fragment> m_fragments = new ArrayList<>();
+	private final List<UIComponent> m_content = new ArrayList<>();
 
 	public Paragraph() {
 	}
@@ -85,25 +92,28 @@ public class Paragraph extends UIRefreshableComponent {
 	}
 
 	public Paragraph clear() {
-		m_fragments.clear();
+		m_content.clear();
+		return this;
+	}
+
+	/**
+	 * @param styler This optional function may modify text's custom {@link StyleSet}.
+	 */
+	public Paragraph append(@Nullable Consumer<StyleSet> styler, @NotNull String format, Object... args) {
+		final Text text = new Text(format, args);
+		if(styler != null) {
+			styler.accept(text.customStyle());
+		}
+		m_content.add(text);
 		return this;
 	}
 
 	public Paragraph appendNormal(String format, Object... args) {
-		assert format != null;
-		return append(Style.NORMAL, format, args);
+		return append(null, format, args);
 	}
 
-	public Paragraph appendStrong(String text) {
-		assert text != null;
-		return append(Style.STRONG, text);
-	}
-
-	private Paragraph append(Style style, @NotNull String format, Object... args) {
-		if(!format.isEmpty()) {
-			m_fragments.add(new Fragment(style, String.format(format, args)));
-		}
-		return this;
+	public Paragraph appendBold(String format, Object... args) {
+		return append((style) -> style.setFontWeight("bold"), format, args);
 	}
 
 	@Override
@@ -113,15 +123,9 @@ public class Paragraph extends UIRefreshableComponent {
 		final HTMLNode paragraphElement = containedElement.element();
 		paragraphElement.addClass(m_textAlign.getHTMLClass());
 		paragraphElement.addClass(m_withBorder ? HTML_CLASS_BORDER_ON : HTML_CLASS_BORDER_OFF);
-		for(Fragment fragment : m_fragments) {
-			if(Style.NORMAL == fragment.style()) {
-				paragraphElement.append(new HTMLText(fragment.text()));
-			} else {
-				paragraphElement.createChild(fragment.style().htmlNodeName)
-						.setText(fragment.text());
-			}
+		for(UIComponent fragment : m_content) {
+			paragraphElement.append(fragment.toHTMLNode());
 		}
-
 		return containedElement.getHigherNode();
 	}
 
@@ -134,11 +138,7 @@ public class Paragraph extends UIRefreshableComponent {
 		result.setAttribute(ATTRIBUTE_TEXT_ALIGN, m_textAlign.name());
 		result.setAttribute(ATTRIBUTE_BORDER, m_withBorder ? "on" : "off");
 
-		final JsonArray content = result.createArray(ATTRIBUTE_CONTENT);
-
-		for(Fragment fragment : m_fragments) {
-			content.add(new JsonArray().add(fragment.style().jsonType).add(fragment.text()));
-		}
+		result.createArray(ATTRIBUTE_CONTENT, m_content, UIComponent::toJsonMap);
 
 		return result;
 	}

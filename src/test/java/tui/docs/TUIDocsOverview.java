@@ -87,5 +87,8 @@ public class TUIDocsOverview extends Page {
 				"Because the refresh of the table is triggered by the Search component, the '/table' web service"
 						+ " will be called with additional parameter 'nameContains' which value will be the string entered by the user in the Search"
 						+ " input.");
+		makingItInteractive.appendParagraph(
+				"Note that this parameter 'nameContains' and its value belong now to the refresh parameters of the table component. Any further "
+						+ "refresh of that table will send this parameter to the backend, even if it's not triggered by the search component.");
 	}
 }

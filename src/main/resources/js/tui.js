@@ -177,6 +177,9 @@ function createComponent(json, idMap) {
     } else if(type == 'paragraph') {
         result = document.createElement('p');
         updateParagraph(result, json);
+    } else if(type == 'text') {
+        result = document.createElement('span');
+        result.textContent = json['content'];
     } else if(type == 'grid') {
         result = document.createElement('div');
         result.classList.add('tui-grid');
@@ -449,12 +452,8 @@ function updateParagraph(element, json) {
     element.classList.add('tui-align-' + json['textAlign'].toLowerCase());
     element.classList.add('tui-border-' + json['border']);
     for(var fragment of json['content']) {
-        const fragmentType = fragment[0];
-        if(fragmentType == 'text') {
-            element.innerHTML += fragment[1];
-        } else if(fragmentType == 'strong') {
-            element.innerHTML += '<strong>' + fragment[1] + '</strong>';
-        }
+        const component = createComponent(fragment);
+        element.appendChild(component);
     }
 }
 

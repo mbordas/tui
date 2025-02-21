@@ -30,8 +30,33 @@ import java.util.Map;
 
 public class TParagraph extends TRefreshableComponent {
 
+	public static class TText extends TComponent {
+
+		String m_content = null;
+
+		protected TText(long tuid, TClient client) {
+			super(tuid, client);
+		}
+
+		@Override
+		public TComponent find(long tuid) {
+			return null;
+		}
+
+		@Override
+		protected Collection<TComponent> getChildrenComponents() {
+			return List.of();
+		}
+
+		public static TText parse(JsonMap map, TClient client) {
+			final TText result = new TText(-1L, client); // The Text class in Paragraph class does not provide TUID
+			result.m_content = map.getAttribute(Paragraph.Text.JSON_ATTRIBUTE_CONTENT);
+			return result;
+		}
+	}
+
 	private String m_source;
-	private final List<Paragraph.Fragment> m_fragments = new ArrayList<>();
+	private final List<TComponent> m_content = new ArrayList<>();
 
 	/**
 	 * @param tuid   Unique identifier.
@@ -49,15 +74,15 @@ public class TParagraph extends TRefreshableComponent {
 
 		final TParagraph paragraph = parse(map, null);
 		m_source = paragraph.m_source;
-		m_fragments.clear();
-		m_fragments.addAll(paragraph.m_fragments);
+		m_content.clear();
+		m_content.addAll(paragraph.m_content);
 	}
 
 	public String getText() {
 		final StringBuilder result = new StringBuilder();
-		for(Paragraph.Fragment fragment : m_fragments) {
-			result.append(fragment.text());
-		}
+		m_content.stream()
+				.filter((component) -> component instanceof TText)
+				.forEach((component) -> result.append(((TText) component).m_content));
 		return result.toString();
 	}
 
@@ -78,10 +103,9 @@ public class TParagraph extends TRefreshableComponent {
 
 		final JsonArray content = map.getArray(Paragraph.ATTRIBUTE_CONTENT);
 		for(int i = 0; i < content.size(); i++) {
-			final JsonArray entry = content.getArray(i);
-			final Paragraph.Style style = Paragraph.Style.parseJsonType(entry.get(0).toString());
-			final String text = entry.get(1).toString();
-			result.m_fragments.add(new Paragraph.Fragment(style, text));
+			final JsonMap entry = content.getMap(i);
+			final TComponent component = TComponentFactory.parse(entry, client);
+			result.m_content.add(component);
 		}
 
 		return result;

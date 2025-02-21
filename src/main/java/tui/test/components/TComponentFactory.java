@@ -38,6 +38,7 @@ public class TComponentFactory {
 			case TabbedFlow.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
 			case Panel.JSON_TYPE -> TPanel.parse(map, client);
 			case Paragraph.JSON_TYPE -> TParagraph.parse(map, client);
+			case Paragraph.Text.JSON_TYPE -> TParagraph.TText.parse(map, client);
 			case Section.JSON_TYPE -> TSection.parse(map, client);
 			case Table.JSON_TYPE -> TTable.parse(map, client);
 			case TablePicker.JSON_TYPE -> TTablePicker.parse(map, client);

@@ -132,10 +132,10 @@ public class Forms {
 		wizardParagraph.setSource("/forms/wizard/paragraph");
 		backend.registerWebService(wizardParagraph.getSource(), (uri, request, response) -> {
 			wizardParagraph.clear();
-			wizardParagraph.appendStrong("String: ").appendNormal(emptyWhenNull(m_infoSubmittedWithWizard.string));
-			wizardParagraph.appendStrong("Day: ").appendNormal(emptyWhenNull(m_infoSubmittedWithWizard.day));
-			wizardParagraph.appendStrong("Checkbox: ").appendNormal(emptyWhenNull(String.valueOf(m_infoSubmittedWithWizard.checkbox)));
-			wizardParagraph.appendStrong("Number: ").appendNormal(emptyWhenNull(String.valueOf(m_infoSubmittedWithWizard.number)));
+			wizardParagraph.appendBold("String: ").appendNormal(emptyWhenNull(m_infoSubmittedWithWizard.string));
+			wizardParagraph.appendBold("Day: ").appendNormal(emptyWhenNull(m_infoSubmittedWithWizard.day));
+			wizardParagraph.appendBold("Checkbox: ").appendNormal(emptyWhenNull(String.valueOf(m_infoSubmittedWithWizard.checkbox)));
+			wizardParagraph.appendBold("Number: ").appendNormal(emptyWhenNull(String.valueOf(m_infoSubmittedWithWizard.number)));
 			return wizardParagraph.toJsonMap();
 		});
 		createWizardForm(backend, wizardTab, wizardParagraph);

@@ -91,9 +91,9 @@ public class NavigationWithTablePicker {
 
 			final Grid result = new Grid(2, 1);
 			final Grid header = new Grid(3, 1);
-			header.set(0, 0, new Paragraph().appendStrong("Subject: ").appendNormal(email.subject()));
-			header.set(1, 0, new Paragraph().appendStrong("Date: ").appendNormal(email.date()));
-			header.set(2, 0, new Paragraph().appendStrong("Content:"));
+			header.set(0, 0, new Paragraph().appendBold("Subject: ").appendNormal(email.subject()));
+			header.set(1, 0, new Paragraph().appendBold("Date: ").appendNormal(email.date()));
+			header.set(2, 0, new Paragraph().appendBold("Content:"));
 			result.set(0, 0, header);
 			result.set(1, 0, new Paragraph(email.content()).withBorder(true));
 			return result.toJsonMap();

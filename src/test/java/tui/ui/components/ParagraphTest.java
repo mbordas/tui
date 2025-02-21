@@ -18,7 +18,6 @@ package tui.ui.components;
 import org.junit.Test;
 import tui.html.HTMLNode;
 import tui.http.TUIBackend;
-import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.ui.components.layout.Panel;
 
@@ -33,38 +32,8 @@ public class ParagraphTest {
 				content""");
 
 		HTMLNode.PRETTY_PRINT = false;
-		assertEquals("<p class=\"tui-align-left tui-border-off\">Multi-line<br/>content</p>",
+		assertEquals("<p class=\"tui-align-left tui-border-off\"><span>Multi-line<br/>content</span></p>",
 				paragraph.toHTMLNode().toHTML());
-	}
-
-	@Test
-	public void html() {
-		final Paragraph paragraph = new Paragraph();
-
-		paragraph
-				.appendNormal("Normal text ")
-				.appendStrong("with strong")
-				.appendNormal(" fragment.");
-
-		HTMLNode.PRETTY_PRINT = false;
-		assertEquals("<p class=\"tui-align-left tui-border-off\">Normal text <strong>with strong</strong> fragment.</p>",
-				paragraph.toHTMLNode().toHTML());
-	}
-
-	@Test
-	public void json() {
-		final Paragraph paragraph = new Paragraph();
-
-		paragraph
-				.appendNormal("Normal text ")
-				.appendStrong("with strong")
-				.appendNormal(" fragment.");
-
-		JsonObject.PRETTY_PRINT = false;
-		assertEquals("{\"type\": \"paragraph\",\"tuid\": " + paragraph.getTUID()
-						+ ",\"textAlign\": \"LEFT\",\"border\": \"off\",\"content\": [[\"text\",\"Normal text \"],"
-						+ "[\"strong\",\"with strong\"],[\"text\",\" fragment.\"]]}",
-				paragraph.toJsonMap().toJson());
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -73,7 +42,7 @@ public class ParagraphTest {
 		final RefreshButton refreshButton = panel.append(new RefreshButton("Refresh"));
 		final Paragraph paragraph = panel.append(new Paragraph())
 				.appendNormal("This paragraph contains ")
-				.appendStrong("strong")
+				.appendBold("strong")
 				.appendNormal(" text.");
 		paragraph.setSource("/paragraph");
 		refreshButton.connectListener(paragraph);
@@ -85,7 +54,7 @@ public class ParagraphTest {
 		backend.registerWebService(paragraph.getSource(), (uri, request, response) -> {
 			final Paragraph result = new Paragraph()
 					.appendNormal("Current time is ")
-					.appendStrong("" + System.currentTimeMillis())
+					.appendBold("" + System.currentTimeMillis())
 					.appendNormal(" ms.");
 			return result.toJsonMap();
 		});

@@ -29,6 +29,7 @@ public class StyleSet {
 	private String m_color = null;
 	private String m_fontSize = null;
 	private String m_fontFamily = null;
+	private String m_fontWeight = null;
 	private Double m_lineHeight_em = null;
 	private String m_textTransform = null;
 	private Layouts.TextAlign m_textAlign = null;
@@ -154,6 +155,10 @@ public class StyleSet {
 		m_fontFamily = fontFamily;
 	}
 
+	public void setFontWeight(String fontWeight) {
+		m_fontWeight = fontWeight;
+	}
+
 	private record Property(String name, String value) {
 	}
 
@@ -161,6 +166,7 @@ public class StyleSet {
 		setStylePropertyIfDefined(node, "color", m_color, setter);
 		setStylePropertyIfDefined(node, "font-size", m_fontSize, setter);
 		setStylePropertyIfDefined(node, "font-family", m_fontFamily, setter);
+		setStylePropertyIfDefined(node, "font-weight", m_fontWeight, setter);
 		setStylePropertyIfDefined(node, "line-height", m_lineHeight_em == null ? null : String.valueOf(m_lineHeight_em), setter);
 		setStylePropertyIfDefined(node, "text-transform", m_textTransform, setter);
 		setStylePropertyIfDefined(node, "text-align", m_textAlign == null ? null : m_textAlign.getCSSValue(), setter);

@@ -53,15 +53,14 @@ public class GridTest extends TestWithBackend {
 						    "textAlign": "LEFT",
 						    "border": "off",
 						    "content": [
-						      [
-						        "text",
-						        "paragraph text"
-						      ]
+						      {
+						        "type": "text",
+						        "content": "paragraph text"
+						}
 						    ]
 						}
 						}""",
-				grid.getTUID(), paragraph.getTUID(),
-				paragraph.toJsonMap().toJson());
+				grid.getTUID(), paragraph.getTUID());
 		assertEquals(expectedJson, jsonMap.toJson());
 	}
 
