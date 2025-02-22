@@ -21,13 +21,11 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.html.HTMLNode;
-import tui.http.RequestReader;
-import tui.http.TUIBackend;
-import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.RefreshButton;
-import tui.ui.components.form.Form;
+import tui.ui.components.svg.defs.SVGPatternStripes;
+import tui.utils.TestUtils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -90,51 +88,13 @@ public class SVGTest extends TestWithBackend {
 	}
 
 	public static void main(String[] args) throws Exception {
-		final Page page = new Page("Home", "/index");
+		final SVG svg = new SVG(300, 300);
 
-		final Form form = new Form("New rectangle", "/addRectangle");
-		form.createInputNumber("x", "x");
-		form.createInputNumber("y", "y");
-		form.createInputNumber("width", "width");
-		form.createInputNumber("height", "height");
+		final SVGPatternStripes stripes = svg.addStripes(new SVGPatternStripes("stripes", 2, Color.RED, 5, Color.ORANGE));
 
-		final SVG svg = new SVG(200, 200);
-		svg.setSource("/getSVG");
-		form.registerRefreshListener(svg);
-		page.append(form);
+		svg.add(new SVGRectangle(50, 50, 200, 200).withFillPattern(stripes));
 
-		RefreshButton refreshButton = new RefreshButton("Refresh graph");
-		refreshButton.connectListener(svg);
-		page.append(refreshButton);
-
-		svg.add(new SVGPath(50, 50)
-				.lineRelative(100, 10)
-				.lineRelative(0, 80)
-				.close()
-				.withStrokeColor(Color.BLUE)
-				.withFillColor(Color.BLUE)
-				.withFillOpacity(0.5));
-		page.append(svg);
-
-		final TUIBackend backend = new TUIBackend(8080);
-		backend.registerPage(page);
-
-		backend.registerWebService(form.getTarget(), (uri, request, response) -> {
-			final RequestReader reader = new RequestReader(request);
-			final int x = reader.getIntegerParameter("x");
-			final int y = reader.getIntegerParameter("y");
-			final int width = reader.getIntegerParameter("width");
-			final int height = reader.getIntegerParameter("height");
-			svg.add(new SVGRectangle(x, y, width, height).withFillColor(Color.ORANGE).withFillOpacity(0.5));
-			return Form.buildSuccessfulSubmissionResponse();
-		});
-
-		backend.registerWebService(svg.getSource(), (uri, request, response) -> svg.toJsonMap());
-
-		backend.start();
-
-		final Browser browser = new Browser(backend.getPort());
-		browser.open("/index");
+		TestUtils.quickShow(svg);
 	}
 
 }

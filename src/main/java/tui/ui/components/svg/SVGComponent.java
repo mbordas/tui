@@ -18,6 +18,7 @@ package tui.ui.components.svg;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.Style;
+import tui.ui.components.svg.defs.SVGPatternStripes;
 
 import java.awt.*;
 import java.util.Locale;
@@ -29,6 +30,7 @@ public abstract class SVGComponent {
 	private double m_strokeOpacity = 1.0;
 	private StrokeDashArray m_strokeDashArray = null;
 	private Color m_fillColor = Color.BLACK;
+	private SVGPatternStripes m_fillPattern = null;
 	private double m_fillOpacity = 1.0;
 	private String m_title = null;
 
@@ -80,11 +82,16 @@ public abstract class SVGComponent {
 		return this;
 	}
 
+	public SVGComponent withFillPattern(SVGPatternStripes pattern) {
+		m_fillPattern = pattern;
+		return this;
+	}
+
 	public String computeStyleAttribute() {
 		String result = String.format(Locale.US, "stroke:%s;stroke-width:%d;stroke-opacity:%.2f;fill:%s;fill-opacity:%.2f;",
 				m_strokeColor == null ? "none" : Style.toCSSHex(m_strokeColor),
 				m_strokeWidth, m_strokeOpacity,
-				m_fillColor == null ? "none" : Style.toCSSHex(m_fillColor),
+				computeFillProperty(),
 				m_fillOpacity);
 
 		if(m_strokeDashArray != null) {
@@ -92,6 +99,16 @@ public abstract class SVGComponent {
 		}
 
 		return result;
+	}
+
+	private String computeFillProperty() {
+		if(m_fillPattern != null) {
+			return String.format("url(#%s)", m_fillPattern.getId());
+		} else if(m_fillColor != null) {
+			return Style.toCSSHex(m_fillColor);
+		} else {
+			return "none";
+		}
 	}
 
 	protected void setStyleAttribute(HTMLNode svgComponentNode) {

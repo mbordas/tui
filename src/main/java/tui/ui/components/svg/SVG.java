@@ -25,6 +25,7 @@ import tui.json.JsonObject;
 import tui.json.JsonValue;
 import tui.ui.components.UIRefreshableComponent;
 import tui.ui.components.svg.defs.SVGMarker;
+import tui.ui.components.svg.defs.SVGPatternStripes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +43,8 @@ public class SVG extends UIRefreshableComponent {
 
 	public static final String HTML_CLASS_CONTAINER = "tui-container-svg";
 
-	private final List<SVGMarker> m_markers = new ArrayList<>();
+	private final List<SVGComponent> m_markers = new ArrayList<>();
+	private final List<SVGComponent> m_patterns = new ArrayList<>();
 	private final List<SVGComponent> m_components = new ArrayList<>();
 	private int m_width_px;
 	private int m_height_px;
@@ -59,6 +61,11 @@ public class SVG extends UIRefreshableComponent {
 	public SVGMarker addMarker(SVGMarker marker) {
 		m_markers.add(marker);
 		return marker;
+	}
+
+	public SVGPatternStripes addStripes(SVGPatternStripes stripes) {
+		m_patterns.add(stripes);
+		return stripes;
 	}
 
 	public void add(SVGComponent component) {
@@ -140,8 +147,8 @@ public class SVG extends UIRefreshableComponent {
 			result.setAttribute("viewBox", String.format("%d %d %d %d", m_viewBox.x, m_viewBox.y, m_viewBox.width, m_viewBox.height));
 		}
 		final JsonArray components = result.createArray(JSON_KEY_SUBCOMPONENTS);
-		if(!m_markers.isEmpty()) {
-			components.add(createDefs(m_markers));
+		if(!m_markers.isEmpty() || !m_patterns.isEmpty()) {
+			components.add(createDefs(m_markers, m_patterns));
 		}
 		for(SVGComponent component : m_components) {
 			components.add(component.toJsonMap());
@@ -151,11 +158,13 @@ public class SVG extends UIRefreshableComponent {
 		return result;
 	}
 
-	private static JsonMap createDefs(Collection<? extends SVGComponent> reusables) {
+	private static JsonMap createDefs(Collection<? extends SVGComponent>... reusableCollections) {
 		final JsonMap result = new JsonMap("defs");
 		final JsonArray components = result.createArray(JSON_KEY_SUBCOMPONENTS);
-		for(SVGComponent reusable : reusables) {
-			components.add(reusable.toJsonMap());
+		for(Collection<? extends SVGComponent> reusableCollection : reusableCollections) {
+			for(SVGComponent reusable : reusableCollection) {
+				components.add(reusable.toJsonMap());
+			}
 		}
 		return result;
 	}
