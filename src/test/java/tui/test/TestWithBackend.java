@@ -76,7 +76,7 @@ public class TestWithBackend {
 	}
 
 	/**
-	 * Adds a web service that will return the given component as is.
+	 * Adds a web service that will return the given component as is, and provides a {@link tui.http.RequestReader} for further assertions.
 	 *
 	 * @param component Must be refreshable and have its source set.
 	 */

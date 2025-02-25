@@ -23,31 +23,30 @@ import tui.test.components.BadComponentException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RefreshButton extends UIComponent {
 
+	public static final String HTML_CLASS_CONTAINER = "tui-refresh-button-container";
 	public static final String HTML_CLASS = "tui-refresh-button";
 	public static final String JSON_TYPE = "refreshButton";
-
-	public static final String HTML_ATTRIBUTE_KEY = "tui-key";
-
-	public static final String PARAMETER_NAME = "key";
 
 	private final Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
 
 	private final String m_label;
-	private String m_key = null; // This parameter will be sent to backend on refresh calls when it's not null
+	private final Map<String, String> m_parameters = new HashMap<>();
 
 	public RefreshButton(String label) {
 		m_label = label;
 	}
 
-	public void setKey(String key) {
-		m_key = key;
-	}
-
 	public String getLabel() {
 		return m_label;
+	}
+
+	public void setParameter(String name, String value) {
+		m_parameters.put(name, value);
 	}
 
 	public UIRefreshableComponent connectListener(UIRefreshableComponent component) {
@@ -60,29 +59,40 @@ public class RefreshButton extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		HTMLNode result = super.toHTMLNode("button", false)
+		final HTMLNode container = new HTMLNode("div").setClass(HTML_CLASS_CONTAINER);
+		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
+			final String name = entry.getKey();
+			final String value = entry.getValue();
+			container.createChild("input")
+					.setAttribute("type", "hidden")
+					.setAttribute("name", name)
+					.setAttribute("value", value);
+		}
+
+		HTMLNode button = container.append(super.toHTMLNode("button", false))
 				.setAttribute("type", "button")
 				.setAttribute("class", HTML_CLASS)
 				.setText(m_label);
-		if(m_key != null) {
-			result.setAttribute(HTML_ATTRIBUTE_KEY, m_key);
-		}
+
 		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
+			button.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
-		return result;
+
+		return container;
 	}
 
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("label", m_label);
-		if(m_key != null) {
-			result.setAttribute("key", m_key);
+		final JsonMap parameters = result.setChild("parameters", new JsonMap(null));
+		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
+			parameters.setAttribute(entry.getKey(), entry.getValue());
 		}
 		if(!m_connectedComponents.isEmpty()) {
 			result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
+		applyCustomStyle(result);
 		return result;
 	}
 

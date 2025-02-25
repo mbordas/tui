@@ -376,6 +376,10 @@ public class Style {
 				
 				/* BUTTON */
 				
+				.tui-refresh-button-container {
+					display: inline-block;
+				}
+				
 				button {
 				    border-radius: 2px;
 				    padding: 5px 20px 5px 20px;

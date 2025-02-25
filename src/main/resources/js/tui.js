@@ -139,7 +139,7 @@ function updatePanel(panelElement, json, idMap) {
     if(idMap == null) {
         idMap = new Map();
     }
-    idMap.set(json['tuid'], panelElement.id);
+    idMap.set(json['tuid'].toString(), panelElement.id);
     for(var child of json['content']) {
         const element = createComponent(child, idMap);
         if(element == null) {
@@ -198,13 +198,22 @@ function createComponent(json, idMap) {
         result.classList.add('tui-vertical-scroll');
         updateVerticalScroll(result, json, idMap);
     } else if(type == 'refreshButton') {
-        result = document.createElement('button');
-        result.classList.add('tui-refresh-button');
-        result.setAttribute('type', 'button');
-        result.setAttribute('tui-key', json['key']);
-        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
-        result.textContent = json['label'];
-        instrumentRefreshButton(result);
+        result = document.createElement('div');
+        result.classList.add('tui-refresh-button-container');
+        Object.entries(json['parameters']).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', key);
+            input.setAttribute('value', value);
+            result.appendChild(input);
+        });
+        const button = document.createElement('button');
+        button.classList.add('tui-refresh-button');
+        button.setAttribute('type', 'button');
+        button.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
+        button.textContent = json['label'];
+        result.appendChild(button);
+        instrumentRefreshButton(button);
     } else if (type == 'navbutton') {
         result = document.createElement('form');
         result.classList.add('tui-navbutton');
@@ -266,6 +275,7 @@ function createComponent(json, idMap) {
 
 /*
     Replaces 'idsSeparatedByComa' where ids are found in 'idMap'.
+    @param idMap gives: TUID found in fresh json -> TUID in current page's elements
 */
 function adaptRefreshListeners(idsSeparatedByComa, idMap) {
     if(idMap == null) {
@@ -468,7 +478,11 @@ function instrumentRefreshButtons() {
 
 function instrumentRefreshButton(buttonElement) {
      buttonElement.addEventListener('click', function() {
-        const data = buttonElement.hasAttribute('tui-key') ? { key: buttonElement.getAttribute('tui-key')} : {};
+        const data = {};
+        // Button parameters are inside button's container
+        buttonElement.parentElement.querySelectorAll('input').forEach(function(input) {
+            data[input.getAttribute('name')] = input.getAttribute('value');
+        });
         buttonElement.getAttribute('tui-refresh-listeners').split(",")
         .forEach(function(id, i) {
             refreshComponent(id, data);

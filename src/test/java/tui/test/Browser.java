@@ -107,6 +107,22 @@ public class Browser {
 		return m_driver.findElements(By.className(NavButton.HTML_CLASS));
 	}
 
+	// REFRESH BUTTONS
+
+	public List<WebElement> getRefreshButtons() {
+		return m_driver.findElements(By.className(RefreshButton.HTML_CLASS));
+	}
+
+	public WebElement getRefreshButton(String label) {
+		final Optional<WebElement> anyButton = getRefreshButtons().stream()
+				.filter((button) -> button.getText().equals(label)).findAny();
+		if(anyButton.isPresent()) {
+			return anyButton.get();
+		} else {
+			throw new RuntimeException("RefreshButton element not found with label: " + label);
+		}
+	}
+
 	// TABLES
 
 	public WebElement getTable(String title) {

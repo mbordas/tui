@@ -25,7 +25,7 @@ import tui.ui.components.NavButton;
 import tui.ui.components.NavLink;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
-import tui.ui.components.RefreshButton;
+import tui.ui.components.RefreshButtonTest;
 import tui.ui.components.Section;
 import tui.ui.components.Table;
 import tui.ui.components.TableData;
@@ -94,7 +94,7 @@ public class CodeParagraph extends Paragraph {
 		registerClassForColor(UIComponent.class, UIRefreshableComponent.class);
 		registerClassForColor(Grid.class, Layouts.class, Panel.class, TabbedFlow.class, VerticalFlow.class, VerticalScroll.class);
 		registerClassForColor(DownloadButton.class, Page.class, Image.class, NavButton.class, NavLink.class, Paragraph.class,
-				RefreshButton.class, Section.class, Table.class, TableData.class, TablePicker.class);
+				RefreshButtonTest.class, Section.class, Table.class, TableData.class, TablePicker.class);
 		registerClassForColor(Form.class, FormInput.class, FormInputCheckbox.class, FormInputDay.class, FormInputDayHHmm.class,
 				FormInputEmail.class, FormInputFile.class, FormInputNumber.class, FormInputPassword.class, FormInputRadio.class,
 				FormInputSearch.class, FormInputString.class, ModalForm.class, Search.class);
