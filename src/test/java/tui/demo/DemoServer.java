@@ -30,16 +30,11 @@ import tui.ui.components.form.FormInputString;
 import tui.ui.components.form.ModalForm;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
-import tui.ui.components.monitoring.MonitorField;
-import tui.ui.components.monitoring.MonitorFieldGreenRed;
-import tui.ui.components.monitoring.MonitorFieldSet;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class DemoServer {
 
@@ -74,23 +69,6 @@ public class DemoServer {
 		final FormInputString inputSerialNumber = form.createInputString("Serial number", "serial_number");
 		table.connectForRefresh(form);
 		panel1.append(form);
-
-		final VerticalFlow panel2 = tabbedFlow.createTab("Monitor fields");
-		panel2.append(new Section("Monitoring"))
-				.appendParagraph("Monitor fields display live data.");
-		final MonitorFieldSet monitorFieldSet = new MonitorFieldSet("Live fields");
-		monitorFieldSet.setSource("/monitor/1");
-		monitorFieldSet.setAutoRefreshPeriod_s(5);
-		MonitorFieldGreenRed field1 =
-				monitorFieldSet.createFieldGreenRed("check-1", "Alpha")
-						.set(MonitorFieldGreenRed.Value.GREEN, "Good");
-		MonitorFieldGreenRed field2 =
-				monitorFieldSet.createFieldGreenRed("check-2", "Beta")
-						.set(MonitorFieldGreenRed.Value.RED, "Bad");
-		MonitorFieldGreenRed field3 =
-				monitorFieldSet.createFieldGreenRed("check-3", "Gamma")
-						.set(MonitorFieldGreenRed.Value.NEUTRAL, "Regular");
-		panel2.append(monitorFieldSet);
 
 		final VerticalFlow panel3 = tabbedFlow.createTab("Modal form");
 		final ModalForm modalForm = new ModalForm("Add a new element", "Add", "/modalform/add");
@@ -130,23 +108,6 @@ public class DemoServer {
 			} else {
 				return Form.buildSuccessfulSubmissionResponse();
 			}
-		});
-
-		backend.registerWebService(monitorFieldSet.getSource(), (uri, request, response) -> {
-			final List<MonitorFieldGreenRed> fields = new ArrayList<>();
-			final Random random = new Random();
-			for(MonitorFieldGreenRed field : new MonitorFieldGreenRed[] { field1, field2, field3 }) {
-				final int number = random.nextInt(100);
-				if(number < 34) {
-					field.set(MonitorFieldGreenRed.Value.RED, String.format("%d %%", number));
-				} else if(number < 66) {
-					field.set(MonitorFieldGreenRed.Value.NEUTRAL, String.format("%d %%", number));
-				} else {
-					field.set(MonitorFieldGreenRed.Value.GREEN, String.format("%d %%", number));
-				}
-				fields.add(field);
-			}
-			return MonitorField.toJson(fields);
 		});
 
 		HTMLNode.PRETTY_PRINT = true;
