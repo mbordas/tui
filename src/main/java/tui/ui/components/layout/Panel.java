@@ -49,6 +49,7 @@ public class Panel extends UIRefreshableComponent {
 	public HTMLNode toHTMLNode() {
 		final ContainedElement containedElement = createContainedNode("div", HTML_CLASS_CONTAINER);
 		containedElement.element().addClass(HTML_CLASS);
+		containedElement.element().addClass(m_textAlign.getHTMLClass());
 
 		final HTMLNode node = containedElement.element();
 		for(UIComponent component : getContent()) {

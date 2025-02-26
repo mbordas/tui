@@ -84,6 +84,9 @@ public class Grid extends UIRefreshableComponent {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("rows", m_components.length);
 		result.setAttribute("columns", m_components[0].length);
+		if(m_firstColumnWidth_px != null) {
+			result.setAttribute("firstColumnWidth_px", m_firstColumnWidth_px);
+		}
 		for(int row = 0; row < m_components.length; row++) {
 			for(int column = 0; column < m_components[0].length; column++) {
 				final UIComponent child = m_components[row][column];

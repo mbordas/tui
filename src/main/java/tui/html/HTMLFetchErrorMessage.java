@@ -15,6 +15,7 @@ public class HTMLFetchErrorMessage {
 	 */
 	public static HTMLNode addErrorMessageChild(HTMLNode node) {
 		return node.createChild("div")
-				.setAttribute("class", HTML_CLASS_ERROR_ELEMENT);
+				.setAttribute("class", HTML_CLASS_ERROR_ELEMENT)
+				.setStyleProperty("display", "none");
 	}
 }

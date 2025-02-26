@@ -133,23 +133,6 @@ function getFetchData(element) {
     return result;
 }
 
-function updatePanel(panelElement, json, idMap) {
-    panelElement.innerHTML = '';
-    setTextAlignClass(panelElement, json['textAlign']);
-    if(idMap == null) {
-        idMap = new Map();
-    }
-    idMap.set(json['tuid'].toString(), panelElement.id);
-    for(var child of json['content']) {
-        const element = createComponent(child, idMap);
-        if(element == null) {
-            console.error('Unable to create component from type: ' + child['type']);
-        } else {
-            panelElement.appendChild(element);
-        }
-    }
-}
-
 function setTextAlignClass(element, textAlign) {
     element.classList.remove('tui-align-left');
     element.classList.remove('tui-align-center');
@@ -166,9 +149,9 @@ function createComponent(json, idMap) {
     const type = json['type'];
     var result;
     if(type == 'panel') {
-        result = document.createElement('div');
-        result.id = json['tuid'];
-        updatePanel(result, json, idMap);
+        const containedElement = createElementWithContainer('div', 'tui-container-panel');
+        updatePanel(containedElement.element, json, idMap);
+        result = containedElement.container;
     } else if(type == 'table') {
         const containedElement = createElementWithContainer('table', 'tui-table-container');
         containedElement.element.appendChild(document.createElement('tbody'));
@@ -335,8 +318,12 @@ function hideFetchError(element) {
 function updateGrid(gridElement, json, idMap) {
     const rows = parseInt(json['rows']);
     const columns = parseInt(json['columns']);
-    gridElement.style.gridTemplateRows = 'auto '.repeat(rows);
-    gridElement.style.gridTemplateColumns = 'auto '.repeat(columns);
+    gridElement.style.gridTemplateRows = '1fr '.repeat(rows);
+    if(json.hasOwnProperty('firstColumnWidth_px')) {
+        gridElement.style.gridTemplateColumns = '' + json['firstColumnWidth_px'] + 'px ' + '1fr '.repeat(columns - 1);
+    } else {
+        gridElement.style.gridTemplateColumns = '1fr '.repeat(columns);
+    }
     gridElement.innerHTML = '';
 
     for(var row = 0; row < rows; row++) {
@@ -452,6 +439,25 @@ function selectTab(tabId, tabLink) {
         link.setAttribute('class', 'tui-tablink');
     });
     tabLink.setAttribute('class', 'tui-tablink tui-tablink-active');
+}
+
+// PANELS
+
+function updatePanel(panelElement, json, idMap) {
+    panelElement.innerHTML = '';
+    setTextAlignClass(panelElement, json['textAlign']);
+    if(idMap == null) {
+        idMap = new Map();
+    }
+    idMap.set(json['tuid'].toString(), panelElement.id);
+    for(var child of json['content']) {
+        const element = createComponent(child, idMap);
+        if(element == null) {
+            console.error('Unable to create component from type: ' + child['type']);
+        } else {
+            panelElement.appendChild(element);
+        }
+    }
 }
 
 // PARAGRAPHS
