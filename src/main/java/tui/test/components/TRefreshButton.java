@@ -20,6 +20,7 @@ import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonValue;
 import tui.test.TClient;
+import tui.ui.components.RefreshButton;
 import tui.utils.TUIUtils;
 
 import java.util.Collection;
@@ -32,6 +33,7 @@ import java.util.TreeSet;
 
 public class TRefreshButton extends TComponent {
 
+	private final String m_label;
 	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Set<Long> m_refreshListeners = new TreeSet<>();
 
@@ -39,8 +41,13 @@ public class TRefreshButton extends TComponent {
 	 * @param tuid   Unique identifier.
 	 * @param client This client object will help acting on some component, and determining if they are reachable.
 	 */
-	protected TRefreshButton(long tuid, TClient client) {
+	protected TRefreshButton(long tuid, TClient client, String label) {
 		super(tuid, client);
+		m_label = label;
+	}
+
+	public String getLabel() {
+		return m_label;
 	}
 
 	public void click() throws HttpException {
@@ -62,9 +69,10 @@ public class TRefreshButton extends TComponent {
 
 	public static TRefreshButton parse(JsonMap jsonMap, TClient tClient) {
 		final long tuid = JsonConstants.readTUID(jsonMap);
-		final TRefreshButton result = new TRefreshButton(tuid, tClient);
+		final String label = jsonMap.getAttribute(RefreshButton.JSON_ATTRIBUTE_LABEL);
+		final TRefreshButton result = new TRefreshButton(tuid, tClient, label);
 
-		final JsonMap parameters = jsonMap.getMap("parameters");
+		final JsonMap parameters = jsonMap.getMap(RefreshButton.JSON_ATTRIBUTE_PARAMETERS);
 		for(Map.Entry<String, JsonValue<?>> entry : parameters.getAttributes().entrySet()) {
 			final String name = entry.getKey();
 			final String value = entry.getValue().toString();

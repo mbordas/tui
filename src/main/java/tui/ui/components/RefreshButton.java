@@ -31,6 +31,8 @@ public class RefreshButton extends UIComponent {
 	public static final String HTML_CLASS_CONTAINER = "tui-refresh-button-container";
 	public static final String HTML_CLASS = "tui-refresh-button";
 	public static final String JSON_TYPE = "refreshButton";
+	public static final String JSON_ATTRIBUTE_LABEL = "label";
+	public static final String JSON_ATTRIBUTE_PARAMETERS = "parameters";
 
 	private final Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
 
@@ -84,8 +86,8 @@ public class RefreshButton extends UIComponent {
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
-		result.setAttribute("label", m_label);
-		final JsonMap parameters = result.setChild("parameters", new JsonMap(null));
+		result.setAttribute(JSON_ATTRIBUTE_LABEL, m_label);
+		final JsonMap parameters = result.setChild(JSON_ATTRIBUTE_PARAMETERS, new JsonMap(null));
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
 			parameters.setAttribute(entry.getKey(), entry.getValue());
 		}
