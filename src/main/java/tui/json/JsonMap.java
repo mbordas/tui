@@ -87,6 +87,12 @@ public class JsonMap extends JsonObject {
 		return result;
 	}
 
+	public JsonMap createMap(String name) {
+		final JsonMap result = new JsonMap(null);
+		setChild(name, result);
+		return result;
+	}
+
 	public Map<String, JsonArray> getArrays() {
 		final Map<String, JsonArray> result = new LinkedHashMap<>();
 		for(Map.Entry<String, JsonObject> child : m_children.entrySet()) {

@@ -15,20 +15,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.apache.http.HttpException;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
+import tui.json.JsonValue;
 import tui.test.TClient;
 import tui.utils.TUIUtils;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class TRefreshButton extends TComponent {
 
-	private String m_label;
-	private String m_key;
+	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Set<Long> m_refreshListeners = new TreeSet<>();
 
 	/**
@@ -37,6 +41,13 @@ public class TRefreshButton extends TComponent {
 	 */
 	protected TRefreshButton(long tuid, TClient client) {
 		super(tuid, client);
+	}
+
+	public void click() throws HttpException {
+		final Map<String, Object> parameters = new TreeMap<>(m_parameters);
+		for(Long listenerTUID : m_refreshListeners) {
+			m_client.refresh(listenerTUID, parameters);
+		}
 	}
 
 	@Override
@@ -53,8 +64,13 @@ public class TRefreshButton extends TComponent {
 		final long tuid = JsonConstants.readTUID(jsonMap);
 		final TRefreshButton result = new TRefreshButton(tuid, tClient);
 
-		result.m_label = jsonMap.getAttribute("label");
-		result.m_key = jsonMap.getAttribute("key");
+		final JsonMap parameters = jsonMap.getMap("parameters");
+		for(Map.Entry<String, JsonValue<?>> entry : parameters.getAttributes().entrySet()) {
+			final String name = entry.getKey();
+			final String value = entry.getValue().toString();
+			result.m_parameters.put(name, value);
+		}
+
 		final String refreshListenersTUIDs = jsonMap.getAttributeOrNull(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS);
 		if(refreshListenersTUIDs != null) {
 			result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(refreshListenersTUIDs));
@@ -62,4 +78,5 @@ public class TRefreshButton extends TComponent {
 
 		return result;
 	}
+
 }

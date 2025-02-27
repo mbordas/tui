@@ -15,18 +15,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import org.apache.http.HttpException;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
-import tui.json.JsonParser;
 import tui.test.TClient;
 import tui.ui.components.Paragraph;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class TParagraph extends TRefreshableComponent {
 
@@ -55,23 +52,19 @@ public class TParagraph extends TRefreshableComponent {
 		}
 	}
 
-	private String m_source;
+	private String m_source = null;
 	private final List<TComponent> m_content = new ArrayList<>();
 
 	/**
 	 * @param tuid   Unique identifier.
 	 * @param client This client object will help acting on some component, and determining if they are reachable.
 	 */
-	protected TParagraph(long tuid, TClient client, String source) {
+	protected TParagraph(long tuid, TClient client) {
 		super(tuid, client);
-		m_source = source;
 	}
 
 	@Override
-	public void refresh(Map<String, Object> data) throws HttpException {
-		final String response = m_client.callBackend(m_source, data, false);
-		final JsonMap map = JsonParser.parseMap(response);
-
+	public void update(JsonMap map) {
 		final TParagraph paragraph = parse(map, null);
 		m_source = paragraph.m_source;
 		m_content.clear();
@@ -98,8 +91,8 @@ public class TParagraph extends TRefreshableComponent {
 
 	public static TParagraph parse(JsonMap map, TClient client) {
 		final long tuid = JsonConstants.readTUID(map);
-		final String source = map.getAttributeOrNull(Paragraph.ATTRIBUTE_SOURCE);
-		final TParagraph result = new TParagraph(tuid, client, source);
+		final TParagraph result = new TParagraph(tuid, client);
+		result.readSource(map);
 
 		final JsonArray content = map.getArray(Paragraph.ATTRIBUTE_CONTENT);
 		for(int i = 0; i < content.size(); i++) {

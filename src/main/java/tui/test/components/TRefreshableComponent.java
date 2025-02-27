@@ -16,11 +16,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.apache.http.HttpException;
+import tui.json.JsonMap;
+import tui.json.JsonParser;
 import tui.test.TClient;
+import tui.ui.components.UIRefreshableComponent;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class TRefreshableComponent extends TComponent {
+
+	private String m_source = null;
+	private Map<String, Object> m_fetchData = new HashMap<>();
 
 	/**
 	 * @param tuid   Unique identifier.
@@ -30,5 +37,22 @@ public abstract class TRefreshableComponent extends TComponent {
 		super(tuid, client);
 	}
 
-	public abstract void refresh(Map<String, Object> data) throws HttpException;
+	public void setSource(String source) {
+		m_source = source;
+	}
+
+	public abstract void update(JsonMap jsonMap);
+
+	public void refresh(Map<String, Object> data) throws HttpException {
+		m_fetchData.putAll(data);
+		final String response = m_client.callBackend(m_source, data, false);
+		final JsonMap map = JsonParser.parseMap(response);
+		update(map);
+	}
+
+	protected void readSource(JsonMap map) {
+		if(map.hasAttribute(UIRefreshableComponent.ATTRIBUTE_SOURCE)) {
+			setSource(map.getAttribute(UIRefreshableComponent.ATTRIBUTE_SOURCE));
+		}
+	}
 }

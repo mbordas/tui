@@ -24,6 +24,7 @@ import tui.test.components.TComponent;
 import tui.test.components.TForm;
 import tui.test.components.TPage;
 import tui.test.components.TPanel;
+import tui.test.components.TRefreshableComponent;
 import tui.test.components.TTable;
 import tui.test.components.TTablePicker;
 
@@ -140,7 +141,10 @@ public class TClient {
 	 * @param multipart Should be set for form submission
 	 */
 	public String callBackend(String target, Map<String, Object> parameters, boolean multipart) throws HttpException {
-		return m_httpClient.callBackend(target, parameters, multipart);
+		Map<String, Object> params = new HashMap<>();
+		params.putAll(m_currentPage.getSessionParameters());
+		params.putAll(parameters);
+		return m_httpClient.callBackend(target, params, multipart);
 	}
 
 	public TComponent find(long tuid) {
@@ -156,8 +160,10 @@ public class TClient {
 			throw new ComponentNoReachableException("Component with tuid=%d is not reachable", tuid);
 		}
 
-		if(componentToRefresh instanceof TTable table) {
-			table.refresh(data);
+		if(componentToRefresh instanceof TRefreshableComponent refreshableComponent) {
+			refreshableComponent.refresh(data);
+		} else {
+			throw new TestExecutionException("Component not refreshable: %s", componentToRefresh.getClass().getSimpleName());
 		}
 	}
 

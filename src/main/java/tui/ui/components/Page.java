@@ -30,6 +30,8 @@ import java.util.Map;
 public class Page {
 
 	public static final String JSON_TYPE = "page";
+	public static final String JSON_ATTRIBUTE_FETCH_TYPE = "fetchType";
+	public static final String JSON_ARRAY_SESSION_PARAMETERS = "sessionParameters";
 
 	public static final String SESSION_PARAMS_MAP_NAME = "SESSION_PARAMS";
 
@@ -195,6 +197,9 @@ public class Page {
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE);
 		result.setAttribute("title", m_title);
+		result.setAttribute(JSON_ATTRIBUTE_FETCH_TYPE, m_fetchType.name());
+		final JsonMap parameters = result.createMap(JSON_ARRAY_SESSION_PARAMETERS);
+		m_sessionParameters.forEach(parameters::setAttribute);
 		result.createArray("content", m_content, UIComponent::toJsonMap);
 		return result;
 	}

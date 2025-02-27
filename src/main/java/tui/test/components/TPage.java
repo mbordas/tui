@@ -19,22 +19,29 @@ import tui.json.JsonArray;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.test.TClient;
+import tui.ui.components.Page;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 public class TPage {
 
 	private final String m_title;
-	private List<TComponent> m_content;
+	private Map<String, Object> m_sessionParameters = new HashMap<>();
+	private List<TComponent> m_content = new ArrayList<>();
 
 	TPage(String title, TClient tClient) {
 		m_title = title;
-		m_content = new ArrayList<>();
+	}
+
+	public Map<String, Object> getSessionParameters() {
+		return m_sessionParameters;
 	}
 
 	public String getTitle() {
@@ -45,6 +52,7 @@ public class TPage {
 		final Collection<TComponent> result = new ArrayList<>();
 		for(TComponent component : m_content) {
 			result.add(component);
+			result.addAll(component.getReachableSubComponents());
 		}
 		return result;
 	}
@@ -72,6 +80,8 @@ public class TPage {
 	public static TPage parse(JsonMap jsonMap, TClient client) {
 		final String title = jsonMap.getAttribute("title");
 		TPage result = new TPage(title, client);
+		final JsonMap sessionParameters = jsonMap.getMap(Page.JSON_ARRAY_SESSION_PARAMETERS);
+		sessionParameters.getAttributes().forEach((key, value) -> result.m_sessionParameters.put(key, value.toString()));
 		final JsonArray content = jsonMap.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {

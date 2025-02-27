@@ -19,8 +19,9 @@ import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.TClient;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class TGrid extends TComponent {
 
@@ -41,7 +42,11 @@ public class TGrid extends TComponent {
 
 	@Override
 	protected Collection<TComponent> getChildrenComponents() {
-		return List.of();
+		final Collection<TComponent> result = new ArrayList<>();
+		for(final TComponent[] rowOfComponents : m_components) {
+			result.addAll(Arrays.asList(rowOfComponents).subList(0, m_components[0].length));
+		}
+		return result;
 	}
 
 	public static TGrid parse(JsonMap jsonMap, TClient tClient) {

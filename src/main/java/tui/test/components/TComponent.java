@@ -17,6 +17,7 @@ package tui.test.components;
 
 import tui.test.TClient;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +48,19 @@ public abstract class TComponent {
 	public abstract TComponent find(long tuid);
 
 	protected abstract Collection<TComponent> getChildrenComponents();
+
+	public Collection<TComponent> getReachableSubComponents() {
+		final Collection<TComponent> result = new ArrayList<>();
+		if(m_isVisible) {
+			for(TComponent childComponent : getChildrenComponents()) {
+				if(childComponent.m_isVisible) {
+					result.add(childComponent);
+					result.addAll(childComponent.getReachableSubComponents());
+				}
+			}
+		}
+		return result;
+	}
 
 	public Optional<TComponent> findReachableSubComponent(Predicate<TComponent> condition) {
 		if(m_isVisible) {

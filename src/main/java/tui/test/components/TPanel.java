@@ -26,8 +26,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class TPanel extends TComponent {
+public class TPanel extends TRefreshableComponent {
 
+	private String m_source;
 	private final List<TComponent> m_content = new ArrayList<>();
 
 	/**
@@ -36,6 +37,14 @@ public class TPanel extends TComponent {
 	 */
 	protected TPanel(long tuid, TClient client) {
 		super(tuid, client);
+	}
+
+	@Override
+	public void update(JsonMap map) {
+		final TPanel panel = parse(map, null);
+		m_source = panel.m_source;
+		m_content.clear();
+		m_content.addAll(panel.m_content);
 	}
 
 	public List<TComponent> getContent() {
@@ -55,6 +64,7 @@ public class TPanel extends TComponent {
 	public static TPanel parse(JsonMap map, TClient client) {
 		final long tuid = JsonConstants.readTUID(map);
 		TPanel result = new TPanel(tuid, client);
+		result.readSource(map);
 		final JsonArray content = map.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {

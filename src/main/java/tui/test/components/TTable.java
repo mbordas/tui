@@ -40,7 +40,6 @@ public class TTable extends TRefreshableComponent {
 	private String m_title;
 	final List<String> m_columns;
 	final List<List<Object>> m_rows = new ArrayList<>();
-	private final String m_sourcePath;
 	private TableData.PageInfo m_pageInfo = null;
 	private Integer m_lastPageNumber = null;
 
@@ -48,7 +47,7 @@ public class TTable extends TRefreshableComponent {
 		super(tuid, tClient);
 		m_title = title;
 		m_columns = new ArrayList<>(columns);
-		m_sourcePath = sourcePath;
+		setSource(sourcePath);
 	}
 
 	public String getTitle() {
@@ -131,9 +130,10 @@ public class TTable extends TRefreshableComponent {
 	}
 
 	@Override
-	public void refresh(Map<String, Object> data) throws HttpException {
-		final String json = m_client.callBackend(m_sourcePath, data, false);
-		parseUpdate(json);
+	public void update(JsonMap map) {
+		m_rows.clear();
+		loadRows(map, m_columns, this);
+		loadPageInfo(map, this);
 	}
 
 	/**
