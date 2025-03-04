@@ -15,7 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.json.JsonArray;
@@ -85,12 +84,12 @@ public class TForm extends TComponent {
 	/**
 	 * Sends form data to the backend. When successful, it refreshes listeners too.
 	 */
-	public void submit() throws HttpException {
+	public void submit() {
 		final Map<String, Object> parameters = new HashMap<>();
 		m_fields.forEach((field) -> parameters.put(field.name, field.enteredValue));
 		final String jsonResponse = m_client.callBackend(m_target, parameters, true);
 		if(!Form.isSuccessfulSubmissionResponse(jsonResponse)) {
-			throw new HttpException("Unexpected web service response");
+			throw new TestExecutionException("Unexpected web service response");
 		}
 
 		for(long listenerId : m_refreshListeners) {

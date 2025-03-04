@@ -15,7 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import org.apache.http.HttpException;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonValue;
@@ -50,7 +49,11 @@ public class TRefreshButton extends TComponent {
 		return m_label;
 	}
 
-	public void click() throws HttpException {
+	/**
+	 * Triggers a click on this button. All connected refreshable components will be refresh one by one. Only then this method will end.
+	 * As soon as one component could not be refreshed because an error occurs, this method stops and throws {@link tui.test.TestExecutionException}.
+	 */
+	public void click() {
 		final Map<String, Object> parameters = new TreeMap<>(m_parameters);
 		for(Long listenerTUID : m_refreshListeners) {
 			m_client.refresh(listenerTUID, parameters);

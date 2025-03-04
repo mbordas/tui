@@ -6,7 +6,6 @@
 
 package tui.test.components;
 
-import org.apache.http.HttpException;
 import tui.json.JsonMap;
 import tui.test.ComponentNoReachableException;
 import tui.test.TClient;
@@ -52,11 +51,7 @@ public class TTablePicker extends TTable {
 				throw new ComponentNoReachableException(listenerTUID);
 			}
 			if(tComponent instanceof TRefreshableComponent tRefreshableComponent) {
-				try {
-					tRefreshableComponent.refresh(row);
-				} catch(HttpException e) {
-					throw new TestExecutionException(e);
-				}
+				tRefreshableComponent.refresh(row);
 			} else {
 				throw new BadComponentException("Component #%d of type %s could not be refreshed",
 						listenerTUID, tComponent.getClass().getSimpleName());

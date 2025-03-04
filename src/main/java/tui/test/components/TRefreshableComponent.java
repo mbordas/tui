@@ -15,10 +15,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import org.apache.http.HttpException;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
 import tui.test.TClient;
+import tui.test.TestExecutionException;
 import tui.ui.components.UIRefreshableComponent;
 
 import java.util.HashMap;
@@ -43,9 +43,10 @@ public abstract class TRefreshableComponent extends TComponent {
 
 	public abstract void update(JsonMap jsonMap);
 
-	public void refresh(Map<String, Object> data) throws HttpException {
+	public void refresh(Map<String, Object> data) throws TestExecutionException {
 		m_fetchData.putAll(data);
-		final String response = m_client.callBackend(m_source, data, false);
+		final String response;
+		response = m_client.callBackend(m_source, data, false);
 		final JsonMap map = JsonParser.parseMap(response);
 		update(map);
 	}

@@ -15,7 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test;
 
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.json.JsonMap;
@@ -59,11 +58,11 @@ public class TClient {
 		this("localhost", localPort);
 	}
 
-	public void open(String endPoint) throws HttpException {
+	public void open(String endPoint) {
 		open(endPoint, Map.of());
 	}
 
-	public void open(String endPoint, Map<String, String> parameters) throws HttpException {
+	public void open(String endPoint, Map<String, String> parameters) {
 		Map<String, Object> completedParameters = new HashMap<>(parameters);
 		completedParameters.put("format", "json");
 		final String json = m_httpClient.callBackend(endPoint, completedParameters, false);
@@ -140,7 +139,7 @@ public class TClient {
 	/**
 	 * @param multipart Should be set for form submission
 	 */
-	public String callBackend(String target, Map<String, Object> parameters, boolean multipart) throws HttpException {
+	public String callBackend(String target, Map<String, Object> parameters, boolean multipart) {
 		Map<String, Object> params = new HashMap<>();
 		params.putAll(m_currentPage.getSessionParameters());
 		params.putAll(parameters);
@@ -154,7 +153,7 @@ public class TClient {
 	/**
 	 * Refreshes component by using its source attribute.
 	 */
-	public void refresh(long tuid, Map<String, Object> data) throws HttpException {
+	public void refresh(long tuid, Map<String, Object> data) {
 		final TComponent componentToRefresh = find(tuid);
 		if(componentToRefresh == null) {
 			throw new ComponentNoReachableException("Component with tuid=%d is not reachable", tuid);

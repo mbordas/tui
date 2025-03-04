@@ -16,7 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
@@ -116,7 +115,7 @@ public class TestHTTPClient {
 		}
 	}
 
-	public String callBackend(String target, Map<String, Object> parameters, boolean multipart) throws HttpException {
+	public String callBackend(String target, Map<String, Object> parameters, boolean multipart) {
 		final String uri = String.format("http://%s:%d/%s", m_host, m_port,
 				target.startsWith("/") ? target.substring(1) : target);
 		final HttpPost httpRequest = new HttpPost(uri);
@@ -151,12 +150,12 @@ public class TestHTTPClient {
 			result = m_httpClient.execute(httpRequest, m_responseHandler);
 
 		} catch(IOException e) {
-			throw new HttpException(e.getMessage(), e);
+			throw new TestExecutionException(e);
 		} finally {
 			httpRequest.releaseConnection();
 		}
 		if(m_responseHandler.getLastStatusCode() < 200 || m_responseHandler.getLastStatusCode() >= 300) {
-			throw new HttpException(String.format("HTTP error %d", m_responseHandler.getLastStatusCode()));
+			throw new TestExecutionException(String.format("HTTP error %d", m_responseHandler.getLastStatusCode()));
 		}
 		return result;
 	}
