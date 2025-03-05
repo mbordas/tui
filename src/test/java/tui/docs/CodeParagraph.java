@@ -15,7 +15,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.docs;
 
+import tui.html.HTMLNode;
 import tui.http.TUIBackend;
+import tui.test.TClient;
+import tui.test.components.TSearch;
+import tui.test.components.TTable;
 import tui.ui.Style;
 import tui.ui.StyleSet;
 import tui.ui.UIConfigurationException;
@@ -64,6 +68,7 @@ import tui.ui.components.svg.graph.DataSerie;
 import tui.ui.components.svg.graph.LineSerie;
 import tui.ui.components.svg.graph.StepLineSerie;
 import tui.ui.components.svg.graph.UIGraph;
+import tui.utils.TestUtils;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -89,9 +94,10 @@ public class CodeParagraph extends Paragraph {
 		customStyle().setBorderColor(BORDER_COLOR);
 		customStyle().setBorderRadius(3);
 
-		setColorizedWords(COLOR_JAVA_KEYS, "new", "private", "final", "static", "void");
+		setColorizedWords(COLOR_JAVA_KEYS, "new", "private", "final", "static", "void", "record");
 
 		registerClassForColor(UIComponent.class, UIRefreshableComponent.class);
+		registerClassForColor(HTMLNode.class);
 		registerClassForColor(Grid.class, Layouts.class, Panel.class, TabbedFlow.class, VerticalFlow.class, VerticalScroll.class);
 		registerClassForColor(DownloadButton.class, Page.class, Image.class, NavButton.class, NavLink.class, Paragraph.class,
 				RefreshButtonTest.class, Section.class, Table.class, TableData.class, TablePicker.class);
@@ -101,6 +107,7 @@ public class CodeParagraph extends Paragraph {
 		registerClassForColor(SVG.class, SVGCircle.class, SVGComponent.class, SVGPath.class, SVGRectangle.class, SVGText.class,
 				CoordinatesComputer.class, DataSerie.class, LineSerie.class, StepLineSerie.class, UIGraph.class, SVGMarker.class);
 		registerClassForColor(Style.class, StyleSet.class);
+		registerClassForColor(TestUtils.class, TClient.class, TTable.class, TSearch.class);
 		registerClassForColor(UIConfigurationException.class);
 
 		registerClassForColor(TUIBackend.class);

@@ -13,58 +13,51 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.docs;
+package tui.ui.components;
 
 import tui.html.HTMLNode;
-import tui.ui.Style;
-import tui.ui.components.Page;
-import tui.ui.components.layout.Panel;
+import tui.json.JsonArray;
+import tui.json.JsonMap;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 
-public class TUIDocumentation {
+public class List extends UIComponent {
 
-	private final Collection<Page> m_pages = new ArrayList<>();
+	public static final String JSON_TYPE = "list";
+	public static final String JSON_ATTRIBUTE_IS_ORDERED = "isIrdered";
+	public static final String JSON_ARRAY_ELEMENTS = "content";
 
-	public TUIDocumentation() {
-		m_pages.add(new TUIDocsIndex());
-		m_pages.add(new TUIDocsOverview());
+	private boolean m_isOrdered = true;
+	private final java.util.List<UIComponent> m_content = new ArrayList<>();
+
+	public List(boolean isOrdered) {
+		m_isOrdered = isOrdered;
 	}
 
-	void save(File dir) {
-		final Style style = new Style();
-		for(Page page : m_pages) {
-			try {
-				decorate(page, style);
-				save(page, style, dir);
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
-		}
+	public List append(UIComponent component) {
+		m_content.add(component);
+		return this;
 	}
 
-	static void decorate(Page page, Style style) {
-		page.setFooter(new Panel());
-		style.footer().setHeight_px(50);
+	@Override
+	public HTMLNode toHTMLNode() {
+		final HTMLNode result = new HTMLNode(m_isOrdered ? "ol" : "ul");
+		m_content.forEach((component) -> {
+			final HTMLNode itemContainer = result.createChild("li");
+			itemContainer.append(component.toHTMLNode());
+		});
+
+		applyCustomStyle(result);
+		return result;
 	}
 
-	static void save(Page page, Style style, File dir) throws IOException {
-		final File file = new File(dir, page.getSource());
-		try(FileOutputStream outputStream = new FileOutputStream(file)) {
-			final HTMLNode htmlNode = page.toHTMLNode(new Page.Resource(false, style.toCSS()), null);
-			byte[] strToBytes = htmlNode.toHTML().getBytes();
-			outputStream.write(strToBytes);
-		}
-		System.out.println("Page saved: " + file.getAbsolutePath());
-	}
-
-	public static void main(String[] args) throws IOException {
-		final File dir = new File(args[0]);
-		final TUIDocumentation tuiDocumentation = new TUIDocumentation();
-		tuiDocumentation.save(dir);
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = new JsonMap(JSON_TYPE);
+		result.setAttribute(JSON_ATTRIBUTE_IS_ORDERED, Boolean.toString(m_isOrdered));
+		final JsonArray contentArray = result.createArray(JSON_ARRAY_ELEMENTS);
+		m_content.forEach((component) -> contentArray.add(component.toJsonMap()));
+		applyCustomStyle(result);
+		return result;
 	}
 }

@@ -516,7 +516,7 @@ function instrumentSearchForms() {
                         data[inputElement.name] = 'off';
                     }
                 } else {
-                    if(inputElement.value != '') {
+                    if(inputElement.type == 'search' || inputElement.value != '') {
                         data[inputElement.name] = inputElement.value;
                     }
                 }

@@ -37,7 +37,7 @@ public class TestUtils {
 			"Strongfair", "Middlesborough", "Kilerth", "Shadowfen", "Nuxvar" };
 
 	public static String getRandomCityName() {
-		return CITIES[(int) (Math.random() * CITIES.length) - 1];
+		return CITIES[(int) (Math.random() * (CITIES.length - 1))];
 	}
 
 	public static void quickShow(UIComponent component) throws Exception {

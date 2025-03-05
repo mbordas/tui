@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,68 +15,58 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.json.JsonParser;
-import tui.json.JsonValue;
 import tui.test.TClient;
 import tui.test.TestExecutionException;
-import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInput;
+import tui.ui.components.form.Search;
 import tui.utils.TUIUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class TForm extends TComponent {
+public class TSearch extends TComponent {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TForm.class);
-
-	private String m_title;
-	private String m_target;
-
-	private final List<TFormField> m_inputs = new ArrayList<>();
+	private final String m_title;
+	private final String m_submitLabel;
+	private final Map<String, String> m_parameters = new HashMap<>();
+	private final Set<TForm.TFormField> m_inputs = new LinkedHashSet<>();
 	private final Set<Long> m_refreshListeners = new TreeSet<>();
-	private String m_opensPageSource = null;
+	private boolean m_hideButton = false;
 
-	static class TFormField {
-		String name;
-		String label;
-		Object enteredValue;
-
-		TFormField(String name, String label, Object enteredValue) {
-			this.name = name;
-			this.label = label;
-			this.enteredValue = enteredValue;
-		}
-	}
-
-	TForm(long tuid, String title, String target, TClient tClient) {
-		super(tuid, tClient);
+	/**
+	 * @param tuid   Unique identifier.
+	 * @param client This client object will help acting on some component, and determining if they are reachable.
+	 */
+	TSearch(long tuid, String title, String submitLabel, TClient client) {
+		super(tuid, client);
 		m_title = title;
-		m_target = target;
+		m_submitLabel = submitLabel;
 	}
 
 	public String getTitle() {
 		return m_title;
 	}
 
+	public String getSubmitLabel() {
+		return m_submitLabel;
+	}
+
 	public void enterInput(String fieldName, String value) {
-		final Optional<TFormField> anyField = m_inputs.stream().filter(
+		final Optional<TForm.TFormField> anyField = m_inputs.stream().filter(
 				(field) -> field.name.equals(fieldName)).findAny();
 		if(anyField.isEmpty()) {
-			throw new TestExecutionException("No string input found in form '%s' with name: %s", m_title, fieldName);
+			throw new TestExecutionException("No string input found in search '%s' with name: %s", m_title, fieldName);
 		}
 		anyField.get().enteredValue = value;
 	}
@@ -87,26 +77,10 @@ public class TForm extends TComponent {
 	public void submit() {
 		final Map<String, Object> parameters = new HashMap<>();
 		m_inputs.forEach((field) -> parameters.put(field.name, field.enteredValue));
-		final String jsonResponse = m_client.callBackend(m_target, parameters, true);
-		if(!Form.isSuccessfulSubmissionResponse(jsonResponse)) {
-			throw new TestExecutionException("Unexpected web service response");
-		}
+		parameters.putAll(m_parameters);
 
 		for(long listenerId : m_refreshListeners) {
-			m_client.refresh(listenerId, null);
-		}
-
-		if(m_opensPageSource != null) {
-			final JsonMap response = JsonParser.parseMap(jsonResponse);
-
-			final Map<String, String> params = new HashMap<>();
-			params.put("action", m_opensPageSource);
-			final JsonMap responseParameters = response.getMap("parameters");
-			for(Map.Entry<String, JsonValue<?>> entry : responseParameters.getAttributes().entrySet()) {
-				params.put(entry.getKey(), entry.getValue().toString());
-			}
-			LOG.trace("Form submission opening page {}...", m_opensPageSource);
-			m_client.open(m_opensPageSource, params);
+			m_client.refresh(listenerId, parameters);
 		}
 	}
 
@@ -120,29 +94,33 @@ public class TForm extends TComponent {
 		return List.of();
 	}
 
-	public static TForm parse(JsonMap json, TClient client) {
+	public static TComponent parse(JsonMap json, TClient client) {
 		final long tuid = JsonConstants.readTUID(json);
-		final String title = json.getAttribute("title");
-		final String target = json.getAttribute("target");
-		final TForm result = new TForm(tuid, title, target, client);
+		final String title = json.getAttribute(Search.JSON_ATTRIBUTE_TITLE);
+		final String submitLabel = json.getAttribute(Search.JSON_ATTRIBUTE_SUBMIT_LABEL);
 
-		final JsonArray array = json.getArray("inputs");
-		final Iterator<JsonObject> iterator = array.iterator();
+		final TSearch result = new TSearch(tuid, title, submitLabel, client);
+		result.m_hideButton = Boolean.parseBoolean(json.getAttribute(Search.JSON_ATTRIBUTE_HIDE_BUTTON));
+
+		// Displayed inputs
+		final JsonArray inputsArray = json.getArray(Search.JSON_ATTRIBUTE_INPUTS);
+		final Iterator<JsonObject> iterator = inputsArray.iterator();
 		while(iterator.hasNext()) {
 			final JsonObject input = iterator.next();
 			assert input instanceof JsonMap;
-			JsonMap map = (JsonMap) input;
-			final String name = FormInput.getName(map);
-			final String label = FormInput.getLabel(map);
-			result.m_inputs.add(new TFormField(name, label, null));
+			JsonMap inputMap = (JsonMap) input;
+			final String name = FormInput.getName(inputMap);
+			final String label = FormInput.getLabel(inputMap);
+			result.m_inputs.add(new TForm.TFormField(name, label, null));
 		}
+
+		// Hidden parameters
+		final JsonMap parametersMap = json.getMap(Search.JSON_ATTRIBUTE_PARAMETERS);
+		parametersMap.getAttributes().forEach((key, value) -> result.m_parameters.put(key, value.toString()));
 
 		result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
 
-		if(json.hasAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE)) {
-			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);
-		}
-
 		return result;
 	}
+
 }

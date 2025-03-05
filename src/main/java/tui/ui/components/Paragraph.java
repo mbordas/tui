@@ -37,7 +37,7 @@ public class Paragraph extends UIRefreshableComponent {
 	public static final String ATTRIBUTE_BORDER = "border";
 	public static final String ATTRIBUTE_TEXT_ALIGN = "textAlign";
 
-	public class Text extends UIComponent {
+	public static class Text extends UIComponent {
 
 		public static final String JSON_TYPE = "text";
 		public static final String JSON_ATTRIBUTE_CONTENT = "content";

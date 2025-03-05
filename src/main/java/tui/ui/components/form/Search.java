@@ -17,6 +17,7 @@ package tui.ui.components.form;
 
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
+import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.components.BadComponentException;
 import tui.ui.components.UIComponent;
@@ -31,25 +32,31 @@ import java.util.Set;
 
 public class Search extends UIComponent {
 
-	public static final String JSON_TYPE = "search_form";
 	public static final String HTML_CLASS = "tui-search-form";
 
+	public static final String JSON_TYPE = "search_form";
+	public static final String JSON_ATTRIBUTE_TITLE = "title";
+	public static final String JSON_ATTRIBUTE_SUBMIT_LABEL = "submitLabel";
+	public static final String JSON_ATTRIBUTE_HIDE_BUTTON = "hideButton";
+	public static final String JSON_ATTRIBUTE_INPUTS = "inputs";
+	public static final String JSON_ATTRIBUTE_PARAMETERS = "parameters";
+
 	private final String m_title;
-	private final String m_buttonLabel;
+	private final String m_submitLabel;
 	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
 	private boolean m_hideButton = false;
 
-	public Search(String title, String buttonLabel, String parameterName) {
+	public Search(String title, String submitLabel, String inputName) {
 		m_title = title;
-		m_buttonLabel = buttonLabel;
-		createInputSearch(buttonLabel, parameterName);
+		m_submitLabel = submitLabel;
+		createInputSearch(submitLabel, inputName);
 	}
 
 	public Search(String title, String buttonLabel) {
 		m_title = title;
-		m_buttonLabel = buttonLabel;
+		m_submitLabel = buttonLabel;
 	}
 
 	public String getTitle() {
@@ -119,7 +126,7 @@ public class Search extends UIComponent {
 		}
 
 		final HTMLNode button = result.createChild("button")
-				.setText(m_buttonLabel);
+				.setText(m_submitLabel);
 		if(m_hideButton) {
 			button.setStyleProperty("display", "none");
 		}
@@ -133,10 +140,17 @@ public class Search extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		//		final JsonMap result = super.toJsonMap();
-		//		result.setType(JSON_TYPE);
-		//		return result;
-		return null;
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		result.setAttribute(JSON_ATTRIBUTE_TITLE, m_title);
+		result.setAttribute(JSON_ATTRIBUTE_SUBMIT_LABEL, m_submitLabel);
+		result.setAttribute(JSON_ATTRIBUTE_HIDE_BUTTON, String.valueOf(m_hideButton));
+		result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));
+		result.createArray(JSON_ATTRIBUTE_INPUTS, m_inputs, FormInput::toJsonObject);
+		final JsonMap parameters = result.createMap(JSON_ATTRIBUTE_PARAMETERS);
+		for(final Map.Entry<String, String> parameterEntry : m_parameters.entrySet()) {
+			parameters.setAttribute(parameterEntry.getKey(), parameterEntry.getValue());
+		}
+		return result;
 	}
 
 }

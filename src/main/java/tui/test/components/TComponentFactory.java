@@ -25,6 +25,7 @@ import tui.ui.components.Section;
 import tui.ui.components.Table;
 import tui.ui.components.TablePicker;
 import tui.ui.components.form.Form;
+import tui.ui.components.form.Search;
 import tui.ui.components.layout.Grid;
 import tui.ui.components.layout.Panel;
 import tui.ui.components.layout.TabbedFlow;
@@ -43,6 +44,7 @@ public class TComponentFactory {
 			case Table.JSON_TYPE -> TTable.parse(map, client);
 			case TablePicker.JSON_TYPE -> TTablePicker.parse(map, client);
 			case Form.JSON_TYPE -> TForm.parse(map, client);
+			case Search.JSON_TYPE -> TSearch.parse(map, client);
 			case VerticalFlow.JSON_TYPE -> TVerticalFlow.parse(map, client);
 			case TabbedFlow.JSON_TYPE -> TTabbedFlow.parse(map, client);
 			case Grid.JSON_TYPE -> TGrid.parse(map, client);

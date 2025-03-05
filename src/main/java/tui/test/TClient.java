@@ -24,6 +24,7 @@ import tui.test.components.TForm;
 import tui.test.components.TPage;
 import tui.test.components.TPanel;
 import tui.test.components.TRefreshableComponent;
+import tui.test.components.TSearch;
 import tui.test.components.TTable;
 import tui.test.components.TTablePicker;
 
@@ -133,6 +134,16 @@ public class TClient {
 			return (TForm) anyFoundForm.get();
 		} else {
 			throw new NullPointerException(String.format("Form '%s' not present in page or not reachable", title));
+		}
+	}
+
+	public TSearch getSearch(String title) {
+		final Optional<TComponent> anyFoundSearch = m_currentPage.findReachableSubComponent(
+				(component) -> component instanceof TSearch search && title.equals(search.getTitle()));
+		if(anyFoundSearch.isPresent()) {
+			return (TSearch) anyFoundSearch.get();
+		} else {
+			throw new NullPointerException(String.format("Search '%s' not present in page or not reachable", title));
 		}
 	}
 
