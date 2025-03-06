@@ -15,18 +15,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.ui.components.layout.Layouts;
 
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Style {
-
-	private static final Logger LOG = LoggerFactory.getLogger(Style.class);
 
 	static class GlobalColors {
 		Color text = new Color(46, 46, 46);
@@ -47,23 +42,85 @@ public class Style {
 	}
 
 	private final GlobalColors m_globalColors = new GlobalColors();
+
+	private final StyleSet m_global = new StyleSet();
+	private final StyleSet m_body = new StyleSet();
 	private final StyleSet m_header = new StyleSet();
+	private final StyleSet m_header_link = new StyleSet();
+	private final StyleSet m_header_submitButton = new StyleSet();
 	private final StyleSet m_footer = new StyleSet();
+	private final Map<Integer, StyleSet> m_headings = new TreeMap<>();
+	private final StyleSet m_section = new StyleSet();
 	private final StyleSet m_paragraph = new StyleSet();
+	private final StyleSet m_link = new StyleSet();
+	private final StyleSet m_button = new StyleSet();
+	private final StyleSet m_submitButton = new StyleSet();
 
 	public Style() {
-		m_header.setBackgroundColor("var(--global-color-background)");
-		m_header.setTextColor("var(--global-color-background-contrast)");
-		m_header.setPadding(10, 10, 10, 10);
 
-		m_footer.setBackgroundColor("var(--global-color-background)");
-		m_footer.setTextColor("var(--global-color-background-contrast)");
-		m_footer.setPadding(10, 10, 10, 10);
-		m_footer.setBorderWidth_px(1, 0, 0, 0);
+		global().setTextColor("var(--global-color-text)");
 
-		m_paragraph.setTextAlign(Layouts.TextAlign.LEFT);
-		m_paragraph.setMargin(0, 0, 10, 0);
-		m_paragraph.setPadding(0, 0, 0, 0);
+		body().overrideProperty("min-height", "100vh");
+		body().setPadding(0, 0, 0, 0);
+		body().setMargin(0, 0, 0, 0);
+		body().setFontFamily("Arial, sans-serif");
+
+		header().setBackgroundColor("var(--global-color-background)");
+		header().setTextColor("var(--global-color-background-contrast)");
+		header().setPadding(10, 10, 10, 10);
+		header().overrideProperty("vertical-align", "middle");
+		header().setBorderWidth_px(0, 0, 1, 0);
+
+		headerLink().setTextAlign(Layouts.TextAlign.CENTER);
+		headerLink().setNoTextDecoration();
+
+		headerSubmitButton().setNoBackground();
+		headerSubmitButton().setPadding(0, 5, 0, 5);
+		headerSubmitButton().setNoBorder();
+		headerSubmitButton().setTextUnderlined();
+		headerSubmitButton().setCursorPointingHand();
+
+		footer().setBackgroundColor("var(--global-color-background)");
+		footer().setTextColor("var(--global-color-background-contrast)");
+		footer().setPadding(10, 10, 10, 10);
+		footer().setBorderWidth_px(1, 0, 0, 0);
+
+		section().setTextAlign(Layouts.TextAlign.LEFT);
+		section().setMargin(30, 0, 0, 0);
+
+		heading(1).setPadding(0, 0, 0, 0);
+		heading(1).setTextSize_em(2);
+
+		heading(2).setPadding(0, 0, 0, 0);
+		heading(2).setTextSize_em(1.5f);
+
+		heading(3).setPadding(0, 0, 0, 0);
+		heading(3).setTextSize_em(1.2f);
+		heading(3).setFontWeight("lighter");
+
+		heading(4).setPadding(0, 0, 0, 0);
+		heading(4).setTextSize_em(1.1f);
+		heading(4).setTextItalic();
+		heading(4).setFontWeight("lighter");
+
+		paragraph().setTextAlign(Layouts.TextAlign.LEFT);
+		paragraph().setMargin(0, 0, 10, 0);
+		paragraph().setPadding(0, 0, 0, 0);
+
+		link().setTextColor("var(--global-color-action)");
+
+		button().setBorderRadius_px(2);
+		button().setPadding(5, 20, 5, 20);
+		button().setTextAlign(Layouts.TextAlign.CENTER);
+		button().setCursorPointingHand();
+		button().setBackgroundColor("var(--global-color-cancel)");
+		button().setTextColor("var(--global-color-cancel-contrast)");
+		button().setBorderWidth_px(1);
+		button().setBorderColor("var(--global-color-borders)");
+
+		submitButton().setBackgroundColor("var(--global-color-action)");
+		submitButton().setTextColor("var(--global-color-action-contrast)");
+		submitButton().setBorderColor("var(--global-color-action)");
 	}
 
 	public void setColorForAction(Color color) {
@@ -74,16 +131,56 @@ public class Style {
 		m_globalColors.tableRowHover = color;
 	}
 
+	public StyleSet global() {
+		return m_global;
+	}
+
+	public StyleSet body() {
+		return m_body;
+	}
+
 	public StyleSet header() {
 		return m_header;
+	}
+
+	public StyleSet headerLink() {
+		return m_header_link;
+	}
+
+	public StyleSet headerSubmitButton() {
+		return m_header_submitButton;
 	}
 
 	public StyleSet footer() {
 		return m_footer;
 	}
 
+	public StyleSet button() {
+		return m_button;
+	}
+
+	public StyleSet submitButton() {
+		return m_submitButton;
+	}
+
+	public StyleSet section() {
+		return m_section;
+	}
+
+	/**
+	 * @param depth 1 (h1) or more.
+	 */
+	public StyleSet heading(int depth) {
+		assert depth >= 1;
+		return m_headings.computeIfAbsent(depth, (_depth) -> new StyleSet());
+	}
+
 	public StyleSet paragraph() {
 		return m_paragraph;
+	}
+
+	public StyleSet link() {
+		return m_link;
 	}
 
 	public String toCSS() {
@@ -91,85 +188,23 @@ public class Style {
 
 		appendGlobalVariables(result);
 
+		result.append(global().toCSS("*")).append("\n");
+		result.append(body().toCSS("body")).append("\n");
+
+		for(Map.Entry<Integer, StyleSet> headingEntry : m_headings.entrySet()) {
+			final String selector = String.format("h%d", headingEntry.getKey());
+			result.append(headingEntry.getValue().toCSS(selector)).append("\n");
+		}
+
+		result.append(link().toCSS("a")).append("\n");
+		result.append(header().toCSS("header")).append("\n");
+		result.append(headerLink().toCSS("header a")).append("\n");
+		result.append(headerSubmitButton().toCSS("header button[type='submit']")).append("\n");
+		result.append(footer().toCSS("footer")).append("\n");
+		result.append(section().toCSS("section")).append("\n");
+		result.append(paragraph().toCSS("p")).append("\n");
+
 		result.append("""
-				* {
-				    color: var(--global-color-text);
-				}
-				
-				body {
-				    min-height: 100vh;
-				    padding: 0px;
-				    margin: 0px;
-				    font-family: Arial, sans-serif;
-				}
-				
-				main {
-				    /* justify-self: stretch; */
-				}
-				
-				h1 {
-					padding-left: 0px;
-					font-size: 2em;
-				}
-				
-				h2 {
-					padding-left: 0px;
-					font-size: 1.5em;
-				}
-				
-				h3 {
-					padding-left: 0px;
-					font-size: 1.2em;
-					font-weight: lighter;
-				}
-				
-				h4 {
-					padding-left: 0px;
-					font-size: 1.1em;
-					font-style: italic;
-					font-weight: lighter;
-				}
-				
-				a {
-					color: var(--global-color-action);
-				}
-				
-				header {
-				""");
-		result.append(m_header.toCSS()).append("\n");
-		result.append("""
-				    vertical-align: middle;
-				    border-bottom: solid 1px;
-				}
-				header a {
-				    text-align: center;
-				    text-decoration: none;
-				}
-				header button[type='submit'] {
-				      background: none;
-				      padding-left: 5px;
-				      padding-right: 5px;
-				      border: none;
-				      text-decoration: underline;
-				      cursor: pointer;
-				}
-				
-				footer {
-				""");
-		result.append(m_footer.toCSS()).append("\n");
-		result.append("""
-				}
-				
-				section {
-					text-align: left;
-					margin-top: 30px;
-				}
-				
-				p {
-				""");
-		result.append(m_paragraph.toCSS());
-		result.append("""
-				 				}
 				
 				.tui-border-on {
 				    border: 1px solid var(--global-color-border);
@@ -302,7 +337,6 @@ public class Style {
 				    translate: -50% -50%;
 				    z-index: -1;
 				    padding: 3px;
-				    /* background: linear-gradient(var(--angle), var(--global-color-background) 0%, var(--global-color-background) 50%, var(--global-color-action) 100%); */
 				    background-image: conic-gradient(from var(--angle), var(--global-color-background) 0% 50%, var(--global-color-action) 50% 100%);
 				    animation: 1s spin linear infinite;
 				}
@@ -379,21 +413,12 @@ public class Style {
 				.tui-refresh-button-container {
 					display: inline-block;
 				}
-				
-				button {
-				    border-radius: 2px;
-				    padding: 5px 20px 5px 20px;
-				    text-align: center;
-				    cursor: pointer;
-				    background-color: var(--global-color-cancel);
-				    color: var(--global-color-cancel-contrast);
-				    border: 1px solid var(--global-color-border);
-				}
-				button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button {
-				    background-color: var(--global-color-action);
-				    color: var(--global-color-action-contrast);
-				    border-color: var(--global-color-action);
-				}
+				""");
+
+		result.append(button().toCSS("button")).append("\n");
+		result.append(submitButton().toCSS("button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button")).append("\n");
+
+		result.append("""
 				
 				/* NAV BUTTON */
 				
@@ -404,45 +429,6 @@ public class Style {
 				.tui-navbutton>button {
 					background-color: var(--global-color-cancel);
 					border: 1px solid var(--global-color-border);
-				}
-				
-				/* MONITORING */
-				
-				.tui-monitor-fieldset {
-				    border-radius: 2px;
-				    display: grid;
-				    border: 1px solid var(--global-color-border);
-				}
-				.tui-monitor-field {
-				}
-				.tui-monitor-field-label {
-				    display: inline-block;
-				    width: 150px;
-				    text-align: right;
-				    padding-left: 10px;
-				    padding-right: 10px;
-				    margin: 2px;
-				}
-				.tui-monitor-field-value {
-				    display: inline-block;
-				    width: 80px;
-				    text-align: center;
-				    padding-left: 10px;
-				    padding-right: 10px;
-				    margin: 1px;
-				    border: 1px solid var(--global-color-border);
-				}
-				.tui-monitor-field-value-neutral {
-				    background-color: var(--global-color-neutral-state);
-				    color: var(--global-color-neutral-state-contrast);
-				}
-				.tui-monitor-field-value-green {
-				    background-color: var(--global-color-green-state);
-				    color: var(--global-color-green-state-contrast);
-				}
-				.tui-monitor-field-value-red {
-				    background-color: var(--global-color-red-state);
-				    color: var(--global-color-red-state-contrast);
 				}
 				
 				/* TABLE */
@@ -497,6 +483,7 @@ public class Style {
 				    background-color: var(--global-color-fetch-error);
 				    color: var(--global-color-fetch-error-contrast);
 				}""");
+
 		return result.toString();
 	}
 
@@ -545,15 +532,5 @@ public class Style {
 		} else {
 			return Color.WHITE; // dark colors - white font
 		}
-	}
-
-	private static String getResourceFileContent(String resourcePath) throws IOException {
-		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-		String result = null;
-		if(is != null) {
-			result = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-			is.close();
-		}
-		return result;
 	}
 }

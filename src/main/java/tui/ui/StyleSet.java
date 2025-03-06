@@ -22,6 +22,8 @@ import tui.json.JsonMap;
 import tui.ui.components.layout.Layouts;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class StyleSet {
@@ -30,8 +32,10 @@ public class StyleSet {
 	private String m_fontSize = null;
 	private String m_fontFamily = null;
 	private String m_fontWeight = null;
+	private String m_fontStyle = null;
 	private Double m_lineHeight_em = null;
 	private String m_textTransform = null;
+	private String m_textDecoration = null;
 	private Layouts.TextAlign m_textAlign = null;
 	private String m_backgroundColor = null;
 	private String m_borderStyle = null;
@@ -39,12 +43,20 @@ public class StyleSet {
 	private String m_borderWidth = null;
 	private String m_borderRadius_px = null;
 
+	private String m_cursor = null;
+
 	private Style.Padding m_padding = null;
 	private Style.Margin m_margin = null;
 	private String m_width = null;
 	private String m_height = null;
 
+	private final Map<String, String> m_overriddenProperties = new HashMap<>();
+
 	public StyleSet() {
+	}
+
+	public void overrideProperty(String name, String value) {
+		m_overriddenProperties.put(name, value);
 	}
 
 	public StyleSet setNoBorder() {
@@ -54,6 +66,12 @@ public class StyleSet {
 
 	public StyleSet setBorderColor(Color color) {
 		m_borderColor = Style.toCSSHex(color);
+		m_borderStyle = "solid";
+		return this;
+	}
+
+	public StyleSet setBorderColor(String cssValue) {
+		m_borderColor = cssValue;
 		m_borderStyle = "solid";
 		return this;
 	}
@@ -68,8 +86,13 @@ public class StyleSet {
 		return this;
 	}
 
-	public StyleSet setBorderRadius(Integer radius_px) {
+	public StyleSet setBorderRadius_px(Integer radius_px) {
 		m_borderRadius_px = String.format("%dpx", radius_px);
+		return this;
+	}
+
+	public StyleSet setCursorPointingHand() {
+		m_cursor = "pointer";
 		return this;
 	}
 
@@ -104,6 +127,11 @@ public class StyleSet {
 		return this;
 	}
 
+	public StyleSet setTextSize_em(float size_em) {
+		m_fontSize = String.format("%fem", size_em);
+		return this;
+	}
+
 	public StyleSet setLineHeight(double height_em) {
 		m_lineHeight_em = height_em;
 		return this;
@@ -111,6 +139,21 @@ public class StyleSet {
 
 	public StyleSet setTextUpperCase() {
 		m_textTransform = "uppercase";
+		return this;
+	}
+
+	public StyleSet setTextItalic() {
+		m_fontStyle = "italic";
+		return this;
+	}
+
+	public StyleSet setNoTextDecoration() {
+		m_textDecoration = "none";
+		return this;
+	}
+
+	public StyleSet setTextUnderlined() {
+		m_textDecoration = "underline";
 		return this;
 	}
 
@@ -145,6 +188,10 @@ public class StyleSet {
 		return node.computeStyleAttribute();
 	}
 
+	public String toCSS(String selector) {
+		return String.format("%s { %s }", selector, toCSS());
+	}
+
 	public void apply(HTMLNode node) {
 		apply(node, (htmlNode, property) -> htmlNode.setStyleProperty(property.name, property.value));
 	}
@@ -176,14 +223,17 @@ public class StyleSet {
 		setStylePropertyIfDefined(node, "font-size", m_fontSize, setter);
 		setStylePropertyIfDefined(node, "font-family", m_fontFamily, setter);
 		setStylePropertyIfDefined(node, "font-weight", m_fontWeight, setter);
+		setStylePropertyIfDefined(node, "font-style", m_fontStyle, setter);
 		setStylePropertyIfDefined(node, "line-height", m_lineHeight_em == null ? null : String.valueOf(m_lineHeight_em), setter);
 		setStylePropertyIfDefined(node, "text-transform", m_textTransform, setter);
+		setStylePropertyIfDefined(node, "text-decoration", m_textDecoration, setter);
 		setStylePropertyIfDefined(node, "text-align", m_textAlign == null ? null : m_textAlign.getCSSValue(), setter);
 		setStylePropertyIfDefined(node, "background-color", m_backgroundColor, setter);
 		setStylePropertyIfDefined(node, "border-style", m_borderStyle, setter);
 		setStylePropertyIfDefined(node, "border-color", m_borderColor, setter);
 		setStylePropertyIfDefined(node, "border-width", m_borderWidth, setter);
 		setStylePropertyIfDefined(node, "border-radius", m_borderRadius_px, setter);
+		setStylePropertyIfDefined(node, "cursor", m_cursor, setter);
 		setStylePropertyIfDefined(node, "width", m_width, setter);
 		setStylePropertyIfDefined(node, "height", m_height, setter);
 
@@ -195,6 +245,11 @@ public class StyleSet {
 			setStylePropertyIfDefined(node, "padding", String.format("%dpx %dpx %dpx %dpx",
 					m_padding.top_px(), m_padding.right_px(), m_padding.bottom_px(), m_padding.left_px()), setter);
 		}
+
+		for(Map.Entry<String, String> overrideEntry : m_overriddenProperties.entrySet()) {
+			setStylePropertyIfDefined(node, overrideEntry.getKey(), overrideEntry.getValue(), setter);
+		}
+
 	}
 
 	private <T> void setStylePropertyIfDefined(@NotNull T node, @NotNull String name, @Nullable String value,
