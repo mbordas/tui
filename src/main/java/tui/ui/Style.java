@@ -59,6 +59,8 @@ public class Style {
 	public Style() {
 
 		global().setTextColor("var(--global-color-text)");
+		global().setFontFamily(
+				"Public Sans Web, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol");
 
 		body().overrideProperty("min-height", "100vh");
 		body().setPadding(0, 0, 0, 0);
