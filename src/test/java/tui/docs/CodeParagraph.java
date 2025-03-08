@@ -83,12 +83,13 @@ public class CodeParagraph extends Paragraph {
 	public static final Color COLOR_TUI_CLASS = new Color(18, 61, 195);
 	public static final Color COLOR_STRING_LITERALS = new Color(34, 193, 67);
 
+	public static final String FONT_FAMILY = "Consolas";
+
 	private Map<String, Color> m_colorMap = new HashMap<>();
 
 	public CodeParagraph() {
 		customStyle().setPadding(5, 5, 5, 5);
 		customStyle().setBackgroundColor(BACKGROUND_COLOR);
-		customStyle().setFontFamily("Consolas");
 		customStyle().setLineHeight(1.4);
 		customStyle().setBorderWidth_px(1);
 		customStyle().setBorderColor(BORDER_COLOR);
@@ -161,7 +162,9 @@ public class CodeParagraph extends Paragraph {
 
 	private StringBuilder flushLiteralString(StringBuilder currentStringLiteral) {
 		if(currentStringLiteral != null) {
-			append((style) -> style.setTextColor(COLOR_STRING_LITERALS), currentStringLiteral.toString());
+			// Applying color and font
+			append((style) -> style.setTextColor(COLOR_STRING_LITERALS).setFontFamily(FONT_FAMILY),
+					currentStringLiteral.toString());
 		}
 		return null;
 	}
@@ -170,14 +173,16 @@ public class CodeParagraph extends Paragraph {
 		if(currentWord != null) {
 			final String word = currentWord.toString();
 			final Color color = m_colorMap.get(word);
-			append(color == null ? null : (style) -> style.setTextColor(color), currentWord.toString());
+			append(color == null ? (style) -> style.setFontFamily(FONT_FAMILY) // Applying font only
+							: (style) -> style.setTextColor(color).setFontFamily(FONT_FAMILY), // font and color
+					currentWord.toString());
 		}
 		return null;
 	}
 
 	private StringBuilder flushSpace(StringBuilder currentSpace) {
 		if(currentSpace != null) {
-			append(null, currentSpace.toString());
+			append((style) -> style.setFontFamily(FONT_FAMILY), currentSpace.toString());
 		}
 		return null;
 	}
