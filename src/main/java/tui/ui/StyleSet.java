@@ -182,14 +182,10 @@ public class StyleSet {
 		return this;
 	}
 
-	public String toCSS() {
-		final HTMLNode node = new HTMLNode("fake");
-		apply(node);
-		return node.computeStyleAttribute();
-	}
-
 	public String toCSS(String selector) {
-		return String.format("%s { %s }", selector, toCSS());
+		final Map<String, String> styleProperties = new HashMap<>();
+		apply(styleProperties, (map, property) -> map.put(property.name, property.value));
+		return String.format("%s { %s }", selector, computeStyleAttribute(styleProperties));
 	}
 
 	public void apply(HTMLNode node) {
@@ -257,6 +253,16 @@ public class StyleSet {
 		if(value != null) {
 			setter.accept(node, new Property(name, value));
 		}
+	}
+
+	public static @NotNull String computeStyleAttribute(Map<String, String> properties) {
+		final StringBuilder stylePropertiesStr = new StringBuilder();
+		for(Map.Entry<String, String> styleProperty : properties.entrySet()) {
+			stylePropertiesStr.append(
+							styleProperty.getKey()).append(":")
+					.append(styleProperty.getValue()).append(";");
+		}
+		return stylePropertiesStr.toString();
 	}
 
 }

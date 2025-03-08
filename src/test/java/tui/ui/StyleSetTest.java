@@ -26,7 +26,6 @@ public class StyleSetTest {
 		final StyleSet styleSet = new StyleSet();
 		styleSet.setHeight_px(15);
 
-		assertEquals("height:15px;", styleSet.toCSS());
 		assertEquals("p { height:15px; }", styleSet.toCSS("p"));
 	}
 
