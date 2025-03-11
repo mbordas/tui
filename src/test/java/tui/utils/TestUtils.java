@@ -17,9 +17,9 @@ package tui.utils;
 
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.Style;
 import tui.ui.components.Page;
 import tui.ui.components.UIComponent;
+import tui.ui.style.Style;
 
 public class TestUtils {
 

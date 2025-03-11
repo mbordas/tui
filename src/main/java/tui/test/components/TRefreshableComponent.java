@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.Nullable;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
 import tui.test.TClient;
@@ -43,10 +44,12 @@ public abstract class TRefreshableComponent extends TComponent {
 
 	public abstract void update(JsonMap jsonMap);
 
-	public void refresh(Map<String, Object> data) throws TestExecutionException {
-		m_fetchData.putAll(data);
+	public void refresh(@Nullable Map<String, Object> data) throws TestExecutionException {
+		if(data != null) {
+			m_fetchData.putAll(data);
+		}
 		final String response;
-		response = m_client.callBackend(m_source, data, false);
+		response = m_client.callBackend(m_source, m_fetchData, false);
 		final JsonMap map = JsonParser.parseMap(response);
 		update(map);
 	}

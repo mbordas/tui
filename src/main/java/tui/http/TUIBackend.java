@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
-import tui.ui.Style;
 import tui.ui.components.Page;
+import tui.ui.style.Style;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;

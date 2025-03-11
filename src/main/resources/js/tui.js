@@ -445,7 +445,8 @@ function selectTab(tabId, tabLink) {
 
 function updatePanel(panelElement, json, idMap) {
     panelElement.innerHTML = '';
-    setTextAlignClass(panelElement, json['textAlign']);
+    panelElement.classList.add('tui-panel-' + json['align'].toLowerCase());
+    const itemSpacingClass = 'tui-horizontal-spacing-' + json['spacing'].toLowerCase();
     if(idMap == null) {
         idMap = new Map();
     }
@@ -455,6 +456,7 @@ function updatePanel(panelElement, json, idMap) {
         if(element == null) {
             console.error('Unable to create component from type: ' + child['type']);
         } else {
+            element.classList.add(itemSpacingClass);
             panelElement.appendChild(element);
         }
     }

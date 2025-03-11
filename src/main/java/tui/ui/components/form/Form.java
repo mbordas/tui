@@ -193,7 +193,7 @@ public class Form extends UIComponent {
 				.setText(" ") // Prevents the following elements to be created under this div
 				.setStyleProperty("width", "100%");
 
-		final HTMLNode formFooter = result.append(new Paragraph(Layouts.TextAlign.RIGHT).toHTMLNode());
+		final HTMLNode formFooter = result.append(new Paragraph(Layouts.Align.RIGHT).toHTMLNode());
 		formFooter.addClass("tui-form-footer");
 		if(isModal) {
 			formFooter.createChild("button")

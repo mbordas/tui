@@ -20,8 +20,6 @@ import tui.http.TUIBackend;
 import tui.test.TClient;
 import tui.test.components.TSearch;
 import tui.test.components.TTable;
-import tui.ui.Style;
-import tui.ui.StyleSet;
 import tui.ui.UIConfigurationException;
 import tui.ui.components.DownloadButton;
 import tui.ui.components.Image;
@@ -68,6 +66,8 @@ import tui.ui.components.svg.graph.DataSerie;
 import tui.ui.components.svg.graph.LineSerie;
 import tui.ui.components.svg.graph.StepLineSerie;
 import tui.ui.components.svg.graph.UIGraph;
+import tui.ui.style.Style;
+import tui.ui.style.StyleSet;
 import tui.utils.TestUtils;
 
 import java.awt.*;
@@ -90,7 +90,6 @@ public class CodeParagraph extends Paragraph {
 	public CodeParagraph() {
 		customStyle().setPadding(5, 5, 5, 5);
 		customStyle().setBackgroundColor(BACKGROUND_COLOR);
-		customStyle().setLineHeight(1.4);
 		customStyle().setBorderWidth_px(1);
 		customStyle().setBorderColor(BORDER_COLOR);
 		customStyle().setBorderRadius_px(3);
@@ -163,7 +162,7 @@ public class CodeParagraph extends Paragraph {
 	private StringBuilder flushLiteralString(StringBuilder currentStringLiteral) {
 		if(currentStringLiteral != null) {
 			// Applying color and font
-			append((style) -> style.setTextColor(COLOR_STRING_LITERALS).setFontFamily(FONT_FAMILY),
+			append((style) -> style.text().setTextColor(COLOR_STRING_LITERALS).setFontFamily(FONT_FAMILY).setLineHeight(1.4),
 					currentStringLiteral.toString());
 		}
 		return null;
@@ -173,8 +172,8 @@ public class CodeParagraph extends Paragraph {
 		if(currentWord != null) {
 			final String word = currentWord.toString();
 			final Color color = m_colorMap.get(word);
-			append(color == null ? (style) -> style.setFontFamily(FONT_FAMILY) // Applying font only
-							: (style) -> style.setTextColor(color).setFontFamily(FONT_FAMILY), // font and color
+			append(color == null ? (style) -> style.text().setLineHeight(1.4).setFontFamily(FONT_FAMILY) // Applying font only
+							: (style) -> style.text().setTextColor(color).setLineHeight(1.4).setFontFamily(FONT_FAMILY), // font and color
 					currentWord.toString());
 		}
 		return null;
@@ -182,7 +181,7 @@ public class CodeParagraph extends Paragraph {
 
 	private StringBuilder flushSpace(StringBuilder currentSpace) {
 		if(currentSpace != null) {
-			append((style) -> style.setFontFamily(FONT_FAMILY), currentSpace.toString());
+			append((style) -> style.text().setLineHeight(1.4).setFontFamily(FONT_FAMILY), currentSpace.toString());
 		}
 		return null;
 	}

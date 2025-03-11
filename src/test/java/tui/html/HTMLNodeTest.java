@@ -16,7 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.html;
 
 import org.junit.Test;
-import tui.ui.StyleSet;
+import tui.ui.style.LayoutStyleSet;
 
 import java.awt.*;
 
@@ -41,11 +41,11 @@ public class HTMLNodeTest {
 		HTMLNode.PRETTY_PRINT = false;
 		final HTMLNode node = new HTMLNode("div");
 
-		StyleSet styleset = new StyleSet();
+		LayoutStyleSet styleset = new LayoutStyleSet();
 		styleset.setBackgroundColor(Color.WHITE);
 		styleset.apply(node);
 
-		assertEquals("<div style=\"background-color:#ffffff;color:#000000;\"></div>", node.toHTML());
+		assertEquals("<div style=\"background-color:#ffffff;\"></div>", node.toHTML());
 	}
 
 }

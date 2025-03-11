@@ -15,7 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.html;
 
-import tui.ui.StyleSet;
+import tui.ui.style.StyleSet;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

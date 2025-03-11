@@ -13,7 +13,7 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui;
+package tui.ui.style;
 
 import tui.ui.components.layout.Layouts;
 
@@ -43,86 +43,87 @@ public class Style {
 
 	private final GlobalColors m_globalColors = new GlobalColors();
 
-	private final StyleSet m_global = new StyleSet();
-	private final StyleSet m_body = new StyleSet();
-	private final StyleSet m_header = new StyleSet();
-	private final StyleSet m_header_link = new StyleSet();
-	private final StyleSet m_header_submitButton = new StyleSet();
-	private final StyleSet m_footer = new StyleSet();
-	private final Map<Integer, StyleSet> m_headings = new TreeMap<>();
-	private final StyleSet m_section = new StyleSet();
-	private final StyleSet m_paragraph = new StyleSet();
-	private final StyleSet m_link = new StyleSet();
-	private final StyleSet m_button = new StyleSet();
-	private final StyleSet m_submitButton = new StyleSet();
+	private final CombinedStyleSet m_global = new CombinedStyleSet();
+	private final CombinedStyleSet m_body = new CombinedStyleSet();
+	private final CombinedStyleSet m_header = new CombinedStyleSet();
+	private final CombinedStyleSet m_header_link = new CombinedStyleSet();
+	private final CombinedStyleSet m_header_submitButton = new CombinedStyleSet();
+	private final CombinedStyleSet m_footer = new CombinedStyleSet();
+	private final Map<Integer, CombinedStyleSet> m_headings = new TreeMap<>();
+	private final CombinedStyleSet m_section = new CombinedStyleSet();
+	private final CombinedStyleSet m_paragraph = new CombinedStyleSet();
+	private final CombinedStyleSet m_link = new CombinedStyleSet();
+	private final CombinedStyleSet m_button = new CombinedStyleSet();
+	private final CombinedStyleSet m_submitButton = new CombinedStyleSet();
 
 	public Style() {
 
-		global().setTextColor("var(--global-color-text)");
-		global().setFontFamily(
+		global().text().setTextColor("var(--global-color-text)");
+		global().text().setFontFamily(
 				"Public Sans Web, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol");
 
-		body().overrideProperty("min-height", "100vh");
-		body().setPadding(0, 0, 0, 0);
-		body().setMargin(0, 0, 0, 0);
-		body().setFontFamily("Arial, sans-serif");
+		body().layout().overrideProperty("min-height", "100vh");
+		body().layout().setPadding(0, 0, 0, 0);
+		body().layout().setMargin(0, 0, 0, 0);
 
-		header().setBackgroundColor("var(--global-color-background)");
-		header().setTextColor("var(--global-color-background-contrast)");
-		header().setPadding(10, 10, 10, 10);
-		header().overrideProperty("vertical-align", "middle");
-		header().setBorderWidth_px(0, 0, 1, 0);
+		header().layout().setBackgroundColor("var(--global-color-background)");
+		header().layout().setPadding(10, 10, 10, 10);
+		header().layout().overrideProperty("vertical-align", "middle");
+		header().layout().setBorderWidth_px(0, 0, 1, 0);
+		header().text().setTextColor("var(--global-color-background-contrast)");
 
-		headerLink().setTextAlign(Layouts.TextAlign.CENTER);
-		headerLink().setNoTextDecoration();
+		headerLink().text().setTextAlign(Layouts.Align.CENTER);
+		headerLink().text().setNoTextDecoration();
 
-		headerSubmitButton().setNoBackground();
-		headerSubmitButton().setPadding(0, 5, 0, 5);
-		headerSubmitButton().setNoBorder();
-		headerSubmitButton().setTextUnderlined();
-		headerSubmitButton().setCursorPointingHand();
+		headerSubmitButton().layout().setNoBackground();
+		headerSubmitButton().layout().setPadding(0, 5, 0, 5);
+		headerSubmitButton().layout().setNoBorder();
+		headerSubmitButton().layout().setCursorPointingHand();
+		headerSubmitButton().text().setTextUnderlined();
 
-		footer().setBackgroundColor("var(--global-color-background)");
-		footer().setTextColor("var(--global-color-background-contrast)");
-		footer().setPadding(10, 10, 10, 10);
-		footer().setBorderWidth_px(1, 0, 0, 0);
+		footer().layout().setBackgroundColor("var(--global-color-background)");
+		footer().layout().setPadding(10, 10, 10, 10);
+		footer().layout().setBorderWidth_px(1, 0, 0, 0);
+		footer().text().setTextColor("var(--global-color-background-contrast)");
 
-		section().setTextAlign(Layouts.TextAlign.LEFT);
-		section().setMargin(30, 0, 0, 0);
+		section().layout().setMargin(30, 0, 0, 0);
+		section().text().setTextAlign(Layouts.Align.LEFT);
 
-		heading(1).setPadding(0, 0, 0, 0);
-		heading(1).setTextSize_em(2);
+		heading(1).layout().setPadding(0, 0, 0, 0);
+		heading(1).text().setTextSize_em(2);
 
-		heading(2).setPadding(0, 0, 0, 0);
-		heading(2).setTextSize_em(1.5f);
+		heading(2).layout().setPadding(0, 0, 0, 0);
+		heading(2).text().setTextSize_em(1.5f);
 
-		heading(3).setPadding(0, 0, 0, 0);
-		heading(3).setTextSize_em(1.2f);
-		heading(3).setFontWeight("lighter");
+		heading(3).layout().setPadding(0, 0, 0, 0);
+		heading(3).text().setTextSize_em(1.2f);
+		heading(3).text().setFontWeight("lighter");
 
-		heading(4).setPadding(0, 0, 0, 0);
-		heading(4).setTextSize_em(1.1f);
-		heading(4).setTextItalic();
-		heading(4).setFontWeight("lighter");
+		heading(4).layout().setPadding(0, 0, 0, 0);
+		heading(4).text().setTextSize_em(1.1f);
+		heading(4).text().setTextItalic();
+		heading(4).text().setFontWeight("lighter");
 
-		paragraph().setTextAlign(Layouts.TextAlign.LEFT);
-		paragraph().setMargin(0, 0, 10, 0);
-		paragraph().setPadding(0, 0, 0, 0);
+		paragraph().layout().setMargin(0, 0, 10, 0);
+		paragraph().layout().setPadding(0, 0, 0, 0);
+		paragraph().text().setTextAlign(Layouts.Align.LEFT);
+		paragraph().text().setLineHeight(1.4);
 
-		link().setTextColor("var(--global-color-action)");
+		link().text().setTextColor("var(--global-color-action)");
 
-		button().setBorderRadius_px(2);
-		button().setPadding(5, 20, 5, 20);
-		button().setTextAlign(Layouts.TextAlign.CENTER);
-		button().setCursorPointingHand();
-		button().setBackgroundColor("var(--global-color-cancel)");
-		button().setTextColor("var(--global-color-cancel-contrast)");
-		button().setBorderWidth_px(1);
-		button().setBorderColor("var(--global-color-borders)");
+		button().layout().setBorderRadius_px(2);
+		button().layout().setPadding(5, 20, 5, 20);
+		button().layout().setCursorPointingHand();
+		button().layout().setBackgroundColor("var(--global-color-cancel)");
+		button().layout().setBorderWidth_px(1);
+		button().layout().setBorderColor("var(--global-color-borders)");
+		button().layout().setWidth_percent(100);
+		button().text().setTextAlign(Layouts.Align.CENTER);
+		button().text().setTextColor("var(--global-color-cancel-contrast)");
 
-		submitButton().setBackgroundColor("var(--global-color-action)");
-		submitButton().setTextColor("var(--global-color-action-contrast)");
-		submitButton().setBorderColor("var(--global-color-action)");
+		submitButton().layout().setBackgroundColor("var(--global-color-action)");
+		submitButton().layout().setBorderColor("var(--global-color-action)");
+		submitButton().text().setTextColor("var(--global-color-action-contrast)");
 	}
 
 	public void setColorForAction(Color color) {
@@ -133,55 +134,55 @@ public class Style {
 		m_globalColors.tableRowHover = color;
 	}
 
-	public StyleSet global() {
+	public CombinedStyleSet global() {
 		return m_global;
 	}
 
-	public StyleSet body() {
+	public CombinedStyleSet body() {
 		return m_body;
 	}
 
-	public StyleSet header() {
+	public CombinedStyleSet header() {
 		return m_header;
 	}
 
-	public StyleSet headerLink() {
+	public CombinedStyleSet headerLink() {
 		return m_header_link;
 	}
 
-	public StyleSet headerSubmitButton() {
+	public CombinedStyleSet headerSubmitButton() {
 		return m_header_submitButton;
 	}
 
-	public StyleSet footer() {
+	public CombinedStyleSet footer() {
 		return m_footer;
 	}
 
-	public StyleSet button() {
+	public CombinedStyleSet button() {
 		return m_button;
 	}
 
-	public StyleSet submitButton() {
+	public CombinedStyleSet submitButton() {
 		return m_submitButton;
 	}
 
-	public StyleSet section() {
+	public CombinedStyleSet section() {
 		return m_section;
 	}
 
 	/**
 	 * @param depth 1 (h1) or more.
 	 */
-	public StyleSet heading(int depth) {
+	public CombinedStyleSet heading(int depth) {
 		assert depth >= 1;
-		return m_headings.computeIfAbsent(depth, (_depth) -> new StyleSet());
+		return m_headings.computeIfAbsent(depth, (_depth) -> new CombinedStyleSet());
 	}
 
-	public StyleSet paragraph() {
+	public CombinedStyleSet paragraph() {
 		return m_paragraph;
 	}
 
-	public StyleSet link() {
+	public CombinedStyleSet link() {
 		return m_link;
 	}
 
@@ -190,10 +191,12 @@ public class Style {
 
 		appendGlobalVariables(result);
 
-		result.append(global().toCSS("*")).append("\n");
+		result.append(global().layout().toCSS("*")).append("\n");
+		result.append(global().text().toCSS("*")).append("\n");
+
 		result.append(body().toCSS("body")).append("\n");
 
-		for(Map.Entry<Integer, StyleSet> headingEntry : m_headings.entrySet()) {
+		for(Map.Entry<Integer, CombinedStyleSet> headingEntry : m_headings.entrySet()) {
 			final String selector = String.format("h%d", headingEntry.getKey());
 			result.append(headingEntry.getValue().toCSS(selector)).append("\n");
 		}
@@ -226,15 +229,54 @@ public class Style {
 				
 				.tui-align-right {
 				    text-align: right;
+				    display: flex;
+					justify-content: end;
 				}
 				
 				.tui-align-center {
 				    text-align: center;
+				    display: flex;
+					justify-content: center;
 				}
 				
 				.tui-align-stretch {
 				    text-align: justify;
+				    display: flex;
+					justify-content: space-between;
 				}
+				
+				/* PANEL */
+				.tui-container-panel {
+					display: block;
+				}
+				.tui-panel-left {
+				    display: flex;
+				    flex-direction: row;
+					justify-content: start;
+				}
+				.tui-panel-right {
+				    display: flex;
+				    flex-direction: row;
+					justify-content: end;
+				}
+				.tui-panel-center {
+				    display: flex;
+				    flex-direction: row;
+					justify-content: center;
+				}
+				.tui-panel-stretch {
+				    display: flex;
+				    flex-direction: row;
+					justify-content: space-between;
+				}
+				.tui-panel-vertical {
+				    display: flex;
+				    flex-direction: column;
+				}
+				/*.tui-panel-vertical>* {
+				    display: block;
+				    width: 100%;
+				}*/
 				
 				/* TABS */
 				
@@ -412,9 +454,9 @@ public class Style {
 				
 				/* BUTTON */
 				
-				.tui-refresh-button-container {
+				/*.tui-refresh-button-container {
 					display: inline-block;
-				}
+				}*/
 				""");
 
 		result.append(button().toCSS("button")).append("\n");

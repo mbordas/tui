@@ -53,16 +53,16 @@ public class LayoutsDemo {
 		//		final HorizontalFlow buttons = tabFlow.append(new HorizontalFlow());
 		final Panel buttons = tabFlow.append(new Panel());
 		buttons.setSpacing(spacing);
-		buttons.setAlign(Layouts.TextAlign.LEFT);
+		buttons.setAlign(Panel.Align.LEFT);
 		buttons.append(new RefreshButton("Button 1"));
 		buttons.append(new RefreshButton("Button 2"));
 		buttons.append(new RefreshButton("Button 3"));
-		tabFlow.append(new Paragraph(Layouts.TextAlign.RIGHT).appendNormal(TestUtils.LOREM_IPSUM));
+		tabFlow.append(new Paragraph(Layouts.Align.RIGHT).appendNormal(TestUtils.LOREM_IPSUM));
 
 		tabFlow.appendUnitedBlock(createTable(),
-				new Paragraph(Layouts.TextAlign.CENTER).appendNormal("My legend here"));
+				new Paragraph(Layouts.Align.CENTER).appendNormal("My legend here"));
 
-		tabFlow.append(new Paragraph(Layouts.TextAlign.STRETCH).appendNormal(TestUtils.LOREM_IPSUM));
+		tabFlow.append(new Paragraph(Layouts.Align.STRETCH).appendNormal(TestUtils.LOREM_IPSUM));
 	}
 
 	public static void main(String[] args) throws Exception {

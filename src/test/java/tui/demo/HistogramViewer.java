@@ -109,7 +109,7 @@ public class HistogramViewer {
 		}
 		page.append(buildSVG(600, 500, values, 20));
 
-		page.append(new Paragraph(Layouts.TextAlign.LEFT).appendNormal(TestUtils.LOREM_IPSUM));
+		page.append(new Paragraph(Layouts.Align.LEFT).appendNormal(TestUtils.LOREM_IPSUM));
 
 		final TUIBackend backend = new TUIBackend(8080);
 		backend.registerPage(page);

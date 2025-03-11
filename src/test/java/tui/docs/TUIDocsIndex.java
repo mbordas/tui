@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.docs;
 
+import tui.ui.components.List;
 import tui.ui.components.NavLink;
 import tui.ui.components.Page;
 import tui.ui.components.Section;
@@ -27,5 +28,9 @@ public class TUIDocsIndex extends Page {
 		final Section toc = appendSection("Table of Content");
 
 		toc.append(new NavLink("Overview", TUIDocsOverview.PATH));
+
+		final Section sectionLayouts = toc.createSubSection("Layouts");
+		final List listLayouts = sectionLayouts.append(new List(false));
+		listLayouts.append(new NavLink("Panels", TUIDocsPanels.PATH));
 	}
 }

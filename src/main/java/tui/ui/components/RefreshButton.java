@@ -80,6 +80,8 @@ public class RefreshButton extends UIComponent {
 			button.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
 
+		applyCustomStyle(button);
+
 		return container;
 	}
 

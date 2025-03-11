@@ -19,8 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.ui.StyleSet;
 import tui.ui.components.layout.Layouts;
+import tui.ui.style.CombinedStyleSet;
+import tui.ui.style.StyleSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,16 +44,26 @@ public class Paragraph extends UIRefreshableComponent {
 		public static final String JSON_ATTRIBUTE_CONTENT = "content";
 
 		private final String m_text;
+		private CombinedStyleSet m_customStyle = null;
 
 		public Text(String format, Object... args) {
 			m_text = String.format(format, args);
+		}
+
+		public CombinedStyleSet customTextStyle() {
+			if(m_customStyle == null) {
+				m_customStyle = new CombinedStyleSet();
+			}
+			return m_customStyle;
 		}
 
 		@Override
 		public HTMLNode toHTMLNode() {
 			final HTMLNode result = new HTMLNode("span");
 			result.setText(m_text.replaceAll("\\n", "<br/>"));
-			applyCustomStyle(result);
+			if(m_customStyle != null) {
+				m_customStyle.apply(result);
+			}
 			return result;
 		}
 
@@ -60,29 +71,31 @@ public class Paragraph extends UIRefreshableComponent {
 		public JsonMap toJsonMap() {
 			final JsonMap result = new JsonMap(JSON_TYPE);
 			result.setAttribute(JSON_ATTRIBUTE_CONTENT, m_text);
-			applyCustomStyle(result);
+			if(m_customStyle != null) {
+				m_customStyle.apply(result);
+			}
 			return result;
 		}
 	}
 
 	private boolean m_withBorder = false;
-	private Layouts.TextAlign m_textAlign = Layouts.TextAlign.LEFT;
+	private Layouts.Align m_textAlign = Layouts.Align.LEFT;
 	private final List<UIComponent> m_content = new ArrayList<>();
 
 	public Paragraph() {
 	}
 
-	public Paragraph(Layouts.TextAlign textAlign) {
+	public Paragraph(Layouts.Align align) {
 		this();
-		setAlign(textAlign);
+		setAlign(align);
 	}
 
 	public Paragraph(String format, Object... args) {
 		appendNormal(String.format(format, args));
 	}
 
-	public Paragraph setAlign(@NotNull Layouts.TextAlign textAlign) {
-		m_textAlign = textAlign;
+	public Paragraph setAlign(@NotNull Layouts.Align align) {
+		m_textAlign = align;
 		return this;
 	}
 
@@ -104,10 +117,10 @@ public class Paragraph extends UIRefreshableComponent {
 	/**
 	 * @param styler This optional function may modify text's custom {@link StyleSet}.
 	 */
-	public Paragraph append(@Nullable Consumer<StyleSet> styler, @NotNull String format, Object... args) {
+	public Paragraph append(@Nullable Consumer<CombinedStyleSet> styler, @NotNull String format, Object... args) {
 		final Text text = new Text(format, args);
 		if(styler != null) {
-			styler.accept(text.customStyle());
+			styler.accept(text.customTextStyle());
 		}
 		m_content.add(text);
 		return this;
@@ -118,7 +131,7 @@ public class Paragraph extends UIRefreshableComponent {
 	}
 
 	public Paragraph appendBold(String format, Object... args) {
-		return append((style) -> style.setFontWeight("bold"), format, args);
+		return append((style) -> style.text().setFontWeight("bold"), format, args);
 	}
 
 	@Override

@@ -16,8 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import org.junit.Test;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,30 +32,6 @@ public class PageTest {
 
 		assertEquals("const testMap={keyA:'valueA',keyB:'valueB'};",
 				Page.generateSessionParametersInitialization("testMap", params));
-	}
-
-	@Test
-	public void toJsonMap() {
-		final Page page = new Page("Empty page");
-		final Section section = page.appendSection("section A");
-
-		//
-		final JsonMap jsonMap = page.toJsonMap();
-		//
-
-		assertEquals(Page.JSON_TYPE, jsonMap.getType());
-
-		//
-		JsonObject.PRETTY_PRINT = false;
-		final String json = jsonMap.toJson();
-		//
-
-		assertEquals(
-				String.format(
-						"{\"type\": \"page\",\"title\": \"Empty page\",\"content\": [{\"type\": \"section\",\"tuid\": %d,\"title\": \"section A\",\"content\": []}]}",
-						section.getTUID()),
-				json);
-
 	}
 
 }

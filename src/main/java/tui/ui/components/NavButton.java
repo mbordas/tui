@@ -17,6 +17,7 @@ package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.style.TextStyleSet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class NavButton extends UIComponent {
 	protected final String m_label;
 	protected final String m_target;
 	protected final Map<String, String> m_parameters = new HashMap<>();
+	protected TextStyleSet m_customTextStyle = null;
 
 	public NavButton(String label, String target) {
 		m_label = label;
@@ -63,7 +65,9 @@ public class NavButton extends UIComponent {
 				.setText(m_label);
 
 		applyCustomStyle(button);
-
+		if(m_customTextStyle != null) {
+			m_customTextStyle.apply(result);
+		}
 		return result;
 	}
 
@@ -77,6 +81,16 @@ public class NavButton extends UIComponent {
 			parameters.setAttribute(entry.getKey(), entry.getValue());
 		}
 		applyCustomStyle(result);
+		if(m_customTextStyle != null) {
+			m_customTextStyle.apply(result);
+		}
 		return result;
+	}
+
+	public TextStyleSet customTextStyle() {
+		if(m_customTextStyle == null) {
+			m_customTextStyle = new TextStyleSet();
+		}
+		return m_customTextStyle;
 	}
 }

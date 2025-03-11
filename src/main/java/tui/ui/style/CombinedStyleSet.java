@@ -13,59 +13,49 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.docs;
+package tui.ui.style;
 
-import tui.html.HTMLNode;
-import tui.ui.components.Page;
-import tui.ui.components.layout.Panel;
-import tui.ui.style.Style;
+import java.util.function.BiConsumer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+public class CombinedStyleSet extends StyleSet {
 
-public class TUIDocumentation {
+	private LayoutStyleSet m_layout = null;
+	private TextStyleSet m_text = null;
 
-	private final Collection<Page> m_pages = new ArrayList<>();
-
-	public TUIDocumentation() {
-		m_pages.add(new TUIDocsIndex());
-		m_pages.add(new TUIDocsOverview());
-		m_pages.add(new TUIDocsPanels());
-	}
-
-	void save(File dir) {
-		final Style style = new Style();
-		for(Page page : m_pages) {
-			try {
-				decorate(page, style);
-				save(page, style, dir);
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+	public LayoutStyleSet layout() {
+		if(m_layout == null) {
+			m_layout = new LayoutStyleSet();
 		}
+		return m_layout;
 	}
 
-	static void decorate(Page page, Style style) {
-		page.setFooter(new Panel());
-		style.footer().layout().setHeight_px(50);
-	}
-
-	static void save(Page page, Style style, File dir) throws IOException {
-		final File file = new File(dir, page.getSource());
-		try(FileOutputStream outputStream = new FileOutputStream(file)) {
-			final HTMLNode htmlNode = page.toHTMLNode(new Page.Resource(false, style.toCSS()), null);
-			byte[] strToBytes = htmlNode.toHTML().getBytes();
-			outputStream.write(strToBytes);
+	public TextStyleSet text() {
+		if(m_text == null) {
+			m_text = new TextStyleSet();
 		}
-		System.out.println("Page saved: " + file.getAbsolutePath());
+		return m_text;
 	}
 
-	public static void main(String[] args) throws IOException {
-		final File dir = new File(args[0]);
-		final TUIDocumentation tuiDocumentation = new TUIDocumentation();
-		tuiDocumentation.save(dir);
+	@Override
+	public String toCSS(String selector) {
+		final StringBuilder result = new StringBuilder();
+		if(m_layout != null) {
+			result.append(m_layout.toCSS(selector));
+		}
+		if(m_text != null) {
+			result.append(m_text.toCSS(selector));
+			result.append(m_text.toCSS(selector + " *"));
+		}
+		return result.toString();
+	}
+
+	@Override
+	<T> void apply(T node, BiConsumer<T, Property> setter) {
+		if(m_layout != null) {
+			m_layout.apply(node, setter);
+		}
+		if(m_text != null) {
+			m_text.apply(node, setter);
+		}
 	}
 }

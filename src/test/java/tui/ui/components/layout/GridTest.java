@@ -69,8 +69,8 @@ public class GridTest extends TestWithBackend {
 
 		final Grid grid = new Grid(5, 2);
 
-		grid.set(1, 1, new Paragraph(Layouts.TextAlign.LEFT).appendNormal("1,1"));
-		grid.set(4, 0, new Paragraph(Layouts.TextAlign.RIGHT).appendNormal("4,0"));
+		grid.set(1, 1, new Paragraph(Layouts.Align.LEFT).appendNormal("1,1"));
+		grid.set(4, 0, new Paragraph(Layouts.Align.RIGHT).appendNormal("4,0"));
 		page.append(grid);
 
 		final TUIBackend backend = new TUIBackend(8080);

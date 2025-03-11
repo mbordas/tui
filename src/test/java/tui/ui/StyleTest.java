@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui;
 
 import org.junit.Test;
+import tui.ui.style.Style;
 
 import java.awt.*;
 

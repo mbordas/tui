@@ -35,23 +35,14 @@ public class Layouts {
 	}
 
 	public enum Spacing {
-		FIT("tui-spacing-fit"), // No space between elements.
-		COMPACT("tui-spacing-compact"),
-		NORMAL("tui-spacing-normal"),
-		LARGE("tui-spacing-large");
-
-		private final String m_htmlClass;
-
-		Spacing(String htmlClass) {
-			m_htmlClass = htmlClass;
-		}
+		FIT, COMPACT, NORMAL, LARGE;
 
 		public String getHTMLClass() {
-			return m_htmlClass;
+			return "tui-spacing-" + name().toLowerCase();
 		}
 	}
 
-	public enum TextAlign {
+	public enum Align {
 		LEFT("tui-align-left", "left"),
 		CENTER("tui-align-center", "center"),
 		RIGHT("tui-align-right", "right"),
@@ -60,7 +51,7 @@ public class Layouts {
 		private final String m_htmlClass;
 		private final String m_cssValue;
 
-		TextAlign(String htmlClass, String cssValue) {
+		Align(String htmlClass, String cssValue) {
 			m_htmlClass = htmlClass;
 			m_cssValue = cssValue;
 		}

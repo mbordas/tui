@@ -19,8 +19,8 @@ import org.junit.Test;
 import tui.html.HTMLNode;
 import tui.http.TUIBackend;
 import tui.test.Browser;
-import tui.ui.Style;
 import tui.ui.components.layout.Panel;
+import tui.ui.style.Style;
 
 import java.awt.*;
 
@@ -58,8 +58,10 @@ public class ParagraphTest {
 			final Color backgroundColor = new Color((int) (Math.random() * 250), (int) (Math.random() * 250), (int) (Math.random() * 250));
 			final Paragraph result = new Paragraph()
 					.appendNormal("Current time is")
-					.append((style) -> style.setTextColor(Style.computeContrastColor(backgroundColor)).setBackgroundColor(backgroundColor),
-							" " + System.currentTimeMillis() + " ")
+					.append((style) -> {
+						style.text().setTextColor(Style.computeContrastColor(backgroundColor));
+						style.layout().setBackgroundColor(backgroundColor);
+					}, " " + System.currentTimeMillis() + " ")
 					.appendNormal("ms.");
 			return result.toJsonMap();
 		});

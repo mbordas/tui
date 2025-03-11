@@ -21,7 +21,6 @@ import tui.test.Browser;
 import tui.ui.components.NavButton;
 import tui.ui.components.Page;
 import tui.ui.components.Section;
-import tui.ui.components.layout.Layouts;
 import tui.ui.components.layout.Panel;
 
 public class NavigationWithButton {
@@ -38,7 +37,7 @@ public class NavigationWithButton {
 		final Section section = page.appendSection("Selected directions:");
 
 		final Panel buttons = section.append(new Panel());
-		buttons.setAlign(Layouts.TextAlign.CENTER);
+		buttons.setAlign(Panel.Align.CENTER);
 		buttons.append(new NavButton("< Previous", page.getSource())
 				.setParameter("direction", "previous"));
 		buttons.append(new NavButton("Next >", page.getSource())

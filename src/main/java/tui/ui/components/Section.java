@@ -17,7 +17,7 @@ package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.ui.StyleSet;
+import tui.ui.style.TextStyleSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class Section extends UIComponent {
 	public enum DisclosureType {NONE, STARTS_OPENED, STARTS_CLOSED}
 
 	private final String m_title;
-	private StyleSet m_customStyleHeader = null;
+	private TextStyleSet m_customStyleHeader = null;
 	private DisclosureType m_disclosureType = DisclosureType.NONE;
 	private final List<UIComponent> m_content = new ArrayList<>();
 
@@ -42,9 +42,9 @@ public class Section extends UIComponent {
 		return this;
 	}
 
-	public StyleSet customStyleForHeader() {
+	public TextStyleSet customStyleForHeader() {
 		if(m_customStyleHeader == null) {
-			m_customStyleHeader = new StyleSet();
+			m_customStyleHeader = new TextStyleSet();
 		}
 		return m_customStyleHeader;
 	}
@@ -55,8 +55,8 @@ public class Section extends UIComponent {
 		return result;
 	}
 
-	public Paragraph appendParagraph(String text) {
-		final Paragraph result = new Paragraph(text);
+	public Paragraph appendParagraph(String format, Object... args) {
+		final Paragraph result = new Paragraph(String.format(format, args));
 		m_content.add(result);
 		return result;
 	}

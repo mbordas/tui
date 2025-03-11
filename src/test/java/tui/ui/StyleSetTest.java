@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui;
 
 import org.junit.Test;
+import tui.ui.style.LayoutStyleSet;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,7 +24,7 @@ public class StyleSetTest {
 
 	@Test
 	public void toCSS() {
-		final StyleSet styleSet = new StyleSet();
+		final LayoutStyleSet styleSet = new LayoutStyleSet();
 		styleSet.setHeight_px(15);
 
 		assertEquals("p { height:15px; }", styleSet.toCSS("p"));

@@ -18,7 +18,7 @@ package tui.ui.components;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.ui.StyleSet;
+import tui.ui.style.LayoutStyleSet;
 import tui.utils.TUIUtils;
 
 import java.util.Collection;
@@ -31,7 +31,7 @@ public abstract class UIComponent {
 
 	private final long m_tuid = m_counter.incrementAndGet();
 
-	private StyleSet m_customStyle = null;
+	private LayoutStyleSet m_customStyle = null;
 
 	public abstract HTMLNode toHTMLNode();
 
@@ -50,9 +50,9 @@ public abstract class UIComponent {
 		return m_tuid;
 	}
 
-	public StyleSet customStyle() {
+	public LayoutStyleSet customStyle() {
 		if(m_customStyle == null) {
-			m_customStyle = new StyleSet();
+			m_customStyle = new LayoutStyleSet();
 		}
 		return m_customStyle;
 	}

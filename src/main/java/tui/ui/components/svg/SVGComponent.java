@@ -17,8 +17,8 @@ package tui.ui.components.svg;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.ui.Style;
 import tui.ui.components.svg.defs.SVGPatternStripes;
+import tui.ui.style.Style;
 
 import java.awt.*;
 import java.util.Locale;
