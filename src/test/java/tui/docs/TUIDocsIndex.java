@@ -29,6 +29,10 @@ public class TUIDocsIndex extends Page {
 
 		toc.append(new NavLink("Overview", TUIDocsOverview.PATH));
 
+		final Section sectionComponents = toc.createSubSection("Components");
+		final List listComponents = sectionComponents.append(new List(false));
+		listComponents.append(new NavLink("Tables", TUIDocsTables.PATH));
+
 		final Section sectionLayouts = toc.createSubSection("Layouts");
 		final List listLayouts = sectionLayouts.append(new List(false));
 		listLayouts.append(new NavLink("Panels", TUIDocsPanels.PATH));

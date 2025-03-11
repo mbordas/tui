@@ -273,10 +273,6 @@ public class Style {
 				    display: flex;
 				    flex-direction: column;
 				}
-				/*.tui-panel-vertical>* {
-				    display: block;
-				    width: 100%;
-				}*/
 				
 				/* TABS */
 				
@@ -478,7 +474,6 @@ public class Style {
 				/* TABLE */
 				
 				table {
-				    width: 100%;
 				    border-collapse: collapse;
 				    border-radius: 2px;
 				    border: 1px solid var(--global-color-border);

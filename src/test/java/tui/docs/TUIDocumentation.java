@@ -33,6 +33,7 @@ public class TUIDocumentation {
 	public TUIDocumentation() {
 		m_pages.add(new TUIDocsIndex());
 		m_pages.add(new TUIDocsOverview());
+		m_pages.add(new TUIDocsTables());
 		m_pages.add(new TUIDocsPanels());
 	}
 
