@@ -25,10 +25,8 @@ import java.util.Map;
 
 public class TUIDocsTables extends Page {
 
-	public static final String PATH = "tables.html";
-
 	public TUIDocsTables() {
-		super("TUI Tables", PATH);
+		super("Tables", "tables.html");
 
 		final Section chapter = appendSection("Tables");
 

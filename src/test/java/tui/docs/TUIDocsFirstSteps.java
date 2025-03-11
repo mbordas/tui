@@ -20,14 +20,12 @@ import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.Section;
 
-public class TUIDocsOverview extends Page {
+public class TUIDocsFirstSteps extends Page {
 
-	public static final String PATH = "overview.html";
+	public TUIDocsFirstSteps() {
+		super("First steps", "first_steps.html");
 
-	public TUIDocsOverview() {
-		super("TUI Overview", PATH);
-
-		final Section chapter = appendSection("Overview");
+		final Section chapter = appendSection("First steps");
 
 		chapter.appendParagraph("TUI is a Java library that helps building and testing web UI by using Java code only.");
 		chapter.appendParagraph("In this chapter we will see how to create a dynamic page, how to provide it, and how to test it.");

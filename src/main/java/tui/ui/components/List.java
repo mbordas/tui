@@ -39,6 +39,10 @@ public class List extends UIComponent {
 		return this;
 	}
 
+	public List appendText(String format, Object... args) {
+		return append(new Paragraph.Text(String.format(format, args)));
+	}
+
 	@Override
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = new HTMLNode(m_isOrdered ? "ol" : "ul");
@@ -60,4 +64,5 @@ public class List extends UIComponent {
 		applyCustomStyle(result);
 		return result;
 	}
+
 }

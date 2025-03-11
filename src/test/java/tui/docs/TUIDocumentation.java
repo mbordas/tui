@@ -16,7 +16,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.docs;
 
 import tui.html.HTMLNode;
+import tui.ui.components.List;
+import tui.ui.components.NavLink;
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
+import tui.ui.components.Section;
 import tui.ui.components.layout.Panel;
 import tui.ui.style.Style;
 
@@ -28,18 +32,49 @@ import java.util.Collection;
 
 public class TUIDocumentation {
 
-	private final Collection<Page> m_pages = new ArrayList<>();
+	private final java.util.List<Page> m_miscs = new ArrayList<>();
+	private final java.util.List<Page> m_components = new ArrayList<>();
+	private final java.util.List<Page> m_layouts = new ArrayList<>();
 
 	public TUIDocumentation() {
-		m_pages.add(new TUIDocsIndex());
-		m_pages.add(new TUIDocsOverview());
-		m_pages.add(new TUIDocsTables());
-		m_pages.add(new TUIDocsPanels());
+		m_layouts.add(new TUIDocsPanels());
+		m_components.add(new TUIDocsTables());
+		m_miscs.add(new TUIDocsFirstSteps());
+		m_miscs.add(new TUIDocsUpdatingAPage());
+	}
+
+	Page buildIndex() {
+		final Page result = new Page("TUI Index", "index.html");
+
+		final Section sectionMisc = result.appendSection("Table of Content");
+		for(Page miscPage : m_miscs) {
+			sectionMisc.append(new Paragraph().append(new NavLink(miscPage.getTitle(), miscPage.getSource())));
+		}
+
+		final Section sectionComponents = sectionMisc.createSubSection("Components");
+		final List listComponents = sectionComponents.append(new List(false));
+		for(Page componentPage : m_components) {
+			listComponents.append(new NavLink(componentPage.getTitle(), componentPage.getSource()));
+		}
+
+		final Section sectionLayouts = sectionMisc.createSubSection("Layouts");
+		final List listLayouts = sectionLayouts.append(new List(false));
+		for(Page layoutPage : m_layouts) {
+			listLayouts.append(new NavLink(layoutPage.getTitle(), layoutPage.getSource()));
+		}
+
+		return result;
 	}
 
 	void save(File dir) {
 		final Style style = new Style();
-		for(Page page : m_pages) {
+		Collection<Page> pages = new ArrayList<>();
+		pages.add(buildIndex());
+		pages.addAll(m_miscs);
+		pages.addAll(m_components);
+		pages.addAll(m_layouts);
+
+		for(Page page : pages) {
 			try {
 				decorate(page, style);
 				save(page, style, dir);

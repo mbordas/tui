@@ -49,8 +49,8 @@ public class Section extends UIComponent {
 		return m_customStyleHeader;
 	}
 
-	public Section createSubSection(String title) {
-		final Section result = new Section(title);
+	public Section createSubSection(String format, Object... args) {
+		final Section result = new Section(String.format(format, args));
 		m_content.add(result);
 		return result;
 	}

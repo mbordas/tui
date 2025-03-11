@@ -27,13 +27,11 @@ import java.util.List;
 
 public class TUIDocsPanels extends Page {
 
-	public static final String PATH = "panels.html";
-
 	public static final Color COLOR_CONTAINER = new Color(209, 22, 255);
 	public static final Color COLOR_ELEMENT = new Color(27, 155, 255);
 
 	public TUIDocsPanels() {
-		super("TUI Panels", PATH);
+		super("Panels", "panels.html");
 
 		final Section chapter = appendSection("Panels");
 		chapter.appendParagraph(
