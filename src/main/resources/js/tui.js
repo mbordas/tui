@@ -486,7 +486,7 @@ function updateSection(element, json) {
         });
         elementForTitle.setAttribute('style', style);
     }
-    const elementHeader = document.createElement('h1');
+    const elementHeader = document.createElement('h' + json['depth']);
     elementForTitle.appendChild(elementHeader);
     elementHeader.textContent = json['title'];
     if(json['disclosureType'] != 'NONE') {

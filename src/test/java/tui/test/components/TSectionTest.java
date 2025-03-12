@@ -22,14 +22,25 @@ import java.util.Optional;
 
 public class TSectionTest {
 
-	public static String getTitle(WebElement element) {
-		final Optional<WebElement> anyHeaderELement = element.findElements(By.xpath("./*")).stream()
+	public static String getTitle(WebElement sectionElement) {
+		final Optional<WebElement> anyHeaderELement = sectionElement.findElements(By.xpath("./*")).stream()
 				.filter((child) -> child.getTagName().startsWith("h"))
 				.findFirst();
 		if(anyHeaderELement.isPresent()) {
 			return anyHeaderELement.get().getText();
 		} else {
 			throw new NullPointerException("Title not found. Please check that this section element is correct.");
+		}
+	}
+
+	public static int getDepth(WebElement sectionElement) {
+		final Optional<WebElement> anyHeaderELement = sectionElement.findElements(By.xpath("./*")).stream()
+				.filter((child) -> child.getTagName().startsWith("h"))
+				.findFirst();
+		if(anyHeaderELement.isPresent()) {
+			return Integer.parseInt(anyHeaderELement.get().getTagName().substring(1));
+		} else {
+			throw new NullPointerException("Header tag not found. Please check that this section element is correct.");
 		}
 	}
 }

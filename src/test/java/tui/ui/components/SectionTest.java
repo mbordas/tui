@@ -20,15 +20,22 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
+import tui.test.components.TSectionTest;
 import tui.ui.components.layout.Panel;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class SectionTest extends TestWithBackend {
 
-	@Test
-	public void refresh() throws InterruptedException {
+	record Context(Page page, RefreshButton button, String panelSource) {
+	}
+
+	/**
+	 * The default page contains a panel which is refreshed by clicking the refresh button.
+	 */
+	private Context withDefaultPage() {
 		final Page page = new Page("SectionTest", "/index");
 		final Panel panel = page.append(new Panel());
 		panel.setAlign(Panel.Align.VERTICAL);
@@ -39,9 +46,17 @@ public class SectionTest extends TestWithBackend {
 		final RefreshButton button = page.append(new RefreshButton("Refresh panel with sections"));
 		button.connectListener(panel);
 
-		startBackend(page);
+		return new Context(page, button, panel.getSource());
+	}
 
-		registerWebService(panel.getSource(), (uri, request, response) -> {
+	/**
+	 * We build a page with one panel and refresh it with new content: 2 sections, each with one paragraph.
+	 */
+	@Test
+	public void refresh() throws InterruptedException {
+		final Context context = withDefaultPage();
+
+		registerWebService(context.panelSource, (uri, request, response) -> {
 			Panel panel1 = new Panel().setAlign(Panel.Align.VERTICAL);
 			panel1.append(new Section("Section 1 updated"))
 					.appendParagraph("Paragraph updated in section 1.");
@@ -50,10 +65,12 @@ public class SectionTest extends TestWithBackend {
 			return panel1.toJsonMap();
 		});
 
-		final Browser browser = super.startBrowser();
-		browser.open(page.getSource());
+		startBackend(context.page);
 
-		browser.clickRefreshButton(button.getLabel());
+		final Browser browser = super.startBrowser();
+		browser.open(context.page.getSource());
+
+		browser.clickRefreshButton(context.button.getLabel());
 
 		final WebElement section1 = browser.getSection("Section 1 updated");
 		assertNotNull(section1);
@@ -62,6 +79,33 @@ public class SectionTest extends TestWithBackend {
 		final WebElement section2 = browser.getSection("Section 2 updated");
 		assertNotNull(section2);
 		assertFalse(section2.findElements(By.tagName("p")).isEmpty());
+	}
+
+	@Test
+	public void depthOnUpdate() {
+		final Context context = withDefaultPage();
+
+		registerWebService(context.panelSource, (uri, request, response) -> {
+			final Panel panel = new Panel().setAlign(Panel.Align.VERTICAL);
+			panel.append(new Section("Section 1"))
+					.appendParagraph("Paragraph updated in section 1");
+			final Section section2 = panel.append(new Section("Section 2"));
+			section2.appendParagraph("Paragraph updated in section 2");
+			section2.createSubSection("Section 2.1")
+					.appendParagraph("Paragraph updated in section 2.1");
+			return panel.toJsonMap();
+		});
+
+		startBackend(context.page);
+
+		final Browser browser = super.startBrowser();
+		browser.open(context.page.getSource());
+
+		browser.clickRefreshButton(context.button.getLabel());
+
+		assertEquals(1, TSectionTest.getDepth(browser.getSection("Section 1")));
+		assertEquals(1, TSectionTest.getDepth(browser.getSection("Section 2")));
+		assertEquals(2, TSectionTest.getDepth(browser.getSection("Section 2.1")));
 	}
 
 }

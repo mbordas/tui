@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import tui.html.HTMLNode;
+import tui.json.JsonArray;
 import tui.json.JsonMap;
 import tui.ui.style.TextStyleSet;
 
@@ -120,13 +121,28 @@ public class Section extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
-		result.setAttribute("title", m_title);
-		result.setAttribute("disclosureType", m_disclosureType.name());
-		result.createArray("content", m_content, UIComponent::toJsonMap);
-		if(m_customStyleHeader != null) {
-			m_customStyleHeader.apply(result.createMap("customStyleHeader"));
+		return toJsonMap(this, 1);
+	}
+
+	private static JsonMap toJsonMap(Section section, int depth) {
+		final JsonMap result = new JsonMap(JSON_TYPE, section.getTUID());
+		result.setAttribute("title", section.m_title);
+		result.setAttribute("depth", depth);
+		result.setAttribute("disclosureType", section.m_disclosureType.name());
+		if(section.m_customStyleHeader != null) {
+			section.m_customStyleHeader.apply(result.createMap("customStyleHeader"));
 		}
+
+		result.createArray("content", section.m_content, UIComponent::toJsonMap);
+		final JsonArray contentArray = result.createArray("content");
+		for(UIComponent component : section.m_content) {
+			if(component instanceof Section subSection) {
+				contentArray.add(toJsonMap(subSection, depth + 1));
+			} else {
+				contentArray.add(component.toJsonMap());
+			}
+		}
+
 		return result;
 	}
 
