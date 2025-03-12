@@ -90,16 +90,20 @@ public class Style {
 		section().text().setTextAlign(Layouts.Align.LEFT);
 
 		heading(1).layout().setPadding(0, 0, 0, 0);
+		heading(1).layout().setMargin(10, 0, 5, 0);
 		heading(1).text().setTextSize_em(2);
 
 		heading(2).layout().setPadding(0, 0, 0, 0);
+		heading(2).layout().setMargin(10, 0, 5, 0);
 		heading(2).text().setTextSize_em(1.5f);
 
 		heading(3).layout().setPadding(0, 0, 0, 0);
+		heading(3).layout().setMargin(10, 0, 5, 0);
 		heading(3).text().setTextSize_em(1.2f);
 		heading(3).text().setFontWeight("lighter");
 
 		heading(4).layout().setPadding(0, 0, 0, 0);
+		heading(4).layout().setMargin(10, 0, 5, 0);
 		heading(4).text().setTextSize_em(1.1f);
 		heading(4).text().setTextItalic();
 		heading(4).text().setFontWeight("lighter");
@@ -283,6 +287,7 @@ public class Style {
 				}
 				.tui-tablink {
 				    font-size: 1em;
+				    white-space: nowrap;
 				    padding-left: 30px;
 				    padding-right: 30px;
 				    cursor: pointer;
@@ -423,6 +428,10 @@ public class Style {
 				.tui-form-footer {
 				    margin-top: 15px;
 				}
+				.tui-form-footer>button {
+				    margin-right: 5px;
+				    width: auto; /* overrides the 100% value of button */
+				}
 				.tui-form-message {
 				    margin-top: 5px;
 				    margin-bottom: 5px;
@@ -504,12 +513,17 @@ public class Style {
 				.tui-tablepicker td {
 				    cursor: pointer;
 				}
+				.tui-table-container {
+					display: flex;
+					flex-direction: column;
+				}
 				.tui-table-navigation {
 				    padding-top: 5px;
 				    padding-bottom: 5px;
 				}
 				.tui-table-navigation>button {
 					margin-right: 5px;
+					width: auto; /* overrides 100% value for buttons */
 				}
 				
 				/* FETCH ERRORS */

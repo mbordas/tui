@@ -18,6 +18,7 @@ package tui.ui.style;
 import tui.ui.components.layout.Layouts;
 
 import java.awt.*;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 
 public class TextStyleSet extends StyleSet {
@@ -43,12 +44,12 @@ public class TextStyleSet extends StyleSet {
 	}
 
 	public TextStyleSet setTextSize_px(int size_px) {
-		m_fontSize = String.format("%dpx", size_px);
+		m_fontSize = String.format(Locale.US, "%dpx", size_px);
 		return this;
 	}
 
 	public TextStyleSet setTextSize_em(float size_em) {
-		m_fontSize = String.format("%fem", size_em);
+		m_fontSize = String.format(Locale.US, "%fem", size_em);
 		return this;
 	}
 

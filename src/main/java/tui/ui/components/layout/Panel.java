@@ -48,6 +48,13 @@ public class Panel extends UIRefreshableComponent {
 		return component;
 	}
 
+	public Panel() {
+	}
+
+	public Panel(Align align) {
+		m_align = align;
+	}
+
 	public Panel setAlign(@NotNull Align align) {
 		m_align = align;
 		return this;

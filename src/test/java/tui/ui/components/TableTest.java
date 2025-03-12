@@ -23,6 +23,7 @@ import tui.http.TUIWebService;
 import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
+import tui.ui.components.layout.Panel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -110,7 +111,7 @@ public class TableTest extends TestWithBackend {
 		TableTest.putItemsInTable(items, table);
 		table.setSource("/table");
 		table.setPaging(7);
-		page.append(table);
+		page.append(new Panel(Panel.Align.CENTER)).append(table);
 
 		startBackend(page);
 		registerWebService(table.getSource(), buildWebServiceTableLoad(table.clone()));

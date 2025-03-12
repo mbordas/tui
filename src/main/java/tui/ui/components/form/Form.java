@@ -23,9 +23,8 @@ import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
-import tui.ui.components.Paragraph;
 import tui.ui.components.UIComponent;
-import tui.ui.components.layout.Layouts;
+import tui.ui.components.layout.Panel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -193,7 +192,7 @@ public class Form extends UIComponent {
 				.setText(" ") // Prevents the following elements to be created under this div
 				.setStyleProperty("width", "100%");
 
-		final HTMLNode formFooter = result.append(new Paragraph(Layouts.Align.RIGHT).toHTMLNode());
+		final HTMLNode formFooter = result.append(new Panel(Panel.Align.RIGHT).toHTMLNode());
 		formFooter.addClass("tui-form-footer");
 		if(isModal) {
 			formFooter.createChild("button")
