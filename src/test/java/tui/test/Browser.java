@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import tui.html.HTMLFetchErrorMessage;
 import tui.test.components.TFormTest;
 import tui.test.components.TSearchTest;
+import tui.test.components.TSectionTest;
 import tui.test.components.TTableTest;
 import tui.ui.components.NavButton;
 import tui.ui.components.NavLink;
@@ -87,6 +88,25 @@ public class Browser {
 			button = anyButton.get();
 		}
 		button.click();
+	}
+
+	// SECTIONS
+
+	public List<WebElement> getSections() {
+		return m_driver.findElements(By.tagName("section"));
+	}
+
+	public WebElement getSection(String title) {
+		final Optional<WebElement> anySectionElement = getSections().stream()
+				.filter(WebElement::isDisplayed)
+				.filter((element) -> title.equals(TSectionTest.getTitle(element)))
+				.findAny();
+
+		if(anySectionElement.isPresent()) {
+			return anySectionElement.get();
+		} else {
+			throw new RuntimeException("Section element not found: " + title);
+		}
 	}
 
 	// PARAGRAPHS

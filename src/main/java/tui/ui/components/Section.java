@@ -122,7 +122,11 @@ public class Section extends UIComponent {
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("title", m_title);
+		result.setAttribute("disclosureType", m_disclosureType.name());
 		result.createArray("content", m_content, UIComponent::toJsonMap);
+		if(m_customStyleHeader != null) {
+			m_customStyleHeader.apply(result.createMap("customStyleHeader"));
+		}
 		return result;
 	}
 

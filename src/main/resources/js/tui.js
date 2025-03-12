@@ -157,6 +157,9 @@ function createComponent(json, idMap) {
         containedElement.element.appendChild(document.createElement('tbody'));
         updateTable(containedElement.element, json);
         result = containedElement.container;
+    } else if(type == 'section') {
+        result = document.createElement('section');
+        updateSection(result, json);
     } else if(type == 'paragraph') {
         result = document.createElement('p');
         updateParagraph(result, json);
@@ -459,6 +462,39 @@ function updatePanel(panelElement, json, idMap) {
             element.classList.add(itemSpacingClass);
             panelElement.appendChild(element);
         }
+    }
+}
+
+// SECTIONS
+
+function updateSection(element, json) {
+    var elementForTitle = element;
+    var elementForContent = element;
+    if(json['disclosureType'] != 'NONE') {
+        elementForContent = document.createElement('details');
+        result.appendChild(elementForContent);
+        if(json['disclosureType'] == 'STARTS_OPENED') {
+            elementForContent.setAttribute("open");
+        }
+        elementForTitle = document.createElement('summary');
+        containerNodeForContent.appendChild(elementForTitle);
+    }
+    if(json['customStyleHeader'] != null) {
+        var style = '';
+        Object.entries(json['customStyleHeader']).forEach(([key, value]) => {
+            style += key + ':' + value + ';';
+        });
+        elementForTitle.setAttribute('style', style);
+    }
+    const elementHeader = document.createElement('h1');
+    elementForTitle.appendChild(elementHeader);
+    elementHeader.textContent = json['title'];
+    if(json['disclosureType'] != 'NONE') {
+        elementHeader.style.display = 'inline';
+    }
+    for(var fragment of json['content']) {
+        const component = createComponent(fragment);
+        element.appendChild(component);
     }
 }
 
