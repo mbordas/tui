@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class List extends UIComponent {
 
 	public static final String JSON_TYPE = "list";
-	public static final String JSON_ATTRIBUTE_IS_ORDERED = "isIrdered";
+	public static final String JSON_ATTRIBUTE_IS_ORDERED = "isOrdered";
 	public static final String JSON_ARRAY_ELEMENTS = "content";
 
 	private boolean m_isOrdered = true;

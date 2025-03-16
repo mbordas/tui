@@ -25,6 +25,7 @@ import tui.utils.TUIUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,6 +117,17 @@ public class Table extends UIRefreshableComponent {
 	public void append(Map<String, Object> values) {
 		m_data.append(values);
 		m_data.incrementTableSize();
+	}
+
+	public void append(TableData data) {
+		for(List<Object> row : data.getRows()) {
+			Map<String, Object> values = new LinkedHashMap<>();
+			int i = 0;
+			for(String column : data.getColumns()) {
+				values.put(column, row.get(i++));
+			}
+			append(values);
+		}
 	}
 
 	public int size() {

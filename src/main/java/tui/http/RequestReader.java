@@ -27,8 +27,12 @@ import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class RequestReader {
@@ -101,6 +105,38 @@ public class RequestReader {
 		} else {
 			return result;
 		}
+	}
+
+	public long getLongParameter(String key) {
+		final String stringValue = getStringParameter(key);
+		if(stringValue == null) {
+			throw new NullPointerException(String.format("expected parameter '%s' not found in request", key));
+		} else {
+			return Long.parseLong(stringValue);
+		}
+	}
+
+	public Date getDateParameter(String key, Locale locale) throws ParseException {
+		final String stringValue = getStringParameter(key);
+		if(stringValue == null) {
+			throw new NullPointerException(String.format("expected parameter '%s' not found in request", key));
+		} else {
+			return parseDate(stringValue, locale);
+		}
+	}
+
+	public Date getDateParameter(String key, Locale locale, Date defaultValue) throws ParseException {
+		final String stringValue = getStringParameter(key);
+		if(stringValue == null) {
+			return defaultValue;
+		} else {
+			return parseDate(stringValue, locale);
+		}
+	}
+
+	public static Date parseDate(String ddMMyyyyHHmm, Locale locale) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", locale);
+		return formatter.parse(ddMMyyyyHHmm);
 	}
 
 	public boolean getCheckboxParameter(String key) {

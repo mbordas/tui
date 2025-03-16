@@ -36,6 +36,7 @@ public class Search extends UIComponent {
 
 	public static final String JSON_TYPE = "search_form";
 	public static final String JSON_ATTRIBUTE_TITLE = "title";
+	public static final String JSON_ATTRIBUTE_HIDE_TITLE = "hideButton";
 	public static final String JSON_ATTRIBUTE_SUBMIT_LABEL = "submitLabel";
 	public static final String JSON_ATTRIBUTE_HIDE_BUTTON = "hideButton";
 	public static final String JSON_ATTRIBUTE_INPUTS = "inputs";
@@ -46,6 +47,7 @@ public class Search extends UIComponent {
 	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
+	private boolean m_hideTitle = false;
 	private boolean m_hideButton = false;
 
 	public Search(String title, String submitLabel, String inputName) {
@@ -61,6 +63,10 @@ public class Search extends UIComponent {
 
 	public String getTitle() {
 		return m_title;
+	}
+
+	public void hideTitle() {
+		m_hideTitle = true;
 	}
 
 	public Search addParameter(String name, String value) {
@@ -110,7 +116,10 @@ public class Search extends UIComponent {
 		final HTMLNode result = super.toHTMLNode("search", false)
 				.setClass(HTML_CLASS);
 
-		result.createChild("label").setText(m_title);
+		final HTMLNode titleNode = result.createChild("label").setText(m_title);
+		if(m_hideTitle) {
+			titleNode.setStyleProperty("display", "none");
+		}
 
 		for(FormInput input : m_inputs) {
 			result.append(input.toHTMLNode());
@@ -142,6 +151,7 @@ public class Search extends UIComponent {
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute(JSON_ATTRIBUTE_TITLE, m_title);
+		result.setAttribute(JSON_ATTRIBUTE_HIDE_TITLE, String.valueOf(m_hideTitle));
 		result.setAttribute(JSON_ATTRIBUTE_SUBMIT_LABEL, m_submitLabel);
 		result.setAttribute(JSON_ATTRIBUTE_HIDE_BUTTON, String.valueOf(m_hideButton));
 		result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));

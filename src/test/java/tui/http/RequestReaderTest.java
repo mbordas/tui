@@ -17,6 +17,9 @@ package tui.http;
 
 import org.junit.Test;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -36,6 +39,12 @@ public class RequestReaderTest {
 		assertEquals(2, map.size());
 		assertEquals("002", map.get("Id"));
 		assertEquals("Item-2", map.get("Name"));
+	}
+
+	@Test
+	public void parseDate() throws ParseException {
+		final Date date = RequestReader.parseDate("13-03-2025T18:11", Locale.FRANCE);
+		assertEquals(1741885860000L, date.getTime()); // as French local date
 	}
 
 }

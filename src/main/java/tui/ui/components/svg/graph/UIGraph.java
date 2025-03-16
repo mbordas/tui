@@ -36,7 +36,7 @@ public class UIGraph {
 
 	public static int PADDING_px = 30;
 
-	record Point(double x, double y, String label) {
+	public record Point(double x, double y, String label) {
 	}
 
 	private Color m_backgroundColor = null;
@@ -233,6 +233,9 @@ public class UIGraph {
 				xSerieRange = CoordinatesComputer.getUnion(xSerieRange, xRange);
 			}
 		}
+		if(xSerieRange == null) {
+			xSerieRange = new CoordinatesComputer.Range(-1.0, +1.0);
+		}
 
 		final CoordinatesComputer.Range xLabelRange = computeRange(m_xLabels.keySet());
 		return CoordinatesComputer.getUnion(xSerieRange, xLabelRange);
@@ -247,6 +250,9 @@ public class UIGraph {
 			} else {
 				ySerieRange = CoordinatesComputer.getUnion(ySerieRange, yRange);
 			}
+		}
+		if(ySerieRange == null) {
+			ySerieRange = new CoordinatesComputer.Range(-1.0, +1.0);
 		}
 
 		final CoordinatesComputer.Range yLabelRange = computeRange(m_yLabels.keySet());

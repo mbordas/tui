@@ -36,12 +36,20 @@ public class StepLineSerie extends DataSerie {
 
 	@Override
 	public CoordinatesComputer.Range getXRange() {
-		return CoordinatesComputer.getRange(m_points.stream().map(Point::x).toList());
+		if(m_points.isEmpty()) {
+			return null;
+		} else {
+			return CoordinatesComputer.getRange(m_points.stream().map(Point::x).toList());
+		}
 	}
 
 	@Override
 	public CoordinatesComputer.Range getYRange() {
-		return CoordinatesComputer.getRange(m_points.stream().filter((point -> point.y != null)).map(Point::y).toList());
+		if(m_points.isEmpty()) {
+			return null;
+		} else {
+			return CoordinatesComputer.getRange(m_points.stream().filter((point -> point.y != null)).map(Point::y).toList());
+		}
 	}
 
 	@Override
@@ -54,7 +62,7 @@ public class StepLineSerie extends DataSerie {
 				final int x_px = coordinatesComputer.getX_px(point.x());
 				svg.add(new SVGPath(prevX_px, prevY_px).lineAbsolute(x_px, prevY_px).withStrokeColor(m_color));
 			}
-			
+
 			if(point.y != null) {
 				final SVGCircle circle = new SVGCircle(coordinatesComputer.getX_px(point.x()), coordinatesComputer.getY_px(point.y()), 3);
 				circle.withTitle(point.label());

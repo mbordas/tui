@@ -166,6 +166,18 @@ function createComponent(json, idMap) {
     } else if(type == 'text') {
         result = document.createElement('span');
         result.textContent = json['content'];
+    } else if(type == 'list') {
+        if(json['isOrdered' == 'true']) {
+            result = document.createElement('ol');
+        } else {
+            result = document.createElement('ul');
+        }
+        for(var child of json['content']) {
+            const childContainer = document.createElement('li');
+            const childElement = createComponent(child, idMap);
+            childContainer.appendChild(childElement);
+            result.appendChild(childContainer);
+        }
     } else if(type == 'grid') {
         result = document.createElement('div');
         result.classList.add('tui-grid');

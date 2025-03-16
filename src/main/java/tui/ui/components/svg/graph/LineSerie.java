@@ -32,6 +32,10 @@ public class LineSerie extends DataSerie {
 		m_points.add(new UIGraph.Point(x, y, label));
 	}
 
+	public void addAll(Collection<UIGraph.Point> points) {
+		m_points.addAll(points);
+	}
+
 	@Override
 	public CoordinatesComputer.Range getXRange() {
 		final List<Double> xValues = new ArrayList<>(m_points.stream()
@@ -67,4 +71,5 @@ public class LineSerie extends DataSerie {
 			svg.add(circle);
 		}
 	}
+
 }

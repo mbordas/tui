@@ -354,6 +354,9 @@ public class Style {
 				search>label {
 					margin-right: 10px;
 				}
+				search>button {
+				    width: auto; /* overrides the 100% value of button */
+				}
 				
 				/* FORM */
 				
@@ -456,12 +459,6 @@ public class Style {
 				    background: var(--global-color-background-contrast);
 				    opacity: .5
 				}
-				
-				/* BUTTON */
-				
-				/*.tui-refresh-button-container {
-					display: inline-block;
-				}*/
 				""");
 
 		result.append(button().toCSS("button")).append("\n");
