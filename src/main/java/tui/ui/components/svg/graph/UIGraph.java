@@ -59,6 +59,10 @@ public class UIGraph {
 		m_series.add(serie);
 	}
 
+	List<DataSerie> getSeries() {
+		return m_series;
+	}
+
 	public void addXLabel(double x, String label) {
 		m_xLabels.put(x, label);
 	}

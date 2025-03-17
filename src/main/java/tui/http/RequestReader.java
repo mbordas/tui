@@ -134,9 +134,9 @@ public class RequestReader {
 		}
 	}
 
-	public static Date parseDate(String ddMMyyyyHHmm, Locale locale) throws ParseException {
+	public static Date parseDate(String yyyMMdd_HHmm, Locale locale) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", locale);
-		return formatter.parse(ddMMyyyyHHmm);
+		return formatter.parse(yyyMMdd_HHmm);
 	}
 
 	public boolean getCheckboxParameter(String key) {

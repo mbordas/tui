@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg.graph;
 
+import tui.ui.components.svg.CoordinatesComputer;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -25,6 +27,9 @@ import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.BiFunction;
 
 import static java.time.temporal.ChronoUnit.CENTURIES;
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -37,7 +42,86 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.time.temporal.ChronoUnit.WEEKS;
 import static java.time.temporal.ChronoUnit.YEARS;
 
-public class TimeSerieUtils {
+public class AxisLabeller {
+
+	public record GridFactor(int powerOfTen, int step) {
+
+		double multiply(double input) {
+			return Math.pow(10.0, powerOfTen) * step * input;
+		}
+
+		double computeNextY(double inputY) {
+			int intValueOfPower = (int) Math.floor(inputY / (Math.pow(10.0, powerOfTen) * step));
+			double lowValue = Math.pow(10.0, powerOfTen) * intValueOfPower * step;
+			if(inputY > lowValue) {
+				return Math.pow(10.0, powerOfTen) * step * (intValueOfPower + 1);
+			} else {
+				return lowValue;
+			}
+		}
+
+		GridFactor less() {
+			return switch(step) {
+				case 5 -> new GridFactor(powerOfTen, 2);
+				case 2 -> new GridFactor(powerOfTen, 1);
+				case 1 -> new GridFactor(powerOfTen - 1, 5);
+				default -> null;
+			};
+		}
+
+		GridFactor more() {
+			return switch(step) {
+				case 5 -> new GridFactor(powerOfTen + 1, 1);
+				case 2 -> new GridFactor(powerOfTen, 5);
+				case 1 -> new GridFactor(powerOfTen, 2);
+				default -> null;
+			};
+		}
+	}
+
+	public static Map<Double, String> computeYLabels(int height_px, CoordinatesComputer.Range yValuesRange,
+			BiFunction<Double, GridFactor, String> formatter) {
+		double minLabelHeight_px = 30;
+		final GridFactor gridFactor = computeGridFactor(height_px, yValuesRange, minLabelHeight_px);
+
+		final Map<Double, String> result = new TreeMap<>();
+		double y = gridFactor.computeNextY(yValuesRange.min());
+		while(y <= yValuesRange.max()) {
+			result.put(y, formatter.apply(y, gridFactor));
+			y += gridFactor.multiply(1.0);
+		}
+
+		return result;
+	}
+
+	static GridFactor computeGridFactor(int height_px, CoordinatesComputer.Range yValuesRange, double minLabelHeight_px) {
+		GridFactor result = new GridFactor(1, 1);
+		if(yValuesRange != null) {
+			double range_u = yValuesRange.max() - yValuesRange.min(); // value in raw (and unknown) unit
+			double unitHeight_px = (height_px + minLabelHeight_px) / range_u;
+			while(result.multiply(unitHeight_px) > minLabelHeight_px) {
+				result = result.less();
+			}
+			while(result.multiply(unitHeight_px) <= minLabelHeight_px) {
+				result = result.more();
+			}
+		}
+		return result;
+	}
+
+	public static void addYLabelsAuto(UIGraph graph, int height_px, BiFunction<Double, GridFactor, String> formatter) {
+		CoordinatesComputer.Range yRange = null;
+		for(DataSerie serie : graph.getSeries()) {
+			if(yRange == null) {
+				yRange = serie.getYRange();
+			} else {
+				yRange = CoordinatesComputer.getUnion(yRange, serie.getYRange());
+			}
+		}
+
+		final Map<Double, String> yLabels = computeYLabels(height_px, yRange, formatter);
+		yLabels.forEach(graph::addYLabel);
+	}
 
 	public record TimePoint(LocalDateTime x, Double y, String label) {
 	}
@@ -66,17 +150,18 @@ public class TimeSerieUtils {
 	 * {@link Duration#of(long, TemporalUnit)} doesn't work with unit larger or equal to {@link ChronoUnit#DAYS} because it would be an
 	 * 'estimation'. Indeed, the value computed in this method is not accurate, but it will do the job for what is expected in this class.
 	 */
-	private static long estimateDuration_ms(Integer preferredStep, LabellingPlan labellingPlan) {
+	private static long estimateDuration_ms(Integer preferredStep, AxisLabeller.LabellingPlan labellingPlan) {
 		LocalDateTime t1 = LocalDateTime.now();
 		LocalDateTime t2 = t1.plus(preferredStep, labellingPlan.stepUnit);
 		return getDuration_ms(t1, t2);
 	}
 
-	private static TimeRange computeRange(Collection<LocalDateTime> times) {
-		return new TimeRange(times.stream().min(LocalDateTime::compareTo).get(), times.stream().max(LocalDateTime::compareTo).get());
+	private static AxisLabeller.TimeRange computeRange(Collection<LocalDateTime> times) {
+		return new AxisLabeller.TimeRange(times.stream().min(LocalDateTime::compareTo).get(),
+				times.stream().max(LocalDateTime::compareTo).get());
 	}
 
-	public static Collection<UIGraph.Point> toPoints(Collection<TimePoint> points) {
+	public static Collection<UIGraph.Point> toPoints(Collection<AxisLabeller.TimePoint> points) {
 		if(points.isEmpty()) {
 			return new ArrayList<>();
 		}
@@ -84,7 +169,7 @@ public class TimeSerieUtils {
 		final Collection<UIGraph.Point> result = new ArrayList<>();
 		final LocalDateTime startTime = computeRange(points.stream().map((point) -> point.x).toList()).min;
 		final long start_ms = getMillis(startTime);
-		for(TimePoint point : points) {
+		for(AxisLabeller.TimePoint point : points) {
 			long x = getMillis(point.x) - start_ms;
 			result.add(new UIGraph.Point(x, point.y, point.label));
 		}
@@ -129,27 +214,27 @@ public class TimeSerieUtils {
 	private record LabellingPlan(LocalDateTime gridStart, ChronoUnit stepUnit, Collection<Integer> preferredSteps) {
 	}
 
-	private static LabellingPlan computeLabellingPlan(LocalDateTime time, ChronoUnit formatPrecision) {
+	private static AxisLabeller.LabellingPlan computeLabellingPlan(LocalDateTime time, ChronoUnit formatPrecision) {
 		LocalDateTime gridStart = truncate(time, formatPrecision);
 		return switch(formatPrecision) {
-			case MILLIS -> new LabellingPlan(gridStart, MILLIS, List.of(1, 2, 5, 10, 50, 100));
-			case SECONDS -> new LabellingPlan(gridStart, SECONDS, List.of(1, 2, 5, 10, 30));
-			case MINUTES -> new LabellingPlan(gridStart, MINUTES, List.of(1, 2, 5, 10, 30));
-			case HOURS, HALF_DAYS, DAYS -> new LabellingPlan(gridStart, DAYS, List.of(1, 7));
-			case WEEKS -> new LabellingPlan(gridStart, WEEKS, List.of(1, 2));
-			case MONTHS, YEARS -> new LabellingPlan(gridStart, MONTHS, List.of(1, 2, 3, 4, 6));
-			case DECADES -> new LabellingPlan(gridStart, DECADES, List.of(1, 2, 5, 10));
-			case CENTURIES -> new LabellingPlan(gridStart, CENTURIES, List.of(1, 2, 5, 10));
-			default -> new LabellingPlan(gridStart, formatPrecision, List.of(1));
+			case MILLIS -> new AxisLabeller.LabellingPlan(gridStart, MILLIS, List.of(1, 2, 5, 10, 50, 100));
+			case SECONDS -> new AxisLabeller.LabellingPlan(gridStart, SECONDS, List.of(1, 2, 5, 10, 30));
+			case MINUTES -> new AxisLabeller.LabellingPlan(gridStart, MINUTES, List.of(1, 2, 5, 10, 30));
+			case HOURS, HALF_DAYS, DAYS -> new AxisLabeller.LabellingPlan(gridStart, DAYS, List.of(1, 7));
+			case WEEKS -> new AxisLabeller.LabellingPlan(gridStart, WEEKS, List.of(1, 2));
+			case MONTHS, YEARS -> new AxisLabeller.LabellingPlan(gridStart, MONTHS, List.of(1, 2, 3, 4, 6));
+			case DECADES -> new AxisLabeller.LabellingPlan(gridStart, DECADES, List.of(1, 2, 5, 10));
+			case CENTURIES -> new AxisLabeller.LabellingPlan(gridStart, CENTURIES, List.of(1, 2, 5, 10));
+			default -> new AxisLabeller.LabellingPlan(gridStart, formatPrecision, List.of(1));
 		};
 	}
 
-	public static void addXLabels(UIGraph graph, int width_px, Collection<TimePoint> timePoints) {
-		final TimeRange timeRange = computeRange(timePoints.stream().map((point) -> point.x).toList());
-		addXLabels(graph, width_px, timeRange);
+	public static void addXLabelsAuto(UIGraph graph, int width_px, Collection<AxisLabeller.TimePoint> timePoints) {
+		final AxisLabeller.TimeRange timeRange = computeRange(timePoints.stream().map((point) -> point.x).toList());
+		addXLabelsAuto(graph, width_px, timeRange);
 	}
 
-	public static void addXLabels(UIGraph graph, int width_px, TimeRange timeRange) {
+	public static void addXLabelsAuto(UIGraph graph, int width_px, AxisLabeller.TimeRange timeRange) {
 		final long range_ms = timeRange.size_ms();
 
 		// Computing minimum space between 2 labels (time marks)
@@ -157,8 +242,8 @@ public class TimeSerieUtils {
 		final long labelSpaceMin_ms = (long) (100 * millisPerPixel);
 
 		// Choosing the best date format
-		LabelFormat format = LabelFormat.MSL;
-		for(LabelFormat _format : LabelFormat.values()) {
+		AxisLabeller.LabelFormat format = AxisLabeller.LabelFormat.MSL;
+		for(AxisLabeller.LabelFormat _format : AxisLabeller.LabelFormat.values()) {
 			if(labelSpaceMin_ms >= _format.precision.getDuration().get(ChronoUnit.SECONDS) * 1000L) {
 				format = _format;
 			} else {
@@ -168,7 +253,7 @@ public class TimeSerieUtils {
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format.pattern);
 
 		// The labelling plan defines which instants should be marked with label on x-axis
-		final LabellingPlan labellingPlan = computeLabellingPlan(timeRange.min, format.precision);
+		final AxisLabeller.LabellingPlan labellingPlan = computeLabellingPlan(timeRange.min, format.precision);
 		Integer stepFactor = 1;
 		for(Integer preferredStep : labellingPlan.preferredSteps) {
 			final long duration_ms = estimateDuration_ms(preferredStep, labellingPlan);
@@ -189,5 +274,4 @@ public class TimeSerieUtils {
 			time = time.plus(stepFactor, labellingPlan.stepUnit);
 		}
 	}
-
 }
