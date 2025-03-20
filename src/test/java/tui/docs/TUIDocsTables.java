@@ -73,5 +73,26 @@ public class TUIDocsTables extends Page {
 				.setAlign(Panel.Align.CENTER)
 				.append(table4);
 
+		final Section pagination = chapter.createSubSection("Pagination");
+
+		pagination.appendParagraph("""
+				When the table is too long to be displayed at once, then you can configure a pagination. Of course it is not available on
+				a static Table, you will need the Table to have a source and a corresponding web service on backend side.""");
+		pagination.append(new CodeParagraph("""
+				int pageSize = 12;
+				table.setPaging(pageSize);"""));
+		pagination.appendParagraph("""
+				Once you have set a paging size on your table, it will be displayed with page information and navigation buttons.""");
+
+		pagination.appendParagraph(
+				"The page your are reading is static, that's why it is not possible to show any example of pagination, sorry.");
+
+		pagination.appendParagraph(
+				"At the backend side, you must provider a TableData object which contains the rows of the selected page, "
+						+ "and the pagination information. There is a convenient way to obtain a TableData instance from either a Table, a TablePicker "
+						+ "or a TableData, this is the method getPage:");
+		pagination.append(new CodeParagraph("""
+				table.getPage(pageNumber, pageSize, tableSize);
+				"""));
 	}
 }

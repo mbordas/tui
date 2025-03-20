@@ -17,9 +17,26 @@ package tui.ui.components;
 
 import org.junit.Test;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 
 public class TableDataTest {
+
+	@Test
+	public void getPageWithPageNumberOverflow() {
+		final TableData data = new TableData(List.of("A"), 4);
+		data.append(Map.of("A", "1"));
+		data.append(Map.of("A", "2"));
+		data.append(Map.of("A", "3"));
+		data.append(Map.of("A", "4"));
+
+		// Trying to get page #3 should return page #1 because there is no page #3
+		final TableData result = data.getPage(3, 2, 2);
+
+		assertEquals(1, result.m_pageInfo.pageNumber());
+	}
 
 	@Test
 	public void computeLastPageNumber() {

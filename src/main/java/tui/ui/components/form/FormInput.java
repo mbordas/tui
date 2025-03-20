@@ -18,7 +18,6 @@ package tui.ui.components.form;
 import org.jetbrains.annotations.Nullable;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.json.JsonObject;
 
 public abstract class FormInput implements Comparable<FormInput> {
 
@@ -26,6 +25,7 @@ public abstract class FormInput implements Comparable<FormInput> {
 	protected final String m_htmlType;
 	protected final String m_label;
 	protected final String m_name;
+	protected String m_initialValue = null;
 	protected String m_placeHolder = null;
 
 	public FormInput(String jsonType, String htmlType, String label, String name) {
@@ -55,16 +55,22 @@ public abstract class FormInput implements Comparable<FormInput> {
 		final HTMLNode result = new HTMLNode("input");
 		result.setAttribute("type", m_htmlType);
 		result.setAttribute("name", m_name);
+		if(m_initialValue != null) {
+			result.setAttribute("value", m_initialValue);
+		}
 		if(m_placeHolder != null) {
 			result.setAttribute("placeholder", m_placeHolder);
 		}
 		return result;
 	}
 
-	public JsonObject toJsonObject() {
+	public JsonMap toJsonObject() {
 		final JsonMap result = new JsonMap(m_jsonType);
 		result.setAttribute("label", m_label);
 		result.setAttribute("name", m_name);
+		if(m_initialValue != null) {
+			result.setAttribute("initialValue", m_initialValue);
+		}
 		if(m_placeHolder != null) {
 			result.setAttribute("placeholder", m_placeHolder);
 		}

@@ -140,13 +140,23 @@ public class RequestReader {
 	}
 
 	public boolean getCheckboxParameter(String key) {
+		final Boolean value = getCheckboxParameter(key, null);
+		if(value == null) {
+			final String valueStr = getStringParameter(key);
+			throw new IllegalArgumentException(String.format("Unexpected request parameter value for checkbox '%s': %s", key, valueStr));
+		} else {
+			return value;
+		}
+	}
+
+	public Boolean getCheckboxParameter(String key, Boolean defaultValue) {
 		final String valueStr = getStringParameter(key);
 		if("on".equals(valueStr)) {
 			return true;
 		} else if("off".equals(valueStr)) {
 			return false;
 		} else {
-			throw new IllegalArgumentException(String.format("Unexpected request parameter value for checkbox '%s': %s", key, valueStr));
+			return defaultValue;
 		}
 	}
 

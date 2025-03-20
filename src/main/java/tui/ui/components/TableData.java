@@ -46,7 +46,7 @@ public class TableData {
 	public record PageInfo(int pageNumber, int pageSize, int firstItemNumber, int lastItemNumber) {
 	}
 
-	private PageInfo m_pageInfo = null; // When set, it means that the instance only contains one page of a table.
+	PageInfo m_pageInfo = null; // When set, it means that the instance only contains one page of a table.
 
 	public TableData(Collection<String> columns, int tableSize) {
 		m_columns.addAll(columns);
@@ -72,6 +72,13 @@ public class TableData {
 			result.m_rows.add(m_rows.get(rowIndex));
 			rowIndex++;
 		}
+
+		// Asked page number could be too high (reasons: the data may have been updated, the table may have been filtered, etc)
+		// When the asked page number does not fit, then we return #1
+		if((pageNumber - 1) * pageSize > tableSize) {
+			pageNumber = 1;
+		}
+
 		result.m_pageInfo = new PageInfo(pageNumber, pageSize, pageSize * (pageNumber - 1) + 1, rowIndex);
 		return result;
 	}

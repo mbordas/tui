@@ -32,7 +32,8 @@ import java.util.Set;
 
 public class Search extends UIComponent {
 
-	public static final String HTML_CLASS = "tui-search-form";
+	public static final String HTML_CLASS = "tui-search";
+	public static final String HTML_CLASS_FIELD = "tui-search-input";
 
 	public static final String JSON_TYPE = "search_form";
 	public static final String JSON_ATTRIBUTE_TITLE = "title";
@@ -47,6 +48,7 @@ public class Search extends UIComponent {
 	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
+	private boolean m_displayLikeForm = false;
 	private boolean m_hideTitle = false;
 	private boolean m_hideButton = false;
 
@@ -67,6 +69,10 @@ public class Search extends UIComponent {
 
 	public void hideTitle() {
 		m_hideTitle = true;
+	}
+
+	public void displayLikeForm() {
+		m_displayLikeForm = true;
 	}
 
 	public Search addParameter(String name, String value) {
@@ -92,6 +98,12 @@ public class Search extends UIComponent {
 		return result;
 	}
 
+	public FormInputCheckbox createInputCheckbox(String label, String name) {
+		final FormInputCheckbox result = new FormInputCheckbox(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
 	public FormInputRadio createInputRadio(String label, String name) {
 		final FormInputRadio result = new FormInputRadio(label, name);
 		m_inputs.add(result);
@@ -113,8 +125,8 @@ public class Search extends UIComponent {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = super.toHTMLNode("search", false)
-				.setClass(HTML_CLASS);
+		final HTMLNode result = super.toHTMLNode("search", false);
+		result.setClass(HTML_CLASS);
 
 		final HTMLNode titleNode = result.createChild("label").setText(m_title);
 		if(m_hideTitle) {
@@ -122,7 +134,9 @@ public class Search extends UIComponent {
 		}
 
 		for(FormInput input : m_inputs) {
-			result.append(input.toHTMLNode());
+			final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
+			inputNode.addClass(m_displayLikeForm ? Form.HTML_CLASS_FIELD : HTML_CLASS_FIELD);
+			result.append(inputNode);
 		}
 
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {

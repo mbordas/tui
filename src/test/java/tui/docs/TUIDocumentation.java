@@ -39,6 +39,7 @@ public class TUIDocumentation {
 	public TUIDocumentation() {
 		m_layouts.add(new TUIDocsPanels());
 		m_components.add(new TUIDocsTables());
+		m_components.add(new TUIDocsTablePicker());
 		m_miscs.add(new TUIDocsFirstSteps());
 		m_miscs.add(new TUIDocsUpdatingAPage());
 	}

@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import org.jetbrains.annotations.NotNull;
 import tui.html.HTMLConstants;
 import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
@@ -171,18 +172,8 @@ public class Form extends UIComponent {
 
 		final HTMLNode inputsDiv = result.createChild("div");
 		for(FormInput input : getInputs()) {
-			// We must use a unique id for the input to be linked to its label with the 'for' attribute.
-			final String inputId = String.format("%s-%s", getTUID(), input.getName());
-			final HTMLNode inputDiv = inputsDiv.createChild("div").addClass(HTML_CLASS_FIELD);
-			inputDiv.createChild("label")
-					.addClass("label-" + input.getHTMLType())
-					.setAttribute("for", inputId)
-					.setText(input.getLabel());
-
-			final HTMLNode inputNode = input.toHTMLNode();
-			inputNode.setAttribute("id", inputId);
-			inputDiv.append(inputNode);
-
+			final HTMLNode inputDiv = inputsDiv.append(createInputNodeWithLabel(getTUID(), input));
+			inputDiv.addClass(HTML_CLASS_FIELD);
 			inputDiv.createChild("span").addClass("tui-input-error");
 		}
 
@@ -209,6 +200,24 @@ public class Form extends UIComponent {
 				.setText(m_submitLabel);
 
 		return result;
+	}
+
+	/**
+	 * @param formTUID Used to generate unique identifiers for each input that has to be linked to a label element.
+	 */
+	static @NotNull HTMLNode createInputNodeWithLabel(long formTUID, FormInput input) {
+		// We must use a unique id for the input to be linked to its label with the 'for' attribute.
+		final String inputId = String.format("%d-%s", formTUID, input.getName());
+		final HTMLNode inputDiv = new HTMLNode("div");
+		inputDiv.createChild("label")
+				.addClass("label-" + input.getHTMLType())
+				.setAttribute("for", inputId)
+				.setText(input.getLabel());
+
+		final HTMLNode inputNode = input.toHTMLNode();
+		inputNode.setAttribute("id", inputId);
+		inputDiv.append(inputNode);
+		return inputDiv;
 	}
 
 	@Override

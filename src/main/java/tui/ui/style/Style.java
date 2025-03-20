@@ -344,12 +344,13 @@ public class Style {
 				
 				/* SEARCH */
 				
-				tui-search-form {
+				tui-search {
 					margin: 10px 0px 10px 0px;
 				}
-				
-				search>div {
+				.tui-search-input {
 					display: inline-block;
+				    margin-top: 10px;
+				    text-align: left;
 				}
 				search>label {
 					margin-right: 10px;

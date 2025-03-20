@@ -15,12 +15,38 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import tui.html.HTMLNode;
+import tui.json.JsonMap;
+
 public class FormInputCheckbox extends FormInput {
 
 	public static final String HTML_TYPE = "checkbox";
 	public static final String JSON_TYPE = HTML_TYPE;
 
+	private boolean m_checked = false;
+
 	public FormInputCheckbox(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);
+	}
+
+	public FormInputCheckbox check() {
+		m_checked = true;
+		return this;
+	}
+
+	public HTMLNode toHTMLNode() {
+		final HTMLNode result = super.toHTMLNode();
+		if(m_checked) {
+			result.setAttribute("checked", null);
+		}
+		return result;
+	}
+
+	public JsonMap toJsonObject() {
+		final JsonMap result = super.toJsonObject();
+		if(m_checked) {
+			result.setAttribute("checked", "true");
+		}
+		return result;
 	}
 }

@@ -48,6 +48,11 @@ public class JsonMap extends JsonObject {
 		return this;
 	}
 
+	public JsonMap setAttribute(String name, boolean value) {
+		setAttribute(name, String.valueOf(value));
+		return this;
+	}
+
 	public String getAttribute(String key) {
 		final String result = getAttributeOrNull(key);
 		if(result == null) {

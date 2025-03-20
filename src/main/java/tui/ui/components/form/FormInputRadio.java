@@ -17,7 +17,6 @@ package tui.ui.components.form;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
-import tui.json.JsonObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -67,7 +66,7 @@ public class FormInputRadio extends FormInput {
 	}
 
 	@Override
-	public JsonObject toJsonObject() {
+	public JsonMap toJsonObject() {
 		final JsonMap result = new JsonMap(m_jsonType);
 		result.setAttribute("label", m_label);
 		result.setAttribute("name", m_name);

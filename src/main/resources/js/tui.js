@@ -549,7 +549,7 @@ function instrumentRefreshButton(buttonElement) {
 // SEARCH
 
 function instrumentSearchForms() {
-    const searchForms = document.querySelectorAll('.tui-search-form');
+    const searchForms = document.querySelectorAll('.tui-search');
     searchForms.forEach(function(searchElement, i) {
         const button = searchElement.querySelector('button');
         button.addEventListener('click', function() {
