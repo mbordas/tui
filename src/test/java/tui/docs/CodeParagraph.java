@@ -94,7 +94,7 @@ public class CodeParagraph extends Paragraph {
 		customStyle().setBorderColor(BORDER_COLOR);
 		customStyle().setBorderRadius_px(3);
 
-		setColorizedWords(COLOR_JAVA_KEYS, "new", "private", "final", "static", "void", "record");
+		setColorizedWords(COLOR_JAVA_KEYS, "new", "private", "final", "static", "void", "record", "int");
 
 		registerClassForColor(UIComponent.class, UIRefreshableComponent.class);
 		registerClassForColor(HTMLNode.class);

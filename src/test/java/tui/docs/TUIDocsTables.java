@@ -92,7 +92,15 @@ public class TUIDocsTables extends Page {
 						+ "and the pagination information. There is a convenient way to obtain a TableData instance from either a Table, a TablePicker "
 						+ "or a TableData, this is the method getPage:");
 		pagination.append(new CodeParagraph("""
-				table.getPage(pageNumber, pageSize, tableSize);
+				// Getting or building the table
+				Table table = [...]
+				
+				// Reading page number and page size from request
+				int pageNumber = reader.getIntParameter(Table.PARAMETER_PAGE_NUMBER);
+				int pageSize = reader.getIntParameter(Table.PARAMETER_PAGE_SIZE);
+				
+				// Giving back the TableData of selected page
+				TableData dataToRespond = table.getPage(pageNumber, pageSize, table.size());
 				"""));
 	}
 }
