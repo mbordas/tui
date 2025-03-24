@@ -143,7 +143,7 @@ public class UIGraph {
 		for(Double stripeY : m_yStripes) {
 			final int y_px = coordinatesComputer.getY_px(stripeY);
 			result.add(new SVGPath(leftMargin_px + PADDING_px, y_px)
-					.lineRelative(width_px - leftMargin_px - 2L * PADDING_px, y_px)
+					.lineRelative(width_px - leftMargin_px - 2L * PADDING_px, 0)
 					.withStrokeColor(m_stripesColor));
 		}
 

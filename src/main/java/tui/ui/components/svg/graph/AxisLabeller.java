@@ -121,6 +121,7 @@ public class AxisLabeller {
 
 		final Map<Double, String> yLabels = computeYLabels(height_px, yRange, formatter);
 		yLabels.forEach(graph::addYLabel);
+		yLabels.forEach((y, label) -> graph.addYStripe(y));
 	}
 
 	public record TimePoint(LocalDateTime x, Double y, String label) {
@@ -270,6 +271,7 @@ public class AxisLabeller {
 				double x = (double) getDuration_ms(timeRange.min, time);
 				String label = time.format(formatter);
 				graph.addXLabel(x, label);
+				graph.addXStripe(x);
 			}
 			time = time.plus(stepFactor, labellingPlan.stepUnit);
 		}
