@@ -20,11 +20,11 @@ import tui.ui.components.svg.CoordinatesComputer;
 
 import static org.junit.Assert.assertEquals;
 
-public class AxisLabellerTest {
+public class AxisTest {
 
 	@Test
 	public void computeNextY_factor20() {
-		AxisLabeller.GridFactor gridFactor = new AxisLabeller.GridFactor(1, 2); // 20
+		Axis.GridFactor gridFactor = new Axis.GridFactor(1, 2); // 20
 
 		assertEquals(20.0, gridFactor.computeNextY(10.0), 0.1);
 		assertEquals(0.0, gridFactor.computeNextY(0.0), 0.1);
@@ -35,7 +35,7 @@ public class AxisLabellerTest {
 
 	@Test
 	public void computeNextY_factor500() {
-		AxisLabeller.GridFactor gridFactor = new AxisLabeller.GridFactor(2, 5); // 500
+		Axis.GridFactor gridFactor = new Axis.GridFactor(2, 5); // 500
 
 		assertEquals(500.0, gridFactor.computeNextY(10.0), 0.1);
 		assertEquals(0.0, gridFactor.computeNextY(0.0), 0.1);
@@ -47,31 +47,31 @@ public class AxisLabellerTest {
 	@Test
 	public void computeGridFactor() {
 		{ // height 500 px values [0-100], minLabelHeight 50 px -> max label 11, unit factor 10
-			final AxisLabeller.GridFactor gridFactor = AxisLabeller.computeGridFactor(500, new CoordinatesComputer.Range(0.0, 100.0), 50.0);
+			final Axis.GridFactor gridFactor = Axis.computeGridFactor(500, new CoordinatesComputer.Range(0.0, 100.0), 50.0);
 			assertEquals(1, gridFactor.powerOfTen());
 			assertEquals(1, gridFactor.step());
 		}
 
 		{ // height 500 px values [5-100], minLabelHeight 50 px -> max label 11, unit factor 10
-			final AxisLabeller.GridFactor gridFactor = AxisLabeller.computeGridFactor(500, new CoordinatesComputer.Range(5.0, 100.0), 50.0);
+			final Axis.GridFactor gridFactor = Axis.computeGridFactor(500, new CoordinatesComputer.Range(5.0, 100.0), 50.0);
 			assertEquals(1, gridFactor.powerOfTen());
 			assertEquals(1, gridFactor.step());
 		}
 
 		{ // height 500 px values [0-50], minLabelHeight 50 px -> max label 11, unit factor 5
-			final AxisLabeller.GridFactor gridFactor = AxisLabeller.computeGridFactor(500, new CoordinatesComputer.Range(0.0, 50.0), 50.0);
+			final Axis.GridFactor gridFactor = Axis.computeGridFactor(500, new CoordinatesComputer.Range(0.0, 50.0), 50.0);
 			assertEquals(0, gridFactor.powerOfTen());
 			assertEquals(5, gridFactor.step());
 		}
 
 		{ // height 300 px values [0-680], minLabelHeight 50 px -> max label 7, unit factor 100
-			final AxisLabeller.GridFactor gridFactor = AxisLabeller.computeGridFactor(300, new CoordinatesComputer.Range(0.0, 680.0), 50.0);
+			final Axis.GridFactor gridFactor = Axis.computeGridFactor(300, new CoordinatesComputer.Range(0.0, 680.0), 50.0);
 			assertEquals(2, gridFactor.powerOfTen());
 			assertEquals(1, gridFactor.step());
 		}
 
 		{ // height 800 px values [0-7], minLabelHeight 30 px -> max label 27, unit factor 0.5
-			final AxisLabeller.GridFactor gridFactor = AxisLabeller.computeGridFactor(300, new CoordinatesComputer.Range(0.0, 680.0), 50.0);
+			final Axis.GridFactor gridFactor = Axis.computeGridFactor(300, new CoordinatesComputer.Range(0.0, 680.0), 50.0);
 			assertEquals(2, gridFactor.powerOfTen());
 			assertEquals(1, gridFactor.step());
 		}

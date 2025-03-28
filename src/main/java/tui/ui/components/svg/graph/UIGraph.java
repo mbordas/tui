@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 
 public class UIGraph {
@@ -121,7 +120,7 @@ public class UIGraph {
 		final CoordinatesComputer.Range rangeX = computeXRange();
 		final CoordinatesComputer.Range rangeY = computeYRange();
 
-		final int leftMargin_px = computeLeftMargin_px();
+		final int leftMargin_px = Axis.computeLeftMargin_px(m_yLabels.values());
 		final CoordinatesComputer coordinatesComputer =
 				new CoordinatesComputer(width_px - leftMargin_px, height_px, PADDING_px, rangeX, rangeY);
 		coordinatesComputer.setMarginLeft_px(leftMargin_px);
@@ -163,13 +162,6 @@ public class UIGraph {
 		drawYAxis(coordinatesComputer, leftMargin_px, rangeX, rangeY, arrowMarker, result);
 
 		return result;
-	}
-
-	private int computeLeftMargin_px() {
-		final Optional<Integer> maxLabelLength = m_yLabels.values().stream()
-				.map(String::length)
-				.max(Integer::compareTo);
-		return maxLabelLength.orElse(0) * 10;
 	}
 
 	private void drawYAxis(CoordinatesComputer coordinatesComputer, int leftMargin_px, CoordinatesComputer.Range rangeX,
@@ -275,6 +267,10 @@ public class UIGraph {
 	}
 
 	private SVGMarker buildArrow() {
+		return buildArrow(m_axisColor);
+	}
+
+	public static SVGMarker buildArrow(Color color) {
 		final SVGMarker result = new SVGMarker("arrow", 10, 8)
 				.withRef(0, 4);
 		result.add(new SVGPath(0, 1)
@@ -282,8 +278,8 @@ public class UIGraph {
 				.lineAbsolute(0, 7)
 				.lineAbsolute(0, 1)
 				.withStrokeWidth(1)
-				.withFillColor(m_axisColor)
-				.withStrokeColor(m_axisColor));
+				.withFillColor(color)
+				.withStrokeColor(color));
 		return result;
 	}
 

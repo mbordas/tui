@@ -16,10 +16,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.svg;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public class CoordinatesComputer {
 
 	public record Range(double min, double max) {
+	}
+
+	public record Point_px(int x_px, int y_px) {
 	}
 
 	// f(x) = a.x + b
@@ -62,7 +66,7 @@ public class CoordinatesComputer {
 		assert !values.isEmpty();
 		Double min = null;
 		Double max = null;
-		for(double value : values) {
+		for(double value : values.stream().filter(Objects::nonNull).toList()) {
 			min = min == null ? value : Math.min(min, value);
 			max = max == null ? value : Math.max(max, value);
 		}

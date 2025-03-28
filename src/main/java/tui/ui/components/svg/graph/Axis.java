@@ -15,8 +15,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg.graph;
 
+import org.jetbrains.annotations.Nullable;
 import tui.ui.components.svg.CoordinatesComputer;
+import tui.ui.components.svg.SVG;
+import tui.ui.components.svg.SVGPath;
+import tui.ui.components.svg.SVGText;
+import tui.ui.components.svg.defs.SVGMarker;
 
+import java.awt.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -28,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 
@@ -42,7 +49,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.time.temporal.ChronoUnit.WEEKS;
 import static java.time.temporal.ChronoUnit.YEARS;
 
-public class AxisLabeller {
+public class Axis {
 
 	public record GridFactor(int powerOfTen, int step) {
 
@@ -92,6 +99,13 @@ public class AxisLabeller {
 		}
 
 		return result;
+	}
+
+	public static int computeLeftMargin_px(Collection<String> yLabels) {
+		final Optional<Integer> maxLabelLength = yLabels.stream()
+				.map(String::length)
+				.max(Integer::compareTo);
+		return maxLabelLength.orElse(0) * 10;
 	}
 
 	static GridFactor computeGridFactor(int height_px, CoordinatesComputer.Range yValuesRange, double minLabelHeight_px) {
@@ -151,18 +165,18 @@ public class AxisLabeller {
 	 * {@link Duration#of(long, TemporalUnit)} doesn't work with unit larger or equal to {@link ChronoUnit#DAYS} because it would be an
 	 * 'estimation'. Indeed, the value computed in this method is not accurate, but it will do the job for what is expected in this class.
 	 */
-	private static long estimateDuration_ms(Integer preferredStep, AxisLabeller.LabellingPlan labellingPlan) {
+	private static long estimateDuration_ms(Integer preferredStep, Axis.LabellingPlan labellingPlan) {
 		LocalDateTime t1 = LocalDateTime.now();
 		LocalDateTime t2 = t1.plus(preferredStep, labellingPlan.stepUnit);
 		return getDuration_ms(t1, t2);
 	}
 
-	private static AxisLabeller.TimeRange computeRange(Collection<LocalDateTime> times) {
-		return new AxisLabeller.TimeRange(times.stream().min(LocalDateTime::compareTo).get(),
+	private static Axis.TimeRange computeRange(Collection<LocalDateTime> times) {
+		return new Axis.TimeRange(times.stream().min(LocalDateTime::compareTo).get(),
 				times.stream().max(LocalDateTime::compareTo).get());
 	}
 
-	public static Collection<UIGraph.Point> toPoints(Collection<AxisLabeller.TimePoint> points) {
+	public static Collection<UIGraph.Point> toPoints(Collection<Axis.TimePoint> points) {
 		if(points.isEmpty()) {
 			return new ArrayList<>();
 		}
@@ -170,7 +184,7 @@ public class AxisLabeller {
 		final Collection<UIGraph.Point> result = new ArrayList<>();
 		final LocalDateTime startTime = computeRange(points.stream().map((point) -> point.x).toList()).min;
 		final long start_ms = getMillis(startTime);
-		for(AxisLabeller.TimePoint point : points) {
+		for(Axis.TimePoint point : points) {
 			long x = getMillis(point.x) - start_ms;
 			result.add(new UIGraph.Point(x, point.y, point.label));
 		}
@@ -215,27 +229,26 @@ public class AxisLabeller {
 	private record LabellingPlan(LocalDateTime gridStart, ChronoUnit stepUnit, Collection<Integer> preferredSteps) {
 	}
 
-	private static AxisLabeller.LabellingPlan computeLabellingPlan(LocalDateTime time, ChronoUnit formatPrecision) {
+	private static Axis.LabellingPlan computeLabellingPlan(LocalDateTime time, ChronoUnit formatPrecision) {
 		LocalDateTime gridStart = truncate(time, formatPrecision);
 		return switch(formatPrecision) {
-			case MILLIS -> new AxisLabeller.LabellingPlan(gridStart, MILLIS, List.of(1, 2, 5, 10, 50, 100));
-			case SECONDS -> new AxisLabeller.LabellingPlan(gridStart, SECONDS, List.of(1, 2, 5, 10, 30));
-			case MINUTES -> new AxisLabeller.LabellingPlan(gridStart, MINUTES, List.of(1, 2, 5, 10, 30));
-			case HOURS, HALF_DAYS, DAYS -> new AxisLabeller.LabellingPlan(gridStart, DAYS, List.of(1, 7));
-			case WEEKS -> new AxisLabeller.LabellingPlan(gridStart, WEEKS, List.of(1, 2));
-			case MONTHS, YEARS -> new AxisLabeller.LabellingPlan(gridStart, MONTHS, List.of(1, 2, 3, 4, 6));
-			case DECADES -> new AxisLabeller.LabellingPlan(gridStart, DECADES, List.of(1, 2, 5, 10));
-			case CENTURIES -> new AxisLabeller.LabellingPlan(gridStart, CENTURIES, List.of(1, 2, 5, 10));
-			default -> new AxisLabeller.LabellingPlan(gridStart, formatPrecision, List.of(1));
+			case MILLIS -> new Axis.LabellingPlan(gridStart, MILLIS, List.of(1, 2, 5, 10, 50, 100));
+			case SECONDS -> new Axis.LabellingPlan(gridStart, SECONDS, List.of(1, 2, 5, 10, 30));
+			case MINUTES -> new Axis.LabellingPlan(gridStart, MINUTES, List.of(1, 2, 5, 10, 30));
+			case HOURS, HALF_DAYS, DAYS -> new Axis.LabellingPlan(gridStart, DAYS, List.of(1, 7));
+			case WEEKS -> new Axis.LabellingPlan(gridStart, WEEKS, List.of(1, 2));
+			case MONTHS, YEARS -> new Axis.LabellingPlan(gridStart, MONTHS, List.of(1, 2, 3, 4, 6));
+			case DECADES -> new Axis.LabellingPlan(gridStart, DECADES, List.of(1, 2, 5, 10));
+			case CENTURIES -> new Axis.LabellingPlan(gridStart, CENTURIES, List.of(1, 2, 5, 10));
+			default -> new Axis.LabellingPlan(gridStart, formatPrecision, List.of(1));
 		};
 	}
 
-	public static void addXLabelsAuto(UIGraph graph, int width_px, Collection<AxisLabeller.TimePoint> timePoints) {
-		final AxisLabeller.TimeRange timeRange = computeRange(timePoints.stream().map((point) -> point.x).toList());
-		addXLabelsAuto(graph, width_px, timeRange);
-	}
-
-	public static void addXLabelsAuto(UIGraph graph, int width_px, AxisLabeller.TimeRange timeRange) {
+	/**
+	 * @param width_px The length of the x-axis in pixels.
+	 * @return Each entry of the Map gives the abscissa relative to the start of x-axis (in pixels), and the label.
+	 */
+	public static Map<Integer, String> computeXTimeLabels(int width_px, Axis.TimeRange timeRange) {
 		final long range_ms = timeRange.size_ms();
 
 		// Computing minimum space between 2 labels (time marks)
@@ -243,8 +256,8 @@ public class AxisLabeller {
 		final long labelSpaceMin_ms = (long) (100 * millisPerPixel);
 
 		// Choosing the best date format
-		AxisLabeller.LabelFormat format = AxisLabeller.LabelFormat.MSL;
-		for(AxisLabeller.LabelFormat _format : AxisLabeller.LabelFormat.values()) {
+		Axis.LabelFormat format = Axis.LabelFormat.MSL;
+		for(Axis.LabelFormat _format : Axis.LabelFormat.values()) {
 			if(labelSpaceMin_ms >= _format.precision.getDuration().get(ChronoUnit.SECONDS) * 1000L) {
 				format = _format;
 			} else {
@@ -254,7 +267,7 @@ public class AxisLabeller {
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format.pattern);
 
 		// The labelling plan defines which instants should be marked with label on x-axis
-		final AxisLabeller.LabellingPlan labellingPlan = computeLabellingPlan(timeRange.min, format.precision);
+		final Axis.LabellingPlan labellingPlan = computeLabellingPlan(timeRange.min, format.precision);
 		Integer stepFactor = 1;
 		for(Integer preferredStep : labellingPlan.preferredSteps) {
 			final long duration_ms = estimateDuration_ms(preferredStep, labellingPlan);
@@ -264,16 +277,74 @@ public class AxisLabeller {
 			}
 		}
 
-		// Drawing the labels on x-axis
+		// Computing the labels on x-axis
+		final Map<Integer, String> result = new TreeMap<>();
 		LocalDateTime time = labellingPlan.gridStart;
 		while(time.isBefore(timeRange.max)) {
 			if(time.equals(timeRange.min) || time.isAfter(timeRange.min)) {
-				double x = (double) getDuration_ms(timeRange.min, time);
+				int relativeAbscissa_px = (int) ((double) getDuration_ms(timeRange.min, time) * width_px / range_ms);
 				String label = time.format(formatter);
-				graph.addXLabel(x, label);
-				graph.addXStripe(x);
+				result.put(relativeAbscissa_px, label);
 			}
 			time = time.plus(stepFactor, labellingPlan.stepUnit);
+		}
+
+		return result;
+	}
+
+	public static void addXLabelsAuto(UIGraph graph, int width_px, Axis.TimeRange timeRange, CoordinatesComputer.Range xRange) {
+		// labels are localised with pixels (relative to x-axis start)
+		final Map<Integer, String> labelsOnAxis_px = computeXTimeLabels(width_px, timeRange);
+
+		// Converting relative position in pixels into absolute value
+		for(Map.Entry<Integer, String> entry : labelsOnAxis_px.entrySet()) {
+			int x_px = entry.getKey();
+			double x = xRange.min() + ((double) x_px / width_px) * (xRange.max() - xRange.min());
+			graph.addXLabel(x, entry.getValue());
+			graph.addXStripe(x);
+		}
+	}
+
+	public static void drawXAxis(SVG svg, Axis.TimeRange timeRange,
+			CoordinatesComputer.Point_px start, int length_px,
+			int verticalSpaceForText_px, Color color) {
+		drawXAxis(svg, timeRange, start, length_px, verticalSpaceForText_px, color, null);
+	}
+
+	/**
+	 * @param svg                     Where the x-axis is drawn.
+	 * @param timeRange               The time range to be labelled on the whole x-axis.
+	 * @param start                   The starting point of the x-axis (left) localised with pixel coordinates in the SVG referential.
+	 * @param length_px               The length of the x-axis in the SVG (pixels).
+	 * @param verticalSpaceForText_px The space available under the x-axis for the labels.
+	 */
+	public static void drawXAxisWithArrow(SVG svg, Axis.TimeRange timeRange,
+			CoordinatesComputer.Point_px start, int length_px,
+			int verticalSpaceForText_px, Color color) {
+		final SVGMarker endMarker = svg.addMarker(UIGraph.buildArrow(color));
+		drawXAxis(svg, timeRange, start, length_px, verticalSpaceForText_px, color, endMarker);
+	}
+
+	private static void drawXAxis(SVG svg, Axis.TimeRange timeRange,
+			CoordinatesComputer.Point_px start, int length_px,
+			int verticalSpaceForText_px, Color color, @Nullable SVGMarker endMarker) {
+
+		final Map<Integer, String> xAxisLabels = computeXTimeLabels(length_px, timeRange);
+
+		final SVGPath xAxis = new SVGPath(start.x_px(), start.y_px()).lineRelative(length_px, 0);
+		if(endMarker != null) {
+			xAxis.withMarkerAtEnd(endMarker);
+		}
+		xAxis.withStrokeColor(color);
+		svg.add(xAxis);
+
+		for(Map.Entry<Integer, String> entry : xAxisLabels.entrySet()) {
+			final int x_px = start.x_px() + entry.getKey();
+			svg.add(new SVGPath(x_px, start.y_px() - 4).lineRelative(0, 8).withStrokeColor(color));
+			svg.add(new SVGText(x_px, start.y_px() + 4L * verticalSpaceForText_px / 5, entry.getValue(), SVGText.Anchor.MIDDLE)
+					.withFontSize_em(1.0f)
+					.withStrokeColor(color)
+					.withFillColor(color));
 		}
 	}
 }
