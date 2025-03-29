@@ -123,7 +123,7 @@ public class UIGraph {
 		final int leftMargin_px = Axis.computeLeftMargin_px(m_yLabels.values());
 		final CoordinatesComputer coordinatesComputer =
 				new CoordinatesComputer(width_px - leftMargin_px, height_px, PADDING_px, rangeX, rangeY);
-		coordinatesComputer.setMarginLeft_px(leftMargin_px);
+		coordinatesComputer.setPaddingLeft_px(leftMargin_px);
 
 		if(m_backgroundColor != null) {
 			result.add(new SVGRectangle(leftMargin_px + PADDING_px, PADDING_px,

@@ -37,4 +37,14 @@ public class CoordinatesComputerTest {
 		assertEquals(height_px - padding_px, computer.getY_px(-1.0));
 		assertEquals(height_px / 2, computer.getY_px(0.0));
 	}
+
+	@Test
+	public void computeXWithOverriddenLeftPadding() {
+		final CoordinatesComputer computer = new CoordinatesComputer(200, 100, 20,
+				new CoordinatesComputer.Range(0.0, 10.0), new CoordinatesComputer.Range(-1.0, 1.0));
+		computer.setPaddingLeft_px(30);
+
+		assertEquals(30, computer.getX_px(0.0));
+		assertEquals(200 - 20, computer.getX_px(10.0));
+	}
 }

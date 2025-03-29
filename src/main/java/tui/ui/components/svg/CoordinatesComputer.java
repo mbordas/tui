@@ -35,27 +35,31 @@ public class CoordinatesComputer {
 
 	final int m_width_px;
 	final int m_height_px;
-	final int m_padding_px;
-	int m_marginLeft_px = 0;
+	final int m_padding_px; // Applies to top, right and bottom
+	int m_paddingLeft_px = 0; // Padding left can be customized in order to adapt to y-axis labels
+	final Range m_range_X;
 
-	final AffineTransformation m_x_transformation;
+	AffineTransformation m_x_transformation;
 	final AffineTransformation m_y_transformation;
 
 	public CoordinatesComputer(int width_px, int height_px, int padding_px, Range range_X, Range range_Y) {
+		m_range_X = range_X;
 		m_width_px = width_px;
 		m_height_px = height_px;
 		m_padding_px = padding_px;
+		m_paddingLeft_px = padding_px;
 
-		m_x_transformation = computeAffineTransformation(range_X.min, range_X.max, m_padding_px, m_width_px - m_padding_px);
+		m_x_transformation = computeAffineTransformation(m_range_X.min, m_range_X.max, m_paddingLeft_px, m_width_px - m_padding_px);
 		m_y_transformation = computeAffineTransformation(range_Y.min, range_Y.max, m_height_px - m_padding_px, m_padding_px);
 	}
 
-	public void setMarginLeft_px(int marginLeft_px) {
-		m_marginLeft_px = marginLeft_px;
+	public void setPaddingLeft_px(int paddingLeft_px) {
+		m_paddingLeft_px = paddingLeft_px;
+		m_x_transformation = computeAffineTransformation(m_range_X.min, m_range_X.max, m_paddingLeft_px, m_width_px - m_padding_px);
 	}
 
 	public int getX_px(double x) {
-		return m_marginLeft_px + (int) m_x_transformation.transform(x);
+		return (int) m_x_transformation.transform(x);
 	}
 
 	public int getY_px(double y) {

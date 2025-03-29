@@ -101,6 +101,29 @@ public class Axis {
 		return result;
 	}
 
+	public static void drawYAxisWithArrow(SVG svg, CoordinatesComputer.Range yRange, CoordinatesComputer.Point_px axisStart,
+			int height_px, Color color, BiFunction<Double, GridFactor, String> formatter) {
+		final SVGMarker endMarker = svg.addMarker(UIGraph.buildArrow(color));
+
+		final SVGPath yAxis = new SVGPath(axisStart.x_px(), axisStart.y_px()).lineRelative(0, -height_px);
+		yAxis.withStrokeColor(color);
+		yAxis.withMarkerAtEnd(endMarker);
+		svg.add(yAxis);
+
+		final Map<Double, String> yLabels = computeYLabels(height_px, yRange, formatter);
+
+		final CoordinatesComputer.AffineTransformation yTransform_px = CoordinatesComputer.computeAffineTransformation(yRange.min(),
+				yRange.max(), 0, height_px);
+
+		for(Map.Entry<Double, String> entry : yLabels.entrySet()) {
+			int y_px = (int) yTransform_px.transform(entry.getKey());
+			svg.add(new SVGPath(axisStart.x_px() - 4, axisStart.y_px() - y_px).lineRelative(8, 0).withStrokeColor(color));
+			svg.add(new SVGText(axisStart.x_px() - 10, axisStart.y_px() - y_px, entry.getValue(), SVGText.Anchor.END)
+					.withStrokeColor(color)
+					.withFillColor(color));
+		}
+	}
+
 	public static int computeLeftMargin_px(Collection<String> yLabels) {
 		final Optional<Integer> maxLabelLength = yLabels.stream()
 				.map(String::length)
@@ -271,8 +294,8 @@ public class Axis {
 		Integer stepFactor = 1;
 		for(Integer preferredStep : labellingPlan.preferredSteps) {
 			final long duration_ms = estimateDuration_ms(preferredStep, labellingPlan);
+			stepFactor = preferredStep;
 			if(duration_ms >= labelSpaceMin_ms) {
-				stepFactor = preferredStep;
 				break;
 			}
 		}
@@ -332,10 +355,10 @@ public class Axis {
 		final Map<Integer, String> xAxisLabels = computeXTimeLabels(length_px, timeRange);
 
 		final SVGPath xAxis = new SVGPath(start.x_px(), start.y_px()).lineRelative(length_px, 0);
+		xAxis.withStrokeColor(color);
 		if(endMarker != null) {
 			xAxis.withMarkerAtEnd(endMarker);
 		}
-		xAxis.withStrokeColor(color);
 		svg.add(xAxis);
 
 		for(Map.Entry<Integer, String> entry : xAxisLabels.entrySet()) {
