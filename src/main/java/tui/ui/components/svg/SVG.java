@@ -102,8 +102,6 @@ public class SVG extends UIRefreshableComponent {
 	static HTMLNode toHTMLNode(JsonObject json) {
 		final HTMLNode result = new HTMLNode(json.getType());
 
-		LOG.info("JSON:\n{}", json.toJson());
-
 		if(json instanceof JsonMap map) {
 			for(Map.Entry<String, JsonValue<?>> attribute : map.getAttributes().entrySet()) {
 				final String key = attribute.getKey();
