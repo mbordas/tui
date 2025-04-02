@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static java.time.temporal.ChronoUnit.CENTURIES;
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -119,9 +120,24 @@ public class Axis {
 			int y_px = (int) yTransform_px.transform(entry.getKey());
 			svg.add(new SVGPath(axisStart.x_px() - 4, axisStart.y_px() - y_px).lineRelative(8, 0).withStrokeColor(color));
 			svg.add(new SVGText(axisStart.x_px() - 10, axisStart.y_px() - y_px, entry.getValue(), SVGText.Anchor.END)
-					.withStrokeColor(color)
-					.withFillColor(color));
+					.withStrokeColor(color).withFillColor(color));
 		}
+	}
+
+	public static void drawYBooleanAxis(SVG svg, CoordinatesComputer.Point_px axisStart, int height_px, Color color,
+			Function<Boolean, String> formatter) {
+		// Vertical line
+		svg.add(new SVGPath(axisStart.x_px(), axisStart.y_px()).lineRelative(0, -height_px).withStrokeColor(color));
+
+		// bottom tick
+		svg.add(new SVGPath(axisStart.x_px() - 4, axisStart.y_px()).lineRelative(8, 0).withStrokeColor(color));
+		svg.add(new SVGText(axisStart.x_px() - 10, axisStart.y_px(), formatter.apply(false), SVGText.Anchor.END)
+				.withStrokeColor(color).withFillColor(color));
+
+		// top tick
+		svg.add(new SVGPath(axisStart.x_px() - 4, axisStart.y_px() - height_px).lineRelative(8, 0).withStrokeColor(color));
+		svg.add(new SVGText(axisStart.x_px() - 10, axisStart.y_px() - height_px, formatter.apply(true), SVGText.Anchor.END)
+				.withStrokeColor(color).withFillColor(color));
 	}
 
 	public static int computeLeftMargin_px(Collection<String> yLabels) {
@@ -175,7 +191,7 @@ public class Axis {
 		return zdt.toInstant().toEpochMilli();
 	}
 
-	private static long getDuration_ms(LocalDateTime from, LocalDateTime to) {
+	public static long getDuration_ms(LocalDateTime from, LocalDateTime to) {
 		return getMillis(to) - getMillis(from);
 	}
 
