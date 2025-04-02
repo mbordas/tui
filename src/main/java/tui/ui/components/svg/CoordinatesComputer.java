@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg;
 
+import tui.ui.components.svg.graph.Axis;
+
 import java.util.Collection;
 import java.util.Objects;
 
@@ -30,6 +32,14 @@ public class CoordinatesComputer {
 	public record AffineTransformation(double a, double b) {
 		public double transform(double x) {
 			return a * x + b;
+		}
+	}
+
+	public record TimeToPixelTransformation(java.time.LocalDateTime referenceTime, int origin_px, double pixelPerMinute) {
+		public int transform(java.time.LocalDateTime time) {
+			final long duration_ms = Axis.getDuration_ms(referenceTime, time);
+			double duration_px = pixelPerMinute * duration_ms / 60_000;
+			return origin_px + (int) duration_px;
 		}
 	}
 
