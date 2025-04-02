@@ -20,9 +20,10 @@ import tui.test.Browser;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.layout.Layouts;
-import tui.ui.components.svg.CoordinatesComputer;
+import tui.ui.components.svg.CoordinateTransformation;
 import tui.ui.components.svg.SVG;
 import tui.ui.components.svg.SVGPath;
+import tui.ui.components.svg.SVGPoint;
 import tui.ui.components.svg.SVGText;
 import tui.ui.components.svg.defs.SVGMarker;
 import tui.utils.TestUtils;
@@ -33,13 +34,14 @@ import java.util.List;
 
 public class HistogramViewer {
 
-	private static SVG buildSVG(int width_px, int height_px, List<Double> values, int padding_px) {
+	private static SVG buildSVG(long width_px, long height_px, List<Double> values, long padding_px) {
 		assert !values.isEmpty();
 		final SVG result = new SVG(width_px, height_px);
 
-		final var range_x = new CoordinatesComputer.Range(0.0, 1.0 * values.size());
-		final var range_y = CoordinatesComputer.getRange(values);
-		final var computer = new CoordinatesComputer(width_px, height_px, padding_px, range_x, range_y);
+		final var range_x = new CoordinateTransformation.Range(0.0, 1.0 * values.size());
+		final var range_y = CoordinateTransformation.getRange(values);
+		final SVGPoint topLeft = new SVGPoint(padding_px, padding_px);
+		final var computer = new CoordinateTransformation(topLeft, width_px - 2 * padding_px, height_px - 2 * padding_px, range_x, range_y);
 
 		final SVGMarker arrow = new SVGMarker("arrow", 10, 8)
 				.withRef(0, 4);
@@ -63,8 +65,8 @@ public class HistogramViewer {
 		final SVGPath area = new SVGPath(computer.getX_px(0.0), computer.getY_px(0.0));
 
 		double firstValue = values.get(0);
-		int prevX_px = computer.getX_px(1.0);
-		int prevY_px = computer.getY_px(firstValue);
+		long prevX_px = computer.getX_px(1.0);
+		long prevY_px = computer.getY_px(firstValue);
 		area.lineAbsolute(computer.getX_px(0.0), prevY_px);
 
 		final SVGPath curve = new SVGPath(computer.getX_px(0.0), prevY_px);
@@ -73,8 +75,8 @@ public class HistogramViewer {
 
 		for(int i = 1; i < values.size(); i++) {
 			final double value = values.get(i);
-			int newX_px = computer.getX_px(1.0 * (i + 1));
-			int newY_px = computer.getY_px(value);
+			long newX_px = computer.getX_px(1.0 * (i + 1));
+			long newY_px = computer.getY_px(value);
 
 			curve.lineAbsolute(prevX_px, newY_px);
 			curve.lineAbsolute(newX_px, newY_px);

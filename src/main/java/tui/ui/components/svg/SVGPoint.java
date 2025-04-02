@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -13,25 +13,23 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.ui.components.svg.graph;
+package tui.ui.components.svg;
 
-import tui.ui.components.svg.CoordinateTransformation;
-import tui.ui.components.svg.SVG;
+public class SVGPoint {
 
-import java.awt.*;
+	private final long m_x_px;
+	private final long m_y_px;
 
-public abstract class DataSerie {
-
-	protected Color m_color = Color.BLACK;
-
-	public abstract CoordinateTransformation.Range getXRange();
-
-	public abstract CoordinateTransformation.Range getYRange();
-
-	public abstract void draw(SVG svg, CoordinateTransformation coordinateTransformation);
-
-	public void setColor(Color color) {
-		m_color = color;
+	public SVGPoint(long x_px, long y_px) {
+		m_x_px = x_px;
+		m_y_px = y_px;
 	}
 
+	public long x_px() {
+		return m_x_px;
+	}
+
+	public long y_px() {
+		return m_y_px;
+	}
 }

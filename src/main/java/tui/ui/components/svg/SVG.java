@@ -46,14 +46,14 @@ public class SVG extends UIRefreshableComponent {
 	private final List<SVGComponent> m_markers = new ArrayList<>();
 	private final List<SVGComponent> m_patterns = new ArrayList<>();
 	private final List<SVGComponent> m_components = new ArrayList<>();
-	private int m_width_px;
-	private int m_height_px;
+	private long m_width_px;
+	private long m_height_px;
 	private ViewBox m_viewBox = null;
 
 	record ViewBox(long x, long y, long width, long height) {
 	}
 
-	public SVG(int width_px, int height_px) {
+	public SVG(long width_px, long height_px) {
 		m_width_px = width_px;
 		m_height_px = height_px;
 	}

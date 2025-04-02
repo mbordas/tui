@@ -16,9 +16,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.svg.graph;
 
 import org.jetbrains.annotations.Nullable;
-import tui.ui.components.svg.CoordinatesComputer;
+import tui.ui.components.svg.CoordinateTransformation;
 import tui.ui.components.svg.SVG;
 import tui.ui.components.svg.SVGPath;
+import tui.ui.components.svg.SVGPoint;
 import tui.ui.components.svg.SVGText;
 import tui.ui.components.svg.defs.SVGMarker;
 
@@ -87,7 +88,7 @@ public class Axis {
 		}
 	}
 
-	public static Map<Double, String> computeYLabels(int height_px, CoordinatesComputer.Range yValuesRange,
+	public static Map<Double, String> computeYLabels(long height_px, CoordinateTransformation.Range yValuesRange,
 			BiFunction<Double, GridFactor, String> formatter) {
 		double minLabelHeight_px = 30;
 		final GridFactor gridFactor = computeGridFactor(height_px, yValuesRange, minLabelHeight_px);
@@ -102,8 +103,8 @@ public class Axis {
 		return result;
 	}
 
-	public static void drawYAxisWithArrow(SVG svg, CoordinatesComputer.Range yRange, CoordinatesComputer.Point_px axisStart,
-			int height_px, Color color, BiFunction<Double, GridFactor, String> formatter) {
+	public static void drawYAxisWithArrow(SVG svg, CoordinateTransformation.Range yRange, SVGPoint axisStart,
+			long height_px, Color color, BiFunction<Double, GridFactor, String> formatter) {
 		final SVGMarker endMarker = svg.addMarker(UIGraph.buildArrow(color));
 
 		final SVGPath yAxis = new SVGPath(axisStart.x_px(), axisStart.y_px()).lineRelative(0, -height_px);
@@ -113,7 +114,8 @@ public class Axis {
 
 		final Map<Double, String> yLabels = computeYLabels(height_px, yRange, formatter);
 
-		final CoordinatesComputer.AffineTransformation yTransform_px = CoordinatesComputer.computeAffineTransformation(yRange.min(),
+		final CoordinateTransformation.AffineTransformation yTransform_px = CoordinateTransformation.computeAffineTransformation(
+				yRange.min(),
 				yRange.max(), 0, height_px);
 
 		for(Map.Entry<Double, String> entry : yLabels.entrySet()) {
@@ -124,7 +126,7 @@ public class Axis {
 		}
 	}
 
-	public static void drawYBooleanAxis(SVG svg, CoordinatesComputer.Point_px axisStart, int height_px, Color color,
+	public static void drawYBooleanAxis(SVG svg, SVGPoint axisStart, int height_px, Color color,
 			Function<Boolean, String> formatter) {
 		// Vertical line
 		svg.add(new SVGPath(axisStart.x_px(), axisStart.y_px()).lineRelative(0, -height_px).withStrokeColor(color));
@@ -147,7 +149,7 @@ public class Axis {
 		return maxLabelLength.orElse(0) * 10;
 	}
 
-	static GridFactor computeGridFactor(int height_px, CoordinatesComputer.Range yValuesRange, double minLabelHeight_px) {
+	static GridFactor computeGridFactor(long height_px, CoordinateTransformation.Range yValuesRange, double minLabelHeight_px) {
 		GridFactor result = new GridFactor(1, 1);
 		if(yValuesRange != null) {
 			double range_u = yValuesRange.max() - yValuesRange.min(); // value in raw (and unknown) unit
@@ -163,12 +165,12 @@ public class Axis {
 	}
 
 	public static void addYLabelsAuto(UIGraph graph, int height_px, BiFunction<Double, GridFactor, String> formatter) {
-		CoordinatesComputer.Range yRange = null;
+		CoordinateTransformation.Range yRange = null;
 		for(DataSerie serie : graph.getSeries()) {
 			if(yRange == null) {
 				yRange = serie.getYRange();
 			} else {
-				yRange = CoordinatesComputer.getUnion(yRange, serie.getYRange());
+				yRange = CoordinateTransformation.getUnion(yRange, serie.getYRange());
 			}
 		}
 
@@ -287,7 +289,7 @@ public class Axis {
 	 * @param width_px The length of the x-axis in pixels.
 	 * @return Each entry of the Map gives the abscissa relative to the start of x-axis (in pixels), and the label.
 	 */
-	public static Map<Integer, String> computeXTimeLabels(int width_px, Axis.TimeRange timeRange) {
+	public static Map<Integer, String> computeXTimeLabels(long width_px, Axis.TimeRange timeRange) {
 		final long range_ms = timeRange.size_ms();
 
 		// Computing minimum space between 2 labels (time marks)
@@ -331,7 +333,7 @@ public class Axis {
 		return result;
 	}
 
-	public static void addXLabelsAuto(UIGraph graph, int width_px, Axis.TimeRange timeRange, CoordinatesComputer.Range xRange) {
+	public static void addXLabelsAuto(UIGraph graph, int width_px, Axis.TimeRange timeRange, CoordinateTransformation.Range xRange) {
 		// labels are localised with pixels (relative to x-axis start)
 		final Map<Integer, String> labelsOnAxis_px = computeXTimeLabels(width_px, timeRange);
 
@@ -345,7 +347,7 @@ public class Axis {
 	}
 
 	public static void drawXAxis(SVG svg, Axis.TimeRange timeRange,
-			CoordinatesComputer.Point_px start, int length_px,
+			SVGPoint start, int length_px,
 			int verticalSpaceForText_px, Color color) {
 		drawXAxis(svg, timeRange, start, length_px, verticalSpaceForText_px, color, null);
 	}
@@ -358,15 +360,15 @@ public class Axis {
 	 * @param verticalSpaceForText_px The space available under the x-axis for the labels.
 	 */
 	public static void drawXAxisWithArrow(SVG svg, Axis.TimeRange timeRange,
-			CoordinatesComputer.Point_px start, int length_px,
-			int verticalSpaceForText_px, Color color) {
+			SVGPoint start, long length_px,
+			long verticalSpaceForText_px, Color color) {
 		final SVGMarker endMarker = svg.addMarker(UIGraph.buildArrow(color));
 		drawXAxis(svg, timeRange, start, length_px, verticalSpaceForText_px, color, endMarker);
 	}
 
 	private static void drawXAxis(SVG svg, Axis.TimeRange timeRange,
-			CoordinatesComputer.Point_px start, int length_px,
-			int verticalSpaceForText_px, Color color, @Nullable SVGMarker endMarker) {
+			SVGPoint start, long length_px,
+			long verticalSpaceForText_px, Color color, @Nullable SVGMarker endMarker) {
 
 		final Map<Integer, String> xAxisLabels = computeXTimeLabels(length_px, timeRange);
 
@@ -378,7 +380,7 @@ public class Axis {
 		svg.add(xAxis);
 
 		for(Map.Entry<Integer, String> entry : xAxisLabels.entrySet()) {
-			final int x_px = start.x_px() + entry.getKey();
+			final long x_px = start.x_px() + entry.getKey();
 			svg.add(new SVGPath(x_px, start.y_px() - 4).lineRelative(0, 8).withStrokeColor(color));
 			svg.add(new SVGText(x_px, start.y_px() + 4L * verticalSpaceForText_px / 5, entry.getValue(), SVGText.Anchor.MIDDLE)
 					.withFontSize_em(1.0f)

@@ -20,12 +20,13 @@ import tui.ui.components.svg.graph.Axis;
 import java.util.Collection;
 import java.util.Objects;
 
-public class CoordinatesComputer {
+/**
+ * This class transforms x,y coordinates from any 2D referential to another 2D referential. It is mainly used to convert coordinates from
+ * a user space (using job-specific units) to  a pixel-based referential for drawing into an SVG.
+ */
+public class CoordinateTransformation {
 
 	public record Range(double min, double max) {
-	}
-
-	public record Point_px(int x_px, int y_px) {
 	}
 
 	// f(x) = a.x + b
@@ -35,56 +36,27 @@ public class CoordinatesComputer {
 		}
 	}
 
-	public record TimeToPixelTransformation(java.time.LocalDateTime referenceTime, int origin_px, double pixelPerMinute) {
-		public int transform(java.time.LocalDateTime time) {
-			final long duration_ms = Axis.getDuration_ms(referenceTime, time);
+	public record TimeToPixelTransformation(java.time.LocalDateTime originTime, long origin_px, double pixelPerMinute) {
+		public long transform(java.time.LocalDateTime time) {
+			final long duration_ms = Axis.getDuration_ms(originTime, time);
 			double duration_px = pixelPerMinute * duration_ms / 60_000;
-			return origin_px + (int) duration_px;
+			return origin_px + (long) duration_px;
 		}
 	}
 
-	final int m_width_px;
-	final int m_height_px;
-	final int m_padding_px; // Applies to top, right and bottom
-	int m_paddingLeft_px = 0; // Padding left can be customized in order to adapt to y-axis labels
-	final Range m_range_X;
-
-	AffineTransformation m_x_transformation;
+	final AffineTransformation m_x_transformation;
 	final AffineTransformation m_y_transformation;
 
-	@Deprecated
-	public CoordinatesComputer(int width_px, int height_px, int padding_px, Range range_X, Range range_Y) {
-		m_range_X = range_X;
-		m_width_px = width_px;
-		m_height_px = height_px;
-		m_padding_px = padding_px;
-		m_paddingLeft_px = padding_px;
-
-		m_x_transformation = computeAffineTransformation(m_range_X.min, m_range_X.max, m_paddingLeft_px, m_width_px - m_padding_px);
-		m_y_transformation = computeAffineTransformation(range_Y.min, range_Y.max, m_height_px - m_padding_px, m_padding_px);
+	public CoordinateTransformation(SVGPoint topLeft, long width_px, long height_px, Range range_X, Range range_Y) {
+		m_x_transformation = computeAffineTransformation(range_X.min, range_X.max, topLeft.x_px(), topLeft.x_px() + width_px);
+		m_y_transformation = computeAffineTransformation(range_Y.min, range_Y.max, topLeft.y_px() + height_px, topLeft.y_px());
 	}
 
-	public CoordinatesComputer(Point_px topLeft, int width_px, int height_px, Range range_X, Range range_Y) {
-		m_range_X = range_X;
-		m_width_px = width_px;
-		m_height_px = height_px;
-		m_padding_px = 0;
-		m_paddingLeft_px = 0;
-
-		m_x_transformation = computeAffineTransformation(m_range_X.min, m_range_X.max, topLeft.x_px(), topLeft.x_px() + m_width_px);
-		m_y_transformation = computeAffineTransformation(range_Y.min, range_Y.max, topLeft.y_px() + m_height_px, topLeft.y_px());
+	public long getX_px(double x) {
+		return (long) m_x_transformation.transform(x);
 	}
 
-	public void setPaddingLeft_px(int paddingLeft_px) {
-		m_paddingLeft_px = paddingLeft_px;
-		m_x_transformation = computeAffineTransformation(m_range_X.min, m_range_X.max, m_paddingLeft_px, m_width_px - m_padding_px);
-	}
-
-	public int getX_px(double x) {
-		return (int) m_x_transformation.transform(x);
-	}
-
-	public int getY_px(double y) {
+	public long getY_px(double y) {
 		return (int) m_y_transformation.transform(y);
 	}
 

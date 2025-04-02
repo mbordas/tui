@@ -16,10 +16,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.svg.graph;
 
 import org.jetbrains.annotations.NotNull;
-import tui.ui.components.svg.CoordinatesComputer;
+import tui.ui.components.svg.CoordinateTransformation;
 import tui.ui.components.svg.SVG;
 import tui.ui.components.svg.SVGCircle;
 import tui.ui.components.svg.SVGPath;
+import tui.ui.components.svg.SVGPoint;
 import tui.ui.components.svg.SVGRectangle;
 import tui.ui.components.svg.SVGText;
 import tui.ui.components.svg.defs.SVGMarker;
@@ -33,7 +34,7 @@ import java.util.TreeMap;
 
 public class UIGraph {
 
-	public static int PADDING_px = 30;
+	public static long PADDING_px = 30;
 
 	public record Point(double x, double y, String label) {
 	}
@@ -117,13 +118,15 @@ public class UIGraph {
 	private SVG toSVG(int width_px, int height_px, boolean addDebugLines) {
 		final SVG result = new SVG(width_px, height_px);
 
-		final CoordinatesComputer.Range rangeX = computeXRange();
-		final CoordinatesComputer.Range rangeY = computeYRange();
+		final CoordinateTransformation.Range rangeX = computeXRange();
+		final CoordinateTransformation.Range rangeY = computeYRange();
 
 		final int leftMargin_px = Axis.computeLeftMargin_px(m_yLabels.values());
-		final CoordinatesComputer coordinatesComputer =
-				new CoordinatesComputer(width_px - leftMargin_px, height_px, PADDING_px, rangeX, rangeY);
-		coordinatesComputer.setPaddingLeft_px(leftMargin_px);
+		final SVGPoint topLeft = new SVGPoint(leftMargin_px, PADDING_px);
+		final long drawingWidth_px = width_px - leftMargin_px - PADDING_px;
+		final long drawingHeight_px = height_px - 2 * PADDING_px;
+		final CoordinateTransformation coordinateTransformation =
+				new CoordinateTransformation(topLeft, drawingWidth_px, drawingHeight_px, rangeX, rangeY);
 
 		if(m_backgroundColor != null) {
 			result.add(new SVGRectangle(leftMargin_px + PADDING_px, PADDING_px,
@@ -133,21 +136,21 @@ public class UIGraph {
 		}
 
 		for(Double stripeX : m_xStripes) {
-			final int x_px = coordinatesComputer.getX_px(stripeX);
+			final long x_px = coordinateTransformation.getX_px(stripeX);
 			result.add(new SVGPath(x_px, PADDING_px)
 					.lineRelative(0, height_px - 2L * PADDING_px)
 					.withStrokeColor(m_stripesColor));
 		}
 
 		for(Double stripeY : m_yStripes) {
-			final int y_px = coordinatesComputer.getY_px(stripeY);
+			final long y_px = coordinateTransformation.getY_px(stripeY);
 			result.add(new SVGPath(leftMargin_px + PADDING_px, y_px)
 					.lineRelative(width_px - leftMargin_px - 2L * PADDING_px, 0)
 					.withStrokeColor(m_stripesColor));
 		}
 
 		for(DataSerie serie : m_series) {
-			serie.draw(result, coordinatesComputer);
+			serie.draw(result, coordinateTransformation);
 		}
 
 		if(addDebugLines) {
@@ -158,48 +161,49 @@ public class UIGraph {
 		}
 
 		final SVGMarker arrowMarker = result.addMarker(buildArrow());
-		drawXAxis(coordinatesComputer, rangeX, rangeY, arrowMarker, result, addDebugLines);
-		drawYAxis(coordinatesComputer, leftMargin_px, rangeX, rangeY, arrowMarker, result);
+		drawXAxis(coordinateTransformation, rangeX, rangeY, arrowMarker, result, addDebugLines);
+		drawYAxis(coordinateTransformation, leftMargin_px, rangeX, rangeY, arrowMarker, result);
 
 		return result;
 	}
 
-	private void drawYAxis(CoordinatesComputer coordinatesComputer, int leftMargin_px, CoordinatesComputer.Range rangeX,
-			CoordinatesComputer.Range rangeY, SVGMarker endMarker, SVG result) {
-		final SVGPath yAxis = new SVGPath(coordinatesComputer.getX_px(rangeX.min()), coordinatesComputer.getY_px(rangeY.min()))
-				.lineAbsolute(coordinatesComputer.getX_px(rangeX.min()), coordinatesComputer.getY_px(rangeY.max()));
+	private void drawYAxis(CoordinateTransformation coordinateTransformation, int leftMargin_px, CoordinateTransformation.Range rangeX,
+			CoordinateTransformation.Range rangeY, SVGMarker endMarker, SVG result) {
+		final SVGPath yAxis = new SVGPath(coordinateTransformation.getX_px(rangeX.min()), coordinateTransformation.getY_px(rangeY.min()))
+				.lineAbsolute(coordinateTransformation.getX_px(rangeX.min()), coordinateTransformation.getY_px(rangeY.max()));
 		if(m_drawArrowsOnAxis) {
 			yAxis.withMarkerAtEnd(endMarker);
 		}
 		yAxis.withStrokeColor(m_axisColor);
 		result.add(yAxis);
 		for(Map.Entry<Double, String> entry : m_yLabels.entrySet()) {
-			final int y_px = coordinatesComputer.getY_px(entry.getKey());
+			final long y_px = coordinateTransformation.getY_px(entry.getKey());
 			result.add(new SVGPath(leftMargin_px + PADDING_px - 4, y_px).lineRelative(8, 0).withStrokeColor(m_axisColor));
 			result.add(new SVGText(leftMargin_px + PADDING_px - 10, y_px, entry.getValue(), SVGText.Anchor.END)
 					.withStrokeColor(m_axisColor)
 					.withFillColor(m_axisColor));
 		}
 		for(double y : m_yDivisions) {
-			final int y_px = coordinatesComputer.getY_px(y);
+			final long y_px = coordinateTransformation.getY_px(y);
 			result.add(new SVGPath(leftMargin_px + PADDING_px - 2, y_px).lineRelative(4, 0).withStrokeColor(m_axisColor));
 		}
 	}
 
-	private void drawXAxis(CoordinatesComputer coordinatesComputer, CoordinatesComputer.Range rangeX, CoordinatesComputer.Range rangeY,
+	private void drawXAxis(CoordinateTransformation coordinateTransformation, CoordinateTransformation.Range rangeX,
+			CoordinateTransformation.Range rangeY,
 			SVGMarker endMarker, SVG result, boolean addDebugLines) {
 
-		final int leftX_px = coordinatesComputer.getX_px(rangeX.min());
-		final int axisY_px = coordinatesComputer.getY_px(rangeY.min());
+		final long leftX_px = coordinateTransformation.getX_px(rangeX.min());
+		final long axisY_px = coordinateTransformation.getY_px(rangeY.min());
 
-		final SVGPath xAxis = new SVGPath(leftX_px, axisY_px).lineAbsolute(coordinatesComputer.getX_px(rangeX.max()), axisY_px);
+		final SVGPath xAxis = new SVGPath(leftX_px, axisY_px).lineAbsolute(coordinateTransformation.getX_px(rangeX.max()), axisY_px);
 		if(m_drawArrowsOnAxis) {
 			xAxis.withMarkerAtEnd(endMarker);
 		}
 		xAxis.withStrokeColor(m_axisColor);
 		result.add(xAxis);
 		for(Map.Entry<Double, String> entry : m_xLabels.entrySet()) {
-			final int x_px = coordinatesComputer.getX_px(entry.getKey());
+			final long x_px = coordinateTransformation.getX_px(entry.getKey());
 			result.add(new SVGPath(x_px, axisY_px - 4).lineRelative(0, 8).withStrokeColor(m_axisColor));
 			result.add(new SVGText(x_px, axisY_px + 4 * PADDING_px / 5, entry.getValue(), SVGText.Anchor.MIDDLE)
 					.withFontSize_em(1.0f)
@@ -207,62 +211,62 @@ public class UIGraph {
 					.withFillColor(m_axisColor));
 		}
 		for(double x : m_xDivisions) {
-			final int x_px = coordinatesComputer.getX_px(x);
+			final long x_px = coordinateTransformation.getX_px(x);
 			result.add(new SVGPath(x_px, axisY_px - 2).lineRelative(0, 4).withStrokeColor(m_axisColor));
 		}
 
 		if(addDebugLines) {
-			final int rightX_px = coordinatesComputer.getX_px(rangeX.max());
+			final long rightX_px = coordinateTransformation.getX_px(rangeX.max());
 			result.add(new SVGRectangle(leftX_px, axisY_px, rightX_px - leftX_px, PADDING_px)
 					.withStrokeColor(Color.MAGENTA)
 					.withFillOpacity(0.0));
 		}
 	}
 
-	private CoordinatesComputer.Range computeXRange() {
-		CoordinatesComputer.Range xSerieRange = null;
+	private CoordinateTransformation.Range computeXRange() {
+		CoordinateTransformation.Range xSerieRange = null;
 		for(DataSerie serie : m_series) {
-			final CoordinatesComputer.Range xRange = serie.getXRange();
+			final CoordinateTransformation.Range xRange = serie.getXRange();
 			if(xSerieRange == null) {
 				xSerieRange = xRange;
 			} else {
-				xSerieRange = CoordinatesComputer.getUnion(xSerieRange, xRange);
+				xSerieRange = CoordinateTransformation.getUnion(xSerieRange, xRange);
 			}
 		}
 		if(xSerieRange == null) {
-			xSerieRange = new CoordinatesComputer.Range(-1.0, +1.0);
+			xSerieRange = new CoordinateTransformation.Range(-1.0, +1.0);
 		}
 
-		final CoordinatesComputer.Range xLabelRange = computeRange(m_xLabels.keySet());
-		return CoordinatesComputer.getUnion(xSerieRange, xLabelRange);
+		final CoordinateTransformation.Range xLabelRange = computeRange(m_xLabels.keySet());
+		return CoordinateTransformation.getUnion(xSerieRange, xLabelRange);
 	}
 
-	private CoordinatesComputer.Range computeYRange() {
-		CoordinatesComputer.Range ySerieRange = null;
+	private CoordinateTransformation.Range computeYRange() {
+		CoordinateTransformation.Range ySerieRange = null;
 		for(DataSerie serie : m_series) {
-			final CoordinatesComputer.Range yRange = serie.getYRange();
+			final CoordinateTransformation.Range yRange = serie.getYRange();
 			if(ySerieRange == null) {
 				ySerieRange = yRange;
 			} else {
-				ySerieRange = CoordinatesComputer.getUnion(ySerieRange, yRange);
+				ySerieRange = CoordinateTransformation.getUnion(ySerieRange, yRange);
 			}
 		}
 		if(ySerieRange == null) {
-			ySerieRange = new CoordinatesComputer.Range(-1.0, +1.0);
+			ySerieRange = new CoordinateTransformation.Range(-1.0, +1.0);
 		}
 
-		final CoordinatesComputer.Range yLabelRange = computeRange(m_yLabels.keySet());
-		return CoordinatesComputer.getUnion(ySerieRange, yLabelRange);
+		final CoordinateTransformation.Range yLabelRange = computeRange(m_yLabels.keySet());
+		return CoordinateTransformation.getUnion(ySerieRange, yLabelRange);
 	}
 
-	private static CoordinatesComputer.@NotNull Range computeRange(Collection<Double> xValues) {
+	private static CoordinateTransformation.@NotNull Range computeRange(Collection<Double> xValues) {
 		if(xValues.isEmpty()) {
-			return new CoordinatesComputer.Range(-1.0, 1.0);
+			return new CoordinateTransformation.Range(-1.0, 1.0);
 		} else if(xValues.size() == 1) {
 			final double uniqueValue = xValues.iterator().next();
-			return new CoordinatesComputer.Range(uniqueValue - 1.0, uniqueValue + 1.0);
+			return new CoordinateTransformation.Range(uniqueValue - 1.0, uniqueValue + 1.0);
 		} else {
-			return CoordinatesComputer.getRange(xValues);
+			return CoordinateTransformation.getRange(xValues);
 		}
 	}
 

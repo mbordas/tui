@@ -54,7 +54,7 @@ import tui.ui.components.layout.Panel;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
 import tui.ui.components.layout.VerticalScroll;
-import tui.ui.components.svg.CoordinatesComputer;
+import tui.ui.components.svg.CoordinateTransformation;
 import tui.ui.components.svg.SVG;
 import tui.ui.components.svg.SVGCircle;
 import tui.ui.components.svg.SVGComponent;
@@ -105,7 +105,7 @@ public class CodeParagraph extends Paragraph {
 				FormInputEmail.class, FormInputFile.class, FormInputNumber.class, FormInputPassword.class, FormInputRadio.class,
 				FormInputSearch.class, FormInputString.class, ModalForm.class, Search.class);
 		registerClassForColor(SVG.class, SVGCircle.class, SVGComponent.class, SVGPath.class, SVGRectangle.class, SVGText.class,
-				CoordinatesComputer.class, DataSerie.class, LineSerie.class, StepLineSerie.class, UIGraph.class, SVGMarker.class);
+				CoordinateTransformation.class, DataSerie.class, LineSerie.class, StepLineSerie.class, UIGraph.class, SVGMarker.class);
 		registerClassForColor(Style.class, StyleSet.class);
 		registerClassForColor(TestUtils.class, TClient.class, TTable.class, TSearch.class);
 		registerClassForColor(UIConfigurationException.class);

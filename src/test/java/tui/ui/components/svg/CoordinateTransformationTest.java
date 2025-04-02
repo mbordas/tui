@@ -19,32 +19,23 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class CoordinatesComputerTest {
+public class CoordinateTransformationTest {
 
 	@Test
 	public void computeX_px() {
+
+		final SVGPoint topLeft = new SVGPoint(20, 30);
 		final int width_px = 600;
 		final int height_px = 500;
-		final int padding_px = 20;
 
-		final CoordinatesComputer computer = new CoordinatesComputer(width_px, height_px, padding_px,
-				new CoordinatesComputer.Range(0.0, 10.0), new CoordinatesComputer.Range(-1.0, 1.0));
+		final CoordinateTransformation computer = new CoordinateTransformation(topLeft, width_px, height_px,
+				new CoordinateTransformation.Range(0.0, 10.0), new CoordinateTransformation.Range(-1.0, 1.0));
 
-		assertEquals(padding_px, computer.getX_px(0.0));
-		assertEquals(width_px - padding_px, computer.getX_px(10.0));
+		assertEquals(20, computer.getX_px(0.0));
+		assertEquals(20 + 600, computer.getX_px(10.0));
 
-		assertEquals(padding_px, computer.getY_px(1.0));
-		assertEquals(height_px - padding_px, computer.getY_px(-1.0));
-		assertEquals(height_px / 2, computer.getY_px(0.0));
-	}
-
-	@Test
-	public void computeXWithOverriddenLeftPadding() {
-		final CoordinatesComputer computer = new CoordinatesComputer(200, 100, 20,
-				new CoordinatesComputer.Range(0.0, 10.0), new CoordinatesComputer.Range(-1.0, 1.0));
-		computer.setPaddingLeft_px(30);
-
-		assertEquals(30, computer.getX_px(0.0));
-		assertEquals(200 - 20, computer.getX_px(10.0));
+		assertEquals(30, computer.getY_px(1.0));
+		assertEquals(30 + 500, computer.getY_px(-1.0));
+		assertEquals(30 + 500 / 2, computer.getY_px(0.0));
 	}
 }

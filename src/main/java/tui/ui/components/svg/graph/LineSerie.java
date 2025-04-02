@@ -15,7 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg.graph;
 
-import tui.ui.components.svg.CoordinatesComputer;
+import tui.ui.components.svg.CoordinateTransformation;
 import tui.ui.components.svg.SVG;
 import tui.ui.components.svg.SVGCircle;
 import tui.ui.components.svg.SVGPath;
@@ -37,34 +37,35 @@ public class LineSerie extends DataSerie {
 	}
 
 	@Override
-	public CoordinatesComputer.Range getXRange() {
+	public CoordinateTransformation.Range getXRange() {
 		final List<Double> xValues = new ArrayList<>(m_points.stream()
 				.map(UIGraph.Point::x)
 				.toList());
-		return CoordinatesComputer.getRange(xValues);
+		return CoordinateTransformation.getRange(xValues);
 	}
 
 	@Override
-	public CoordinatesComputer.Range getYRange() {
+	public CoordinateTransformation.Range getYRange() {
 		final List<Double> yValues = new ArrayList<>(m_points.stream()
 				.map(UIGraph.Point::y)
 				.toList());
-		return CoordinatesComputer.getRange(yValues);
+		return CoordinateTransformation.getRange(yValues);
 	}
 
 	@Override
-	public void draw(SVG svg, CoordinatesComputer coordinatesComputer) {
+	public void draw(SVG svg, CoordinateTransformation coordinateTransformation) {
 		SVGPath path = null;
 		for(UIGraph.Point point : m_points) {
 			if(path == null) {
-				path = new SVGPath(coordinatesComputer.getX_px(point.x()), coordinatesComputer.getY_px(point.y()));
+				path = new SVGPath(coordinateTransformation.getX_px(point.x()), coordinateTransformation.getY_px(point.y()));
 				path.withStrokeColor(m_color);
 				path.withFillOpacity(0.0);
 				svg.add(path);
 			} else {
-				path.lineAbsolute(coordinatesComputer.getX_px(point.x()), coordinatesComputer.getY_px(point.y()));
+				path.lineAbsolute(coordinateTransformation.getX_px(point.x()), coordinateTransformation.getY_px(point.y()));
 			}
-			final SVGCircle circle = new SVGCircle(coordinatesComputer.getX_px(point.x()), coordinatesComputer.getY_px(point.y()), 3);
+			final SVGCircle circle = new SVGCircle(coordinateTransformation.getX_px(point.x()), coordinateTransformation.getY_px(point.y()),
+					3);
 			circle.withTitle(point.label());
 			circle.withStrokeColor(m_color);
 			circle.withFillColor(m_color);
