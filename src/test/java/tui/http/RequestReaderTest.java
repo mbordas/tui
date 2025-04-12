@@ -15,17 +15,74 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.http;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import tui.test.TClient;
+import tui.test.components.TComponent;
+import tui.test.components.TParagraph;
+import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
+import tui.ui.components.RefreshButton;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class RequestReaderTest {
+
+	/**
+	 * Arrange: a paragraph is connected to a refresh button, the page has fetch type set to 'FormData'.
+	 * Act: click on the button in order to update the text of the paragraph
+	 * Assert: the paragraph is well updated. Its new text uses the parameter set on the button.
+	 */
+	@Test
+	public void fetchTypeFormData() throws Exception {
+		try(TUIBackend backend = new TUIBackend(8080)) {
+
+			// Arrange
+			final Page page = createPageWithRefreshableParagraph("/paragraph");
+			page.setFetchType(Page.FetchType.FORM_DATA); // What we want to test
+			backend.registerPage(page);
+			backend.registerWebService("/paragraph", (uri, request, response) -> {
+				final RequestReader reader = new RequestReader(request);
+				final String code = reader.getStringParameter("code");
+				return new Paragraph("text updated with code: %s", code).toJsonMap();
+			});
+			backend.start();
+
+			// Act
+			final TClient client = new TClient(backend.getPort());
+			client.open(page.getSource());
+			client.getRefreshButton("Refresh").click();
+
+			// Assert
+			assertEquals("text updated with code: FormData", getParagraph(client).getText());
+		}
+	}
+
+	private static @NotNull TParagraph getParagraph(TClient client) {
+		final Optional<TComponent> anyParagraph = client.getReachableSubComponents().stream()
+				.filter((component) -> component instanceof TParagraph)
+				.findAny();
+		assertTrue(anyParagraph.isPresent());
+		return (TParagraph) anyParagraph.get();
+	}
+
+	private static @NotNull Page createPageWithRefreshableParagraph(String paragraphSource) {
+		final Page page = new Page("Fetch with type FormData", "/index");
+		final Paragraph paragraph = page.append(new Paragraph("initial text"));
+		paragraph.setSource(paragraphSource);
+		final RefreshButton button = page.append(new RefreshButton("Refresh"));
+		button.setParameter("code", "FormData");
+		button.connectListener(paragraph);
+		return page;
+	}
 
 	@Test
 	public void parsePostMap() {

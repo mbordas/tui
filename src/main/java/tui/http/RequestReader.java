@@ -52,7 +52,7 @@ public class RequestReader {
 		try {
 			if(contentType != null && contentType.startsWith("multipart/")) {
 				MultipartConfigElement multipartConfigElement =
-						new MultipartConfigElement("target/test-classes/tmp", 1024, 1024, 256);
+						new MultipartConfigElement("/tmp", 1024, 1024, 256);
 				request.setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
 
 				for(Part part : request.getParts()) {
@@ -182,7 +182,7 @@ public class RequestReader {
 		final Map<String, String> result = new LinkedHashMap<>();
 		try {
 			final JSONArray object = new JSONArray(json);
-			if(object.length() > 0) {
+			if(!object.isEmpty()) {
 				int index = 0;
 				JSONArray entry = object.getJSONArray(index);
 				while(entry != null) {
