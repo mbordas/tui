@@ -23,6 +23,7 @@ import tui.test.components.TComponent;
 import tui.test.components.TForm;
 import tui.test.components.TPage;
 import tui.test.components.TPanel;
+import tui.test.components.TRefreshButton;
 import tui.test.components.TRefreshableComponent;
 import tui.test.components.TSearch;
 import tui.test.components.TTable;
@@ -144,6 +145,16 @@ public class TClient {
 			return (TSearch) anyFoundSearch.get();
 		} else {
 			throw new NullPointerException(String.format("Search '%s' not present in page or not reachable", title));
+		}
+	}
+
+	public TRefreshButton getRefreshButton(String label) {
+		final Optional<TComponent> anyFoundButton = m_currentPage.findReachableSubComponent(
+				(component) -> component instanceof TRefreshButton button && label.equals(button.getLabel()));
+		if(anyFoundButton.isPresent()) {
+			return (TRefreshButton) anyFoundButton.get();
+		} else {
+			throw new NullPointerException(String.format("RefreshButton '%s' not present in page or not reachable", label));
 		}
 	}
 
