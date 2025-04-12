@@ -37,6 +37,7 @@ import tui.ui.components.layout.VerticalFlow;
 import tui.ui.components.layout.VerticalScroll;
 
 import javax.annotation.Nullable;
+import java.io.Closeable;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,7 +49,7 @@ import java.util.function.Predicate;
 
 import static tui.test.components.TFormTest.getFieldName;
 
-public class Browser {
+public class Browser implements Closeable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Browser.class);
 
@@ -72,7 +73,7 @@ public class Browser {
 		return m_driver.getTitle();
 	}
 
-	public void stop() {
+	public void close() {
 		m_driver.quit();
 	}
 

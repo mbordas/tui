@@ -36,7 +36,7 @@ public class TestWithBackend {
 	@After
 	public void after() throws Exception {
 		if(m_browser != null) {
-			m_browser.stop();
+			m_browser.close();
 		}
 		if(m_backend != null) {
 			m_backend.stop();
