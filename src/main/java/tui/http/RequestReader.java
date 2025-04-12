@@ -152,9 +152,13 @@ public class RequestReader {
 
 	public Boolean getCheckboxParameter(String key, Boolean defaultValue) {
 		final String valueStr = getStringParameter(key);
-		if("on".equals(valueStr)) {
+		return parseCheckboxParameter(valueStr, defaultValue);
+	}
+
+	public static Boolean parseCheckboxParameter(String value, Boolean defaultValue) {
+		if("on".equals(value)) {
 			return true;
-		} else if("off".equals(valueStr)) {
+		} else if("off".equals(value)) {
 			return false;
 		} else {
 			return defaultValue;
