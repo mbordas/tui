@@ -26,14 +26,18 @@ public class SVGText extends SVGComponent {
 	private long m_x;
 	private long m_y;
 	private String m_text;
-	private final Anchor m_anchor;
+	private final Anchor m_anchorAlignment;
 	private float m_fontSize_em = 1;
 
-	public SVGText(long x, long y, String text, Anchor anchor) {
+	public SVGText(long x, long y, String text, Anchor anchorAlignment) {
 		m_x = x;
 		m_y = y;
 		m_text = text;
-		m_anchor = anchor;
+		m_anchorAlignment = anchorAlignment;
+	}
+
+	public SVGText(SVGPoint anchor, String text, Anchor anchorAlignment) {
+		this(anchor.x(), anchor.y(), text, anchorAlignment);
 	}
 
 	public SVGText withFontSize_em(float size_em) {
@@ -43,7 +47,7 @@ public class SVGText extends SVGComponent {
 
 	@Override
 	public String computeStyleAttribute() {
-		return String.format("text-anchor:%s;", m_anchor.name().toLowerCase());
+		return String.format("text-anchor:%s;", m_anchorAlignment.name().toLowerCase());
 	}
 
 	@Override

@@ -48,8 +48,8 @@ public class CoordinateTransformation {
 	final AffineTransformation m_y_transformation;
 
 	public CoordinateTransformation(SVGPoint topLeft, long width_px, long height_px, Range range_X, Range range_Y) {
-		m_x_transformation = computeAffineTransformation(range_X.min, range_X.max, topLeft.x_px(), topLeft.x_px() + width_px);
-		m_y_transformation = computeAffineTransformation(range_Y.min, range_Y.max, topLeft.y_px() + height_px, topLeft.y_px());
+		m_x_transformation = computeAffineTransformation(range_X.min, range_X.max, topLeft.x(), topLeft.x() + width_px);
+		m_y_transformation = computeAffineTransformation(range_Y.min, range_Y.max, topLeft.y() + height_px, topLeft.y());
 	}
 
 	public long getX_px(double x) {

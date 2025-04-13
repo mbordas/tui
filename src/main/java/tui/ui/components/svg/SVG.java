@@ -68,8 +68,9 @@ public class SVG extends UIRefreshableComponent {
 		return stripes;
 	}
 
-	public void add(SVGComponent component) {
+	public <C extends SVGComponent> C add(C component) {
 		m_components.add(component);
+		return component;
 	}
 
 	public void setViewBox(long x, long y, long width, long height) {

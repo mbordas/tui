@@ -17,19 +17,23 @@ package tui.ui.components.svg;
 
 public class SVGPoint {
 
-	private final long m_x_px;
-	private final long m_y_px;
+	private final long m_x;
+	private final long m_y;
 
-	public SVGPoint(long x_px, long y_px) {
-		m_x_px = x_px;
-		m_y_px = y_px;
+	public SVGPoint(long x, long y) {
+		m_x = x;
+		m_y = y;
 	}
 
-	public long x_px() {
-		return m_x_px;
+	public long x() {
+		return m_x;
 	}
 
-	public long y_px() {
-		return m_y_px;
+	public long y() {
+		return m_y;
+	}
+
+	public SVGPoint translate(long x, int y) {
+		return new SVGPoint(x() + x, y() + y);
 	}
 }

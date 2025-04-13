@@ -29,6 +29,14 @@ public class SVGRectangle extends SVGComponent {
 		m_height = height;
 	}
 
+	public SVGRectangle(SVGPoint topLeft, long width, long height) {
+		this(topLeft.x(), topLeft.y(), width, height);
+	}
+
+	public SVGPoint getCenter() {
+		return new SVGPoint(m_x + m_width / 2, m_y + m_height / 2);
+	}
+
 	public SVGRectangle withCornerRadius(long rx, long ry) {
 		m_rx = rx;
 		m_ry = ry;

@@ -96,7 +96,7 @@ public class Page {
 		return component;
 	}
 
-	public List<UIComponent> getContent() {
+	private List<UIComponent> getContent() {
 		return m_content;
 	}
 

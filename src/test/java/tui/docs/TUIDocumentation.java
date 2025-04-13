@@ -37,6 +37,7 @@ public class TUIDocumentation {
 	private final java.util.List<Page> m_layouts = new ArrayList<>();
 
 	public TUIDocumentation() {
+		m_layouts.add(new TUIDocsPage());
 		m_layouts.add(new TUIDocsPanels());
 		m_components.add(new TUIDocsTables());
 		m_components.add(new TUIDocsTablePicker());

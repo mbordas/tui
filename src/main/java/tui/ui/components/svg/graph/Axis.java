@@ -107,7 +107,7 @@ public class Axis {
 			long height_px, Color color, BiFunction<Double, GridFactor, String> formatter) {
 		final SVGMarker endMarker = svg.addMarker(UIGraph.buildArrow(color));
 
-		final SVGPath yAxis = new SVGPath(axisStart.x_px(), axisStart.y_px()).lineRelative(0, -height_px);
+		final SVGPath yAxis = new SVGPath(axisStart.x(), axisStart.y()).lineRelative(0, -height_px);
 		yAxis.withStrokeColor(color);
 		yAxis.withMarkerAtEnd(endMarker);
 		svg.add(yAxis);
@@ -120,8 +120,8 @@ public class Axis {
 
 		for(Map.Entry<Double, String> entry : yLabels.entrySet()) {
 			int y_px = (int) yTransform_px.transform(entry.getKey());
-			svg.add(new SVGPath(axisStart.x_px() - 4, axisStart.y_px() - y_px).lineRelative(8, 0).withStrokeColor(color));
-			svg.add(new SVGText(axisStart.x_px() - 10, axisStart.y_px() - y_px, entry.getValue(), SVGText.Anchor.END)
+			svg.add(new SVGPath(axisStart.x() - 4, axisStart.y() - y_px).lineRelative(8, 0).withStrokeColor(color));
+			svg.add(new SVGText(axisStart.x() - 10, axisStart.y() - y_px, entry.getValue(), SVGText.Anchor.END)
 					.withStrokeColor(color).withFillColor(color));
 		}
 	}
@@ -129,16 +129,16 @@ public class Axis {
 	public static void drawYBooleanAxis(SVG svg, SVGPoint axisStart, int height_px, Color color,
 			Function<Boolean, String> formatter) {
 		// Vertical line
-		svg.add(new SVGPath(axisStart.x_px(), axisStart.y_px()).lineRelative(0, -height_px).withStrokeColor(color));
+		svg.add(new SVGPath(axisStart.x(), axisStart.y()).lineRelative(0, -height_px).withStrokeColor(color));
 
 		// bottom tick
-		svg.add(new SVGPath(axisStart.x_px() - 4, axisStart.y_px()).lineRelative(8, 0).withStrokeColor(color));
-		svg.add(new SVGText(axisStart.x_px() - 10, axisStart.y_px(), formatter.apply(false), SVGText.Anchor.END)
+		svg.add(new SVGPath(axisStart.x() - 4, axisStart.y()).lineRelative(8, 0).withStrokeColor(color));
+		svg.add(new SVGText(axisStart.x() - 10, axisStart.y(), formatter.apply(false), SVGText.Anchor.END)
 				.withStrokeColor(color).withFillColor(color));
 
 		// top tick
-		svg.add(new SVGPath(axisStart.x_px() - 4, axisStart.y_px() - height_px).lineRelative(8, 0).withStrokeColor(color));
-		svg.add(new SVGText(axisStart.x_px() - 10, axisStart.y_px() - height_px, formatter.apply(true), SVGText.Anchor.END)
+		svg.add(new SVGPath(axisStart.x() - 4, axisStart.y() - height_px).lineRelative(8, 0).withStrokeColor(color));
+		svg.add(new SVGText(axisStart.x() - 10, axisStart.y() - height_px, formatter.apply(true), SVGText.Anchor.END)
 				.withStrokeColor(color).withFillColor(color));
 	}
 
@@ -372,7 +372,7 @@ public class Axis {
 
 		final Map<Integer, String> xAxisLabels = computeXTimeLabels(length_px, timeRange);
 
-		final SVGPath xAxis = new SVGPath(start.x_px(), start.y_px()).lineRelative(length_px, 0);
+		final SVGPath xAxis = new SVGPath(start.x(), start.y()).lineRelative(length_px, 0);
 		xAxis.withStrokeColor(color);
 		if(endMarker != null) {
 			xAxis.withMarkerAtEnd(endMarker);
@@ -380,9 +380,9 @@ public class Axis {
 		svg.add(xAxis);
 
 		for(Map.Entry<Integer, String> entry : xAxisLabels.entrySet()) {
-			final long x_px = start.x_px() + entry.getKey();
-			svg.add(new SVGPath(x_px, start.y_px() - 4).lineRelative(0, 8).withStrokeColor(color));
-			svg.add(new SVGText(x_px, start.y_px() + 4L * verticalSpaceForText_px / 5, entry.getValue(), SVGText.Anchor.MIDDLE)
+			final long x_px = start.x() + entry.getKey();
+			svg.add(new SVGPath(x_px, start.y() - 4).lineRelative(0, 8).withStrokeColor(color));
+			svg.add(new SVGText(x_px, start.y() + 4L * verticalSpaceForText_px / 5, entry.getValue(), SVGText.Anchor.MIDDLE)
 					.withFontSize_em(1.0f)
 					.withStrokeColor(color)
 					.withFillColor(color));
