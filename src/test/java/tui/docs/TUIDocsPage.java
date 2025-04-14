@@ -50,6 +50,35 @@ public class TUIDocsPage extends Page {
 				.appendText("MAX: there is no margins, the body is as wide as the page."));
 		sectionStructure.appendParagraph("Any layout or component added with Page.append(...) goes into the body.");
 
+		final Section sectionResources = chapter.createSubSection("CSS and Javascript");
+		sectionResources.appendParagraph("A Page instance may need resources in order to be displayed correctly in a web browser.");
+		sectionResources.append(new List(false))
+				.appendText("The CSS will apply global style policies.")
+				.appendText("The Javascript code will manage interactions with the user.");
+		sectionResources.appendParagraph("These resources are optional. When present, they can be embedded or referenced with a link.");
+		sectionResources.appendParagraph("""
+				For example, in order to produce this documentation page, we do not add any script in the page, and the CSS is entirely embedded (isExternal=false):""");
+		sectionResources.append(new CodeParagraph("""
+				page.toHTMLNode(new Page.Resource(false, style.toCSS()), null);"""));
+		sectionResources.appendParagraph("""
+				Here we give the full content of our CSS, but we could instead give a relative path to the CSS resource (which will have to be served by the backend).""");
+		sectionResources.append(new CodeParagraph("""
+				page.toHTMLNode(new Page.Resource(true, "/ui/css"), null);"""));
+		sectionResources.appendParagraph("""
+				Note that the CSS does not contain any custom style that you may have set on components. The style customization is part of the HTML code of customized element.""");
+
+		final Section subSectionCSS = sectionResources.createSubSection("CSS");
+		subSectionCSS.appendParagraph("""
+				It is recommended to use the Style class of TUI in order to produce the CSS code. A very simple starting point may be the way it is done for this documentation:""");
+		subSectionCSS.append(new CodeParagraph("""
+				final Style style = new Style();
+				style.footer().layout().setHeight_px(50);"""));
+
+		final Section subSectionJavascript = sectionResources.createSubSection("Javascript");
+		subSectionJavascript.appendParagraph("""
+				If you want your page to be interactive, you absolutely need to add the tui.js code to it. It is part of the jar resources and locates in: js/tui.js
+				You can look at the code of the TUIBackend to see an example how to serv this code as an external file.""");
+
 		final Section sectionSessionParameters = chapter.createSubSection("Session parameters");
 		sectionSessionParameters.appendParagraph("""
 				When you need all the requests to your backend to have a set of parameters, then you can add them as follows:""");
