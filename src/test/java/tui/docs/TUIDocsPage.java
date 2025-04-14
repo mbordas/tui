@@ -100,6 +100,6 @@ public class TUIDocsPage extends Page {
 		headerRectangle.withStrokeColor(new Color(209, 22, 255))
 				.withStrokeWidth(2)
 				.withFillColor(null);
-		svg.add(new SVGText(headerRectangle.getCenter(), text, SVGText.Anchor.MIDDLE));
+		svg.add(new SVGText(headerRectangle.getCenter(), text, SVGText.Anchor.MIDDLE, SVGText.DominantBaseline.MIDDLE));
 	}
 }

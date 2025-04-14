@@ -23,10 +23,13 @@ public class SVGText extends SVGComponent {
 
 	public enum Anchor {START, MIDDLE, END}
 
+	public enum DominantBaseline {AUTO, MIDDLE, HANGING}
+
 	private long m_x;
 	private long m_y;
 	private String m_text;
 	private final Anchor m_anchorAlignment;
+	private DominantBaseline m_dominantBaseline = DominantBaseline.AUTO;
 	private float m_fontSize_em = 1;
 
 	public SVGText(long x, long y, String text, Anchor anchorAlignment) {
@@ -36,8 +39,16 @@ public class SVGText extends SVGComponent {
 		m_anchorAlignment = anchorAlignment;
 	}
 
-	public SVGText(SVGPoint anchor, String text, Anchor anchorAlignment) {
-		this(anchor.x(), anchor.y(), text, anchorAlignment);
+	public SVGText(long x, long y, String text, Anchor anchorAlignment, DominantBaseline baseline) {
+		m_x = x;
+		m_y = y;
+		m_text = text;
+		m_anchorAlignment = anchorAlignment;
+		m_dominantBaseline = baseline;
+	}
+
+	public SVGText(SVGPoint anchor, String text, Anchor anchorAlignment, DominantBaseline baseline) {
+		this(anchor.x(), anchor.y(), text, anchorAlignment, baseline);
 	}
 
 	public SVGText withFontSize_em(float size_em) {
@@ -47,7 +58,9 @@ public class SVGText extends SVGComponent {
 
 	@Override
 	public String computeStyleAttribute() {
-		return String.format("text-anchor:%s;", m_anchorAlignment.name().toLowerCase());
+		return String.format("text-anchor:%s;dominant-baseline:%s;",
+				m_anchorAlignment.name().toLowerCase(),
+				m_dominantBaseline.name().toLowerCase());
 	}
 
 	@Override
