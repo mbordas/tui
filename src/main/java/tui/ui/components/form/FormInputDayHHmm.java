@@ -15,6 +15,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class FormInputDayHHmm extends FormInput {
 
 	public static final String HTML_TYPE = "datetime-local";
@@ -22,5 +25,9 @@ public class FormInputDayHHmm extends FormInput {
 
 	public FormInputDayHHmm(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);
+	}
+
+	public void setInitialValue(LocalDateTime time) {
+		m_initialValue = time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
 	}
 }
