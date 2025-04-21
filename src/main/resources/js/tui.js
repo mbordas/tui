@@ -933,7 +933,7 @@ function downloadFromButton(buttonElement) {
 // TABLES
 
 function instrumentTables() {
-    const tables = document.querySelectorAll('table.tui-table');
+    const tables = document.querySelectorAll('table.tui-table, table.tui-tablepicker');
     tables.forEach(function(table, i) {
         if(table.hasAttribute('tui-source')) {
             const sourcePath = table.getAttribute('tui-source');
