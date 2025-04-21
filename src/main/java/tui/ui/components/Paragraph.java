@@ -134,6 +134,10 @@ public class Paragraph extends UIRefreshableComponent {
 		return append((style) -> style.text().setFontWeight("bold"), format, args);
 	}
 
+	public Paragraph appendItalic(String format, Object... args) {
+		return append((style) -> style.text().setTextItalic(), format, args);
+	}
+
 	@Override
 	public HTMLNode toHTMLNode() {
 		final ContainedElement containedElement = createContainedNode("p", HTML_CLASS_CONTAINER);
