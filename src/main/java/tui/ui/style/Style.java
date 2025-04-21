@@ -358,6 +358,12 @@ public class Style {
 				search>button {
 				    width: auto; /* overrides the 100% value of button */
 				}
+				search table {
+					border: none;
+				}
+				search td {
+					border: none;
+				}
 				
 				/* FORM */
 				
@@ -473,9 +479,10 @@ public class Style {
 				    display: inline;
 				}
 				/* Overriding some style of submit buttons */
-				.tui-navbutton>button {
+				.tui-navbutton button {
 					background-color: var(--global-color-cancel);
 					border: 1px solid var(--global-color-border);
+					color: var(--global-color-text);
 				}
 				
 				/* TABLE */
@@ -499,13 +506,13 @@ public class Style {
 				    padding: 2px 10px 2px 10px;
 				    vertical-align: middle;
 				}
-				.tui-hidden-column {
+				.tui-table .tui-hidden-column {
 				    display: none;
 				}
-				.tui-hidden-head {
+				.tui-table .tui-hidden-head {
 				    display: none;
 				}
-				tr:hover {
+				.tui-table tr:hover {
 				    background-color: var(--table-color-row-hover);
 				}
 				.tui-tablepicker td {
