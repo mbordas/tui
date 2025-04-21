@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,29 @@ public class SearchTest extends TestWithBackend {
 		assertNotNull(webServiceSpy.getRequestReader());
 		assertEquals("value1", webServiceSpy.getRequestReader().getStringParameter("firstInput"));
 		assertEquals("three", webServiceSpy.getRequestReader().getStringParameter("secondInput"));
+	}
+
+	@Ignore
+	@Test
+	public void displayInColumns() throws InterruptedException {
+		final Page page = new Page("Search", "/search");
+		final Search search = page.append(new Search("supportForRadioButton", "One input", "firstInput"));
+		search.createInputRadio("Radio", "secondInput")
+				.addOption("Option 1", "one")
+				.addOption("Option 2", "two")
+				.addOption("Option 3", "three");
+		search.createInputDayHHmm("Time", "time");
+		final Paragraph paragraphToBeRefreshed = page.append(new Paragraph());
+		paragraphToBeRefreshed.setSource("/paragraph");
+		search.connectListener(paragraphToBeRefreshed);
+
+		search.displayLikeForm(3);
+
+		startBackend(page);
+
+		final Browser browser = startBrowser();
+		browser.open(page.getSource());
+		Thread.sleep(60_000);
 	}
 
 }

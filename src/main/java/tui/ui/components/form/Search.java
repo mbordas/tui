@@ -48,7 +48,7 @@ public class Search extends UIComponent {
 	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
-	private boolean m_displayLikeForm = false;
+	private FormDisplay m_displayLikeForm = null;
 	private boolean m_hideTitle = false;
 	private boolean m_hideButton = false;
 
@@ -71,8 +71,11 @@ public class Search extends UIComponent {
 		m_hideTitle = true;
 	}
 
-	public void displayLikeForm() {
-		m_displayLikeForm = true;
+	private record FormDisplay(int columns) {
+	}
+
+	public void displayLikeForm(int columns) {
+		m_displayLikeForm = new FormDisplay(columns);
 	}
 
 	public Search addParameter(String name, String value) {
@@ -133,10 +136,26 @@ public class Search extends UIComponent {
 			titleNode.setStyleProperty("display", "none");
 		}
 
-		for(FormInput input : m_inputs) {
-			final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
-			inputNode.addClass(m_displayLikeForm ? Form.HTML_CLASS_FIELD : HTML_CLASS_FIELD);
-			result.append(inputNode);
+		if(m_displayLikeForm != null) {
+			final HTMLNode table = result.createChild("table");
+			int index = 0;
+			HTMLNode row = table.createChild("tr");
+			for(FormInput input : m_inputs) {
+				final HTMLNode cell = row.createChild("td");
+				final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
+				inputNode.addClass(Form.HTML_CLASS_FIELD);
+				cell.append(inputNode);
+				index++;
+				if(index % m_displayLikeForm.columns() == 0) {
+					row = table.createChild("tr");
+				}
+			}
+		} else {
+			for(FormInput input : m_inputs) {
+				final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
+				inputNode.addClass(HTML_CLASS_FIELD);
+				result.append(inputNode);
+			}
 		}
 
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
