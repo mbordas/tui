@@ -51,6 +51,7 @@ public class Page {
 
 	protected final String m_title;
 	private String m_source;
+	private String m_favicon = "data:,"; // Avoids favicon to be requested
 
 	public Page(String title) {
 		m_title = title;
@@ -79,6 +80,14 @@ public class Page {
 
 	public void setSessionParameter(String name, String value) {
 		m_sessionParameters.put(name, value);
+	}
+
+	public void enableFavicon() {
+		enableFavicon("/favicon.ico");
+	}
+
+	public void enableFavicon(String source) {
+		m_favicon = source;
 	}
 
 	public <C extends UIComponent> C setHeader(C header) {
@@ -121,6 +130,7 @@ public class Page {
 		head.createChild("meta").setAttribute("name", "viewport")
 				.setAttribute("content", "width=device-width, initial-scale=1");
 		head.createChild("title").setText(getTitle());
+		head.createChild("link").setAttribute("rel", "shortcut icon").setAttribute("href", m_favicon);
 		if(cssResource != null) {
 			if(cssResource.isExternal()) {
 				head.createChild("link")
