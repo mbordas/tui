@@ -25,4 +25,9 @@ public class FormInputString extends FormInput {
 		setPlaceHolder("Text");
 	}
 
+	public FormInputString setInitialValue(String value) {
+		m_initialValue = value;
+		return this;
+	}
+
 }
