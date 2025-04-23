@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -27,7 +29,11 @@ public class FormInputDayHHmm extends FormInput {
 		super(JSON_TYPE, HTML_TYPE, label, name);
 	}
 
-	public void setInitialValue(LocalDateTime time) {
-		m_initialValue = time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+	public void setInitialValue(@NotNull LocalDateTime time) {
+		m_initialValue = toString(time);
+	}
+
+	public static String toString(@NotNull LocalDateTime time) {
+		return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
 	}
 }
