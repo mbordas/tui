@@ -37,8 +37,9 @@ public class DownloadButton extends UIComponent {
 		m_downloadName = downloadName;
 	}
 
-	public void setParameter(String name, String value) {
+	public DownloadButton setParameter(String name, String value) {
 		m_parameters.put(name, value);
+		return this;
 	}
 
 	@Override
@@ -57,6 +58,8 @@ public class DownloadButton extends UIComponent {
 					.setAttribute("name", name)
 					.setAttribute("value", value);
 		}
+
+		applyCustomStyle(result);
 
 		return result;
 	}
