@@ -109,9 +109,9 @@ public class Paragraph extends UIRefreshableComponent {
 		return this;
 	}
 
-	public Paragraph append(UIComponent component) {
+	public <C extends UIComponent> C append(C component) {
 		m_content.add(component);
-		return this;
+		return component;
 	}
 
 	/**

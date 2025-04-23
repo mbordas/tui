@@ -50,7 +50,7 @@ public class TUIDocumentation {
 
 		final Section sectionMisc = result.appendSection("Table of Content");
 		for(Page miscPage : m_miscs) {
-			sectionMisc.append(new Paragraph().append(new NavLink(miscPage.getTitle(), miscPage.getSource())));
+			sectionMisc.append(new Paragraph()).append(new NavLink(miscPage.getTitle(), miscPage.getSource()));
 		}
 
 		final Section sectionComponents = sectionMisc.createSubSection("Components");
