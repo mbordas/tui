@@ -215,6 +215,10 @@ public class Style {
 
 		result.append("""
 				
+				p button {
+					width: auto;
+				}
+				
 				.tui-border-on {
 				    border: 1px solid var(--global-color-border);
 				}
