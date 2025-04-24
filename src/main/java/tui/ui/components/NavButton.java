@@ -66,7 +66,7 @@ public class NavButton extends UIComponent {
 
 		applyCustomStyle(button);
 		if(m_customTextStyle != null) {
-			m_customTextStyle.apply(result);
+			m_customTextStyle.apply(button);
 		}
 		return result;
 	}
