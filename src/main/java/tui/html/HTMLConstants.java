@@ -24,7 +24,7 @@ public class HTMLConstants {
 	public static final String JPG_CONTENT_TYPE = "image/jpg";
 	public static final String FAVICON_CONTENT_TYPE = "image/x-icon";
 	public static final String CSS_CONTENT_TYPE = "text/css";
-	public static final String JSON_CONTENT_TYPE = "application/json";
+	public static final String JSON_CONTENT_TYPE = "application/json;charset=" + RESPONSE_CHARSET;
 
 	public static final String ATTRIBUTE_ID = "id";
 	public static final String ATTRIBUTE_REFRESH_LISTENERS = "tui-refresh-listeners";
