@@ -17,6 +17,7 @@ package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.style.TextStyleSet;
 
 public class NavLink extends UIComponent {
 
@@ -26,10 +27,18 @@ public class NavLink extends UIComponent {
 
 	private String m_label;
 	private String m_target;
+	protected TextStyleSet m_customTextStyle = null;
 
 	public NavLink(String label, String target) {
 		m_label = label;
 		m_target = target;
+	}
+
+	public TextStyleSet customTextStyle() {
+		if(m_customTextStyle == null) {
+			m_customTextStyle = new TextStyleSet();
+		}
+		return m_customTextStyle;
 	}
 
 	@Override
@@ -37,6 +46,9 @@ public class NavLink extends UIComponent {
 		final HTMLNode result = super.toHTMLNode("a", false);
 		result.setAttribute("href", m_target);
 		result.setText(m_label);
+		if(m_customTextStyle != null) {
+			m_customTextStyle.apply(result);
+		}
 		return result;
 	}
 
@@ -45,6 +57,9 @@ public class NavLink extends UIComponent {
 		final JsonMap result = new JsonMap(JSON_TYPE);
 		result.setAttribute("label", m_label);
 		result.setAttribute("target", m_target);
+		if(m_customTextStyle != null) {
+			m_customTextStyle.apply(result);
+		}
 		return result;
 	}
 }
