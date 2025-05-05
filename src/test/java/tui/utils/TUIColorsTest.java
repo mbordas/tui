@@ -22,6 +22,7 @@ import tui.ui.components.svg.SVG;
 import tui.ui.components.svg.SVGRectangle;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
@@ -31,18 +32,18 @@ public class TUIColorsTest {
 	private static final Logger LOG = LoggerFactory.getLogger(TUIColorsTest.class);
 
 	@Test
-	public void toHSB() {
-		check(new TUIColors.ColorHSL(0, 0, 0), TUIColors.toHSQB(new Color(0, 0, 0)));
-		check(new TUIColors.ColorHSL(0, 0, 100), TUIColors.toHSQB(new Color(255, 255, 255)));
-		check(new TUIColors.ColorHSL(0, 100, 50), TUIColors.toHSQB(new Color(255, 0, 0)));
-		check(new TUIColors.ColorHSL(120, 100, 50), TUIColors.toHSQB(new Color(0, 255, 0)));
-		check(new TUIColors.ColorHSL(240, 100, 50), TUIColors.toHSQB(new Color(0, 0, 255)));
-		check(new TUIColors.ColorHSL(60, 100, 50), TUIColors.toHSQB(new Color(255, 255, 0)));
-		check(new TUIColors.ColorHSL(180, 100, 50), TUIColors.toHSQB(new Color(0, 255, 255)));
-		check(new TUIColors.ColorHSL(300, 100, 50), TUIColors.toHSQB(new Color(255, 0, 255)));
-		check(new TUIColors.ColorHSL(0, 0, 74), TUIColors.toHSQB(new Color(191, 191, 191)));
-		check(new TUIColors.ColorHSL(0, 0, 50), TUIColors.toHSQB(new Color(128, 128, 128)));
-		check(new TUIColors.ColorHSL(0, 100, 25), TUIColors.toHSQB(new Color(128, 0, 0)));
+	public void toHSL() {
+		check(new TUIColors.ColorHSL(0, 0, 0), TUIColors.toHSL(new Color(0, 0, 0)));
+		check(new TUIColors.ColorHSL(0, 0, 100), TUIColors.toHSL(new Color(255, 255, 255)));
+		check(new TUIColors.ColorHSL(0, 100, 50), TUIColors.toHSL(new Color(255, 0, 0)));
+		check(new TUIColors.ColorHSL(120, 100, 50), TUIColors.toHSL(new Color(0, 255, 0)));
+		check(new TUIColors.ColorHSL(240, 100, 50), TUIColors.toHSL(new Color(0, 0, 255)));
+		check(new TUIColors.ColorHSL(60, 100, 50), TUIColors.toHSL(new Color(255, 255, 0)));
+		check(new TUIColors.ColorHSL(180, 100, 50), TUIColors.toHSL(new Color(0, 255, 255)));
+		check(new TUIColors.ColorHSL(300, 100, 50), TUIColors.toHSL(new Color(255, 0, 255)));
+		check(new TUIColors.ColorHSL(0, 0, 74), TUIColors.toHSL(new Color(191, 191, 191)));
+		check(new TUIColors.ColorHSL(0, 0, 50), TUIColors.toHSL(new Color(128, 128, 128)));
+		check(new TUIColors.ColorHSL(0, 100, 25), TUIColors.toHSL(new Color(128, 0, 0)));
 	}
 
 	private void check(TUIColors.ColorHSL expected, TUIColors.ColorHSL tested) {
@@ -75,6 +76,23 @@ public class TUIColorsTest {
 	}
 
 	/**
+	 * Computing the palette of 3 colors from HSL 200,80,60 to HSL 100,50,90.
+	 * Expected hues are: 200 -(+130)-> 330 -(+130)-> 100
+	 */
+	@Test
+	public void palette() {
+		final TUIColors.ColorHSL startHSL = new TUIColors.ColorHSL(200, 80, 60);
+		final TUIColors.ColorHSL endHSL = new TUIColors.ColorHSL(100, 50, 90);
+
+		final List<TUIColors.ColorHSL> palette = TUIColors.palette(startHSL, endHSL, 3);
+
+		assertEquals(3, palette.size());
+		check(startHSL, palette.get(0));
+		check(new TUIColors.ColorHSL(330, 65, 75), palette.get(1));
+		check(endHSL, palette.get(2));
+	}
+
+	/**
 	 * Here we construct a {@link SVG} to display computed colors from a single Hue value as follows:
 	 * <ul>
 	 *     <li>A 2d grid shows Lightness (y-axis) and Saturation (x-axis)</li>
@@ -104,12 +122,28 @@ public class TUIColorsTest {
 			y_px += height_px + 5;
 		}
 
+		// Palette from same hue
+		x_px = 10;
 		y_px += height_px + 5;
 		for(int lightness = 90; lightness >= 10; lightness -= 10) {
 			int saturation = 110 - lightness;
 			final Color rgb = new TUIColors.ColorHSL(hue, saturation, lightness).toRGB();
 			svg.add(new SVGRectangle(x_px, y_px, width_px, height_px)
 					.withFillColor(rgb)
+					.withStrokeColor(null));
+			x_px += width_px + 5;
+		}
+
+		// Palette with different hue
+		final TUIColors.ColorHSL colorStart = new TUIColors.ColorHSL(hue, 90, 40);
+		int hue2 = (hue + 280) % 360;
+		final TUIColors.ColorHSL colorEnd = new TUIColors.ColorHSL(hue2, 90, 40);
+		x_px = 10;
+		y_px += height_px + 5;
+		final List<TUIColors.ColorHSL> palette = TUIColors.palette(colorStart, colorEnd, 8);
+		for(TUIColors.ColorHSL color : palette) {
+			svg.add(new SVGRectangle(x_px, y_px, width_px, height_px)
+					.withFillColor(color.toRGB())
 					.withStrokeColor(null));
 			x_px += width_px + 5;
 		}

@@ -16,6 +16,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.utils;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TUIColors {
 
@@ -74,7 +76,7 @@ public class TUIColors {
 	/**
 	 * Source: https://www.rapidtables.com/convert/color/rgb-to-hsl.html
 	 */
-	public static ColorHSL toHSQB(Color color) {
+	public static ColorHSL toHSL(Color color) {
 		float r = (float) color.getRed() / 255;
 		float g = (float) color.getGreen() / 255;
 		float b = (float) color.getBlue() / 255;
@@ -94,5 +96,25 @@ public class TUIColors {
 		double lightness = (cmax + cmin) / 2;
 		double saturation = delta / (1 - Math.abs(2 * lightness - 1));
 		return new ColorHSL((int) hue, (int) (saturation * 100.0), (int) (lightness * 100.0));
+	}
+
+	/**
+	 * Computes interpolated colors from 'start' (included) to 'end' (included). Hue, Saturation and Lightness are interpolated.
+	 */
+	public static List<ColorHSL> palette(ColorHSL start, ColorHSL end, int size) {
+		assert size >= 2;
+		final List<ColorHSL> result = new ArrayList<>();
+
+		int hueEnd = end.hue >= start.hue ? end.hue : end.hue + 360;
+		float hueStep = (float) (hueEnd - start.hue) / (size - 1);
+
+		for(int i = 0; i < size; i++) {
+			final float hue = (start.hue + (i * hueStep)) % 360;
+			final float saturation = (float) start.saturation + (float) (i * (end.saturation - start.saturation)) / (size - 1);
+			final float lightness = (float) start.lightness + (float) (i * (end.lightness - start.lightness)) / (size - 1);
+			result.add(new ColorHSL((int) hue, (int) saturation, (int) lightness));
+		}
+
+		return result;
 	}
 }
