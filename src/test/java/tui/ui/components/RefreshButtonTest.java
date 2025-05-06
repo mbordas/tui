@@ -16,12 +16,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 import tui.http.RequestReader;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.test.WebServiceSpy;
 import tui.ui.components.layout.Panel;
+import tui.ui.style.Style;
 
+import java.awt.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
@@ -48,6 +51,36 @@ public class RefreshButtonTest extends TestWithBackend {
 
 		assertEquals("value 1", webServiceSpy.getRequestReader().getStringParameter("param 1"));
 		assertEquals("value 2", webServiceSpy.getRequestReader().getStringParameter("param 2"));
+	}
+
+	@Test
+	public void createComponentWithStyle() throws InterruptedException {
+		final Page page = new Page("RefreshButtonTest", "/index");
+		final Panel panel = page.append(new Panel());
+		panel.setSource("/panel");
+
+		final RefreshButton button = panel.append(new RefreshButton("refresh"));
+		button.connectListener(panel);
+
+		startBackend(page);
+
+		registerWebService(panel.getSource(), (uri, request, response) -> {
+			final Panel refreshedPanel = new Panel();
+			refreshedPanel.setSource(panel.getSource());
+			final RefreshButton refreshedButton = refreshedPanel.append(new RefreshButton("refreshed"));
+			refreshedButton.customStyle().setBackgroundColor(Color.RED);
+			refreshedButton.customTextStyle().setTextColor(Color.ORANGE);
+			refreshedButton.connectListener(refreshedPanel);
+			return refreshedPanel.toJsonMap();
+		});
+
+		final Browser browser = startBrowser();
+		browser.open(page.getSource());
+		browser.clickRefreshButton("refresh");
+
+		final WebElement buttonElement = browser.getRefreshButton("refreshed");
+		assertEquals(Style.toCSSRGBAsSelenium(Color.ORANGE), buttonElement.getCssValue("color"));
+		assertEquals(Style.toCSSRGBAsSelenium(Color.RED), buttonElement.getCssValue("background-color"));
 	}
 
 	/**
@@ -79,12 +112,6 @@ public class RefreshButtonTest extends TestWithBackend {
 
 		final Browser browser = startBrowser();
 		browser.open(page.getSource());
-
-		//		try {
-		//			Thread.sleep(600000L);
-		//		} catch(InterruptedException e) {
-		//			throw new RuntimeException(e);
-		//		}
 
 		browser.clickRefreshButton("refresh");
 

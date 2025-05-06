@@ -148,6 +148,7 @@ function setTextAlignClass(element, textAlign) {
 function createComponent(json, idMap) {
     const type = json['type'];
     var result;
+    var elementToBeStyled = null; // is overridden when style must be applied on it instead of result
     if(type == 'panel') {
         const containedElement = createElementWithContainer('div', 'tui-container-panel');
         updatePanel(containedElement.element, json, idMap);
@@ -212,6 +213,7 @@ function createComponent(json, idMap) {
         button.textContent = json['label'];
         result.appendChild(button);
         instrumentRefreshButton(button);
+        elementToBeStyled = button;
     } else if (type == 'navbutton') {
         result = document.createElement('form');
         result.classList.add('tui-navbutton');
@@ -260,12 +262,15 @@ function createComponent(json, idMap) {
         result = null;
     }
 
-    if(result != null && json['style'] != null) {
+    if(elementToBeStyled == null) {
+        elementToBeStyled = result;
+    }
+    if(elementToBeStyled != null && json['style'] != null) {
         var style = '';
         Object.entries(json['style']).forEach(([key, value]) => {
             style += key + ':' + value + ';';
         });
-        result.setAttribute('style', style);
+        elementToBeStyled.setAttribute('style', style);
     }
 
     return result;

@@ -20,6 +20,7 @@ import tui.html.HTMLNode;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.components.BadComponentException;
+import tui.ui.style.TextStyleSet;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +39,7 @@ public class RefreshButton extends UIComponent {
 
 	private final String m_label;
 	private final Map<String, String> m_parameters = new HashMap<>();
+	private TextStyleSet m_textStyle = null;
 
 	public RefreshButton(String label) {
 		m_label = label;
@@ -57,6 +59,13 @@ public class RefreshButton extends UIComponent {
 		}
 		m_connectedComponents.add(component);
 		return component;
+	}
+
+	public TextStyleSet customTextStyle() {
+		if(m_textStyle == null) {
+			m_textStyle = new TextStyleSet();
+		}
+		return m_textStyle;
 	}
 
 	@Override
@@ -81,6 +90,9 @@ public class RefreshButton extends UIComponent {
 		}
 
 		applyCustomStyle(button);
+		if(m_textStyle != null) {
+			m_textStyle.apply(button);
+		}
 
 		return container;
 	}
@@ -97,6 +109,9 @@ public class RefreshButton extends UIComponent {
 			result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
 		applyCustomStyle(result);
+		if(m_textStyle != null) {
+			m_textStyle.apply(result);
+		}
 		return result;
 	}
 

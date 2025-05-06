@@ -77,20 +77,6 @@ public class Browser implements Closeable {
 		m_driver.quit();
 	}
 
-	public void clickRefreshButton(String label) {
-		final List<WebElement> buttonElements = m_driver.findElements(By.className(RefreshButton.HTML_CLASS));
-		final Optional<WebElement> anyButton = buttonElements.stream()
-				.filter((element) -> label.equals(element.getText()))
-				.findAny();
-		WebElement button;
-		if(anyButton.isEmpty()) {
-			throw new NullPointerException(String.format("Refresh button '%s' not found.", label));
-		} else {
-			button = anyButton.get();
-		}
-		button.click();
-	}
-
 	// SECTIONS
 
 	public List<WebElement> getSections() {
@@ -130,13 +116,19 @@ public class Browser implements Closeable {
 
 	// REFRESH BUTTONS
 
+	public void clickRefreshButton(String label) {
+		final WebElement button = getRefreshButton(label);
+		button.click();
+	}
+
 	public List<WebElement> getRefreshButtons() {
 		return m_driver.findElements(By.className(RefreshButton.HTML_CLASS));
 	}
 
 	public WebElement getRefreshButton(String label) {
 		final Optional<WebElement> anyButton = getRefreshButtons().stream()
-				.filter((button) -> button.getText().equals(label)).findAny();
+				.filter((element) -> label.equals(element.getText()))
+				.findAny();
 		if(anyButton.isPresent()) {
 			return anyButton.get();
 		} else {

@@ -584,6 +584,10 @@ public class Style {
 		return String.format("#%1$2s%2$2s%3$2s", red, green, blue).replace(' ', '0');
 	}
 
+	public static String toCSSRGBAsSelenium(Color color) {
+		return String.format("rgb(%d, %d, %d)", color.getRed(), color.getGreen(), color.getBlue());
+	}
+
 	/**
 	 * This code has been found <a href="https://stackoverflow.com/questions/1855884/determine-font-color-based-on-background-color">here</a>
 	 */
