@@ -58,9 +58,9 @@ public class ParagraphTest {
 			final Color backgroundColor = new Color((int) (Math.random() * 250), (int) (Math.random() * 250), (int) (Math.random() * 250));
 			final Paragraph result = new Paragraph()
 					.appendNormal("Current time is")
-					.append((style) -> {
-						style.text().setTextColor(TUIColors.computeContrastColor(backgroundColor));
-						style.layout().setBackgroundColor(backgroundColor);
+					.append((layoutStyle, textStyle) -> {
+						textStyle.setTextColor(TUIColors.computeContrastColor(backgroundColor));
+						layoutStyle.setBackgroundColor(backgroundColor);
 					}, " " + System.currentTimeMillis() + " ")
 					.appendNormal("ms.");
 			return result.toJsonMap();

@@ -32,6 +32,7 @@ public class TextStyleSet extends StyleSet {
 	private Double m_lineHeight_em = null;
 	private String m_textTransform = null;
 	private String m_textDecoration = null;
+	private String m_textWrap = null;
 	private Layouts.Align m_textAlign = null;
 
 	public TextStyleSet setTextColor(Color color) {
@@ -56,6 +57,11 @@ public class TextStyleSet extends StyleSet {
 
 	public TextStyleSet setLineHeight(double height_em) {
 		m_lineHeight_em = height_em;
+		return this;
+	}
+
+	public TextStyleSet disableTextWrap() {
+		m_textWrap = "nowrap";
 		return this;
 	}
 
@@ -105,6 +111,7 @@ public class TextStyleSet extends StyleSet {
 		setStylePropertyIfDefined(node, "text-transform", m_textTransform, setter);
 		setStylePropertyIfDefined(node, "text-decoration", m_textDecoration, setter);
 		setStylePropertyIfDefined(node, "text-align", m_textAlign == null ? null : m_textAlign.getCSSValue(), setter);
+		setStylePropertyIfDefined(node, "text-wrap", m_textWrap, setter);
 	}
 
 }

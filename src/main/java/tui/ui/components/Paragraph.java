@@ -20,12 +20,13 @@ import org.jetbrains.annotations.Nullable;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.components.layout.Layouts;
-import tui.ui.style.CombinedStyleSet;
+import tui.ui.style.LayoutStyleSet;
 import tui.ui.style.StyleSet;
+import tui.ui.style.TextStyleSet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class Paragraph extends UIRefreshableComponent {
 
@@ -44,17 +45,17 @@ public class Paragraph extends UIRefreshableComponent {
 		public static final String JSON_ATTRIBUTE_CONTENT = "content";
 
 		private final String m_text;
-		private CombinedStyleSet m_customStyle = null;
+		private TextStyleSet m_customTextStyle = null;
 
 		public Text(String format, Object... args) {
 			m_text = String.format(format, args);
 		}
 
-		public CombinedStyleSet customTextStyle() {
-			if(m_customStyle == null) {
-				m_customStyle = new CombinedStyleSet();
+		public TextStyleSet customTextStyle() {
+			if(m_customTextStyle == null) {
+				m_customTextStyle = new TextStyleSet();
 			}
-			return m_customStyle;
+			return m_customTextStyle;
 		}
 
 		@Override
@@ -62,8 +63,8 @@ public class Paragraph extends UIRefreshableComponent {
 			final HTMLNode result = new HTMLNode("span");
 			result.setText(m_text.replaceAll("\\n", "<br/>"));
 			applyCustomStyle(result);
-			if(m_customStyle != null) {
-				m_customStyle.apply(result);
+			if(m_customTextStyle != null) {
+				m_customTextStyle.apply(result);
 			}
 			return result;
 		}
@@ -73,8 +74,8 @@ public class Paragraph extends UIRefreshableComponent {
 			final JsonMap result = new JsonMap(JSON_TYPE);
 			result.setAttribute(JSON_ATTRIBUTE_CONTENT, m_text);
 			applyCustomStyle(result);
-			if(m_customStyle != null) {
-				m_customStyle.apply(result);
+			if(m_customTextStyle != null) {
+				m_customTextStyle.apply(result);
 			}
 			return result;
 		}
@@ -119,10 +120,10 @@ public class Paragraph extends UIRefreshableComponent {
 	/**
 	 * @param styler This optional function may modify text's custom {@link StyleSet}.
 	 */
-	public Paragraph append(@Nullable Consumer<CombinedStyleSet> styler, @NotNull String format, Object... args) {
+	public Paragraph append(@Nullable BiConsumer<LayoutStyleSet, TextStyleSet> styler, @NotNull String format, Object... args) {
 		final Text text = new Text(format, args);
 		if(styler != null) {
-			styler.accept(text.customTextStyle());
+			styler.accept(text.customStyle(), text.customTextStyle());
 		}
 		m_content.add(text);
 		return this;
@@ -133,11 +134,11 @@ public class Paragraph extends UIRefreshableComponent {
 	}
 
 	public Paragraph appendBold(String format, Object... args) {
-		return append((style) -> style.text().setFontWeight("bold"), format, args);
+		return append((layoutStyle, textStyle) -> textStyle.setFontWeight("bold"), format, args);
 	}
 
 	public Paragraph appendItalic(String format, Object... args) {
-		return append((style) -> style.text().setTextItalic(), format, args);
+		return append((layoutStyle, textStyle) -> textStyle.setTextItalic(), format, args);
 	}
 
 	@Override

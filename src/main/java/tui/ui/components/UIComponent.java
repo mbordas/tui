@@ -31,7 +31,7 @@ public abstract class UIComponent {
 
 	private final long m_tuid = m_counter.incrementAndGet();
 
-	private LayoutStyleSet m_customStyle = null;
+	private LayoutStyleSet m_customLayoutStyle = null;
 
 	public abstract HTMLNode toHTMLNode();
 
@@ -51,21 +51,21 @@ public abstract class UIComponent {
 	}
 
 	public LayoutStyleSet customStyle() {
-		if(m_customStyle == null) {
-			m_customStyle = new LayoutStyleSet();
+		if(m_customLayoutStyle == null) {
+			m_customLayoutStyle = new LayoutStyleSet();
 		}
-		return m_customStyle;
+		return m_customLayoutStyle;
 	}
 
 	protected void applyCustomStyle(HTMLNode htmlNode) {
-		if(m_customStyle != null) {
-			m_customStyle.apply(htmlNode);
+		if(m_customLayoutStyle != null) {
+			m_customLayoutStyle.apply(htmlNode);
 		}
 	}
 
 	protected void applyCustomStyle(JsonMap jsonMap) {
-		if(m_customStyle != null) {
-			m_customStyle.apply(jsonMap);
+		if(m_customLayoutStyle != null) {
+			m_customLayoutStyle.apply(jsonMap);
 		}
 	}
 

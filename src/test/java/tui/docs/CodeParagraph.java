@@ -162,7 +162,7 @@ public class CodeParagraph extends Paragraph {
 	private StringBuilder flushLiteralString(StringBuilder currentStringLiteral) {
 		if(currentStringLiteral != null) {
 			// Applying color and font
-			append((style) -> style.text().setTextColor(COLOR_STRING_LITERALS).setFontFamily(FONT_FAMILY).setLineHeight(1.4),
+			append((layoutStyle, textStyle) -> textStyle.setTextColor(COLOR_STRING_LITERALS).setFontFamily(FONT_FAMILY).setLineHeight(1.4),
 					currentStringLiteral.toString());
 		}
 		return null;
@@ -172,8 +172,12 @@ public class CodeParagraph extends Paragraph {
 		if(currentWord != null) {
 			final String word = currentWord.toString();
 			final Color color = m_colorMap.get(word);
-			append(color == null ? (style) -> style.text().setLineHeight(1.4).setFontFamily(FONT_FAMILY) // Applying font only
-							: (style) -> style.text().setTextColor(color).setLineHeight(1.4).setFontFamily(FONT_FAMILY), // font and color
+			append(color == null ?
+							// Applying font only
+							(layoutStyle, textStyle) -> textStyle.setLineHeight(1.4).setFontFamily(FONT_FAMILY)
+							// font and color
+							: (layoutStyle, textStyle) -> textStyle.setTextColor(color).setLineHeight(1.4).setFontFamily(FONT_FAMILY),
+
 					currentWord.toString());
 		}
 		return null;
@@ -181,7 +185,7 @@ public class CodeParagraph extends Paragraph {
 
 	private StringBuilder flushSpace(StringBuilder currentSpace) {
 		if(currentSpace != null) {
-			append((style) -> style.text().setLineHeight(1.4).setFontFamily(FONT_FAMILY), currentSpace.toString());
+			append((layoutStyle, textStyle) -> textStyle.setLineHeight(1.4).setFontFamily(FONT_FAMILY), currentSpace.toString());
 		}
 		return null;
 	}
