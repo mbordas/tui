@@ -20,7 +20,7 @@ import tui.html.HTMLNode;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.components.layout.Panel;
-import tui.ui.style.Style;
+import tui.utils.TUIColors;
 
 import java.awt.*;
 
@@ -59,7 +59,7 @@ public class ParagraphTest {
 			final Paragraph result = new Paragraph()
 					.appendNormal("Current time is")
 					.append((style) -> {
-						style.text().setTextColor(Style.computeContrastColor(backgroundColor));
+						style.text().setTextColor(TUIColors.computeContrastColor(backgroundColor));
 						style.layout().setBackgroundColor(backgroundColor);
 					}, " " + System.currentTimeMillis() + " ")
 					.appendNormal("ms.");

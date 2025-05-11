@@ -61,6 +61,7 @@ public class Paragraph extends UIRefreshableComponent {
 		public HTMLNode toHTMLNode() {
 			final HTMLNode result = new HTMLNode("span");
 			result.setText(m_text.replaceAll("\\n", "<br/>"));
+			applyCustomStyle(result);
 			if(m_customStyle != null) {
 				m_customStyle.apply(result);
 			}
@@ -71,6 +72,7 @@ public class Paragraph extends UIRefreshableComponent {
 		public JsonMap toJsonMap() {
 			final JsonMap result = new JsonMap(JSON_TYPE);
 			result.setAttribute(JSON_ATTRIBUTE_CONTENT, m_text);
+			applyCustomStyle(result);
 			if(m_customStyle != null) {
 				m_customStyle.apply(result);
 			}

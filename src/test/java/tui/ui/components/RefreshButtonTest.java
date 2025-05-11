@@ -22,7 +22,7 @@ import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.test.WebServiceSpy;
 import tui.ui.components.layout.Panel;
-import tui.ui.style.Style;
+import tui.utils.TUIColors;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -79,8 +79,8 @@ public class RefreshButtonTest extends TestWithBackend {
 		browser.clickRefreshButton("refresh");
 
 		final WebElement buttonElement = browser.getRefreshButton("refreshed");
-		assertEquals(Style.toCSSRGBAsSelenium(Color.ORANGE), buttonElement.getCssValue("color"));
-		assertEquals(Style.toCSSRGBAsSelenium(Color.RED), buttonElement.getCssValue("background-color"));
+		assertEquals(TUIColors.toCSSRGBAsSelenium(Color.ORANGE), buttonElement.getCssValue("color"));
+		assertEquals(TUIColors.toCSSRGBAsSelenium(Color.RED), buttonElement.getCssValue("background-color"));
 	}
 
 	/**

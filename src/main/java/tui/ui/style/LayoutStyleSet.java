@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.style;
 
+import tui.utils.TUIColors;
+
 import java.awt.*;
 import java.util.function.BiConsumer;
 
@@ -39,7 +41,7 @@ public class LayoutStyleSet extends StyleSet {
 	}
 
 	public LayoutStyleSet setBorderColor(Color color) {
-		m_borderColor = Style.toCSSHex(color);
+		m_borderColor = TUIColors.toCSSHex(color);
 		m_borderStyle = "solid";
 		return this;
 	}
@@ -76,7 +78,12 @@ public class LayoutStyleSet extends StyleSet {
 	}
 
 	public LayoutStyleSet setBackgroundColor(Color color) {
-		m_backgroundColor = Style.toCSSHex(color);
+		m_backgroundColor = TUIColors.toCSSHex(color);
+		return this;
+	}
+
+	public LayoutStyleSet setBackgroundColor(TUIColors.ColorHSL color) {
+		m_backgroundColor = TUIColors.toCSSHex(color);
 		return this;
 	}
 

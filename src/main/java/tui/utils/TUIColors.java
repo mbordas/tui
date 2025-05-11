@@ -15,6 +15,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,5 +118,36 @@ public class TUIColors {
 		}
 
 		return result;
+	}
+
+	public static String toCSSHex(@NotNull TUIColors.ColorHSL color) {
+		return toCSSHex(color.toRGB());
+	}
+
+	public static String toCSSHex(@NotNull Color color) {
+		String red = Integer.toHexString(color.getRed());
+		String green = Integer.toHexString(color.getGreen());
+		String blue = Integer.toHexString(color.getBlue());
+		return String.format("#%1$2s%2$2s%3$2s", red, green, blue).replace(' ', '0');
+	}
+
+	public static String toCSSRGBAsSelenium(Color color) {
+		return String.format("rgb(%d, %d, %d)", color.getRed(), color.getGreen(), color.getBlue());
+	}
+
+	/**
+	 * This code has been found <a href="https://stackoverflow.com/questions/1855884/determine-font-color-based-on-background-color">here</a>
+	 */
+	public static Color computeContrastColor(Color color) {
+		double perceptiveLuminance = (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
+		if(perceptiveLuminance > 0.5) {
+			return Color.BLACK; // bright colors - black font
+		} else {
+			return Color.WHITE; // dark colors - white font
+		}
+	}
+
+	public static Color computeContrastColor(ColorHSL color) {
+		return computeContrastColor(color.toRGB());
 	}
 }

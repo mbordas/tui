@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.style;
 
 import tui.ui.components.layout.Layouts;
+import tui.utils.TUIColors;
 
 import java.awt.*;
 import java.util.Locale;
@@ -34,7 +35,7 @@ public class TextStyleSet extends StyleSet {
 	private Layouts.Align m_textAlign = null;
 
 	public TextStyleSet setTextColor(Color color) {
-		m_color = Style.toCSSHex(color);
+		m_color = TUIColors.toCSSHex(color);
 		return this;
 	}
 

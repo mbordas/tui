@@ -32,6 +32,12 @@ public class TUIColorsTest {
 	private static final Logger LOG = LoggerFactory.getLogger(TUIColorsTest.class);
 
 	@Test
+	public void toCSS() {
+		assertEquals("#1db0e0", TUIColors.toCSSHex(new Color(29, 176, 224)));
+		assertEquals("#00afe0", TUIColors.toCSSHex(new Color(0, 175, 224)));
+	}
+
+	@Test
 	public void toHSL() {
 		check(new TUIColors.ColorHSL(0, 0, 0), TUIColors.toHSL(new Color(0, 0, 0)));
 		check(new TUIColors.ColorHSL(0, 0, 100), TUIColors.toHSL(new Color(255, 255, 255)));

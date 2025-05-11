@@ -18,7 +18,7 @@ package tui.ui.components.svg;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.components.svg.defs.SVGPatternStripes;
-import tui.ui.style.Style;
+import tui.utils.TUIColors;
 
 import java.awt.*;
 import java.util.Locale;
@@ -89,7 +89,7 @@ public abstract class SVGComponent {
 
 	public String computeStyleAttribute() {
 		String result = String.format(Locale.US, "stroke:%s;stroke-width:%d;stroke-opacity:%.2f;fill:%s;fill-opacity:%.2f;",
-				m_strokeColor == null ? "none" : Style.toCSSHex(m_strokeColor),
+				m_strokeColor == null ? "none" : TUIColors.toCSSHex(m_strokeColor),
 				m_strokeWidth, m_strokeOpacity,
 				computeFillProperty(),
 				m_fillOpacity);
@@ -105,7 +105,7 @@ public abstract class SVGComponent {
 		if(m_fillPattern != null) {
 			return String.format("url(#%s)", m_fillPattern.getId());
 		} else if(m_fillColor != null) {
-			return Style.toCSSHex(m_fillColor);
+			return TUIColors.toCSSHex(m_fillColor);
 		} else {
 			return "none";
 		}

@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.style;
 
 import tui.ui.components.layout.Layouts;
+import tui.utils.TUIColors;
 
 import java.awt.*;
 import java.util.Map;
@@ -569,34 +570,12 @@ public class Style {
 	}
 
 	private static void appendGlobalColor(StringBuilder cssContentBuilder, String name, Color value) {
-		appendGlobalVar(cssContentBuilder, name, toCSSHex(value));
-		appendGlobalVar(cssContentBuilder, name + "-contrast", toCSSHex(computeContrastColor(value)));
+		appendGlobalVar(cssContentBuilder, name, TUIColors.toCSSHex(value));
+		appendGlobalVar(cssContentBuilder, name + "-contrast", TUIColors.toCSSHex(TUIColors.computeContrastColor(value)));
 	}
 
 	private static void appendGlobalVar(StringBuilder cssContentBuilder, String name, String value) {
 		cssContentBuilder.append(String.format("--%s: %s;\n", name, value));
 	}
 
-	public static String toCSSHex(Color color) {
-		String red = Integer.toHexString(color.getRed());
-		String green = Integer.toHexString(color.getGreen());
-		String blue = Integer.toHexString(color.getBlue());
-		return String.format("#%1$2s%2$2s%3$2s", red, green, blue).replace(' ', '0');
-	}
-
-	public static String toCSSRGBAsSelenium(Color color) {
-		return String.format("rgb(%d, %d, %d)", color.getRed(), color.getGreen(), color.getBlue());
-	}
-
-	/**
-	 * This code has been found <a href="https://stackoverflow.com/questions/1855884/determine-font-color-based-on-background-color">here</a>
-	 */
-	public static Color computeContrastColor(Color color) {
-		double perceptiveLuminance = (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
-		if(perceptiveLuminance > 0.5) {
-			return Color.BLACK; // bright colors - black font
-		} else {
-			return Color.WHITE; // dark colors - white font
-		}
-	}
 }
