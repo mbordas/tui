@@ -39,23 +39,15 @@ public class Paragraph extends UIRefreshableComponent {
 	public static final String ATTRIBUTE_BORDER = "border";
 	public static final String ATTRIBUTE_TEXT_ALIGN = "textAlign";
 
-	public static class Text extends UIComponent {
+	public static class Text extends UIComponentWithText {
 
 		public static final String JSON_TYPE = "text";
 		public static final String JSON_ATTRIBUTE_CONTENT = "content";
 
 		private final String m_text;
-		private TextStyleSet m_customTextStyle = null;
 
 		public Text(String format, Object... args) {
 			m_text = String.format(format, args);
-		}
-
-		public TextStyleSet customTextStyle() {
-			if(m_customTextStyle == null) {
-				m_customTextStyle = new TextStyleSet();
-			}
-			return m_customTextStyle;
 		}
 
 		@Override
@@ -63,9 +55,6 @@ public class Paragraph extends UIRefreshableComponent {
 			final HTMLNode result = new HTMLNode("span");
 			result.setText(m_text.replaceAll("\\n", "<br/>"));
 			applyCustomStyle(result);
-			if(m_customTextStyle != null) {
-				m_customTextStyle.apply(result);
-			}
 			return result;
 		}
 
@@ -74,9 +63,6 @@ public class Paragraph extends UIRefreshableComponent {
 			final JsonMap result = new JsonMap(JSON_TYPE);
 			result.setAttribute(JSON_ATTRIBUTE_CONTENT, m_text);
 			applyCustomStyle(result);
-			if(m_customTextStyle != null) {
-				m_customTextStyle.apply(result);
-			}
 			return result;
 		}
 	}

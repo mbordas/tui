@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -17,36 +17,32 @@ package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.style.TextStyleSet;
 
-public class NavLink extends UIComponentWithText {
+public abstract class UIComponentWithText extends UIComponent {
 
-	public static final String HTML_CLASS = "tui-navlink";
+	private TextStyleSet m_customTextStyle = null;
 
-	public static final String JSON_TYPE = "navlink";
-
-	private String m_label;
-	private String m_target;
-
-	public NavLink(String label, String target) {
-		m_label = label;
-		m_target = target;
+	public TextStyleSet customTextStyle() {
+		if(m_customTextStyle == null) {
+			m_customTextStyle = new TextStyleSet();
+		}
+		return m_customTextStyle;
 	}
 
 	@Override
-	public HTMLNode toHTMLNode() {
-		final HTMLNode result = super.toHTMLNode("a", false);
-		result.setAttribute("href", m_target);
-		result.setText(m_label);
-		applyCustomStyle(result);
-		return result;
+	protected void applyCustomStyle(HTMLNode htmlNode) {
+		super.applyCustomStyle(htmlNode);
+		if(m_customTextStyle != null) {
+			m_customTextStyle.apply(htmlNode);
+		}
 	}
 
 	@Override
-	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
-		result.setAttribute("label", m_label);
-		result.setAttribute("target", m_target);
-		applyCustomStyle(result);
-		return result;
+	protected void applyCustomStyle(JsonMap jsonMap) {
+		super.applyCustomStyle(jsonMap);
+		if(m_customTextStyle != null) {
+			m_customTextStyle.apply(jsonMap);
+		}
 	}
 }
