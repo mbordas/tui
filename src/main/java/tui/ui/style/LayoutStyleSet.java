@@ -40,10 +40,12 @@ public class LayoutStyleSet extends StyleSet {
 		return this;
 	}
 
+	public LayoutStyleSet setBorderColor(TUIColors.ColorHSL color) {
+		return setBorderColor(TUIColors.toCSSHex(color));
+	}
+
 	public LayoutStyleSet setBorderColor(Color color) {
-		m_borderColor = TUIColors.toCSSHex(color);
-		m_borderStyle = "solid";
-		return this;
+		return setBorderColor(TUIColors.toCSSHex(color));
 	}
 
 	public LayoutStyleSet setBorderColor(String cssValue) {
