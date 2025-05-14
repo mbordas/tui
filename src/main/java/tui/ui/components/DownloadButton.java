@@ -28,13 +28,13 @@ public class DownloadButton extends UIComponent {
 
 	private final String m_label;
 	private final String m_target;
-	private final String m_downloadName;
+	private final String m_defaultFileName;
 	private final Map<String, String> m_parameters = new HashMap<>();
 
-	public DownloadButton(String label, String target, String downloadName) {
+	public DownloadButton(String label, String target, String defaultFileName) {
 		m_label = label;
 		m_target = target;
-		m_downloadName = downloadName;
+		m_defaultFileName = defaultFileName;
 	}
 
 	public DownloadButton setParameter(String name, String value) {
@@ -47,7 +47,7 @@ public class DownloadButton extends UIComponent {
 		final HTMLNode result = new HTMLNode("button").addClass(HTML_CLASS);
 		result.setText(m_label);
 		result.setAttribute("target", m_target);
-		result.setAttribute("downloadName", m_downloadName);
+		result.setAttribute("downloadName", m_defaultFileName);
 		result.setAttribute("onClick", "downloadFromButton(this)");
 
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
@@ -69,7 +69,7 @@ public class DownloadButton extends UIComponent {
 		final JsonMap result = new JsonMap(JSON_TYPE);
 		result.setAttribute("label", m_label);
 		result.setAttribute("target", m_target);
-		result.setAttribute("downloadName", m_downloadName);
+		result.setAttribute("downloadName", m_defaultFileName);
 		final JsonMap parameters = result.setChild("parameters", new JsonMap(null));
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
 			parameters.setAttribute(entry.getKey(), entry.getValue());
