@@ -35,6 +35,10 @@ public class TParagraph extends TRefreshableComponent {
 			super(null, client);
 		}
 
+		public String getText() {
+			return m_content;
+		}
+
 		@Override
 		public TComponent find(long tuid) {
 			return null;
