@@ -15,45 +15,71 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test;
 
+import org.jetbrains.annotations.NotNull;
 import tui.test.components.TComponent;
+import tui.test.components.TPage;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class TComponentFinder<C extends TComponent> {
 
 	private final Class<C> m_type;
-	private final Supplier<Collection<TComponent>> m_componentSupplier;
+	private final TComponent m_root;
+	private final Collection<TComponent> m_children;
 	private Predicate<TComponent> m_parentOfClass = component -> true;
-	private Predicate<C> m_thisCustomCondition = component -> true;
+	private Predicate<TComponent> m_parentCondition = component -> true;
+	private Predicate<C> m_thisCondition = component -> true;
 
-	private TComponentFinder(Supplier<Collection<TComponent>> componentSupplier, Class<C> type) {
-		m_componentSupplier = componentSupplier;
+	private TComponentFinder(Class<C> type, TComponent root, Collection<TComponent> children) {
 		m_type = type;
+		m_root = root;
+		m_children = children;
 	}
 
 	public List<C> findAll() {
+		return findAll(m_root, m_children);
+	}
+
+	private List<C> findAll(TComponent parent, Collection<TComponent> children) {
 		final List<C> result = new ArrayList<>();
-		m_componentSupplier.get().forEach((component) -> {
-			if(m_parentOfClass.test(component)) {
-				component.getChildrenComponents().stream()
-						.filter((c) -> m_type.isAssignableFrom(c.getClass()))
-						.forEach((c) -> {
-							C typedComponent = (C) c;
-							if(m_thisCustomCondition.test(typedComponent)) {
-								result.add(typedComponent);
-							}
-						});
+		children.forEach((c) -> {
+
+			// Testing child 'c'
+			if((parent == null || (m_parentOfClass.test(parent) && m_parentCondition.test(parent)))
+					&& m_type.isAssignableFrom(c.getClass())) {
+				C typedComponent = (C) c;
+				if(m_thisCondition.test(typedComponent)) {
+					result.add(typedComponent);
+				}
 			}
+
+			// Recursive call on c's children
+			c.getChildrenComponents().forEach((c3) -> result.addAll(findAll(c3, c3.getChildrenComponents())));
 		});
 		return result;
 	}
 
-	public TComponentFinder<C> thatMatches(Predicate<C> condition) {
-		m_thisCustomCondition = condition;
+	public @NotNull C getUnique() {
+		final List<C> components = findAll();
+		if(components.isEmpty()) {
+			throw new TestExecutionException("No %s found in current page.", m_type.getSimpleName());
+		} else if(components.size() > 1) {
+			throw new TestExecutionException("Too many %s found: %d", m_type.getSimpleName(), components.size());
+		} else {
+			return components.get(0);
+		}
+	}
+
+	public TComponentFinder<C> withCondition(Predicate<C> condition) {
+		m_thisCondition = condition;
+		return this;
+	}
+
+	public TComponentFinder<C> withConditionOnParent(Predicate<TComponent> condition) {
+		m_parentCondition = condition;
 		return this;
 	}
 
@@ -62,11 +88,11 @@ public class TComponentFinder<C extends TComponent> {
 		return this;
 	}
 
-	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TClient client) {
-		return new TComponentFinder<>(client::getReachableSubComponents, type);
+	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TPage page) {
+		return new TComponentFinder<>(type, null, page.getChildrenComponents());
 	}
 
 	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TComponent component) {
-		return new TComponentFinder<>(component::getReachableSubComponents, type);
+		return new TComponentFinder<>(type, component, component.getChildrenComponents());
 	}
 }

@@ -28,22 +28,19 @@ import tui.test.components.TRefreshableComponent;
 import tui.test.components.TSearch;
 import tui.test.components.TSection;
 import tui.test.components.TTable;
-import tui.test.components.TTablePicker;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 public class TClient {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TClient.class);
 
 	private TPage m_currentPage;
-	private TestHTTPClient m_httpClient;
+	private final TestHTTPClient m_httpClient;
 
 	/**
 	 * @param host Host name without protocol (ex: localhost).
@@ -85,103 +82,50 @@ public class TClient {
 		return m_currentPage.getTitle();
 	}
 
+	public Collection<TComponent> getChildrenComponents() {
+		return m_currentPage.getChildrenComponents();
+	}
+
 	public Collection<TComponent> getReachableSubComponents() {
 		return m_currentPage.getReachableSubComponents();
 	}
 
-	public Collection<TComponent> getReachableSubComponents(Predicate<TComponent> condition) {
-		return m_currentPage.getReachableSubComponents().stream()
-				.filter(condition)
-				.toList();
-	}
-
-	private static <T> T getUnique(List<T> components) {
-		if(components.isEmpty()) {
-			throw new TestExecutionException("No component found in current page.");
-		} else if(components.size() > 1) {
-			throw new TestExecutionException("Too many components found: %d", components.size());
-		} else {
-			return components.get(0);
-		}
+	public <T extends TComponent> TComponentFinder<T> finderOfClass(Class<T> type) {
+		return TComponentFinder.ofClass(type, m_currentPage);
 	}
 
 	public TSection getSection(String title) {
-		final List<TSection> allSectionsFound = TComponentFinder.ofClass(TSection.class, this)
-				.thatMatches((section) -> section.getTitle().equals(title))
-				.findAll();
-		return getUnique(allSectionsFound);
-	}
-
-	public TPanel getPanel(int index) {
-		final List<TPanel> panels = getPanels();
-		if(panels.isEmpty()) {
-			throw new TestExecutionException("No Panel found in current page.");
-		} else if(index >= panels.size()) {
-			throw new TestExecutionException("Panel #%d does not exist (%d panels in page)", index, panels.size());
-		} else {
-			return panels.get(index);
-		}
+		return finderOfClass(TSection.class)
+				.withCondition((section) -> section.getTitle().equals(title))
+				.getUnique();
 	}
 
 	public List<TPanel> getPanels() {
-		return m_currentPage.getReachableSubComponents().stream()
-				.filter((component) -> component instanceof TPanel)
-				.map((panel) -> (TPanel) panel)
-				.toList();
+		return finderOfClass(TPanel.class).findAll();
 	}
 
 	public TTable getTable(String title) {
-		final List<TComponent> tables = m_currentPage.getReachableSubComponents().stream()
-				.filter((component) -> component instanceof TTable table && title.equals(table.getTitle()))
-				.toList();
-		if(tables.isEmpty()) {
-			throw new TestExecutionException("No table found in current page with title: %s", title);
-		} else if(tables.size() > 1) {
-			throw new TestExecutionException("Multiple tables found in current page with title: %s", title);
-		}
-		return (TTable) tables.get(0);
-	}
-
-	public TTablePicker getTablePicker(String title) {
-		final List<TComponent> tables = m_currentPage.getReachableSubComponents().stream()
-				.filter((component) -> component instanceof TTablePicker tablepicker && title.equals(tablepicker.getTitle()))
-				.toList();
-		if(tables.isEmpty()) {
-			throw new TestExecutionException("No table found in current page with title: %s", title);
-		} else if(tables.size() > 1) {
-			throw new TestExecutionException("Multiple tables found in current page with title: %s", title);
-		}
-		return (TTablePicker) tables.get(0);
+		return finderOfClass(TTable.class)
+				.withCondition((table) -> table.getTitle().equals(title))
+				.getUnique();
 	}
 
 	public TForm getForm(String title) {
-		final Optional<TComponent> anyFoundForm = m_currentPage.findReachableSubComponent(
-				(component) -> component instanceof TForm form && title.equals(form.getTitle()));
-		if(anyFoundForm.isPresent()) {
-			return (TForm) anyFoundForm.get();
-		} else {
-			throw new NullPointerException(String.format("Form '%s' not present in page or not reachable", title));
-		}
+		return finderOfClass(TForm.class)
+				.withCondition((form) -> form.getTitle().equals(title))
+				.getUnique();
 	}
 
 	public TSearch getSearch(String title) {
-		final Optional<TComponent> anyFoundSearch = m_currentPage.findReachableSubComponent(
-				(component) -> component instanceof TSearch search && title.equals(search.getTitle()));
-		if(anyFoundSearch.isPresent()) {
-			return (TSearch) anyFoundSearch.get();
-		} else {
-			throw new NullPointerException(String.format("Search '%s' not present in page or not reachable", title));
-		}
+		return finderOfClass(TSearch.class)
+				.withCondition((search) -> search.getTitle().equals(title))
+				.getUnique();
 	}
 
 	public TRefreshButton getRefreshButton(String label) {
-		final Optional<TComponent> anyFoundButton = m_currentPage.findReachableSubComponent(
-				(component) -> component instanceof TRefreshButton button && label.equals(button.getLabel()));
-		if(anyFoundButton.isPresent()) {
-			return (TRefreshButton) anyFoundButton.get();
-		} else {
-			throw new NullPointerException(String.format("RefreshButton '%s' not present in page or not reachable", label));
-		}
+		return finderOfClass(TRefreshButton.class)
+				.withCondition((button) -> button.getLabel().equals(label))
+				.getUnique();
 	}
 
 	/**

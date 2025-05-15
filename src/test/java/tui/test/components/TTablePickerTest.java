@@ -15,7 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import org.apache.http.HttpException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class TTablePickerTest extends TestWithBackend {
 	private static final Logger LOG = LoggerFactory.getLogger(TTablePickerTest.class);
 
 	@Test
-	public void browseAndClick() throws HttpException {
+	public void browseAndClick() {
 		final Collection<TablePickerTest.Item> items = buildItems(3);
 
 		final Page page = new Page("Home", "/index");
@@ -65,17 +64,20 @@ public class TTablePickerTest extends TestWithBackend {
 
 		final TClient client = startClient();
 		client.open("/index");
+		System.out.println(client.branchString());
 
-		final TPanel tpanel = client.getPanel(0);
+		final TPanel tpanel = client.getPanels().get(0);
 
-		final TParagraph tparagraph = TComponent.getContent(TParagraph.class, tpanel.getContent()).get(0);
+		final TParagraph tparagraph = tpanel.finderOfClass(TParagraph.class)
+				.withConditionOnParent((parent) -> parent == tpanel)
+				.getUnique();
 
 		assertNotNull(tparagraph);
 		LOG.debug("Id of paragraph: {}", tparagraph.getTUID());
 
 		assertEquals("Reloadable panel", tparagraph.getText()); // Initial text
 
-		final TTablePicker ttablepicker = TComponent.getContent(TTablePicker.class, client.getReachableSubComponents()).get(0);
+		final TTablePicker ttablepicker = client.finderOfClass(TTablePicker.class).findAll().get(0);
 
 		assertEquals(tablePicker.getTitle(), ttablepicker.getTitle());
 

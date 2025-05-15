@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import tui.test.TClient;
+import tui.test.TComponentFinder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,5 +129,9 @@ public abstract class TComponent {
 				.filter((component) -> component.getClass() == clazz)
 				.map((component) -> (T) component)
 				.toList();
+	}
+
+	public <T extends TComponent> TComponentFinder<T> finderOfClass(Class<T> type) {
+		return TComponentFinder.ofClass(type, this);
 	}
 }
