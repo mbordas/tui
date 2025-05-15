@@ -30,6 +30,7 @@ import tui.test.components.TSection;
 import tui.test.components.TTable;
 import tui.test.components.TTablePicker;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -211,6 +212,15 @@ public class TClient {
 		} else {
 			throw new TestExecutionException("Component not refreshable: %s", componentToRefresh.getClass().getSimpleName());
 		}
+	}
+
+	public String branchString() {
+		final StringBuilder result = new StringBuilder(TPage.class.getSimpleName() + " '" + m_currentPage.getTitle() + "'");
+		result.append("\n");
+		for(TComponent child : m_currentPage.getChildrenComponents()) {
+			Arrays.stream(child.branchString().split("\n")).forEach((line) -> result.append("  ").append(line).append("\n"));
+		}
+		return result.toString();
 	}
 
 }

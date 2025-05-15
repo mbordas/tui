@@ -48,6 +48,10 @@ public class TPage {
 		return m_title;
 	}
 
+	public List<TComponent> getChildrenComponents() {
+		return m_content;
+	}
+
 	public Collection<TComponent> getReachableSubComponents() {
 		final Collection<TComponent> result = new ArrayList<>();
 		for(TComponent component : m_content) {
@@ -90,4 +94,5 @@ public class TPage {
 		}
 		return result;
 	}
+
 }

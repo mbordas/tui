@@ -64,4 +64,10 @@ public class TSection extends TComponent {
 	public Collection<TComponent> getChildrenComponents() {
 		return new ArrayList<>(m_content);
 	}
+
+	@Override
+	public String toString() {
+		return super.toString(m_title);
+	}
+
 }

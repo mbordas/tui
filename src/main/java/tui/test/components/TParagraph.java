@@ -31,8 +31,8 @@ public class TParagraph extends TRefreshableComponent {
 
 		String m_content = null;
 
-		protected TText(long tuid, TClient client) {
-			super(tuid, client);
+		protected TText(TClient client) {
+			super(null, client);
 		}
 
 		@Override
@@ -46,7 +46,7 @@ public class TParagraph extends TRefreshableComponent {
 		}
 
 		public static TText parse(JsonMap map, TClient client) {
-			final TText result = new TText(-1L, client); // The Text class in Paragraph class does not provide TUID
+			final TText result = new TText(client);
 			result.m_content = map.getAttribute(Paragraph.Text.JSON_ATTRIBUTE_CONTENT);
 			return result;
 		}
@@ -86,7 +86,7 @@ public class TParagraph extends TRefreshableComponent {
 
 	@Override
 	public Collection<TComponent> getChildrenComponents() {
-		return List.of();
+		return m_content;
 	}
 
 	public static TParagraph parse(JsonMap map, TClient client) {

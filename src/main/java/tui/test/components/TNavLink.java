@@ -56,6 +56,11 @@ public class TNavLink extends TComponent {
 		return List.of();
 	}
 
+	@Override
+	public String toString() {
+		return super.toString(m_label) + " -> " + m_target;
+	}
+
 	public static TComponent parse(JsonMap jsonMap, TClient tClient) {
 		final long tuid = JsonConstants.readTUID(jsonMap);
 		final String label = jsonMap.getAttribute(NavLink.JSON_ATTRIBUTE_LABEL);

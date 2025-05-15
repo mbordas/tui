@@ -18,6 +18,7 @@ package tui.test.components;
 import tui.test.TClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +83,31 @@ public abstract class TComponent {
 
 	public boolean isReachable() {
 		return m_client.getReachableSubComponents().contains(this);
+	}
+
+	@Override
+	public String toString() {
+		return toString(null);
+	}
+
+	protected String toString(String title) {
+		final StringBuilder result = new StringBuilder(getClass().getSimpleName());
+		if(m_tuid != null) {
+			result.append(" #").append(m_tuid);
+		}
+		if(title != null) {
+			result.append(" '").append(title).append("'");
+		}
+		return result.toString();
+	}
+
+	public String branchString() {
+		final StringBuilder result = new StringBuilder(toString());
+		result.append("\n");
+		for(TComponent child : getChildrenComponents()) {
+			Arrays.stream(child.branchString().split("\n")).forEach((line) -> result.append("  ").append(line).append("\n"));
+		}
+		return result.toString();
 	}
 
 	protected static TComponent find(long tuid, Collection<? extends TComponent> reachableChildren) {
