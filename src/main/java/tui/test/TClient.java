@@ -26,6 +26,7 @@ import tui.test.components.TPanel;
 import tui.test.components.TRefreshButton;
 import tui.test.components.TRefreshableComponent;
 import tui.test.components.TSearch;
+import tui.test.components.TSection;
 import tui.test.components.TTable;
 import tui.test.components.TTablePicker;
 
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class TClient {
 
@@ -84,6 +86,29 @@ public class TClient {
 
 	public Collection<TComponent> getReachableSubComponents() {
 		return m_currentPage.getReachableSubComponents();
+	}
+
+	public Collection<TComponent> getReachableSubComponents(Predicate<TComponent> condition) {
+		return m_currentPage.getReachableSubComponents().stream()
+				.filter(condition)
+				.toList();
+	}
+
+	private static <T> T getUnique(List<T> components) {
+		if(components.isEmpty()) {
+			throw new TestExecutionException("No component found in current page.");
+		} else if(components.size() > 1) {
+			throw new TestExecutionException("Too many components found: %d", components.size());
+		} else {
+			return components.get(0);
+		}
+	}
+
+	public TSection getSection(String title) {
+		final List<TSection> allSectionsFound = TComponentFinder.ofClass(TSection.class, this)
+				.thatMatches((section) -> section.getTitle().equals(title))
+				.findAll();
+		return getUnique(allSectionsFound);
 	}
 
 	public TPanel getPanel(int index) {

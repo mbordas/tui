@@ -66,7 +66,7 @@ public class TRefreshButton extends TComponent {
 	}
 
 	@Override
-	protected Collection<TComponent> getChildrenComponents() {
+	public Collection<TComponent> getChildrenComponents() {
 		return List.of();
 	}
 

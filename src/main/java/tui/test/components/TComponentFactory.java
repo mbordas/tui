@@ -19,6 +19,7 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.test.TClient;
+import tui.ui.components.NavLink;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Section;
@@ -49,6 +50,7 @@ public class TComponentFactory {
 			case TabbedFlow.JSON_TYPE -> TTabbedFlow.parse(map, client);
 			case Grid.JSON_TYPE -> TGrid.parse(map, client);
 			case RefreshButton.JSON_TYPE -> TRefreshButton.parse(map, client);
+			case NavLink.JSON_TYPE -> TNavLink.parse(map, client);
 			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
 		};
 	}

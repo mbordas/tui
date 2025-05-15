@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -13,58 +13,54 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package tui.test.components;
+package tui.test;
 
-import tui.json.JsonArray;
-import tui.json.JsonConstants;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
-import tui.test.TClient;
+import tui.test.components.TComponent;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
-public class TTabbedPanel extends TComponent {
+public class TComponentFinder<C extends TComponent> {
 
-	private final String m_title;
+	private final Class<C> m_type;
+	private final TClient m_client;
+	private Predicate<TComponent> m_parentOfClass = component -> true;
+	private Predicate<C> m_thisCustomCondition = component -> true;
 
-	private final List<TComponent> m_content = new ArrayList<>();
-
-	/**
-	 * @param tuid   Unique identifier.
-	 * @param client This client object will help acting on some component, and determining if they are reachable.
-	 */
-	protected TTabbedPanel(long tuid, String title, TClient client) {
-		super(tuid, client);
-		m_title = title;
+	private TComponentFinder(TClient client, Class<C> type) {
+		m_client = client;
+		m_type = type;
 	}
 
-	public String getTitle() {
-		return m_title;
-	}
-
-	public static TComponent parse(JsonMap map, TClient client) {
-		final long tuid = JsonConstants.readTUID(map);
-		final String title = map.getAttribute("title");
-		final TTabbedPanel result = new TTabbedPanel(tuid, title, client);
-		final JsonArray content = map.getArray("content");
-		final Iterator<JsonObject> contentIterator = content.iterator();
-		while(contentIterator.hasNext()) {
-			final JsonObject componentJson = contentIterator.next();
-			result.m_content.add(TComponentFactory.parse(componentJson, client));
-		}
+	public List<C> findAll() {
+		final List<C> result = new ArrayList<>();
+		m_client.getReachableSubComponents().forEach((component) -> {
+			if(m_parentOfClass.test(component)) {
+				component.getChildrenComponents().stream()
+						.filter((c) -> m_type.isAssignableFrom(c.getClass()))
+						.forEach((c) -> {
+							C typedComponent = (C) c;
+							if(m_thisCustomCondition.test(typedComponent)) {
+								result.add(typedComponent);
+							}
+						});
+			}
+		});
 		return result;
 	}
 
-	@Override
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
+	public TComponentFinder<C> thatMatches(Predicate<C> condition) {
+		m_thisCustomCondition = condition;
+		return this;
 	}
 
-	@Override
-	public Collection<TComponent> getChildrenComponents() {
-		return new ArrayList<>(m_content);
+	public TComponentFinder<C> withParentOfClass(Class<? extends TComponent> parentOfClass) {
+		m_parentOfClass = parentOfClass::isInstance;
+		return this;
+	}
+
+	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TClient client) {
+		return new TComponentFinder<>(client, type);
 	}
 }

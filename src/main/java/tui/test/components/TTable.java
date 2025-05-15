@@ -125,7 +125,7 @@ public class TTable extends TRefreshableComponent {
 	}
 
 	@Override
-	protected Collection<TComponent> getChildrenComponents() {
+	public Collection<TComponent> getChildrenComponents() {
 		return List.of();
 	}
 

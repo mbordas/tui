@@ -28,7 +28,7 @@ import java.util.function.Predicate;
  */
 public abstract class TComponent {
 
-	private final long m_tuid;
+	private final Long m_tuid;
 	protected final TClient m_client;
 	protected boolean m_isVisible = true;
 
@@ -36,18 +36,18 @@ public abstract class TComponent {
 	 * @param tuid   Unique identifier.
 	 * @param client This client object will help acting on some component, and determining if they are reachable.
 	 */
-	protected TComponent(long tuid, TClient client) {
+	protected TComponent(Long tuid, TClient client) {
 		m_tuid = tuid;
 		m_client = client;
 	}
 
-	public long getTUID() {
+	public Long getTUID() {
 		return m_tuid;
 	}
 
 	public abstract TComponent find(long tuid);
 
-	protected abstract Collection<TComponent> getChildrenComponents();
+	public abstract Collection<TComponent> getChildrenComponents();
 
 	public Collection<TComponent> getReachableSubComponents() {
 		final Collection<TComponent> result = new ArrayList<>();
@@ -81,7 +81,7 @@ public abstract class TComponent {
 	}
 
 	public boolean isReachable() {
-		return m_client.find(getTUID()) != null;
+		return m_client.getReachableSubComponents().contains(this);
 	}
 
 	protected static TComponent find(long tuid, Collection<? extends TComponent> reachableChildren) {

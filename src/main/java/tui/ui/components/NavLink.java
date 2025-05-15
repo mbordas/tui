@@ -23,9 +23,11 @@ public class NavLink extends UIComponentWithText {
 	public static final String HTML_CLASS = "tui-navlink";
 
 	public static final String JSON_TYPE = "navlink";
+	public static final String JSON_ATTRIBUTE_LABEL = "label";
+	public static final String JSON_ATTRIBUTE_TARGET = "target";
 
-	private String m_label;
-	private String m_target;
+	private final String m_label;
+	private final String m_target;
 
 	public NavLink(String label, String target) {
 		m_label = label;
@@ -34,7 +36,7 @@ public class NavLink extends UIComponentWithText {
 
 	@Override
 	public HTMLNode toHTMLNode() {
-		final HTMLNode result = super.toHTMLNode("a", false);
+		final HTMLNode result = super.toHTMLNode("a", true);
 		result.setAttribute("href", m_target);
 		result.setText(m_label);
 		applyCustomStyle(result);
@@ -43,9 +45,9 @@ public class NavLink extends UIComponentWithText {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
-		result.setAttribute("label", m_label);
-		result.setAttribute("target", m_target);
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		result.setAttribute(JSON_ATTRIBUTE_LABEL, m_label);
+		result.setAttribute(JSON_ATTRIBUTE_TARGET, m_target);
 		applyCustomStyle(result);
 		return result;
 	}

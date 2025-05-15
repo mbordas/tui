@@ -41,7 +41,7 @@ public class TParagraph extends TRefreshableComponent {
 		}
 
 		@Override
-		protected Collection<TComponent> getChildrenComponents() {
+		public Collection<TComponent> getChildrenComponents() {
 			return List.of();
 		}
 
@@ -85,7 +85,7 @@ public class TParagraph extends TRefreshableComponent {
 	}
 
 	@Override
-	protected Collection<TComponent> getChildrenComponents() {
+	public Collection<TComponent> getChildrenComponents() {
 		return List.of();
 	}
 

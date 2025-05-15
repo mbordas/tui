@@ -41,7 +41,7 @@ public class TGrid extends TComponent {
 	}
 
 	@Override
-	protected Collection<TComponent> getChildrenComponents() {
+	public Collection<TComponent> getChildrenComponents() {
 		final Collection<TComponent> result = new ArrayList<>();
 		for(final TComponent[] rowOfComponents : m_components) {
 			result.addAll(Arrays.asList(rowOfComponents).subList(0, m_components[0].length));

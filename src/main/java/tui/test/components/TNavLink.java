@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,62 +15,51 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
-import tui.json.JsonObject;
 import tui.test.TClient;
+import tui.ui.components.NavLink;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-public class TPanel extends TRefreshableComponent {
+public class TNavLink extends TComponent {
 
-	private String m_source;
-	private final List<TComponent> m_content = new ArrayList<>();
+	private final String m_label;
+	private final String m_target;
 
 	/**
 	 * @param tuid   Unique identifier.
 	 * @param client This client object will help acting on some component, and determining if they are reachable.
 	 */
-	protected TPanel(long tuid, TClient client) {
+	protected TNavLink(long tuid, TClient client, String label, String target) {
 		super(tuid, client);
+		m_label = label;
+		m_target = target;
 	}
 
-	@Override
-	public void update(JsonMap map) {
-		final TPanel panel = parse(map, null);
-		m_source = panel.m_source;
-		m_content.clear();
-		m_content.addAll(panel.m_content);
+	public String getLabel() {
+		return m_label;
 	}
 
-	public List<TComponent> getContent() {
-		return m_content;
+	public String getTarget() {
+		return m_target;
 	}
 
 	@Override
 	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
+		return null;
 	}
 
 	@Override
 	public Collection<TComponent> getChildrenComponents() {
-		return new ArrayList<>(m_content);
+		return List.of();
 	}
 
-	public static TPanel parse(JsonMap map, TClient client) {
-		final long tuid = JsonConstants.readTUID(map);
-		TPanel result = new TPanel(tuid, client);
-		result.readSource(map);
-		final JsonArray content = map.getArray("content");
-		final Iterator<JsonObject> contentIterator = content.iterator();
-		while(contentIterator.hasNext()) {
-			final JsonObject componentJson = contentIterator.next();
-			result.m_content.add(TComponentFactory.parse(componentJson, client));
-		}
-		return result;
+	public static TComponent parse(JsonMap jsonMap, TClient tClient) {
+		final long tuid = JsonConstants.readTUID(jsonMap);
+		final String label = jsonMap.getAttribute(NavLink.JSON_ATTRIBUTE_LABEL);
+		final String target = jsonMap.getAttribute(NavLink.JSON_ATTRIBUTE_TARGET);
+		return new TNavLink(tuid, tClient, label, target);
 	}
 }

@@ -45,7 +45,7 @@ public class TVerticalFlow extends TComponent {
 	}
 
 	@Override
-	protected Collection<TComponent> getChildrenComponents() {
+	public Collection<TComponent> getChildrenComponents() {
 		return new ArrayList<>(m_content);
 	}
 
