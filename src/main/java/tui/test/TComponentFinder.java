@@ -18,24 +18,26 @@ package tui.test;
 import tui.test.components.TComponent;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class TComponentFinder<C extends TComponent> {
 
 	private final Class<C> m_type;
-	private final TClient m_client;
+	private final Supplier<Collection<TComponent>> m_componentSupplier;
 	private Predicate<TComponent> m_parentOfClass = component -> true;
 	private Predicate<C> m_thisCustomCondition = component -> true;
 
-	private TComponentFinder(TClient client, Class<C> type) {
-		m_client = client;
+	private TComponentFinder(Supplier<Collection<TComponent>> componentSupplier, Class<C> type) {
+		m_componentSupplier = componentSupplier;
 		m_type = type;
 	}
 
 	public List<C> findAll() {
 		final List<C> result = new ArrayList<>();
-		m_client.getReachableSubComponents().forEach((component) -> {
+		m_componentSupplier.get().forEach((component) -> {
 			if(m_parentOfClass.test(component)) {
 				component.getChildrenComponents().stream()
 						.filter((c) -> m_type.isAssignableFrom(c.getClass()))
@@ -61,6 +63,10 @@ public class TComponentFinder<C extends TComponent> {
 	}
 
 	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TClient client) {
-		return new TComponentFinder<>(client, type);
+		return new TComponentFinder<>(client::getReachableSubComponents, type);
+	}
+
+	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TComponent component) {
+		return new TComponentFinder<>(component::getReachableSubComponents, type);
 	}
 }
