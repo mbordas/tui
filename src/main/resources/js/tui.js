@@ -699,7 +699,7 @@ function prepareFormData(formElement) {
 
     // Session parameters
     for(let key in SESSION_PARAMS) {
-        data[key] = SESSION_PARAMS[key];
+        data.append(key, SESSION_PARAMS[key]);
     }
 
     // Form inputs
@@ -800,6 +800,13 @@ function onFormResponse(formElement, json) {
             openForm.setAttribute('method', 'POST');
             openForm.setAttribute('action', formElement.getAttribute('tui-opens-page'));
             openForm.setAttribute('target', '_self');
+            for(let key in SESSION_PARAMS) {
+                const parameterInput = document.createElement('input');
+                parameterInput.setAttribute('type', 'hidden');
+                parameterInput.setAttribute('name', key);
+                parameterInput.setAttribute('value', SESSION_PARAMS[key]);
+                openForm.appendChild(parameterInput);
+            }
             if(json['parameters'] != null) {
                 for(let key in json['parameters']) {
                     const parameterInput = document.createElement('input');
@@ -807,7 +814,7 @@ function onFormResponse(formElement, json) {
                     parameterInput.setAttribute('name', key);
                     parameterInput.setAttribute('value', json['parameters'][key]);
                     openForm.appendChild(parameterInput);
-                };
+                }
             }
             formElement.appendChild(openForm);
             openForm.submit();
