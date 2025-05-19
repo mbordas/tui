@@ -18,10 +18,12 @@ package tui.http;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
+import tui.ui.UIConfigurationException;
 import tui.ui.components.Page;
 import tui.ui.style.Style;
 
@@ -202,7 +204,7 @@ public class TUIBackend implements AutoCloseable {
 		m_webServices.put(path, service);
 	}
 
-	public void registerPageService(String path, TUIPageService service) {
+	public void registerPageService(@NotNull String path, TUIPageService service) {
 		m_pageServices.put(path, service);
 	}
 
@@ -223,6 +225,9 @@ public class TUIBackend implements AutoCloseable {
 	}
 
 	public void registerPage(Page page) {
+		if(page.getSource() == null) {
+			throw new UIConfigurationException("Unable to register page '%s' on backend without source.", page.getTitle());
+		}
 		registerPageService(page.getSource(), (uri, request) -> page);
 	}
 

@@ -45,7 +45,7 @@ public class Form extends UIComponent {
 	private final String m_title;
 	private String m_submitLabel = "Submit";
 	private final String m_target; // Web service path
-	private String m_opensPageSource = null; // Optional page to open when form is successfully submitted.
+	protected String m_opensPageSource = null; // Optional page to open when form is successfully submitted.
 
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();

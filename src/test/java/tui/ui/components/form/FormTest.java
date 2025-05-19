@@ -36,6 +36,25 @@ import static org.junit.Assert.assertTrue;
 public class FormTest extends TestWithBackend {
 
 	@Test
+	public void usesSessionParameters() {
+		final Page page = new Page("FormTest", "/index");
+		page.setSessionParameter("sessionId", "mysessionid");
+		page.append(new Form("Test form", "/form"));
+
+		final Browser browser = startAndBrowse(page).browser();
+
+		final AtomicReference<RequestReader> reader = new AtomicReference<>();
+		registerWebService("/form", (uri, request, response) -> {
+			reader.set(new RequestReader(request));
+			return Form.buildSuccessfulSubmissionResponse();
+		});
+
+		browser.submitForm("Test form");
+
+		assertEquals("mysessionid", reader.get().getStringParameter("sessionId"));
+	}
+
+	@Test
 	public void update() {
 		final Page page = new Page("Form update", "/index");
 		final Form form1 = page.append(new Form("Update 1/2", "/form1"));

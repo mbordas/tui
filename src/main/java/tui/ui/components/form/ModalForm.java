@@ -55,6 +55,9 @@ public class ModalForm extends Form {
 				.setAttribute("method", "post")
 				.setAttribute("enctype", RequestReader.FORM_ENCTYPE)
 				.setAttribute("id", HTMLConstants.toId(getTUID()));
+		if(m_opensPageSource != null) {
+			htmlForm.setAttribute("tui-opens-page", m_opensPageSource);
+		}
 
 		HTMLFetchErrorMessage.addErrorMessageChild(htmlForm);
 

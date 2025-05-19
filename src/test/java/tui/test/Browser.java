@@ -31,6 +31,7 @@ import tui.ui.components.NavLink;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Table;
 import tui.ui.components.form.Form;
+import tui.ui.components.form.ModalForm;
 import tui.ui.components.form.Search;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
@@ -39,6 +40,7 @@ import tui.ui.components.layout.VerticalScroll;
 import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -273,6 +275,17 @@ public class Browser implements Closeable {
 
 	// FORMS
 
+	public void openModalForm(String openButtonLabel) {
+		final Optional<WebElement> anyOpenFormButton = m_driver.findElements(By.className("tui-modal-form-open-button")).stream()
+				.filter((element) -> element.getText().equals(openButtonLabel))
+				.findAny();
+		if(anyOpenFormButton.isPresent()) {
+			anyOpenFormButton.get().click();
+		} else {
+			throw new RuntimeException("ModalForm open button not found: " + openButtonLabel);
+		}
+	}
+
 	public WebElement getForm(String title) {
 		final Optional<WebElement> anyFormElement = getForms().stream()
 				.filter(WebElement::isDisplayed)
@@ -287,7 +300,10 @@ public class Browser implements Closeable {
 	}
 
 	public List<WebElement> getForms() {
-		return m_driver.findElements(By.className(Form.HTML_CLASS));
+		final List<WebElement> result = new ArrayList<>();
+		result.addAll(m_driver.findElements(By.className(Form.HTML_CLASS)));
+		result.addAll(m_driver.findElements(By.className(ModalForm.HTML_CLASS)));
+		return result;
 	}
 
 	public Collection<WebElement> getFormFields(String formTitle) {
@@ -344,6 +360,7 @@ public class Browser implements Closeable {
 		final WebElement formElement = getForm(formTitle);
 		final Optional<WebElement> anySubmitButton = formElement.findElements(By.tagName("button")).stream()
 				.filter((button) -> "submit".equals(button.getAttribute("type")))
+				.filter((button) -> !getClasses(button).contains("tui-modal-form-open-button"))
 				.findAny();
 		if(anySubmitButton.isPresent()) {
 			anySubmitButton.get().click();
