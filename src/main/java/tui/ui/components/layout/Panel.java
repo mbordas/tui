@@ -78,7 +78,9 @@ public class Panel extends UIRefreshableComponent {
 		final HTMLNode node = containedElement.element();
 		for(UIComponent component : getContent()) {
 			final HTMLNode componentNode = component.toHTMLNode();
-			componentNode.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "horizontal-spacing"));
+			if(m_align != Align.VERTICAL) {
+				componentNode.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "horizontal-spacing"));
+			}
 			node.append(componentNode);
 		}
 

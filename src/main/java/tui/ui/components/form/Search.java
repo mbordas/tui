@@ -101,6 +101,12 @@ public class Search extends UIComponent {
 		return result;
 	}
 
+	public FormInputDay createInputDay(String label, String name) {
+		final FormInputDay result = new FormInputDay(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
 	public FormInputCheckbox createInputCheckbox(String label, String name) {
 		final FormInputCheckbox result = new FormInputCheckbox(label, name);
 		m_inputs.add(result);

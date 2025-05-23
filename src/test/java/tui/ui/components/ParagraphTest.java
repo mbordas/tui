@@ -35,7 +35,7 @@ public class ParagraphTest {
 				content""");
 
 		HTMLNode.PRETTY_PRINT = false;
-		assertEquals("<p class=\"tui-align-left tui-border-off\"><span>Multi-line<br/>content</span></p>",
+		assertEquals("<p class=\"tui-align-left\"><span>Multi-line<br/>content</span></p>",
 				paragraph.toHTMLNode().toHTML());
 	}
 

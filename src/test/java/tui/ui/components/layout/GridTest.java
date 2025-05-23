@@ -51,7 +51,6 @@ public class GridTest extends TestWithBackend {
 						    "type": "paragraph",
 						    "tuid": %d,
 						    "textAlign": "LEFT",
-						    "border": "off",
 						    "content": [
 						      {
 						        "type": "text",

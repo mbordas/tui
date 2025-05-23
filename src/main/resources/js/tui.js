@@ -150,9 +150,15 @@ function createComponent(json, idMap) {
     var result;
     var elementToBeStyled = null; // is overridden when style must be applied on it instead of result
     if(type == 'panel') {
-        const containedElement = createElementWithContainer('div', 'tui-container-panel');
-        updatePanel(containedElement.element, json, idMap);
-        result = containedElement.container;
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('div', 'tui-container-panel');
+            updatePanel(containedElement.element, json, idMap);
+            result = containedElement.container;
+        } else {
+            result = document.createElement('div');
+            result.classList.add('tui-panel');
+            updatePanel(result, json, idMap);
+        }
     } else if(type == 'table') {
         const containedElement = createElementWithContainer('table', 'tui-table-container');
         containedElement.element.appendChild(document.createElement('tbody'));
@@ -465,6 +471,7 @@ function selectTab(tabId, tabLink) {
 
 function updatePanel(panelElement, json, idMap) {
     panelElement.innerHTML = '';
+    panelElement.classList.add('tui-panel');
     panelElement.classList.add('tui-panel-' + json['align'].toLowerCase());
     const itemSpacingClass = 'tui-horizontal-spacing-' + json['spacing'].toLowerCase();
     if(idMap == null) {
@@ -521,7 +528,6 @@ function updateParagraph(element, json) {
     element.innerHTML = '';
     element.className = '';
     element.classList.add('tui-align-' + json['textAlign'].toLowerCase());
-    element.classList.add('tui-border-' + json['border']);
     for(var fragment of json['content']) {
         const component = createComponent(fragment);
         element.appendChild(component);

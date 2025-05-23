@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.style;
 
+import tui.ui.components.DownloadButton;
 import tui.ui.components.layout.Layouts;
 import tui.utils.TUIColors;
 
@@ -55,6 +56,7 @@ public class Style {
 	private final CombinedStyleSet m_paragraph = new CombinedStyleSet();
 	private final CombinedStyleSet m_link = new CombinedStyleSet();
 	private final CombinedStyleSet m_button = new CombinedStyleSet();
+	private final CombinedStyleSet m_downloadButton = new CombinedStyleSet();
 	private final CombinedStyleSet m_submitButton = new CombinedStyleSet();
 
 	public Style() {
@@ -126,6 +128,11 @@ public class Style {
 		button().text().setTextAlign(Layouts.Align.CENTER);
 		button().text().setTextColor("var(--global-color-cancel-contrast)");
 
+		downloadButton().layout().setIcon(DownloadButton.buildIcon());
+		downloadButton().layout().setBackgroundColor(Color.WHITE);
+		downloadButton().layout().setBorderColor(Color.GRAY);
+		downloadButton().layout().setPadding(2, 5, 2, 20);
+
 		submitButton().layout().setBackgroundColor("var(--global-color-action)");
 		submitButton().layout().setBorderColor("var(--global-color-action)");
 		submitButton().text().setTextColor("var(--global-color-action-contrast)");
@@ -165,6 +172,10 @@ public class Style {
 
 	public CombinedStyleSet button() {
 		return m_button;
+	}
+
+	public CombinedStyleSet downloadButton() {
+		return m_downloadButton;
 	}
 
 	public CombinedStyleSet submitButton() {
@@ -218,10 +229,6 @@ public class Style {
 				
 				p button {
 					width: auto;
-				}
-				
-				.tui-border-on {
-				    border: 1px solid var(--global-color-border);
 				}
 				
 				.tui-reading-normal-area { /* In NORMAL layout, the width of central area is given. */
@@ -325,13 +332,13 @@ public class Style {
 				.tui-horizontal-spacing-fit {
 				    margin-right: 0px;
 				}
-				.tui-horizontal-spacing-compact {
+				.tui-horizontal-spacing-compact:not(:last-child) {
 				    margin-right: 10px;
 				}
-				.tui-horizontal-spacing-normal {
+				.tui-horizontal-spacing-normal:not(:last-child) {
 				    margin-right: 20px;
 				}
-				.tui-horizontal-spacing-large {
+				.tui-horizontal-spacing-large:not(:last-child) {
 				    margin-right: 30px;
 				}
 				
@@ -474,6 +481,7 @@ public class Style {
 				""");
 
 		result.append(button().toCSS("button")).append("\n");
+		result.append(downloadButton().toCSS("button." + DownloadButton.HTML_CLASS));
 		result.append(submitButton().toCSS("button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button")).append("\n");
 
 		result.append("""

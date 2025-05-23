@@ -67,7 +67,6 @@ public class Paragraph extends UIRefreshableComponent {
 		}
 	}
 
-	private boolean m_withBorder = false;
 	private Layouts.Align m_textAlign = Layouts.Align.LEFT;
 	private final List<UIComponent> m_content = new ArrayList<>();
 
@@ -85,11 +84,6 @@ public class Paragraph extends UIRefreshableComponent {
 
 	public Paragraph setAlign(@NotNull Layouts.Align align) {
 		m_textAlign = align;
-		return this;
-	}
-
-	public Paragraph withBorder(boolean enabled) {
-		m_withBorder = enabled;
 		return this;
 	}
 
@@ -133,7 +127,6 @@ public class Paragraph extends UIRefreshableComponent {
 
 		final HTMLNode paragraphElement = containedElement.element();
 		paragraphElement.addClass(m_textAlign.getHTMLClass());
-		paragraphElement.addClass(m_withBorder ? HTML_CLASS_BORDER_ON : HTML_CLASS_BORDER_OFF);
 		for(UIComponent fragment : m_content) {
 			paragraphElement.append(fragment.toHTMLNode());
 		}
@@ -147,9 +140,10 @@ public class Paragraph extends UIRefreshableComponent {
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
 		result.setAttribute(ATTRIBUTE_TEXT_ALIGN, m_textAlign.name());
-		result.setAttribute(ATTRIBUTE_BORDER, m_withBorder ? "on" : "off");
 
 		result.createArray(ATTRIBUTE_CONTENT, m_content, UIComponent::toJsonMap);
+
+		applyCustomStyle(result);
 
 		return result;
 	}

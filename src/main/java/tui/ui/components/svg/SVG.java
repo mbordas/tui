@@ -58,6 +58,14 @@ public class SVG extends UIRefreshableComponent {
 		m_height_px = height_px;
 	}
 
+	public long getWidth_px() {
+		return m_width_px;
+	}
+
+	public long getHeight_px() {
+		return m_height_px;
+	}
+
 	public SVGMarker addMarker(SVGMarker marker) {
 		m_markers.add(marker);
 		return marker;
@@ -131,6 +139,14 @@ public class SVG extends UIRefreshableComponent {
 		}
 
 		return result;
+	}
+
+	public String toURLForCSS() {
+		return "data:image/svg+xml;utf8," + toHTMLNode().toHTML()
+				.replaceAll("\n", "")
+				.replaceAll("\"", "'")
+				.replaceAll("#", "%23")
+				.replaceAll("<svg ", "<svg xmlns='http://www.w3.org/2000/svg' ");
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.components.svg.SVG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +36,9 @@ public abstract class StyleSet {
 	public String toCSS(String selector) {
 		final Map<String, String> styleProperties = new HashMap<>();
 		apply(styleProperties, (map, property) -> map.put(property.name, property.value));
-		return String.format("%s { %s }", selector, computeStyleAttribute(styleProperties));
+
+		final String styleAttributes = computeStyleAttribute(styleProperties);
+		return String.format("%s { %s }", selector, styleAttributes);
 	}
 
 	public void apply(HTMLNode node) {
@@ -51,6 +54,16 @@ public abstract class StyleSet {
 		apply(node, setter);
 		for(Map.Entry<String, String> overrideEntry : m_overriddenProperties.entrySet()) {
 			setStylePropertyIfDefined(node, overrideEntry.getKey(), overrideEntry.getValue(), setter);
+		}
+	}
+
+	record Icon(SVG svg) {
+		public <T> void applyStyle(T node, BiConsumer<T, Property> setter) {
+			String svgURL = "url(\"" + svg.toURLForCSS() + "\")";
+			setter.accept(node, new Property("background-image", svgURL));
+			setter.accept(node, new Property("background-repeat", "no-repeat"));
+			setter.accept(node, new Property("background-position", "left center"));
+			setter.accept(node, new Property("background-size", String.format("%dpx %dpx", svg.getWidth_px(), svg.getHeight_px())));
 		}
 	}
 

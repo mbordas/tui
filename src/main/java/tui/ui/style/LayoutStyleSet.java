@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.style;
 
+import tui.ui.components.svg.SVG;
 import tui.utils.TUIColors;
 
 import java.awt.*;
@@ -22,6 +23,7 @@ import java.util.function.BiConsumer;
 
 public class LayoutStyleSet extends StyleSet {
 
+	private Icon m_icon = null;
 	private String m_backgroundColor = null;
 	private String m_borderStyle = null;
 	private String m_borderColor = null;
@@ -34,6 +36,17 @@ public class LayoutStyleSet extends StyleSet {
 	private Style.Margin m_margin = null;
 	private String m_width = null;
 	private String m_height = null;
+	private String m_display = null;
+
+	public LayoutStyleSet setDisplayInlineBlock() {
+		m_display = "inline-block";
+		return this;
+	}
+
+	public LayoutStyleSet setIcon(SVG svg) {
+		m_icon = new Icon(svg);
+		return this;
+	}
 
 	public LayoutStyleSet setNoBorder() {
 		m_borderStyle = "none";
@@ -129,6 +142,7 @@ public class LayoutStyleSet extends StyleSet {
 		setStylePropertyIfDefined(node, "cursor", m_cursor, setter);
 		setStylePropertyIfDefined(node, "width", m_width, setter);
 		setStylePropertyIfDefined(node, "height", m_height, setter);
+		setStylePropertyIfDefined(node, "display", m_display, setter);
 
 		if(m_margin != null) {
 			setStylePropertyIfDefined(node, "margin", String.format("%dpx %dpx %dpx %dpx",
@@ -137,6 +151,9 @@ public class LayoutStyleSet extends StyleSet {
 		if(m_padding != null) {
 			setStylePropertyIfDefined(node, "padding", String.format("%dpx %dpx %dpx %dpx",
 					m_padding.top_px(), m_padding.right_px(), m_padding.bottom_px(), m_padding.left_px()), setter);
+		}
+		if(m_icon != null) {
+			m_icon.applyStyle(node, setter);
 		}
 	}
 

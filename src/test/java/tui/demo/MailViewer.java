@@ -71,7 +71,7 @@ public class MailViewer {
 			header.set(1, 0, new Paragraph().appendBold("Date: ").appendNormal(email.date));
 			header.set(2, 0, new Paragraph().appendBold("Content:"));
 			result.set(0, 0, header);
-			result.set(1, 0, new Paragraph(email.content).withBorder(true));
+			result.set(1, 0, new Paragraph(email.content)).customStyle().setBorderWidth_px(1);
 			return result.toJsonMap();
 		});
 		backend.start();

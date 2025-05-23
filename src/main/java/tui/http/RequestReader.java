@@ -140,6 +140,11 @@ public class RequestReader {
 		return formatter.parse(yyyMMdd_HHmm);
 	}
 
+	public static Date parseDay(String yyyMMdd_HHmm, Locale locale) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", locale);
+		return formatter.parse(yyyMMdd_HHmm);
+	}
+
 	public boolean getCheckboxParameter(String key) {
 		final Boolean value = getCheckboxParameter(key, null);
 		if(value == null) {

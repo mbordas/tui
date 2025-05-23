@@ -17,6 +17,8 @@ package tui.ui.components;
 
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
+import tui.ui.components.svg.SVG;
+import tui.ui.components.svg.SVGLine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,15 @@ public class DownloadButton extends UIComponent {
 		m_label = label;
 		m_target = target;
 		m_defaultFileName = defaultFileName;
+	}
+
+	public static SVG buildIcon() {
+		final SVG result = new SVG(16, 16);
+		result.add(new SVGLine(10, 5, 10, 15)).withStrokeWidth(1); // |
+		result.add(new SVGLine(10, 15, 5, 10)).withStrokeWidth(1); // \
+		result.add(new SVGLine(10, 15, 15, 10)).withStrokeWidth(1); // /
+		result.add(new SVGLine(5, 15, 15, 15)).withStrokeWidth(2); // _
+		return result;
 	}
 
 	public DownloadButton setParameter(String name, String value) {

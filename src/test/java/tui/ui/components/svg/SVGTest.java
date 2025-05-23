@@ -39,6 +39,17 @@ public class SVGTest extends TestWithBackend {
 	private static final Logger LOG = LoggerFactory.getLogger(SVGTest.class);
 
 	@Test
+	public void toURLForCSS() {
+		final SVG svg = new SVG(16, 16);
+		svg.add(new SVGRectangle(0, 1, 2, 3))
+				.withFillColor(Color.BLUE);
+
+		assertEquals("""
+						data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect x='0' y='1' width='2' height='3' rx='0' ry='0' style='stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%230000ff;fill-opacity:1.00;'/></svg>""",
+				svg.toURLForCSS());
+	}
+
+	@Test
 	public void oneRectangle() {
 		final SVG svg = new SVG(20, 20);
 		svg.add(new SVGRectangle(5, 10, 15, 20));

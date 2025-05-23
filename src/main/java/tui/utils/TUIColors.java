@@ -32,6 +32,10 @@ public class TUIColors {
 		public Color toRGB() {
 			return TUIColors.toRGB(this);
 		}
+
+		public ColorHSL lighter(int percent) {
+			return new ColorHSL(hue, saturation, lightness + percent * (100 - lightness) / 100);
+		}
 	}
 
 	/**
