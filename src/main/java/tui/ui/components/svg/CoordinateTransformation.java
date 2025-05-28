@@ -71,6 +71,10 @@ public class CoordinateTransformation {
 		return new Range(min, max);
 	}
 
+	public static Range getRange(Range range, double value) {
+		return new Range(Math.min(range.min, value), Math.max(range.max, value));
+	}
+
 	public static Range getUnion(Range rangeA, Range rangeB) {
 		double min = Math.min(rangeA.min(), rangeB.min());
 		double max = Math.max(rangeA.max(), rangeB.max());
