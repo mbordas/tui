@@ -29,6 +29,17 @@ import static org.junit.Assert.assertEquals;
 public class ParagraphTest {
 
 	@Test
+	public void setTextWithoutArgsShouldNotInterpretFormat() {
+		new Paragraph.Text("rate = 50%"); // should not throw exception
+	}
+
+	@Test
+	public void setTextWithFormat() {
+		final Paragraph.Text text = new Paragraph.Text("rate = %.0f%%", 50.23);
+		assertEquals("rate = 50%", text.toJsonMap().getAttribute(Paragraph.Text.JSON_ATTRIBUTE_CONTENT));
+	}
+
+	@Test
 	public void htmlMultiLine() {
 		final Paragraph paragraph = new Paragraph("""
 				Multi-line

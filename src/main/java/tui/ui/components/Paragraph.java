@@ -47,7 +47,11 @@ public class Paragraph extends UIRefreshableComponent {
 		private final String m_text;
 
 		public Text(String format, Object... args) {
-			m_text = String.format(format, args);
+			if(args.length == 0) {
+				m_text = format;
+			} else {
+				m_text = String.format(format, args);
+			}
 		}
 
 		@Override
