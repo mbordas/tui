@@ -42,24 +42,34 @@ public abstract class StyleSet {
 	}
 
 	public void apply(HTMLNode node) {
-		final BiConsumer<HTMLNode, Property> setter = (htmlNode, property) -> htmlNode.setStyleProperty(property.name, property.value);
+		final BiConsumer<HTMLNode, Property> setter = (htmlNode, property)
+				-> htmlNode.setStyleProperty(property.name, replaceDoubleQuotesWithSimpleQuotes(property.value));
 		apply(node, setter);
 		for(Map.Entry<String, String> overrideEntry : m_overriddenProperties.entrySet()) {
-			setStylePropertyIfDefined(node, overrideEntry.getKey(), overrideEntry.getValue(), setter);
+			setStylePropertyIfDefined(node, overrideEntry.getKey(), replaceDoubleQuotesWithSimpleQuotes(overrideEntry.getValue()), setter);
 		}
 	}
 
 	public void apply(JsonMap node) {
-		final BiConsumer<JsonMap, Property> setter = (map, property) -> map.setStyleProperty(property.name, property.value);
+		final BiConsumer<JsonMap, Property> setter = (map, property)
+				-> map.setStyleProperty(property.name, replaceDoubleQuotesWithSimpleQuotes(property.value));
 		apply(node, setter);
 		for(Map.Entry<String, String> overrideEntry : m_overriddenProperties.entrySet()) {
-			setStylePropertyIfDefined(node, overrideEntry.getKey(), overrideEntry.getValue(), setter);
+			setStylePropertyIfDefined(node, overrideEntry.getKey(), replaceDoubleQuotesWithSimpleQuotes(overrideEntry.getValue()), setter);
 		}
+	}
+
+	/**
+	 * Adapts the <code>styleValue</code>, which is supposed to use double quotes for CSS, into HTML or Json format.
+	 */
+	private static String replaceDoubleQuotesWithSimpleQuotes(String styleValue) {
+		final String simpleQuotesEscaped = styleValue.replaceAll("'", "\\\\'");
+		return simpleQuotesEscaped.replaceAll("\"", "'");
 	}
 
 	record Icon(SVG svg) {
 		public <T> void applyStyle(T node, BiConsumer<T, Property> setter) {
-			String svgURL = "url(\"" + svg.toURLForCSS() + "\")";
+			String svgURL = "url(\"" + svg.toURLForCSS() + "\")"; // URL should use '"' for CSS
 			setter.accept(node, new Property("background-image", svgURL));
 			setter.accept(node, new Property("background-repeat", "no-repeat"));
 			setter.accept(node, new Property("background-position", "left center"));
