@@ -36,7 +36,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -103,7 +105,12 @@ public class Axis {
 		return result;
 	}
 
-	public static void drawYAxisWithArrow(SVG svg, CoordinateTransformation.Range yRange, SVGPoint axisStart,
+	/**
+	 * Draws Y-axis and returns the y coordinates of the labelled ticks, relative to <code>axisStart</code>.
+	 *
+	 * @return The y coordinates of each axis label, expressed as pixels relative to <code>axisStart</code>.
+	 */
+	public static Set<Integer> drawYAxisWithArrow(SVG svg, CoordinateTransformation.Range yRange, SVGPoint axisStart,
 			long height_px, Color color, BiFunction<Double, GridFactor, String> formatter) {
 		final SVGMarker endMarker = svg.addMarker(UIGraph.buildArrow(color));
 
@@ -118,12 +125,16 @@ public class Axis {
 				yRange.min(),
 				yRange.max(), 0, height_px);
 
+		final Set<Integer> result = new TreeSet<>();
 		for(Map.Entry<Double, String> entry : yLabels.entrySet()) {
 			int y_px = (int) yTransform_px.transform(entry.getKey());
+			result.add(-y_px);
 			svg.add(new SVGPath(axisStart.x() - 4, axisStart.y() - y_px).lineRelative(8, 0).withStrokeColor(color));
 			svg.add(new SVGText(axisStart.x() - 10, axisStart.y() - y_px, entry.getValue(), SVGText.Anchor.END)
 					.withStrokeColor(color).withFillColor(color));
 		}
+
+		return result;
 	}
 
 	public static void drawYBooleanAxis(SVG svg, SVGPoint axisStart, int height_px, Color color,
