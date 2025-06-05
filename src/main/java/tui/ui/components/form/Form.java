@@ -22,7 +22,6 @@ import tui.html.HTMLNode;
 import tui.http.RequestReader;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
-import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.ui.components.UIComponent;
 import tui.ui.components.layout.Panel;
@@ -244,17 +243,21 @@ public class Form extends UIComponent {
 		return true;
 	}
 
-	public static JsonObject buildSuccessfulSubmissionResponse() {
+	public static JsonMap buildSuccessfulSubmissionResponse() {
+		return buildSuccessfulSubmissionResponse("form submitted");
+	}
+
+	public static JsonMap buildSuccessfulSubmissionResponse(String message) {
 		return new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
-				.setAttribute("message", "form submitted");
+				.setAttribute("message", message);
 	}
 
 	/**
 	 * @param parameters Parameters to send back to frontend. It will be used if the form is set to open a page after submission.
 	 *                   These parameters will be ignored when the form does not open page. See {@link #opensPage(String)}.
 	 */
-	public static JsonObject buildSuccessfulSubmissionResponse(Map<String, String> parameters) {
+	public static JsonMap buildSuccessfulSubmissionResponse(Map<String, String> parameters) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
 				.setAttribute("message", "form submitted");
@@ -265,7 +268,7 @@ public class Form extends UIComponent {
 		return result;
 	}
 
-	public static JsonObject buildFormUpdateSubmissionResponse(Form updatedForm) {
+	public static JsonMap buildFormUpdateSubmissionResponse(Form updatedForm) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
 				.setAttribute("message", "form submitted");
@@ -273,7 +276,7 @@ public class Form extends UIComponent {
 		return result;
 	}
 
-	public static JsonObject buildFailedSubmissionResponse(String message, Map<String, String> errorMessageByFieldName) {
+	public static JsonMap buildFailedSubmissionResponse(String message, Map<String, String> errorMessageByFieldName) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "nok")
 				.setAttribute("message", message);
