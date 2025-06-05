@@ -94,7 +94,7 @@ public class TUIDocsFirstSteps extends Page {
 		makingItInteractive.append(new CodeParagraph("""
 				final List<Item> allItems = new ArrayList<>();
 					for(int i = 0; i < 50; i++) {
-						allItems.add(new Item(String.format("I%%012d", (int) (Math.random() * 1_000_000_000.0)), TestUtils.getRandomCityName(),
+						allItems.add(new Item(String.format("I%012d", (int) (Math.random() * 1_000_000_000.0)), TestUtils.getRandomCityName(),
 							Math.random() * 10_000.0));
 					}"""));
 		makingItInteractive.appendParagraph(
@@ -110,7 +110,7 @@ public class TUIDocsFirstSteps extends Page {
 							.filter((item) -> nameContains.trim().isEmpty() || item.name.contains(nameContains))
 							.forEach((item) -> filteredTable.append(
 								Map.of("Reference", item.reference, "Name", item.name, "Price",
-									String.format("%%.2f €", item.price_Euro))));
+									String.format("%.2f €", item.price_Euro))));
 						return filteredTable.toJsonMap();
 					});"""));
 		makingItInteractive.appendParagraph("Our page is ready to run. Launch the main of the class ")
