@@ -285,9 +285,14 @@ public class Style {
 				    flex-direction: row;
 					justify-content: space-between;
 				}
-				.tui-panel-vertical {
+				.tui-panel-vertical_top {
 				    display: flex;
 				    flex-direction: column;
+				}
+				.tui-panel-vertical_center {
+					display: flex;
+				    flex-direction: column;
+				    justify-content: center;
 				}
 				
 				/* TABS */

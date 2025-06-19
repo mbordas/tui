@@ -132,6 +132,11 @@ public class LayoutStyleSet extends StyleSet {
 		return this;
 	}
 
+	public LayoutStyleSet setHeight_percent(int height_percent) {
+		m_height = String.format("%d%%", height_percent);
+		return this;
+	}
+
 	@Override
 	<T> void apply(T node, BiConsumer<T, Property> setter) {
 		setStylePropertyIfDefined(node, "background-color", m_backgroundColor, setter);

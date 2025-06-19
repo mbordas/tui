@@ -47,6 +47,8 @@ public class GridTest extends TestWithBackend {
 						  "tuid": %d,
 						  "rows": 2,
 						  "columns": 3,
+						  "rows-width": "auto auto ",
+						  "columns-width": "1fr 1fr 1fr ",
 						  "0_0": {
 						    "type": "paragraph",
 						    "tuid": %d,

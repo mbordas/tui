@@ -100,7 +100,7 @@ public class CodeParagraph extends Paragraph {
 		registerClassForColor(HTMLNode.class);
 		registerClassForColor(Grid.class, Layouts.class, Panel.class, TabbedFlow.class, VerticalFlow.class, VerticalScroll.class);
 		registerClassForColor(DownloadButton.class, Page.class, Image.class, NavButton.class, NavLink.class, Paragraph.class,
-				RefreshButtonTest.class, Section.class, Table.class, TableData.class, TablePicker.class);
+				Paragraph.Text.class, RefreshButtonTest.class, Section.class, Table.class, TableData.class, TablePicker.class);
 		registerClassForColor(Form.class, FormInput.class, FormInputCheckbox.class, FormInputDay.class, FormInputDayHHmm.class,
 				FormInputEmail.class, FormInputFile.class, FormInputNumber.class, FormInputPassword.class, FormInputRadio.class,
 				FormInputSearch.class, FormInputString.class, ModalForm.class, Search.class);

@@ -22,13 +22,9 @@ import tui.ui.components.Section;
 import tui.ui.components.layout.Panel;
 import tui.utils.TestUtils;
 
-import java.awt.*;
 import java.util.List;
 
 public class TUIDocsPanels extends Page {
-
-	public static final Color COLOR_CONTAINER = new Color(209, 22, 255);
-	public static final Color COLOR_ELEMENT = new Color(27, 155, 255);
 
 	public TUIDocsPanels() {
 		super("Panels", "panels.html");
@@ -42,63 +38,55 @@ public class TUIDocsPanels extends Page {
 				Different 'Align' options provide different ways to organize the elements inside the panel. The following examples show
 				how components are displayed in a panel depending on the panel's align option.""");
 		for(Panel.Align align : Panel.Align.values()) {
-			chapter.appendParagraph("Example with ").appendBold("align = " + align);
-			Panel panel = newPanel();
-			panel.append(newButton("1- button"));
-			panel.append(newButton("2- button"));
-			panel.append(newParagraph("3- " + TestUtils.LOREM_IPSUM.substring(0, 60)));
-			panel.append(newButton("4- button"));
-			panel.setAlign(align);
-			chapter.append(panel);
+			if(!align.name().startsWith("VERTICAL")) {
+				sectionAlignment.appendParagraph("Example with ").appendBold("align = " + align);
+				Panel panel = TUIDocsUtils.decorateContainer(new Panel());
+				panel.append(TUIDocsUtils.decorateElement(new RefreshButton("1- button")));
+				panel.append(TUIDocsUtils.decorateElement(new RefreshButton("2- button")));
+				panel.append(TUIDocsUtils.decorateElement(new Paragraph("3- " + TestUtils.LOREM_IPSUM.substring(0, 60))));
+				panel.append(TUIDocsUtils.decorateElement(new RefreshButton("4- button")));
+				panel.setAlign(align);
+				sectionAlignment.append(panel);
+			}
+		}
+
+		final Section verticalAlignment = sectionAlignment.createSubSection("Vertical alignment");
+		verticalAlignment.appendParagraph(
+				"The VERTICAL_x alignment values differ when the height of the panel is bigger than the heights of the components"
+						+ " it contains:");
+		for(Panel.Align align : Panel.Align.values()) {
+			if(align.name().startsWith("VERTICAL")) {
+				verticalAlignment.appendParagraph("Example with ").appendBold("align = " + align);
+				Panel panel = TUIDocsUtils.decorateContainer(new Panel());
+				panel.customStyle().setHeight_px(100);
+				panel.append(TUIDocsUtils.decorateElement(new RefreshButton("1- button")));
+				panel.append(TUIDocsUtils.decorateElement(new Paragraph("3- " + TestUtils.LOREM_IPSUM.substring(0, 60))));
+				panel.setAlign(align);
+				verticalAlignment.append(panel);
+			}
 		}
 
 		final Section sectionCombiningPanels = chapter.createSubSection("Combining panels");
 		sectionCombiningPanels.appendParagraph("A panel can also contains other panels, in order to combine layout structures:");
-		for(Panel.Align align : List.of(Panel.Align.STRETCH, Panel.Align.VERTICAL)) {
+		for(Panel.Align align : List.of(Panel.Align.STRETCH, Panel.Align.VERTICAL_CENTER)) {
 
 			sectionCombiningPanels.appendParagraph("With align=%s for main container panel", align.name());
 
-			final Panel mainPanel = sectionCombiningPanels.append(newPanel());
+			final Panel mainPanel = sectionCombiningPanels.append(TUIDocsUtils.decorateContainer(new Panel()));
 			mainPanel.setAlign(align);
 
-			final Panel panel1 = mainPanel.append(newPanel());
+			final Panel panel1 = mainPanel.append(TUIDocsUtils.decorateContainer(new Panel()));
 			panel1.setAlign(Panel.Align.LEFT);
 			panel1.customStyle().setWidth_px(300);
-			panel1.append(newButton("1.1- button"));
-			panel1.append(newParagraph("1.2- text"));
-			final Panel panel2 = mainPanel.append(newPanel());
+			panel1.append(TUIDocsUtils.decorateElement(new RefreshButton("1.1- button")));
+			panel1.append(TUIDocsUtils.decorateElement(new Paragraph("1.2- text")));
+			final Panel panel2 = mainPanel.append(TUIDocsUtils.decorateContainer(new Panel()));
 			panel2.setAlign(Panel.Align.RIGHT);
 			panel2.customStyle().setWidth_px(500);
-			panel2.append(newButton("2.1- button"));
-			panel2.append(newParagraph("2.2- text"));
+			panel2.append(TUIDocsUtils.decorateElement(new RefreshButton("2.1- button")));
+			panel2.append(TUIDocsUtils.decorateElement(new Paragraph("2.2- text")));
 		}
 
 	}
 
-	private Panel newPanel() {
-		final Panel result = new Panel();
-		result.customStyle()
-				.setBorderColor(COLOR_CONTAINER)
-				.setBorderWidth_px(2)
-				.setPadding(2, 2, 2, 2);
-		return result;
-	}
-
-	private Paragraph newParagraph(String text) {
-		final Paragraph result = new Paragraph(text);
-		result.customStyle()
-				.setBorderColor(COLOR_ELEMENT)
-				.setBorderWidth_px(2)
-				.setPadding(2, 2, 2, 2);
-		return result;
-	}
-
-	private RefreshButton newButton(String label) {
-		final RefreshButton result = new RefreshButton(label);
-		result.customStyle()
-				.setBorderColor(COLOR_ELEMENT)
-				.setBorderWidth_px(2)
-				.setPadding(2, 2, 2, 2);
-		return result;
-	}
 }

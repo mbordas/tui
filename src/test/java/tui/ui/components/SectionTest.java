@@ -38,7 +38,7 @@ public class SectionTest extends TestWithBackend {
 	private Context withDefaultPage() {
 		final Page page = new Page("SectionTest", "/index");
 		final Panel panel = page.append(new Panel());
-		panel.setAlign(Panel.Align.VERTICAL);
+		panel.setAlign(Panel.Align.VERTICAL_TOP);
 		panel.append(new Section("Section 1"))
 				.appendParagraph("Paragraph in section 1");
 		panel.setSource("/panel");
@@ -57,7 +57,7 @@ public class SectionTest extends TestWithBackend {
 		final Context context = withDefaultPage();
 
 		registerWebService(context.panelSource, (uri, request, response) -> {
-			Panel panel1 = new Panel().setAlign(Panel.Align.VERTICAL);
+			Panel panel1 = new Panel().setAlign(Panel.Align.VERTICAL_TOP);
 			panel1.append(new Section("Section 1 updated"))
 					.appendParagraph("Paragraph updated in section 1.");
 			panel1.append(new Section("Section 2 updated"))
@@ -86,7 +86,7 @@ public class SectionTest extends TestWithBackend {
 		final Context context = withDefaultPage();
 
 		registerWebService(context.panelSource, (uri, request, response) -> {
-			final Panel panel = new Panel().setAlign(Panel.Align.VERTICAL);
+			final Panel panel = new Panel().setAlign(Panel.Align.VERTICAL_TOP);
 			panel.append(new Section("Section 1"))
 					.appendParagraph("Paragraph updated in section 1");
 			final Section section2 = panel.append(new Section("Section 2"));

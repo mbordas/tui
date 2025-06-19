@@ -344,12 +344,8 @@ function hideFetchError(element) {
 function updateGrid(gridElement, json, idMap) {
     const rows = parseInt(json['rows']);
     const columns = parseInt(json['columns']);
-    gridElement.style.gridTemplateRows = '1fr '.repeat(rows);
-    if(json.hasOwnProperty('firstColumnWidth_px')) {
-        gridElement.style.gridTemplateColumns = '' + json['firstColumnWidth_px'] + 'px ' + '1fr '.repeat(columns - 1);
-    } else {
-        gridElement.style.gridTemplateColumns = '1fr '.repeat(columns);
-    }
+    gridElement.style.gridTemplateRows = json['rows-width'];
+    gridElement.style.gridTemplateColumns = json['columns-width'];
     gridElement.innerHTML = '';
 
     for(var row = 0; row < rows; row++) {

@@ -28,16 +28,34 @@ public class Grid extends UIRefreshableComponent {
 	public static final String HTML_CLASS = "tui-grid";
 
 	private final UIComponent[][] m_components;
-	private Integer m_firstColumnWidth_px = null;
+	private final String[] m_rowsHeight;
+	private final String[] m_columnsWidth;
 
 	public Grid(int rows, int columns) {
 		assert rows > 0;
 		assert columns > 0;
 		m_components = new UIComponent[rows][columns];
+		m_rowsHeight = new String[rows];
+		m_columnsWidth = new String[columns];
 	}
 
-	public Grid setFirstColumnWidth_px(int width_px) {
-		m_firstColumnWidth_px = width_px;
+	public Grid setRowHeightAuto(int rowIndex) {
+		m_rowsHeight[rowIndex] = "auto";
+		return this;
+	}
+
+	public Grid setColumnWidth_px(int columnIndex, int width_px) {
+		m_columnsWidth[columnIndex] = String.format("%dpx", width_px);
+		return this;
+	}
+
+	public Grid setColumnWidthAuto(int columnIndex) {
+		m_columnsWidth[columnIndex] = "auto";
+		return this;
+	}
+
+	public Grid setColumnWidthMaxContent(int columnIndex) {
+		m_columnsWidth[columnIndex] = "min-content";
 		return this;
 	}
 
@@ -53,7 +71,7 @@ public class Grid extends UIRefreshableComponent {
 		final HTMLNode gridElement = containedElement.element();
 		gridElement.setClass(HTML_CLASS);
 
-		gridElement.setStyleProperty("grid-template-rows", "1fr ".repeat(m_components.length));
+		gridElement.setStyleProperty("grid-template-rows", computeGridTemplateRows());
 		gridElement.setStyleProperty("grid-template-columns", computeGridTemplateColumns());
 
 		for(final UIComponent[] row : m_components) {
@@ -71,12 +89,28 @@ public class Grid extends UIRefreshableComponent {
 		return containedElement.getHigherNode();
 	}
 
-	String computeGridTemplateColumns() {
-		if(m_firstColumnWidth_px != null) {
-			return String.format("%dpx ", m_firstColumnWidth_px) + "1fr ".repeat(m_components[0].length - 1);
-		} else {
-			return "1fr ".repeat(m_components[0].length);
+	String computeGridTemplateRows() {
+		final StringBuilder result = new StringBuilder();
+		for(String height : m_rowsHeight) {
+			if(height == null) {
+				result.append("auto ");
+			} else {
+				result.append(height).append(" ");
+			}
 		}
+		return result.toString();
+	}
+
+	String computeGridTemplateColumns() {
+		final StringBuilder result = new StringBuilder();
+		for(String width : m_columnsWidth) {
+			if(width == null) {
+				result.append("1fr ");
+			} else {
+				result.append(width).append(" ");
+			}
+		}
+		return result.toString();
 	}
 
 	@Override
@@ -84,9 +118,8 @@ public class Grid extends UIRefreshableComponent {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("rows", m_components.length);
 		result.setAttribute("columns", m_components[0].length);
-		if(m_firstColumnWidth_px != null) {
-			result.setAttribute("firstColumnWidth_px", m_firstColumnWidth_px);
-		}
+		result.setAttribute("rows-width", computeGridTemplateRows());
+		result.setAttribute("columns-width", computeGridTemplateColumns());
 		for(int row = 0; row < m_components.length; row++) {
 			for(int column = 0; column < m_components[0].length; column++) {
 				final UIComponent child = m_components[row][column];

@@ -48,7 +48,7 @@ public class NavigationWithTablePicker {
 		final Search search = new Search("Search in subject", "Subject contains", "subjectContains");
 		page.append(search);
 
-		final Grid mailNavigationGrid = new Grid(1, 2).setFirstColumnWidth_px(200);
+		final Grid mailNavigationGrid = new Grid(1, 2).setColumnWidth_px(0, 200);
 
 		final TablePicker mailSelector = new TablePicker("Inbox", List.of("id", "date", "subject"));
 		mailSelector.setSource("/email/list");

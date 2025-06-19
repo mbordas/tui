@@ -32,7 +32,7 @@ public class Panel extends UIRefreshableComponent {
 	public static final String JSON_TYPE = "panel";
 
 	public enum Align {
-		LEFT, CENTER, RIGHT, STRETCH, VERTICAL;
+		LEFT, CENTER, RIGHT, STRETCH, VERTICAL_TOP, VERTICAL_CENTER;
 
 		public String getHTMLClass() {
 			return "tui-panel-" + name().toLowerCase();
@@ -78,7 +78,7 @@ public class Panel extends UIRefreshableComponent {
 		final HTMLNode node = containedElement.element();
 		for(UIComponent component : getContent()) {
 			final HTMLNode componentNode = component.toHTMLNode();
-			if(m_align != Align.VERTICAL) {
+			if(m_align != Align.VERTICAL_TOP && m_align != Align.VERTICAL_CENTER) {
 				componentNode.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "horizontal-spacing"));
 			}
 			node.append(componentNode);
