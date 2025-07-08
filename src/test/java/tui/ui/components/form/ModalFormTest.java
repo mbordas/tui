@@ -16,14 +16,53 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.form;
 
 import org.junit.Test;
+import tui.http.RequestReader;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
+import tui.ui.components.layout.Panel;
+import tui.utils.TestUtils;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 
 public class ModalFormTest extends TestWithBackend {
+
+	@Test
+	public void refresh() {
+		final String openButtonLabel = "Open form";
+		final String formTitle = "Form title";
+		final String inputStringName = "string";
+
+		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
+
+		try(final Browser browser = startAndBrowse(updatablePage.page()).browser()) {
+
+			registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> {
+				final Panel panel = new Panel();
+				final ModalForm form = new ModalForm(formTitle, openButtonLabel, "/form");
+				form.createInputString("String", inputStringName);
+				panel.append(form);
+				return panel.toJsonMap();
+			});
+			final AtomicReference<RequestReader> referenceToReader = new AtomicReference<>();
+			registerWebService("/form", (uri, request, response) -> {
+				referenceToReader.set(new RequestReader(request));
+				return Form.buildSuccessfulSubmissionResponse();
+			});
+
+			browser.clickRefreshButton(updatablePage.button().getLabel());
+			// panel then should contain the ModalForm
+			browser.openModalForm(openButtonLabel);
+			browser.typeFormField(formTitle, inputStringName, "my string");
+			browser.submitForm(formTitle);
+
+			final RequestReader reader = referenceToReader.get();
+			assertEquals("my string", reader.getStringParameter(inputStringName));
+		}
+	}
 
 	@Test
 	public void opensPage() {

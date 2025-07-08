@@ -265,59 +265,9 @@ function createComponent(json, idMap) {
         result.setAttribute('src', json['source']);
         result.setAttribute('alt', json['text']);
     } else if(type == 'form') {
-        // Global attributes
-        result = document.createElement('form');
-        result.setAttribute('id', json['tuid']);
-        result.classList.add('tui-form');
-        instrumentWithErrorMessage(result);
-        result.setAttribute('action', json['target']);
-        result.setAttribute('method', 'post');
-        result.setAttribute('enctype', 'multipart/form-data');
-        if(json['opensPageSource'] != null) {
-            result.setAttribute('"tui-opens-page', json['opensPageSource']);
-        }
-        if(json['refreshListeners'] != null) {
-            result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
-        }
-
-        // Fields
-        const fieldset = document.createElement('fieldset');
-        result.appendChild(fieldset);
-        const legend = document.createElement('legend');
-        legend.textContent = json['title'];
-        fieldset.appendChild(legend);
-        const inputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
-        fieldset.appendChild(inputsDiv);
-        const formTUID = result.getAttribute('tuid');
-        json['inputs'].forEach(function(input) {
-            createFormInput(inputsDiv, input, formTUID);
-        });
-
-        // Message
-        const messageDiv = document.createElement('div');
-        messageDiv.setAttribute('id', 'form-message-' + json['tuid']);
-        messageDiv.classList.add('tui-form-message');
-        messageDiv.textContent = ' ';
-        fieldset.appendChild(messageDiv);
-
-        // Footer
-        const footerPanelDiv = createElementWithContainer('div', 'tui-container-panel').container;
-        fieldset.appendChild(footerPanelDiv);
-        footerPanelDiv.classList.add('tui-panel');
-        footerPanelDiv.classList.add('tui-panel-right');
-        footerPanelDiv.classList.add('tui-form-footer');
-        // Button reset
-        const buttonReset = document.createElement('button');
-        buttonReset.setAttribute('type', 'reset');
-        buttonReset.classList.add('tui-form-reset-button');
-        buttonReset.textContent = 'Reset';
-        footerPanelDiv.appendChild(buttonReset);
-        // Button submit
-        const buttonSubmit = document.createElement('button');
-        buttonSubmit.setAttribute('type', 'submit');
-        buttonSubmit.textContent = json['submitLabel'];
-        footerPanelDiv.appendChild(buttonSubmit);
-        instrumentForm(result);
+        result = createForm(json, idMap);
+    } else if(type == 'modalform') {
+        result = createModalForm(json, idMap);
     } else {
         result = null;
     }
@@ -651,6 +601,108 @@ function instrumentSearchForms() {
 
 // FORMS
 
+function createForm(json, idMap) {
+    var result = createFormBase(json, idMap); // Global attributes
+    result.classList.add('tui-form');
+
+    createFieldSet(result, json, false);
+    instrumentForm(result);
+
+    return result;
+}
+
+function createModalForm(json, idMap) {
+    var result = document.createElement('div');
+    result.classList.add('tui-modal-form');
+
+    // Button open
+    const buttonOpen = document.createElement('button');
+    buttonOpen.classList.add('tui-modal-form-open-button');
+    buttonOpen.textContent = json['openButtonLabel'];
+    result.appendChild(buttonOpen);
+
+    // Dialog
+    const dialog = document.createElement('dialog');
+    result.appendChild(dialog);
+    dialog.classList.add('modal');
+
+    var form = createFormBase(json, idMap); // Global attributes
+    dialog.appendChild(form);
+    createFieldSet(form, json, true);
+
+    instrumentModalForm(result);
+
+    return result;
+}
+
+function createFormBase(json, idMap) {
+    var result = document.createElement('form');
+    result.setAttribute('id', json['tuid']);
+    instrumentWithErrorMessage(result);
+    result.setAttribute('action', json['target']);
+    result.setAttribute('method', 'post');
+    result.setAttribute('enctype', 'multipart/form-data');
+    if(json['opensPageSource'] != null) {
+        result.setAttribute('"tui-opens-page', json['opensPageSource']);
+    }
+    if(json['refreshListeners'] != null) {
+        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
+    }
+    return result;
+}
+
+function createFieldSet(form, json, isModal) {
+
+    const fieldset = document.createElement('fieldset');
+    form.appendChild(fieldset);
+    const legend = document.createElement('legend');
+    legend.textContent = json['title'];
+    fieldset.appendChild(legend);
+    const inputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
+    fieldset.appendChild(inputsDiv);
+    const formTUID = form.getAttribute('tuid');
+
+    // Fields
+    json['inputs'].forEach(function(input) {
+        createFormInput(inputsDiv, input, formTUID);
+    });
+
+    // Message
+    const messageDiv = document.createElement('div');
+    messageDiv.setAttribute('id', 'form-message-' + json['tuid']);
+    messageDiv.classList.add('tui-form-message');
+    messageDiv.textContent = ' ';
+    fieldset.appendChild(messageDiv);
+
+    // Footer
+    const footerPanelDiv = createElementWithContainer('div', 'tui-container-panel').container;
+    fieldset.appendChild(footerPanelDiv);
+    footerPanelDiv.classList.add('tui-panel');
+    footerPanelDiv.classList.add('tui-panel-right');
+    footerPanelDiv.classList.add('tui-form-footer');
+
+    if(isModal) {
+        // Button close
+        const buttonClose = document.createElement('button');
+        buttonClose.setAttribute('type', 'button');
+        buttonClose.classList.add('tui-form-close-button');
+        buttonClose.textContent = 'Close';
+        footerPanelDiv.appendChild(buttonClose);
+    }
+
+    // Button reset
+    const buttonReset = document.createElement('button');
+    buttonReset.setAttribute('type', 'reset');
+    buttonReset.classList.add('tui-form-reset-button');
+    buttonReset.textContent = 'Reset';
+    footerPanelDiv.appendChild(buttonReset);
+    // Button submit
+    const buttonSubmit = document.createElement('button');
+    buttonSubmit.setAttribute('type', 'submit');
+    buttonSubmit.textContent = json['submitLabel'];
+    footerPanelDiv.appendChild(buttonSubmit);
+}
+
 function instrumentForms() {
     const forms = document.querySelectorAll('.tui-form');
     forms.forEach(function(form, i) {
@@ -700,51 +752,54 @@ function instrumentForm(formElement) {
 function instrumentModalForms() {
     const modalFormsContainers = document.querySelectorAll('.tui-modal-form');
     modalFormsContainers.forEach(function(formContainer, i) {
-        const openButton = formContainer.querySelector('button');
-        const dialog = formContainer.querySelector('dialog');
-        const form = dialog.querySelector('form');
-        const closeButton = form.querySelector('.tui-form-close-button');
-        const submitButton = form.querySelector('.tui-form-submit-button');
+        instrumentModalForm(formContainer);
+    });
+}
 
-        openButton.addEventListener('click', () => {
-            dialog.showModal();
-        });
-        closeButton.addEventListener('click', () => {
-            hideSuccessMessage(form);
-            dialog.close();
-        });
-        form.addEventListener('reset', e => {
-            form.reset();
-            completeFormReset(form);
-        });
-        form.addEventListener('submit', e => {
-            e.preventDefault();
-            const url = form.action;
-            hideFetchErrorInElement(form);
-            hideSuccessMessage(form);
-            startFormPending(form);
-            fetch(url, {
-                    method: form.method,
-                    enctype: 'multipart/form-data',
-                    body: prepareFormData(form)
-                })
-                .then(response => {
-                    if(!response.ok) {
-                        throw new Error(`HTTP error, status = ${response.status}`);
-                    }
-                    hideFetchErrorInElement(form);
-                    stopFormPending(form);
-                    return response.json();
-                })
-                .then((json) => {
-                    onFormResponse(form, json);
-                })
-                .catch(error => {
-                    stopFormPending(form);
-                    showFetchErrorInElement(form, error);
-                });
-        });
+function instrumentModalForm(formContainer) {
+    const openButton = formContainer.querySelector('button');
+    const dialog = formContainer.querySelector('dialog');
+    const form = dialog.querySelector('form');
+    const closeButton = form.querySelector('.tui-form-close-button');
+    const submitButton = form.querySelector('.tui-form-submit-button');
 
+    openButton.addEventListener('click', () => {
+        dialog.showModal();
+    });
+    closeButton.addEventListener('click', () => {
+        hideSuccessMessage(form);
+        dialog.close();
+    });
+    form.addEventListener('reset', e => {
+        form.reset();
+        completeFormReset(form);
+    });
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const url = form.action;
+        hideFetchErrorInElement(form);
+        hideSuccessMessage(form);
+        startFormPending(form);
+        fetch(url, {
+                method: form.method,
+                enctype: 'multipart/form-data',
+                body: prepareFormData(form)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    throw new Error(`HTTP error, status = ${response.status}`);
+                }
+                hideFetchErrorInElement(form);
+                stopFormPending(form);
+                return response.json();
+            })
+            .then((json) => {
+                onFormResponse(form, json);
+            })
+            .catch(error => {
+                stopFormPending(form);
+                showFetchErrorInElement(form, error);
+            });
     });
 }
 

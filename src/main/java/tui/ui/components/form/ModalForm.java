@@ -19,6 +19,7 @@ import tui.html.HTMLConstants;
 import tui.html.HTMLFetchErrorMessage;
 import tui.html.HTMLNode;
 import tui.http.RequestReader;
+import tui.json.JsonMap;
 import tui.ui.components.UIComponent;
 
 import java.util.Collection;
@@ -26,6 +27,10 @@ import java.util.Collection;
 public class ModalForm extends Form {
 
 	public static final String HTML_CLASS = "tui-modal-form";
+	public static final String HTML_CLASS_MODAL_FORM_OPEN_BUTTON = "tui-modal-form-open-button";
+
+	public static final String JSON_TYPE = "modalform";
+	public static final String JSON_OPEN_BUTTON_LABEL = "openButtonLabel";
 
 	private final String m_openButtonLabel;
 
@@ -44,7 +49,7 @@ public class ModalForm extends Form {
 				.setAttribute("class", HTML_CLASS);
 
 		result.createChild("button")
-				.setAttribute("class", "tui-modal-form-open-button")
+				.setAttribute("class", HTML_CLASS_MODAL_FORM_OPEN_BUTTON)
 				.setText(getOpenButtonLabel());
 
 		final HTMLNode dialog = result.createChild("dialog")
@@ -68,6 +73,14 @@ public class ModalForm extends Form {
 
 		createFieldSet(htmlForm, true);
 
+		return result;
+	}
+
+	@Override
+	public JsonMap toJsonMap() {
+		final JsonMap result = super.toJsonMap();
+		result.setType(JSON_TYPE);
+		result.setAttribute(JSON_OPEN_BUTTON_LABEL, m_openButtonLabel);
 		return result;
 	}
 }
