@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import tui.http.RequestReader;
@@ -22,6 +23,8 @@ import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
+import tui.ui.components.RefreshButton;
+import tui.ui.components.layout.Panel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +39,57 @@ import static org.junit.Assert.assertTrue;
 public class FormTest extends TestWithBackend {
 
 	@Test
+	public void refresh() {
+		final String panelSource = "/panel";
+		final String refreshButtonLabel = "Refresh";
+		final String formTitle = "Form title";
+		final String inputStringName = "string";
+
+		try(final Browser browser = createPageWithEmptyPanelToRefresh(panelSource, refreshButtonLabel)) {
+			final AtomicReference<RequestReader> referenceToReader = new AtomicReference<>();
+
+			registerWebServiceToRefreshPanelWithForm(panelSource, formTitle, inputStringName);
+			registerWebServiceForFormSubmission(referenceToReader);
+
+			// Refreshing the form (frontend javascript)
+			browser.clickRefreshButton(refreshButtonLabel); // should fill the panel with the form given in json
+
+			// Testing the form
+			browser.typeFormField(formTitle, inputStringName, "my string");
+			browser.submitForm(formTitle);
+
+			final RequestReader reader = referenceToReader.get();
+			assertEquals("my string", reader.getStringParameter(inputStringName));
+		}
+	}
+
+	private void registerWebServiceForFormSubmission(AtomicReference<RequestReader> referenceToReader) {
+		registerWebService("/form", (uri, request, response) -> {
+			referenceToReader.set(new RequestReader(request));
+			return Form.buildSuccessfulSubmissionResponse();
+		});
+	}
+
+	private void registerWebServiceToRefreshPanelWithForm(String panelSource, String formTitle, String inputStringName) {
+		registerWebService(panelSource, (uri, request, response) -> {
+			final Panel result = new Panel(Panel.Align.CENTER);
+			final Form form = result.append(new Form(formTitle, "/form"));
+			form.createInputString("String", inputStringName);
+			return result.toJsonMap();
+		});
+	}
+
+	private @NotNull Browser createPageWithEmptyPanelToRefresh(String panelSource, String refreshButtonLabel) {
+		final Page page = new Page("Form refresh", "/index");
+		final Panel panel = page.append(new Panel());
+		panel.setSource(panelSource);
+		final RefreshButton button = panel.append(new RefreshButton(refreshButtonLabel));
+		button.connectListener(panel);
+
+		return startAndBrowse(page).browser();
+	}
+
+	@Test
 	public void usesSessionParameters() {
 		final Page page = new Page("FormTest", "/index");
 		page.setSessionParameter("sessionId", "mysessionid");
@@ -44,10 +98,7 @@ public class FormTest extends TestWithBackend {
 		final Browser browser = startAndBrowse(page).browser();
 
 		final AtomicReference<RequestReader> reader = new AtomicReference<>();
-		registerWebService("/form", (uri, request, response) -> {
-			reader.set(new RequestReader(request));
-			return Form.buildSuccessfulSubmissionResponse();
-		});
+		registerWebServiceForFormSubmission(reader);
 
 		browser.submitForm("Test form");
 

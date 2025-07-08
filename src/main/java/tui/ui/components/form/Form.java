@@ -179,8 +179,7 @@ public class Form extends UIComponent {
 		result.createChild("div")
 				.setAttribute("id", String.format("form-message-%s", getTUID()))
 				.addClass("tui-form-message")
-				.setText(" ") // Prevents the following elements to be created under this div
-				.setStyleProperty("width", "100%");
+				.setText(" "); // Prevents the following elements to be created under this div
 
 		final HTMLNode formFooter = result.append(new Panel(Panel.Align.RIGHT).toHTMLNode());
 		formFooter.addClass("tui-form-footer");
@@ -224,7 +223,9 @@ public class Form extends UIComponent {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute("title", m_title);
 		result.setAttribute("target", m_target);
-		result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));
+		if(!m_refreshListeners.isEmpty()) {
+			result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));
+		}
 		result.createArray("inputs", m_inputs, FormInput::toJsonObject);
 		result.setAttribute("submitLabel", m_submitLabel);
 		if(m_opensPageSource != null) {

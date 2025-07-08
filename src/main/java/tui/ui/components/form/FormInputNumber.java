@@ -23,4 +23,8 @@ public class FormInputNumber extends FormInput {
 	public FormInputNumber(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);
 	}
+
+	public void setInitialValue(String value) {
+		m_initialValue = value;
+	}
 }

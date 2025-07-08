@@ -264,6 +264,60 @@ function createComponent(json, idMap) {
         result = document.createElement('img');
         result.setAttribute('src', json['source']);
         result.setAttribute('alt', json['text']);
+    } else if(type == 'form') {
+        // Global attributes
+        result = document.createElement('form');
+        result.setAttribute('id', json['tuid']);
+        result.classList.add('tui-form');
+        instrumentWithErrorMessage(result);
+        result.setAttribute('action', json['target']);
+        result.setAttribute('method', 'post');
+        result.setAttribute('enctype', 'multipart/form-data');
+        if(json['opensPageSource'] != null) {
+            result.setAttribute('"tui-opens-page', json['opensPageSource']);
+        }
+        if(json['refreshListeners'] != null) {
+            result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
+        }
+
+        // Fields
+        const fieldset = document.createElement('fieldset');
+        result.appendChild(fieldset);
+        const legend = document.createElement('legend');
+        legend.textContent = json['title'];
+        fieldset.appendChild(legend);
+        const inputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
+        fieldset.appendChild(inputsDiv);
+        const formTUID = result.getAttribute('tuid');
+        json['inputs'].forEach(function(input) {
+            createFormInput(inputsDiv, input, formTUID);
+        });
+
+        // Message
+        const messageDiv = document.createElement('div');
+        messageDiv.setAttribute('id', 'form-message-' + json['tuid']);
+        messageDiv.classList.add('tui-form-message');
+        messageDiv.textContent = ' ';
+        fieldset.appendChild(messageDiv);
+
+        // Footer
+        const footerPanelDiv = createElementWithContainer('div', 'tui-container-panel').container;
+        fieldset.appendChild(footerPanelDiv);
+        footerPanelDiv.classList.add('tui-panel');
+        footerPanelDiv.classList.add('tui-panel-right');
+        footerPanelDiv.classList.add('tui-form-footer');
+        // Button reset
+        const buttonReset = document.createElement('button');
+        buttonReset.setAttribute('type', 'reset');
+        buttonReset.classList.add('tui-form-reset-button');
+        buttonReset.textContent = 'Reset';
+        footerPanelDiv.appendChild(buttonReset);
+        // Button submit
+        const buttonSubmit = document.createElement('button');
+        buttonSubmit.setAttribute('type', 'submit');
+        buttonSubmit.textContent = json['submitLabel'];
+        footerPanelDiv.appendChild(buttonSubmit);
+        instrumentForm(result);
     } else {
         result = null;
     }
@@ -600,43 +654,47 @@ function instrumentSearchForms() {
 function instrumentForms() {
     const forms = document.querySelectorAll('.tui-form');
     forms.forEach(function(form, i) {
-        instrumentWithErrorMessage(form);
-
-        const resetButton = form.querySelector('.tui-form-reset-button');
-        resetButton.addEventListener('click', () => {
-            form.reset();
-            completeFormReset(form);
-        });
-
-        form.addEventListener('submit', e => {
-            e.preventDefault();
-
-            const url = form.action;
-            hideFetchErrorInElement(form);
-            hideSuccessMessage(form);
-            startFormPending(form);
-            fetch(url, {
-                    method: form.method,
-                    enctype: 'multipart/form-data',
-                    body: prepareFormData(form)
-                })
-                .then(response => {
-                    if(!response.ok) {
-                        throw new Error(`HTTP error, status = ${response.status}`);
-                    }
-                    hideFetchErrorInElement(form);
-                    stopFormPending(form);
-                    return response.json();
-                })
-                .then((json) => {
-                    onFormResponse(form, json);
-                })
-                .catch(error => {
-                    stopFormPending(form);
-                    showFetchErrorInElement(form, error)
-                });
-        })
+        instrumentForm(form);
     });
+}
+
+function instrumentForm(formElement) {
+    instrumentWithErrorMessage(formElement);
+
+    const resetButton = formElement.querySelector('.tui-form-reset-button');
+    resetButton.addEventListener('click', () => {
+        formElement.reset();
+        completeFormReset(formElement);
+    });
+
+    formElement.addEventListener('submit', e => {
+        e.preventDefault();
+
+        const url = formElement.action;
+        hideFetchErrorInElement(formElement);
+        hideSuccessMessage(formElement);
+        startFormPending(formElement);
+        fetch(url, {
+                method: formElement.method,
+                enctype: 'multipart/form-data',
+                body: prepareFormData(formElement)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    throw new Error(`HTTP error, status = ${response.status}`);
+                }
+                hideFetchErrorInElement(formElement);
+                stopFormPending(formElement);
+                return response.json();
+            })
+            .then((json) => {
+                onFormResponse(formElement, json);
+            })
+            .catch(error => {
+                stopFormPending(formElement);
+                showFetchErrorInElement(formElement, error)
+            });
+    })
 }
 
 function instrumentModalForms() {
@@ -836,6 +894,11 @@ function createFormInput(fieldsetElement, json, formTUID) {
     fieldsetElement.append(inputDiv);
     inputDiv.classList.add('tui-form-input');
     const inputId = formTUID + '-' + json['name'];
+
+    const errorSpan = document.createElement('span');
+    errorSpan.classList.add('tui-input-error');
+    inputDiv.appendChild(errorSpan);
+
     const inputLabel = document.createElement('label');
     inputDiv.append(inputLabel);
     inputLabel.setAttribute('for', inputId);
@@ -845,6 +908,7 @@ function createFormInput(fieldsetElement, json, formTUID) {
         inputLabel.classList.add('label-checkbox');
         const inputElement = document.createElement('input');
         inputDiv.append(inputElement);
+        inputElement.setAttribute('id', inputId);
         inputElement.setAttribute('type', json['type']);
         inputElement.setAttribute('name', json['name']);
     }

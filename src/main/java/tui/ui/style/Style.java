@@ -460,6 +460,7 @@ public class Style {
 				    width: auto; /* overrides the 100% value of button */
 				}
 				.tui-form-message {
+				    width: 100%;
 				    margin-top: 5px;
 				    margin-bottom: 5px;
 				}
