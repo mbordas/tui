@@ -18,7 +18,9 @@ package tui.utils;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.components.Page;
+import tui.ui.components.RefreshButton;
 import tui.ui.components.UIComponent;
+import tui.ui.components.layout.Panel;
 import tui.ui.style.Style;
 
 public class TestUtils {
@@ -56,5 +58,22 @@ public class TestUtils {
 
 		final Browser browser = new Browser(backend.getPort());
 		browser.open(page.getSource());
+	}
+
+	public record UpdatablePage(Page page, Panel panel, RefreshButton button) {
+	}
+
+	/**
+	 * Creates a {@link Page} which contains a {@link Panel} and a {@link RefreshButton}. The button is configured to trigger the panel's
+	 * update.
+	 * Use these objects to quickly build a unit test when you need to check how a component is refreshed.
+	 */
+	public static UpdatablePage createPageWithUpdatablePanel() {
+		final Page page = new Page("Updatable panel", "/page");
+		final Panel panel = page.append(new Panel());
+		panel.setSource("/panel");
+		final RefreshButton button = page.append(new RefreshButton("Refresh"));
+		button.connectListener(panel);
+		return new UpdatablePage(page, panel, button);
 	}
 }

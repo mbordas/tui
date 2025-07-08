@@ -15,16 +15,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import tui.http.RequestReader;
-import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
-import tui.ui.components.RefreshButton;
 import tui.ui.components.layout.Panel;
+import tui.utils.TestUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,19 +38,19 @@ public class FormTest extends TestWithBackend {
 
 	@Test
 	public void refresh() {
-		final String panelSource = "/panel";
-		final String refreshButtonLabel = "Refresh";
 		final String formTitle = "Form title";
 		final String inputStringName = "string";
 
-		try(final Browser browser = createPageWithEmptyPanelToRefresh(panelSource, refreshButtonLabel)) {
+		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
+
+		try(final Browser browser = startAndBrowse(updatablePage.page()).browser()) {
 			final AtomicReference<RequestReader> referenceToReader = new AtomicReference<>();
 
-			registerWebServiceToRefreshPanelWithForm(panelSource, formTitle, inputStringName);
+			registerWebServiceToRefreshPanelWithForm(updatablePage.panel().getSource(), formTitle, inputStringName);
 			registerWebServiceForFormSubmission(referenceToReader);
 
 			// Refreshing the form (frontend javascript)
-			browser.clickRefreshButton(refreshButtonLabel); // should fill the panel with the form given in json
+			browser.clickRefreshButton(updatablePage.button().getLabel()); // should fill the panel with the form given in json
 
 			// Testing the form
 			browser.typeFormField(formTitle, inputStringName, "my string");
@@ -77,16 +75,6 @@ public class FormTest extends TestWithBackend {
 			form.createInputString("String", inputStringName);
 			return result.toJsonMap();
 		});
-	}
-
-	private @NotNull Browser createPageWithEmptyPanelToRefresh(String panelSource, String refreshButtonLabel) {
-		final Page page = new Page("Form refresh", "/index");
-		final Panel panel = page.append(new Panel());
-		panel.setSource(panelSource);
-		final RefreshButton button = panel.append(new RefreshButton(refreshButtonLabel));
-		button.connectListener(panel);
-
-		return startAndBrowse(page).browser();
 	}
 
 	@Test
@@ -228,21 +216,6 @@ public class FormTest extends TestWithBackend {
 			throw new RuntimeException(e);
 		}
 		assertEquals("Uploaded content.", testedContent);
-	}
-
-	public static void main(String[] args) throws Exception {
-		final Page page = new Page("Home", "/index");
-
-		final Form form = new Form("Error will occur on submit", "/form");
-		form.createInputString("Message", "message");
-		page.append(form);
-
-		final TUIBackend backend = new TUIBackend(getRandomAvailablePort());
-		backend.registerPage(page);
-		backend.start();
-
-		final Browser browser = new Browser(backend.getPort());
-		browser.open("/index");
 	}
 
 }
