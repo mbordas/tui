@@ -37,6 +37,7 @@ public class LayoutStyleSet extends StyleSet {
 	private String m_width = null;
 	private String m_height = null;
 	private String m_display = null;
+	private String m_pageBreak = null;
 
 	public LayoutStyleSet setDisplayInlineBlock() {
 		m_display = "inline-block";
@@ -137,6 +138,11 @@ public class LayoutStyleSet extends StyleSet {
 		return this;
 	}
 
+	public LayoutStyleSet setAvoidPageBreak() {
+		m_pageBreak = "avoid";
+		return this;
+	}
+
 	@Override
 	<T> void apply(T node, BiConsumer<T, Property> setter) {
 		setStylePropertyIfDefined(node, "background-color", m_backgroundColor, setter);
@@ -148,6 +154,7 @@ public class LayoutStyleSet extends StyleSet {
 		setStylePropertyIfDefined(node, "width", m_width, setter);
 		setStylePropertyIfDefined(node, "height", m_height, setter);
 		setStylePropertyIfDefined(node, "display", m_display, setter);
+		setStylePropertyIfDefined(node, "page-break-inside", m_pageBreak, setter);
 
 		if(m_margin != null) {
 			setStylePropertyIfDefined(node, "margin", String.format("%dpx %dpx %dpx %dpx",

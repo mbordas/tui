@@ -93,6 +93,7 @@ public class CodeParagraph extends Paragraph {
 		customStyle().setBorderWidth_px(1);
 		customStyle().setBorderColor(BORDER_COLOR);
 		customStyle().setBorderRadius_px(3);
+		customStyle().setAvoidPageBreak();
 
 		setColorizedWords(COLOR_JAVA_KEYS, "new", "private", "final", "static", "void", "record", "int");
 

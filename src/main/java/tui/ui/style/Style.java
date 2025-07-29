@@ -113,6 +113,7 @@ public class Style {
 
 		paragraph().layout().setMargin(0, 0, 10, 0);
 		paragraph().layout().setPadding(0, 0, 0, 0);
+		paragraph().layout().setAvoidPageBreak();
 		paragraph().text().setTextAlign(Layouts.Align.LEFT);
 		paragraph().text().setLineHeight(1.4);
 
@@ -549,6 +550,17 @@ public class Style {
 					margin-right: 5px;
 					width: auto; /* overrides 100% value for buttons */
 				}
+				
+				@media print {
+					thead {
+						display: table-header-group;
+					}
+				
+					tfoot {
+						display: table-footer-group;
+					}
+				}
+				
 				
 				/* FETCH ERRORS */
 				
