@@ -643,7 +643,7 @@ function createFormBase(json, idMap) {
     result.setAttribute('method', 'post');
     result.setAttribute('enctype', 'multipart/form-data');
     if(json['opensPageSource'] != null) {
-        result.setAttribute('"tui-opens-page', json['opensPageSource']);
+        result.setAttribute('tui-opens-page', json['opensPageSource']);
     }
     if(json['refreshListeners'] != null) {
         result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
