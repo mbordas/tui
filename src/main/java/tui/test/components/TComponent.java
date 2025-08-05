@@ -113,7 +113,7 @@ public abstract class TComponent {
 
 	protected static TComponent find(long tuid, Collection<? extends TComponent> reachableChildren) {
 		for(TComponent child : reachableChildren) {
-			if(child.getTUID() == tuid) {
+			if(child.getTUID() != null && child.getTUID() == tuid) {
 				return child;
 			}
 			final TComponent foundComponent = child.find(tuid);
