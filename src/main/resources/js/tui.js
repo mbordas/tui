@@ -471,9 +471,13 @@ function selectTab(tabId, tabLink) {
 
 function updatePanel(panelElement, json, idMap) {
     panelElement.innerHTML = '';
+    panelElement.className = ''; // clears classList
     panelElement.classList.add('tui-panel');
     panelElement.classList.add('tui-panel-' + json['align'].toLowerCase());
-    const itemSpacingClass = 'tui-horizontal-spacing-' + json['spacing'].toLowerCase();
+
+    const itemSpacingClass =
+        json['align'] == 'VERTICAL_TOP' || json['align'] == 'VERTICAL_CENTER' ?
+        null : 'tui-horizontal-spacing-' + json['spacing'].toLowerCase();
     if(idMap == null) {
         idMap = new Map();
     }
@@ -483,7 +487,9 @@ function updatePanel(panelElement, json, idMap) {
         if(element == null) {
             console.error('Unable to create component from type: ' + child['type']);
         } else {
-            element.classList.add(itemSpacingClass);
+            if(itemSpacingClass != null) {
+                element.classList.add(itemSpacingClass);
+            }
             panelElement.appendChild(element);
         }
     }
