@@ -53,11 +53,12 @@ public class TestWithBackend {
 		}
 	}
 
-	protected void startBackend(Page page) {
+	protected TUIBackend startBackend(Page page) {
 		try {
 			constructBackendWhenNeeded();
 			m_backend.registerPage(page);
 			m_backend.start();
+			return m_backend;
 		} catch(Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

@@ -40,6 +40,7 @@ public class RequestReader {
 	private static final Logger LOG = LoggerFactory.getLogger(RequestReader.class);
 
 	public static final String FORM_ENCTYPE = "multipart/form-data";
+	public static final String FORMAT_DAY = "yyyy-MM-dd";
 
 	private record FileInput(String name, InputStream inputStream) {
 	}
@@ -141,8 +142,13 @@ public class RequestReader {
 	}
 
 	public static Date parseDay(String yyyMMdd_HHmm, Locale locale) throws ParseException {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", locale);
+		SimpleDateFormat formatter = new SimpleDateFormat(FORMAT_DAY, locale);
 		return formatter.parse(yyyMMdd_HHmm);
+	}
+
+	public static String toInputString(Date day, Locale locale) {
+		SimpleDateFormat formatter = new SimpleDateFormat(FORMAT_DAY, locale);
+		return formatter.format(day);
 	}
 
 	public boolean getCheckboxParameter(String key) {

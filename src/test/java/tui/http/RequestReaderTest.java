@@ -27,6 +27,7 @@ import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +40,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class RequestReaderTest {
+
+	@Test
+	public void dayToInputString() throws ParseException {
+		final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+		final Date date = formatter.parse("05/08/2025");
+
+		assertEquals("2025-08-05", RequestReader.toInputString(date, Locale.FRANCE));
+	}
 
 	/**
 	 * Arrange: a paragraph is connected to a refresh button, the page has fetch type set to 'FormData'.

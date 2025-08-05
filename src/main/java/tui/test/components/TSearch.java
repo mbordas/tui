@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import tui.http.RequestReader;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -26,10 +27,12 @@ import tui.ui.components.form.Search;
 import tui.utils.TUIUtils;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -69,6 +72,11 @@ public class TSearch extends TComponent {
 			throw new TestExecutionException("No string input found in search '%s' with name: %s", m_title, fieldName);
 		}
 		anyField.get().enteredValue = value;
+	}
+
+	public void enterInputDay(String fieldName, Date day) {
+		final String value = RequestReader.toInputString(day, Locale.getDefault());
+		enterInput(fieldName, value);
 	}
 
 	/**
@@ -111,7 +119,8 @@ public class TSearch extends TComponent {
 			JsonMap inputMap = (JsonMap) input;
 			final String name = FormInput.getName(inputMap);
 			final String label = FormInput.getLabel(inputMap);
-			result.m_inputs.add(new TForm.TFormField(name, label, null));
+			final String initialValue = FormInput.getInitialValue(inputMap);
+			result.m_inputs.add(new TForm.TFormField(name, label, initialValue));
 		}
 
 		// Hidden parameters

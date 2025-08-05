@@ -15,11 +15,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 
 public abstract class FormInput implements Comparable<FormInput> {
+
+	public static final String JSON_ATTRIBUTE_INITIAL_VALUE = "initialValue";
 
 	protected final String m_jsonType;
 	protected final String m_htmlType;
@@ -69,7 +72,7 @@ public abstract class FormInput implements Comparable<FormInput> {
 		result.setAttribute("label", m_label);
 		result.setAttribute("name", m_name);
 		if(m_initialValue != null) {
-			result.setAttribute("initialValue", m_initialValue);
+			result.setAttribute(JSON_ATTRIBUTE_INITIAL_VALUE, m_initialValue);
 		}
 		if(m_placeHolder != null) {
 			result.setAttribute("placeholder", m_placeHolder);
@@ -84,6 +87,10 @@ public abstract class FormInput implements Comparable<FormInput> {
 
 	public static String getLabel(JsonMap map) {
 		return map.getAttribute("label");
+	}
+
+	public static @Nullable String getInitialValue(@NotNull JsonMap map) {
+		return map.getAttributeOrNull(JSON_ATTRIBUTE_INITIAL_VALUE);
 	}
 
 	public static String getName(JsonMap map) {

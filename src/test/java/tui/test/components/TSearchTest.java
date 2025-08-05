@@ -15,12 +15,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import tui.http.TUIBackend;
+import tui.test.TClient;
+import tui.test.TestWithBackend;
+import tui.test.WebServiceSpy;
+import tui.ui.components.Page;
+import tui.ui.components.form.Search;
+import tui.ui.components.layout.Panel;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
 
-public class TSearchTest {
+import static org.junit.Assert.assertEquals;
+
+public class TSearchTest extends TestWithBackend {
+
+	@Test
+	public void initialValue() throws Exception {
+		final LocalDateTime initialValue = LocalDateTime.of(2025, Month.AUGUST, 5, 12, 1);
+
+		final Page page = new Page("TSearch - initialValue", "/page");
+		final Search search = page.append(new Search("search", "submit"));
+		final Panel panel = page.append(new Panel());
+		panel.setSource("/panel");
+		search.connectListener(panel);
+
+		search.createInputDayHHmm("Day", "day")
+				.setInitialValue(initialValue);
+
+		try(final TUIBackend backend = startBackend(page)) {
+			final WebServiceSpy webServiceSpy = registerWebServiceSpy(panel);
+
+			final TClient client = new TClient(backend.getPort());
+			client.open(page.getSource());
+
+			final TSearch tSearch = client.getSearch(search.getTitle());
+			tSearch.submit();
+
+			final Date sentDate = webServiceSpy.getRequestReader().getDateParameter("day", Locale.getDefault());
+			assertEquals(
+					// initialValue is built with default locale which is UTC+2 in France
+					initialValue.toInstant(ZoneOffset.ofHours(+2)),
+					sentDate.toInstant());
+		}
+	}
 
 	public static String getTitle(WebElement formElement) {
 		final WebElement label = formElement.findElement(By.tagName("label"));
