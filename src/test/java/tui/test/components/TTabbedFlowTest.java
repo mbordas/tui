@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,52 +15,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import tui.json.JsonArray;
-import tui.json.JsonConstants;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
+import org.junit.Test;
+import tui.http.TUIBackend;
 import tui.test.TClient;
+import tui.test.TestWithBackend;
+import tui.ui.components.Table;
+import tui.ui.components.layout.Panel;
+import tui.ui.components.layout.TabbedFlow;
+import tui.ui.components.layout.VerticalFlow;
+import tui.utils.TestUtils;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
-public class TTabbedFlow extends TComponent {
-
-	private final Map<String /* title */, TVerticalFlow> m_content = new LinkedHashMap<>();
+public class TTabbedFlowTest extends TestWithBackend {
 
 	/**
-	 * @param tuid   Unique identifier.
-	 * @param client This client object will help acting on some component, and determining if they are reachable.
+	 * Here we check that the components under the TTabbedFlow can be found.
 	 */
-	protected TTabbedFlow(long tuid, TClient client) {
-		super(tuid, client);
-	}
+	@Test
+	public void getChildrenComponents() throws Exception {
+		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
 
-	@Override
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content.values());
-	}
+		final Table table = new Table("Table A", List.of("A", "B"));
 
-	@Override
-	public Collection<TComponent> getChildrenComponents() {
-		return m_content.values().stream()
-				.map((flow) -> (TComponent) flow)
-				.toList();
-	}
+		final TabbedFlow tabbedFlow = new TabbedFlow();
+		final VerticalFlow tabA = tabbedFlow.createTab("TAB A");
+		tabA.append(table);
+		tabbedFlow.createTab("TAB B");
 
-	public static TTabbedFlow parse(JsonMap jsonMap, TClient tClient) {
-		final long tuid = JsonConstants.readTUID(jsonMap);
-		final TTabbedFlow result = new TTabbedFlow(tuid, tClient);
-		final JsonArray tabs = jsonMap.getArray("tabs");
-		final Iterator<JsonObject> contentIterator = tabs.iterator();
-		while(contentIterator.hasNext()) {
-			final JsonMap tabEntryJson = (JsonMap) contentIterator.next();
-			final String tabTitle = tabEntryJson.getAttribute("title");
-			final TVerticalFlow tabFlow = TVerticalFlow.parse(tabEntryJson.getMap("content"), tClient);
-			result.m_content.put(tabTitle, tabFlow);
+		try(final TUIBackend backend = startBackend(updatablePage.page())) {
+			registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> {
+				final Panel panel = new Panel();
+				panel.append(tabbedFlow);
+				return panel.toJsonMap();
+			});
+
+			final TClient tClient = new TClient(backend.getPort());
+			tClient.open(updatablePage.page().getSource());
+			tClient.getRefreshButton(updatablePage.button().getLabel()).click();
+
+			tClient.getTable(table.getTitle());
 		}
-		return result;
 	}
+
 }

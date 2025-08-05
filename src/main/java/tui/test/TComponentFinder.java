@@ -57,7 +57,8 @@ public class TComponentFinder<C extends TComponent> {
 			}
 
 			// Recursive call on c's children
-			c.getChildrenComponents().forEach((c3) -> result.addAll(findAll(c3, c3.getChildrenComponents())));
+			result.addAll(findAll(c, c.getChildrenComponents()));
+			//			c.getChildrenComponents().forEach((c3) -> result.addAll(findAll(c3, c3.getChildrenComponents())));
 		});
 		return result;
 	}
