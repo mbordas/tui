@@ -76,6 +76,8 @@ async function refreshComponent(id, data) {
         headers = {};
     }
 
+    element.classList.add('loading');
+
     fetch(sourcePath, {
             method: 'POST',
             headers: headers,
@@ -106,6 +108,9 @@ async function refreshComponent(id, data) {
         })
         .catch(error => {
             showFetchError(component, error);
+        })
+        .finally(() => {
+            element.classList.remove('loading');
         });
 }
 

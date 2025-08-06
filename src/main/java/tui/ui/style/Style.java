@@ -228,6 +228,31 @@ public class Style {
 
 		result.append("""
 				
+				.loading {
+					pointer-events: none;
+					position: relative;
+				}
+				.loading::after {
+					content: '';
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					background: rgba(128, 128, 128, 0.4);
+					z-index: 10;
+				}
+				.loading::before {
+					content: 'Loading...';
+					font-size: 0.9em;
+					color: white;
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					z-index: 11;
+				}
+				
 				p button {
 					width: auto;
 				}
