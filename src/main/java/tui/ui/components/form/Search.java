@@ -150,6 +150,7 @@ public class Search extends UIComponent {
 				final HTMLNode cell = row.createChild("td");
 				final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
 				inputNode.addClass(Form.HTML_CLASS_FIELD);
+				inputNode.getDescendant("label").addClass("tui-search-input-label");
 				cell.append(inputNode);
 				index++;
 				if(index % m_displayLikeForm.columns() == 0) {
@@ -160,6 +161,7 @@ public class Search extends UIComponent {
 			for(FormInput input : m_inputs) {
 				final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
 				inputNode.addClass(HTML_CLASS_FIELD);
+				inputNode.getDescendant("label").addClass("tui-search-input-label");
 				result.append(inputNode);
 			}
 		}

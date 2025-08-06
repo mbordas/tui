@@ -365,12 +365,16 @@ public class Style {
 				tui-search {
 					margin: 10px 0px 10px 0px;
 				}
+				.tui-search-input-label {
+					margin-right: 10px;
+				}
 				.tui-search-input {
 					display: inline-block;
 				    margin-top: 10px;
+				    margin-right: 10px;
 				    text-align: left;
 				}
-				search>label {
+				search>label { /* search's legend */
 					margin-right: 10px;
 				}
 				search>button {

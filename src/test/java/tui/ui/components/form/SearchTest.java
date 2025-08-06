@@ -122,7 +122,7 @@ public class SearchTest extends TestWithBackend {
 		paragraphToBeRefreshed.setSource("/paragraph");
 		search.connectListener(paragraphToBeRefreshed);
 
-		search.displayLikeForm(3);
+		//		search.displayLikeForm(3);
 
 		startBackend(page);
 
