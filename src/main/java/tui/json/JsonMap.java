@@ -53,6 +53,11 @@ public class JsonMap extends JsonObject {
 		return this;
 	}
 
+	public JsonMap removeAttribute(String name) {
+		m_children.remove(name);
+		return this;
+	}
+
 	public String getAttribute(String key) {
 		final String result = getAttributeOrNull(key);
 		if(result == null) {

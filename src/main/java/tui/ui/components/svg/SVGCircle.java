@@ -27,6 +27,12 @@ public class SVGCircle extends SVGComponent {
 		m_radius = radius;
 	}
 
+	public SVGCircle(SVGPoint center, long radius) {
+		m_cx = center.x();
+		m_cy = center.y();
+		m_radius = radius;
+	}
+
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = toJsonMap("circle");

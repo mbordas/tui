@@ -580,6 +580,15 @@ public class Style {
 					width: auto; /* overrides 100% value for buttons */
 				}
 				
+				/*
+					SVG
+				*/
+				
+				.tui-svg-clickable {
+					cursor: pointer;
+					fill: transparent;
+				}
+				
 				@media print {
 					thead {
 						display: table-header-group;

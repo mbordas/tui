@@ -17,6 +17,9 @@ package tui.json;
 
 import org.junit.Test;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import static org.junit.Assert.assertEquals;
 
 public class JsonMapTest {
@@ -31,6 +34,30 @@ public class JsonMapTest {
 		//
 
 		assertEquals("value", result.getAttribute("key"));
+	}
+
+	@Test
+	public void serializationForHTMLAttribute() {
+		final JsonMap rootMap = new JsonMap("type");
+		rootMap.setAttribute("name", "root map");
+
+		final JsonMap subMap = rootMap.createMap("sub map");
+		subMap.setAttribute("name", "mySubMapName");
+
+		final JsonArray array = subMap.createArray("array of parameters in sub map");
+		final TreeMap<String, String> parameters = new TreeMap<>();
+		parameters.put("key1", "value1");
+		parameters.put("key2", "value2");
+		for(Map.Entry<String, String> entry : parameters.entrySet()) {
+			final JsonMap entryMap = new JsonMap(null);
+			entryMap.setAttribute("key", entry.getKey());
+			entryMap.setAttribute("value", entry.getValue());
+			array.add(entryMap);
+		}
+
+		assertEquals(
+				"{\"type\": \"type\",\"name\": \"root map\",\"sub map\": {\"name\": \"mySubMapName\",\"array of parameters in sub map\": [{\"key\": \"key1\",\"value\": \"value1\"},{\"key\": \"key2\",\"value\": \"value2\"}]}}",
+				rootMap.toJson());
 	}
 
 }

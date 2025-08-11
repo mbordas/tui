@@ -23,6 +23,7 @@ import tui.json.JsonArray;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonValue;
+import tui.test.components.BadComponentException;
 import tui.ui.components.UIRefreshableComponent;
 import tui.ui.components.svg.defs.SVGMarker;
 import tui.ui.components.svg.defs.SVGPatternStripes;
@@ -40,15 +41,23 @@ public class SVG extends UIRefreshableComponent {
 	public static final String JSON_ATTRIBUTE_INNER_TEXT = "innerText";
 	public static final String JSON_ATTRIBUTE_TITLE = "title";
 	public static final String JSON_KEY_SUBCOMPONENTS = "components";
+	public static final String JSON_KEY_CLICKABLE_ZONES = "clickableZones";
+	public static final String JSON_KEY_CLICKABLE_ZONE_AREA = "area";
+	public static final String JSON_KEY_CLICKABLE_ZONE_PARAMETERS = "parameters";
 
 	public static final String HTML_CLASS_CONTAINER = "tui-container-svg";
+	public static final String HTML_CLASS_CLICKABLE_ZONE = "tui-svg-clickable";
+	public static final String HTML_ATTRIBUTE_CLICKABLE_ZONE_PARAMETERS = "parameters";
 
 	private final List<SVGComponent> m_markers = new ArrayList<>();
 	private final List<SVGComponent> m_patterns = new ArrayList<>();
 	private final List<SVGComponent> m_components = new ArrayList<>();
+	private final List<ClickableZone> m_clickableZones = new ArrayList<>();
 	private long m_width_px;
 	private long m_height_px;
 	private ViewBox m_viewBox = null;
+
+	private final Collection<UIRefreshableComponent> m_connectedComponents = new ArrayList<>();
 
 	record ViewBox(long x, long y, long width, long height) {
 	}
@@ -56,6 +65,21 @@ public class SVG extends UIRefreshableComponent {
 	public SVG(long width_px, long height_px) {
 		m_width_px = width_px;
 		m_height_px = height_px;
+	}
+
+	public UIRefreshableComponent connectListener(UIRefreshableComponent component) {
+		if(component.getSource() == null) {
+			throw new BadComponentException("%s must have a source set for reload events.", UIRefreshableComponent.class.getSimpleName());
+		}
+		m_connectedComponents.add(component);
+		return component;
+	}
+
+	public record ClickableZone(SVGComponent area, Map<String, String> parameters) {
+	}
+
+	public void addClickableZone(SVGComponent area, Map<String, String> parameters) {
+		m_clickableZones.add(new ClickableZone(area, parameters));
 	}
 
 	public long getWidth_px() {
@@ -103,6 +127,18 @@ public class SVG extends UIRefreshableComponent {
 
 		for(JsonObject component : jsonMap.getArray(JSON_KEY_SUBCOMPONENTS).getItems()) {
 			svgElement.append(toHTMLNode(component));
+		}
+
+		for(JsonObject component : jsonMap.getArray(JSON_KEY_CLICKABLE_ZONES).getItems()) {
+			if(component instanceof JsonMap zoneMap) {
+				final HTMLNode zoneHTML = svgElement.append(toHTMLNode(zoneMap.getMap(JSON_KEY_CLICKABLE_ZONE_AREA)));
+				zoneHTML.addClass(HTML_CLASS_CLICKABLE_ZONE);
+				zoneHTML.setAttribute(HTML_ATTRIBUTE_CLICKABLE_ZONE_PARAMETERS,
+						zoneMap.getArray(JSON_KEY_CLICKABLE_ZONE_PARAMETERS).toJson());
+				zoneHTML.setDecorateAttributesWithSimpleQuotes(true);
+			} else {
+				throw new IllegalArgumentException("Bad json map");
+			}
 		}
 
 		return containedElement.getHigherNode();
@@ -167,6 +203,28 @@ public class SVG extends UIRefreshableComponent {
 		}
 		for(SVGComponent component : m_components) {
 			components.add(component.toJsonMap());
+		}
+
+		final JsonArray clickableComponents = result.createArray(JSON_KEY_CLICKABLE_ZONES);
+		for(ClickableZone clickableZone : m_clickableZones) {
+			final JsonMap zoneJsonMap = new JsonMap("clickableZone");
+			final JsonMap areaMap = clickableZone.area().toJsonMap();
+			areaMap.removeAttribute("style");
+			zoneJsonMap.setChild(JSON_KEY_CLICKABLE_ZONE_AREA, areaMap);
+
+			final JsonArray zoneParametersJsonArray = new JsonArray();
+			for(Map.Entry<String, String> parameter : clickableZone.parameters().entrySet()) {
+				final JsonMap parameterJsonMap = new JsonMap(null);
+				parameterJsonMap.setAttribute("name", parameter.getKey());
+				parameterJsonMap.setAttribute("value", parameter.getValue());
+				zoneParametersJsonArray.add(parameterJsonMap);
+			}
+			zoneJsonMap.setChild(JSON_KEY_CLICKABLE_ZONE_PARAMETERS, zoneParametersJsonArray);
+			clickableComponents.add(zoneJsonMap);
+		}
+
+		if(!m_connectedComponents.isEmpty()) {
+			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
 
 		applyCustomStyle(result);

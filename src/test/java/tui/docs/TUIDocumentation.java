@@ -44,6 +44,7 @@ public class TUIDocumentation {
 		m_components.add(new TUIDocsNavButtons());
 		m_components.add(new TUIDocsTables());
 		m_components.add(new TUIDocsTablePicker());
+		m_components.add(new TUIDocsSVGs());
 		m_miscs.add(new TUIDocsFirstSteps());
 		m_miscs.add(new TUIDocsUpdatingAPage());
 	}

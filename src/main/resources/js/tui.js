@@ -27,11 +27,9 @@ function onload() {
     instrumentModalForms();
     instrumentNavButtons();
     instrumentTables();
-    instrumentMonitorFields();
     instrumentRefreshButtons();
     instrumentSearchForms();
-
-    updateMonitorFields();
+    instrumentSVGs();
 }
 
 /*
@@ -1221,6 +1219,8 @@ function updateSVG(svgElement, json) {
         copySVGAttributes(jsonComponent, svgElement);
         newElement.appendChild(svgElement);
     });
+
+    instrumentSVG(svgElement);
 }
 
 function copySVGAttributes(svgJson, svgElement) {
@@ -1239,67 +1239,45 @@ function copySVGAttributes(svgJson, svgElement) {
     }
 }
 
-
-// MONITORING
-
-function updateMonitorFields() {
-    const fields = document.querySelectorAll('.tui-monitor-field');
-    fields.forEach(function(field, i) {
-        const value = field.getAttribute('value');
-        const valueSpan = field.querySelectorAll('.tui-monitor-field-value')[0];
-        switch(value) {
-            case 'GREEN':
-                valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-green');
-                break;
-            case 'RED':
-                valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-red');
-                break;
-            case 'NEUTRAL':
-                valueSpan.setAttribute('class', 'tui-monitor-field-value tui-monitor-field-value-neutral');
-                break;
-            default:
-                error('Unsupported value: ' + value);
-        }
+function instrumentSVGs() {
+    const svgs = document.querySelectorAll('svg');
+    svgs.forEach(function(svgElement, i) {
+        instrumentSVG(svgElement);
     });
 }
 
-async function refreshMonitorFields(sourcePath, fieldset) {
-    fetch(sourcePath)
-        .then(response => response.json())
-        .then(json => {
-            hideFetchErrorInElement(fieldset);
-            fieldset.classList.remove("fetch-error");
-            for(const field of json.fields) {
-                switch(field.type) {
-                    case 'monitor-field-greenred':
-                        // Selecting element by numeric id must be handled that (weird) way
-                        const fieldDiv = document.querySelector("[monitor-field-name='" + field.name + "']");
-                        if(fieldDiv) {
-                            fieldDiv.setAttribute('value', field.value);
-                            const valueSpan = fieldDiv.querySelector('.tui-monitor-field-value');
-                            valueSpan.innerText = field.text;
-                        }
-                    break;
-                }
-            }
-        })
-        .catch(error => {
-            fieldset.classList.add("fetch-error");
-            console.log(error);
-            showFetchErrorInElement(fieldset, error)
+function instrumentSVG(svgElement) {
+    svgElement.querySelectorAll('.tui-svg-clickable').forEach(function(clickableElement, i) {
+        clickableElement.addEventListener("click", onClickSVGZone);
+    });
+}
+
+function onClickSVGZone(event) {
+    const clickedElement = event.target;
+    const ancestorSGVElement = getAncestorSVG(clickedElement);
+    if(ancestorSGVElement == null) {
+        console.error("No ancestor SVG found for clicked zone: " + clickedElement);
+        return
+    }
+
+    const parametersAsString = clickedElement.getAttribute("parameters");
+    console.log("parameters: " + parametersAsString);
+    const data = {};
+    const parameters = JSON.parse(parametersAsString);
+    parameters.forEach(parameter => {
+        data[parameter.name] = parameter.value;
+    });
+
+    ancestorSGVElement.getAttribute('tui-refresh-listeners').split(",")
+        .forEach(function(id, i) {
+            refreshComponent(id, data);
         });
-
-    updateMonitorFields();
 }
 
-function instrumentMonitorFields() {
-    const fieldsets = document.querySelectorAll('.tui-monitor-fieldset');
-    fieldsets.forEach(function(fieldset, i) {
-        const sourcePath = fieldset.getAttribute('tui-source');
-        const period_s = parseInt(fieldset.getAttribute('auto-refresh-period_s'));
-        function refresh() {
-            refreshMonitorFields(sourcePath, fieldset);
-        }
-        const intervalId = setInterval(refresh, 1000 * period_s);
-    });
+function getAncestorSVG(svgComponentElement) {
+    let currentElement = svgComponentElement;
+    while(currentElement && currentElement.nodeName.toLowerCase() !== "svg") {
+        currentElement = currentElement.parentNode;
+    }
+    return currentElement;
 }

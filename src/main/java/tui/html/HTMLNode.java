@@ -34,6 +34,7 @@ public class HTMLNode {
 	private final List<HTMLNode> m_children = new ArrayList<>();
 	private StringBuilder m_text = new StringBuilder();
 	private int m_prettyPrintDepth = 0;
+	private boolean m_decorateAttributesWithSimpleQuotes = false;
 
 	public HTMLNode(String name) {
 		m_name = name;
@@ -92,6 +93,10 @@ public class HTMLNode {
 		return this;
 	}
 
+	public void setDecorateAttributesWithSimpleQuotes(boolean enabled) {
+		m_decorateAttributesWithSimpleQuotes = enabled;
+	}
+
 	public HTMLNode setText(String text) {
 		m_text = new StringBuilder();
 		m_text.append(text);
@@ -144,7 +149,12 @@ public class HTMLNode {
 		for(Map.Entry<String, String> attribute : m_attributes.entrySet()) {
 			result.append(" ").append(attribute.getKey());
 			if(attribute.getValue() != null) {
-				result.append("=\"").append(attribute.getValue()).append("\"");
+				final String value = attribute.getValue();
+				if(m_decorateAttributesWithSimpleQuotes) {
+					result.append("='").append(value).append("'");
+				} else {
+					result.append("=\"").append(value).append("\"");
+				}
 			}
 		}
 

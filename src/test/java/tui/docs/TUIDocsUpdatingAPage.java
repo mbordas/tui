@@ -85,7 +85,8 @@ public class TUIDocsUpdatingAPage extends Page {
 				.appendText("%s", RefreshButton.class.getSimpleName())
 				.appendText("%s", TablePicker.class.getSimpleName())
 				.appendText("%s", Search.class.getSimpleName())
-				.appendText("%s and %s", Form.class.getSimpleName(), ModalForm.class.getSimpleName());
+				.appendText("%s and %s", Form.class.getSimpleName(), ModalForm.class.getSimpleName())
+				.appendText("%s", SVG.class.getSimpleName());
 
 		section.appendParagraph("The following TUI components (and layout components) can be updated:");
 		section.append(new List(false))

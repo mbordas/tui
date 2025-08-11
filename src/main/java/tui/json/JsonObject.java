@@ -52,4 +52,5 @@ public abstract class JsonObject {
 			result.append("\n");
 		}
 	}
+
 }
