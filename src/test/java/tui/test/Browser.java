@@ -104,6 +104,12 @@ public class Browser implements Closeable {
 		return m_driver.findElements(By.tagName("p"));
 	}
 
+	public List<WebElement> getParagraphsWithText() {
+		return getParagraphs().stream()
+				.filter((paragraph) -> !paragraph.getText().isEmpty())
+				.toList();
+	}
+
 	// NAVLINKS
 
 	public List<WebElement> getNavLinks() {
@@ -198,9 +204,17 @@ public class Browser implements Closeable {
 		return anyCell.orElse(null);
 	}
 
+	//
+	// SVG
+	//
+
 	public List<WebElement> getSVGs() {
 		return m_driver.findElements(By.tagName("svg"));
 	}
+
+	//
+	// PANELS
+	//
 
 	public List<WebElement> getPanels() {
 		return m_driver.findElements(By.className("tui-panel"));
@@ -433,6 +447,23 @@ public class Browser implements Closeable {
 
 	public WebElement getByTUID(long tuid) {
 		return m_driver.findElement(By.id(String.valueOf(tuid)));
+	}
+
+	public void clickInElement(WebElement svgElement, long xOffset_px, long yOffset_px) {
+		// I tried with Selenium 'Actions' but it did not work, maybe because of security restrictions.
+		// For now the Javascript way is good enough.
+		final String script = "var svg = arguments[0];" +
+				"var rect = svg.getBoundingClientRect();" +
+				"var x = rect.left + arguments[1];" +
+				"var y = rect.top + arguments[2];" +
+				"var evt = new MouseEvent('click', {" +
+				"  clientX: x," +
+				"  clientY: y," +
+				"  bubbles: true," +
+				"  cancelable: true" +
+				"});" +
+				"document.elementFromPoint(x, y).dispatchEvent(evt);";
+		m_driver.executeScript(script, svgElement, xOffset_px, yOffset_px);
 	}
 
 }
