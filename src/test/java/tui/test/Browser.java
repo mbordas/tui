@@ -147,13 +147,13 @@ public class Browser implements Closeable {
 	// TABLES
 
 	public WebElement getTable(String title) {
-		final Optional<WebElement> anyFormElement = getTables().stream()
+		final Optional<WebElement> anyTableElement = getTables().stream()
 				.filter(WebElement::isDisplayed)
 				.filter((element) -> title.equals(TTableTest.getTitle(element)))
 				.findAny();
 
-		if(anyFormElement.isPresent()) {
-			return anyFormElement.get();
+		if(anyTableElement.isPresent()) {
+			return anyTableElement.get();
 		} else {
 			throw new RuntimeException("Table element not found: " + title);
 		}

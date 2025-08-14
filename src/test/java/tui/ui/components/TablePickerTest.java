@@ -42,7 +42,7 @@ public class TablePickerTest extends TestWithBackend {
 	 * Here we test a {@link TablePicker} that is filled with filtered rows (using a {@link Search}), and which uses pagination.
 	 */
 	@Test
-	public void refreshWithPagination() throws InterruptedException {
+	public void refreshWithPagination() {
 		final Page page = new Page("Home", "/index");
 		final Search search = page.append(new Search("Filter", "filter", "filter"));
 		final TablePicker tablePicker = page.append(new TablePicker("Table picker", List.of("Id", "Name")));

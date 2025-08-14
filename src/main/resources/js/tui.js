@@ -164,6 +164,7 @@ function createComponent(json, idMap) {
         }
     } else if(type == 'table') {
         const containedElement = createElementWithContainer('table', 'tui-table-container');
+        containedElement.element.appendChild(document.createElement('thead'));
         containedElement.element.appendChild(document.createElement('tbody'));
         updateTable(containedElement.element, json);
         result = containedElement.container;
@@ -1163,9 +1164,37 @@ function instrumentTablePicker(tablePickerElement) {
     }
 }
 
+/*
+    json may be either 'Table' or 'TableData'
+*/
 async function updateTable(tableElement, json) {
-    const freshBody = document.createElement('tbody');
+
+    var caption = tableElement.getElementsByTagName('caption')[0];
+    if(json['hiddenTitle' == 'true'] && caption != null) {
+        caption.remove();
+    } else if(caption == null) {
+        caption = document.createElement('caption');
+        caption.textContent = json['title'];
+        tableElement.append(caption);
+    } /* else caption is already here */
+
     const hiddenColumnsIndexes = 'hiddenColumns' in json? json['hiddenColumns'] : [];
+
+    if(json['type'] == 'table' && json['tui-hidden-head'] != 'true') {
+        const freshHead = document.createElement('thead');
+        for(var c = 0; c < json['thead'].length; c++) {
+            const cell = json['thead'][c];
+            const freshCell = document.createElement("th");
+            if(hiddenColumnsIndexes.includes(c)) {
+                freshCell.classList.add("tui-hidden-column");
+            }
+            freshHead.append(freshCell);
+            freshCell.textContent = cell;
+        }
+        tableElement.getElementsByTagName('thead')[0].replaceWith(freshHead);
+    }
+
+    const freshBody = document.createElement('tbody');
     for(var r = 0; r < json['tbody'].length; r++) {
         const row = json['tbody'][r];
         const freshRow = document.createElement("tr");
