@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TableTest extends TestWithBackend {
@@ -61,6 +62,37 @@ public class TableTest extends TestWithBackend {
 
 				final WebElement tableElement = browser.getTable(tableTitle);
 				assertEquals(2, tableElement.findElements(By.tagName("th")).size());
+				assertTrue(Browser.getClasses(tableElement).contains(Table.HTML_CLASS));
+			}
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Test
+	public void createComponentWithHiddenTitle() {
+		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
+		final String tableTitle = "Table title";
+
+		try(TUIBackend backend = startBackend(updatablePage.page())) {
+			backend.registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> {
+				final Panel result = new Panel(Panel.Align.CENTER);
+				final Table table = result.append(new Table(tableTitle, List.of("A", "B")));
+				table.append(Map.of("A", "1", "B", "0"));
+				table.append(Map.of("A", "1", "B", "1"));
+				table.hideTitle();
+				return result.toJsonMap();
+			});
+
+			try(final Browser browser = startBrowser()) {
+				browser.open(updatablePage.page().getSource());
+				assertTrue(browser.getTables().isEmpty());
+
+				browser.clickRefreshButton(updatablePage.button().getLabel());
+
+				final List<WebElement> tables = browser.getTables();
+				assertEquals(1, tables.size());
+				tables.forEach((tableElement) -> assertNull(tableElement.findElement(By.tagName("caption"))));
 			}
 		} catch(Exception e) {
 			throw new RuntimeException(e);

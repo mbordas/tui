@@ -164,6 +164,7 @@ function createComponent(json, idMap) {
         }
     } else if(type == 'table') {
         const containedElement = createElementWithContainer('table', 'tui-table-container');
+        containedElement.element.classList.add('tui-table');
         containedElement.element.appendChild(document.createElement('thead'));
         containedElement.element.appendChild(document.createElement('tbody'));
         updateTable(containedElement.element, json);
@@ -1168,10 +1169,11 @@ function instrumentTablePicker(tablePickerElement) {
     json may be either 'Table' or 'TableData'
 */
 async function updateTable(tableElement, json) {
-
     var caption = tableElement.getElementsByTagName('caption')[0];
-    if(json['hiddenTitle' == 'true'] && caption != null) {
-        caption.remove();
+    if(json['hiddenTitle' == 'true']) {
+        if(caption != null) {
+            caption.remove();
+        }
     } else if(caption == null) {
         caption = document.createElement('caption');
         caption.textContent = json['title'];
