@@ -22,12 +22,22 @@ import tui.http.TUIWebService;
 import tui.ui.components.Page;
 import tui.ui.components.UIRefreshableComponent;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.ServerSocket;
 
 public class TestWithBackend {
 
-	protected record BackendAndBrowser(TUIBackend backend, Browser browser) {
+	protected record BackendAndBrowser(TUIBackend backend, Browser browser) implements Closeable {
+		@Override
+		public void close() throws IOException {
+			browser().close();
+			try {
+				backend().close();
+			} catch(Exception e) {
+				throw new IOException(e.getMessage(), e);
+			}
+		}
 	}
 
 	protected TUIBackend m_backend;

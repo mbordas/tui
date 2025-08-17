@@ -220,7 +220,7 @@ function createComponent(json, idMap) {
         const button = document.createElement('button');
         button.classList.add('tui-refresh-button');
         button.setAttribute('type', 'button');
-        button.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
+        button.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
         button.textContent = json['label'];
         result.appendChild(button);
         instrumentRefreshButton(button);
@@ -295,22 +295,27 @@ function createComponent(json, idMap) {
     Replaces 'idsSeparatedByComa' where ids are found in 'idMap'.
     @param idMap gives: TUID found in fresh json -> TUID in current page's elements
 */
-function adaptRefreshListeners(idsSeparatedByComa, idMap) {
-    if(idMap == null) {
-        return idsSeparatedByComa;
+function adaptRefreshListeners(json, idMap) {
+    const idsSeparatedByComa = json['refreshListeners'];
+    if(idsSeparatedByComa == null) {
+        console.warn("Attribute 'refreshListeners' in json of type '" + json['type'] + "'.");
     } else {
-        var result = '';
-        idsSeparatedByComa.split(",").forEach(function(id, i) {
-            if(idMap.has(id)) {
-                result = result + idMap.get(id) + ',';
-            } else {
-                result = result + id + ',';
-            }
-        });
-        if(result.endsWith(',')) {
-            return result.slice(0, -1);
+        if(idMap == null) {
+            return idsSeparatedByComa;
         } else {
-            return result;
+            var result = '';
+            idsSeparatedByComa.split(",").forEach(function(id, i) {
+                if(idMap.has(id)) {
+                    result = result + idMap.get(id) + ',';
+                } else {
+                    result = result + id + ',';
+                }
+            });
+            if(result.endsWith(',')) {
+                return result.slice(0, -1);
+            } else {
+                return result;
+            }
         }
     }
 }
@@ -657,7 +662,7 @@ function createFormBase(json, idMap) {
         result.setAttribute('tui-opens-page', json['opensPageSource']);
     }
     if(json['refreshListeners'] != null) {
-        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json['refreshListeners'], idMap));
+        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
     }
     return result;
 }
@@ -1170,14 +1175,16 @@ function instrumentTablePicker(tablePickerElement) {
 */
 async function updateTable(tableElement, json) {
     var caption = tableElement.getElementsByTagName('caption')[0];
-    if(json['hiddenTitle' == 'true']) {
+    if(json['hiddenTitle'] == 'true') {
         if(caption != null) {
             caption.remove();
         }
     } else if(caption == null) {
-        caption = document.createElement('caption');
-        caption.textContent = json['title'];
-        tableElement.append(caption);
+        if(json['hiddenTitle'] != 'true') {
+            caption = document.createElement('caption');
+            caption.textContent = json['title'];
+            tableElement.append(caption);
+        }
     } /* else caption is already here */
 
     const hiddenColumnsIndexes = 'hiddenColumns' in json? json['hiddenColumns'] : [];

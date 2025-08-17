@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TableTest extends TestWithBackend {
@@ -92,7 +91,7 @@ public class TableTest extends TestWithBackend {
 
 				final List<WebElement> tables = browser.getTables();
 				assertEquals(1, tables.size());
-				tables.forEach((tableElement) -> assertNull(tableElement.findElement(By.tagName("caption"))));
+				tables.forEach((tableElement) -> assertTrue(tableElement.findElements(By.tagName("caption")).isEmpty()));
 			}
 		} catch(Exception e) {
 			throw new RuntimeException(e);

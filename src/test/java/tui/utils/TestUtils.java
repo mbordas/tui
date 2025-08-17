@@ -15,13 +15,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.utils;
 
+import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.components.Page;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.UIComponent;
+import tui.ui.components.UIRefreshableComponent;
 import tui.ui.components.layout.Panel;
 import tui.ui.style.Style;
+
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class TestUtils {
 
@@ -75,5 +83,53 @@ public class TestUtils {
 		final RefreshButton button = page.append(new RefreshButton("Refresh"));
 		button.connectListener(panel);
 		return new UpdatablePage(page, panel, button);
+	}
+
+	/**
+	 * @param componentToTest Must return the {@link UIComponent} instance to be tested.
+	 * @param elementTest     Consumes the root {@link WebElement} of the {@link UIComponent} instance, first when the page is opened
+	 *                        (created in HTML when opening the page), then after having refreshed this component.
+	 */
+	public static void assertHTMLProcedure(Supplier<UIComponent> componentToTest,
+			BiConsumer<String, WebElement> elementTest) {
+
+		final UpdatablePage updatablePage = createPageWithUpdatablePanel();
+		updatablePage.panel().append(componentToTest.get());
+		final int port = 8080;
+		try(final TUIBackend backend = new TUIBackend(port)) {
+			backend.registerPage(updatablePage.page());
+			backend.registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> {
+				final Panel result = new Panel();
+				result.setSource(updatablePage.panel().getSource());
+				result.append(componentToTest.get());
+				return result.toJsonMap();
+			});
+			backend.start();
+
+			try(final Browser browser = new Browser(port)) {
+				browser.open(updatablePage.page().getSource());
+
+				WebElement webElement = getWebElementInPanel(browser, updatablePage);
+				elementTest.accept("initial HTML", webElement);
+
+				browser.getRefreshButton(updatablePage.button().getLabel()).click();
+
+				webElement = getWebElementInPanel(browser, updatablePage);
+				elementTest.accept("refreshed HTML", webElement);
+			}
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static @NotNull WebElement getWebElementInPanel(Browser browser, UpdatablePage updatablePage) {
+		final Optional<WebElement> anyWebElement = browser.getPanels().stream()
+				.filter((webElementPanel) -> updatablePage.panel().getSource().equals(
+						webElementPanel.getAttribute(UIRefreshableComponent.ATTRIBUTE_SOURCE)))
+				.findAny();
+		if(anyWebElement.isEmpty()) {
+			throw new RuntimeException("Can't find the component to test.");
+		}
+		return anyWebElement.get().findElement(By.xpath("./*"));
 	}
 }
