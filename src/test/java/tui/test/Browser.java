@@ -423,6 +423,18 @@ public class Browser implements Closeable {
 		return element.findElement(By.xpath("parent::*"));
 	}
 
+	public static WebElement getUniqueChild(WebElement element) {
+		final List<WebElement> childrenElements = element.findElements(By.xpath("./*"));
+		if(childrenElements.size() != 1) {
+			LOG.error("{} children found", childrenElements.size());
+			for(WebElement childElement : childrenElements) {
+				LOG.debug("Child of type: {}", childElement.getTagName());
+			}
+			throw new TestExecutionException("Child is not unique");
+		}
+		return childrenElements.get(0);
+	}
+
 	public static Collection<String> getClasses(WebElement element) {
 		return Arrays.asList(element.getAttribute("class").split(" "));
 	}

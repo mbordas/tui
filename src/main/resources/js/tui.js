@@ -163,12 +163,19 @@ function createComponent(json, idMap) {
             updatePanel(result, json, idMap);
         }
     } else if(type == 'table') {
-        const containedElement = createElementWithContainer('table', 'tui-table-container');
-        containedElement.element.classList.add('tui-table');
-        containedElement.element.appendChild(document.createElement('thead'));
-        containedElement.element.appendChild(document.createElement('tbody'));
-        updateTable(containedElement.element, json);
-        result = containedElement.container;
+        var tableElement;
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('table', 'tui-table-container');
+            result = containedElement.container;
+            tableElement = containedElement.element;
+        } else {
+            result = document.createElement('table');
+            tableElement = result;
+        }
+        tableElement.classList.add('tui-table');
+        tableElement.appendChild(document.createElement('thead'));
+        tableElement.appendChild(document.createElement('tbody'));
+        updateTable(tableElement, json);
     } else if(type == 'section') {
         result = document.createElement('section');
         updateSection(result, json);
@@ -1175,30 +1182,34 @@ function instrumentTablePicker(tablePickerElement) {
 */
 async function updateTable(tableElement, json) {
     var caption = tableElement.getElementsByTagName('caption')[0];
+    if(caption == null) {
+        caption = document.createElement('caption');
+        tableElement.append(caption);
+    }
+    if(json['title'] != null) {
+        caption.textContent = json['title'];
+    }
     if(json['hiddenTitle'] == 'true') {
-        if(caption != null) {
-            caption.remove();
-        }
-    } else if(caption == null) {
-        if(json['hiddenTitle'] != 'true') {
-            caption = document.createElement('caption');
-            caption.textContent = json['title'];
-            tableElement.append(caption);
-        }
-    } /* else caption is already here */
+        caption.style.display = 'none';
+    }
 
     const hiddenColumnsIndexes = 'hiddenColumns' in json? json['hiddenColumns'] : [];
 
-    if(json['type'] == 'table' && json['tui-hidden-head'] != 'true') {
+    if(json['type'] == 'table') {
         const freshHead = document.createElement('thead');
+        const headRow = document.createElement('tr');
+        freshHead.append(headRow);
         for(var c = 0; c < json['thead'].length; c++) {
             const cell = json['thead'][c];
             const freshCell = document.createElement("th");
             if(hiddenColumnsIndexes.includes(c)) {
                 freshCell.classList.add("tui-hidden-column");
             }
-            freshHead.append(freshCell);
+            headRow.append(freshCell);
             freshCell.textContent = cell;
+        }
+        if(json['hiddenHead'] == 'true') {
+            headRow.classList.add('tui-hidden-head');
         }
         tableElement.getElementsByTagName('thead')[0].replaceWith(freshHead);
     }

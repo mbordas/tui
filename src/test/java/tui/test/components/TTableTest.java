@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.apache.http.HttpException;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -36,8 +37,11 @@ import static org.junit.Assert.assertEquals;
 
 public class TTableTest extends TestWithBackend {
 
-	public static String getTitle(WebElement tableElement) {
+	public static @Nullable String getTitle(WebElement tableElement) {
 		final WebElement caption = tableElement.findElement(By.tagName("caption"));
+		if(caption.getCssValue("display").equals("none")) {
+			return null;
+		}
 		return caption.getText();
 	}
 

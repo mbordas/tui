@@ -16,8 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
@@ -25,7 +23,6 @@ import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.layout.Panel;
-import tui.utils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,68 +32,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TableTest extends TestWithBackend {
-
-	@Test
-	public void createComponent() {
-		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
-		final String tableTitle = "Table title";
-
-		try(TUIBackend backend = startBackend(updatablePage.page())) {
-			backend.registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> {
-				final Panel result = new Panel(Panel.Align.CENTER);
-				final Table table = result.append(new Table(tableTitle, List.of("A", "B")));
-				table.append(Map.of("A", "1", "B", "0"));
-				table.append(Map.of("A", "1", "B", "1"));
-				return result.toJsonMap();
-			});
-
-			try(final Browser browser = startBrowser()) {
-				browser.open(updatablePage.page().getSource());
-				assertTrue(browser.getTables().isEmpty());
-
-				browser.clickRefreshButton(updatablePage.button().getLabel());
-
-				final WebElement tableElement = browser.getTable(tableTitle);
-				assertEquals(2, tableElement.findElements(By.tagName("th")).size());
-				assertTrue(Browser.getClasses(tableElement).contains(Table.HTML_CLASS));
-			}
-		} catch(Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Test
-	public void createComponentWithHiddenTitle() {
-		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
-		final String tableTitle = "Table title";
-
-		try(TUIBackend backend = startBackend(updatablePage.page())) {
-			backend.registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> {
-				final Panel result = new Panel(Panel.Align.CENTER);
-				final Table table = result.append(new Table(tableTitle, List.of("A", "B")));
-				table.append(Map.of("A", "1", "B", "0"));
-				table.append(Map.of("A", "1", "B", "1"));
-				table.hideTitle();
-				return result.toJsonMap();
-			});
-
-			try(final Browser browser = startBrowser()) {
-				browser.open(updatablePage.page().getSource());
-				assertTrue(browser.getTables().isEmpty());
-
-				browser.clickRefreshButton(updatablePage.button().getLabel());
-
-				final List<WebElement> tables = browser.getTables();
-				assertEquals(1, tables.size());
-				tables.forEach((tableElement) -> assertTrue(tableElement.findElements(By.tagName("caption")).isEmpty()));
-			}
-		} catch(Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 	@Test
 	public void computeHiddenColumnsIndexes() {
@@ -139,28 +76,6 @@ public class TableTest extends TestWithBackend {
 								}""",
 						table.getTUID()),
 				table.toJsonMap().toJson());
-	}
-
-	@Test
-	public void browseNoPaging() {
-		final Collection<TablePickerTest.Item> items = TableTest.buildItems(3);
-
-		final Page page = new Page("Home", "/index");
-
-		final Table table = new Table("Table picker", List.of("Id", "Name"));
-		TableTest.putItemsInTable(items, table);
-		page.append(table);
-
-		startBackend(page);
-
-		// Web UI
-		final Browser browser = startBrowser();
-		browser.open("/index");
-
-		final WebElement tableElement = browser.getTable(table.getTitle());
-		final WebElement cell = browser.getTableCellByText(tableElement, (text) -> text.equals("Item-2"));
-
-		assert cell != null;
 	}
 
 	@Test

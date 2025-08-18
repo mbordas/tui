@@ -18,6 +18,8 @@ package tui.utils;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.components.Page;
@@ -32,6 +34,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class TestUtils {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
 	public static final String LOREM_IPSUM = """
 			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.
@@ -110,11 +114,13 @@ public class TestUtils {
 				browser.open(updatablePage.page().getSource());
 
 				WebElement webElement = getWebElementInPanel(browser, updatablePage);
+				LOG.debug("Testing initial HTML...");
 				elementTest.accept("initial HTML", webElement);
 
 				browser.getRefreshButton(updatablePage.button().getLabel()).click();
 
 				webElement = getWebElementInPanel(browser, updatablePage);
+				LOG.debug("Testing refreshed HTML...");
 				elementTest.accept("refreshed HTML", webElement);
 			}
 		} catch(Exception e) {

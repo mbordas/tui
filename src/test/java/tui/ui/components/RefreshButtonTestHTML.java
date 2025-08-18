@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import tui.test.Browser;
-import tui.test.TestWithBackend;
 import tui.utils.TestUtils;
 
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class RefreshButtonTestHTML extends TestWithBackend {
+public class RefreshButtonTestHTML {
 
 	@Test
 	public void html() {
