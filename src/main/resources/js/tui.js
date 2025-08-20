@@ -269,9 +269,13 @@ function createComponent(json, idMap) {
         result.setAttribute('href', json['target']);
         result.textContent = json['label'];
     } else if(type == 'svg') {
-        const containedElement = createElementWithContainer('svg', 'tui-container-svg');
-        updateSVG(containedElement.element, json);
-        result = containedElement.container;
+        if(json['tui-source'] != null) {
+            const svgElement = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
+            const containedElement = createElementWithContainer('svg', 'tui-container-svg', svgElement);
+            result = containedElement.container;
+        } else {
+            result = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
+        }
     } else if(type == 'image') {
         result = document.createElement('img');
         result.setAttribute('src', json['source']);
@@ -327,10 +331,14 @@ function adaptRefreshListeners(json, idMap) {
     }
 }
 
-function createElementWithContainer(name, containerClass) {
+/*
+    @param name The tag name for the contained element to create.
+    @param containedElement    optional. When given, it is used as the contained element (then parameter 'name' is not used).
+*/
+function createElementWithContainer(name, containerClass, containedElement) {
     const containerElement = document.createElement('div');
     containerElement.classList.add(containerClass);
-    const newElement = document.createElement(name);
+    const newElement = containedElement == null? document.createElement(name) : containedElement;
     containerElement.append(newElement);
 
     instrumentWithErrorMessage(containerElement);
@@ -1253,23 +1261,29 @@ function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastIte
 
 function updateSVG(svgElement, json) {
     const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg"); // Creating the SVG tag with same id
-    newElement.setAttribute('id', svgElement.getAttribute('id'));
-    newElement.setAttribute('tui-source', svgElement.getAttribute('tui-source')); // keeping source
+    newElement.setAttribute('id', json['id']);
+    newElement.setAttribute('tui-source', json['tui-source']);
     copySVGAttributes(json, newElement);  // Setting attributes given by backend
 
     const svgContainer = svgElement.parentElement;
-    svgContainer.removeChild(svgElement);
-    svgContainer.appendChild(newElement);
+    if(svgContainer != null) {
+        svgContainer.removeChild(svgElement);
+        svgContainer.appendChild(newElement);
+    } else {
+        svgElement.replaceWith(newElement);
+    }
 
     // Creating SVG components
     const jsonComponents = Array.from(json['components']);
     jsonComponents.forEach(function(jsonComponent, i) {
-        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", jsonComponent['type']);
-        copySVGAttributes(jsonComponent, svgElement);
-        newElement.appendChild(svgElement);
+        const svgComponentElement = document.createElementNS("http://www.w3.org/2000/svg", jsonComponent['type']);
+        copySVGAttributes(jsonComponent, svgComponentElement);
+        newElement.appendChild(svgComponentElement);
     });
 
-    instrumentSVG(svgElement);
+    instrumentSVG(newElement);
+
+    return newElement;
 }
 
 function copySVGAttributes(svgJson, svgElement) {
