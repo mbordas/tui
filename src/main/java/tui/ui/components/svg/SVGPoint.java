@@ -25,6 +25,11 @@ public class SVGPoint {
 		m_y = y;
 	}
 
+	public SVGPoint(SVGPoint point) {
+		m_x = point.m_x;
+		m_y = point.m_y;
+	}
+
 	public long x() {
 		return m_x;
 	}

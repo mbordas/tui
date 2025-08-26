@@ -17,6 +17,16 @@ package tui.ui.components.svg.graph;
 
 import org.junit.Test;
 import tui.ui.components.svg.CoordinateTransformation;
+import tui.ui.components.svg.SVG;
+import tui.ui.components.svg.SVGPoint;
+import tui.ui.components.svg.SVGText;
+import tui.utils.TestUtils;
+
+import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 
@@ -75,5 +85,40 @@ public class AxisTest {
 			assertEquals(2, gridFactor.powerOfTen());
 			assertEquals(1, gridFactor.step());
 		}
+	}
+
+	private static final LocalDateTime T0 = LocalDateTime.of(2025, Month.AUGUST, 26, 10, 54, 48);
+
+	/**
+	 * Draws x-axis for time periods going from 10s to 18 months
+	 */
+	public static void main(String[] args) throws Exception {
+		final long width_px = 600;
+		final long durationLabelWidth_px = 80;
+		double durationGrowthFactor = 1.25;
+
+		final Set<Long> durations_s = new TreeSet<>();
+		{
+			long duration_s = 10; // period = 10s
+			while(duration_s < 18 * 30 * 24 * 3600) { // until period = 18 months
+				durations_s.add(duration_s);
+				duration_s = (long) (duration_s * durationGrowthFactor);
+			}
+		}
+
+		final SVG svg = new SVG(width_px, 10L * 30 * (durations_s.size() + 1));
+		long startY_px = 10;
+		for(long duration_s : durations_s) {
+			SVGPoint startPoint = new SVGPoint(durationLabelWidth_px, startY_px);
+			drawXAxis(svg, duration_s, startPoint, width_px);
+			startY_px += 30;
+		}
+
+		TestUtils.quickShow(svg);
+	}
+
+	private static void drawXAxis(SVG svg, long duration_s, SVGPoint startPoint, long width_px) {
+		Axis.drawXAxisWithArrow(svg, new Axis.TimeRange(T0, T0.plusSeconds(duration_s)), startPoint, width_px - 70, 20, Color.BLACK);
+		svg.add(new SVGText(startPoint.translate(-10, 0), String.valueOf(duration_s), SVGText.Anchor.END, SVGText.DominantBaseline.MIDDLE));
 	}
 }

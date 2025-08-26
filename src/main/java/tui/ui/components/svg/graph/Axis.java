@@ -50,7 +50,6 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.MONTHS;
 import static java.time.temporal.ChronoUnit.SECONDS;
-import static java.time.temporal.ChronoUnit.WEEKS;
 import static java.time.temporal.ChronoUnit.YEARS;
 
 public class Axis {
@@ -217,18 +216,18 @@ public class Axis {
 	 * {@link Duration#of(long, TemporalUnit)} doesn't work with unit larger or equal to {@link ChronoUnit#DAYS} because it would be an
 	 * 'estimation'. Indeed, the value computed in this method is not accurate, but it will do the job for what is expected in this class.
 	 */
-	private static long estimateDuration_ms(Integer preferredStep, Axis.LabellingPlan labellingPlan) {
+	private static long estimateDuration_ms(Integer preferredStep, ChronoUnit stepUnit) {
 		LocalDateTime t1 = LocalDateTime.now();
-		LocalDateTime t2 = t1.plus(preferredStep, labellingPlan.stepUnit);
+		LocalDateTime t2 = t1.plus(preferredStep, stepUnit);
 		return getDuration_ms(t1, t2);
 	}
 
-	private static Axis.TimeRange computeRange(Collection<LocalDateTime> times) {
-		return new Axis.TimeRange(times.stream().min(LocalDateTime::compareTo).get(),
+	private static TimeRange computeRange(Collection<LocalDateTime> times) {
+		return new TimeRange(times.stream().min(LocalDateTime::compareTo).get(),
 				times.stream().max(LocalDateTime::compareTo).get());
 	}
 
-	public static Collection<UIGraph.Point> toPoints(Collection<Axis.TimePoint> points) {
+	public static Collection<UIGraph.Point> toPoints(Collection<TimePoint> points) {
 		if(points.isEmpty()) {
 			return new ArrayList<>();
 		}
@@ -236,7 +235,7 @@ public class Axis {
 		final Collection<UIGraph.Point> result = new ArrayList<>();
 		final LocalDateTime startTime = computeRange(points.stream().map((point) -> point.x).toList()).min;
 		final long start_ms = getMillis(startTime);
-		for(Axis.TimePoint point : points) {
+		for(TimePoint point : points) {
 			long x = getMillis(point.x) - start_ms;
 			result.add(new UIGraph.Point(x, point.y, point.label));
 		}
@@ -245,11 +244,11 @@ public class Axis {
 
 	private enum LabelFormat {
 		MSL("ss''''SSS", MILLIS),
-		MS("HH:mm''ss", ChronoUnit.SECONDS),
-		HM("HH:mm", ChronoUnit.MINUTES),
-		DH("dd/MM HH:00", ChronoUnit.HOURS),
+		MS("HH:mm''ss", SECONDS),
+		HM("HH:mm", MINUTES),
+		DH("dd/MM HH:00", HOURS),
 		MD("dd/MM", DAYS),
-		YM("MM/yyyy", ChronoUnit.MONTHS),
+		YM("MM/yyyy", MONTHS),
 		Y("dd/MM/yyyy", YEARS);
 
 		final String pattern;
@@ -258,6 +257,10 @@ public class Axis {
 		LabelFormat(String format, ChronoUnit precision) {
 			this.pattern = format;
 			this.precision = precision;
+		}
+
+		long width_px() {
+			return this.pattern.length() * 9L;
 		}
 	}
 
@@ -281,70 +284,62 @@ public class Axis {
 	private record LabellingPlan(LocalDateTime gridStart, ChronoUnit stepUnit, Collection<Integer> preferredSteps) {
 	}
 
-	private static Axis.LabellingPlan computeLabellingPlan(LocalDateTime time, ChronoUnit formatPrecision) {
+	private static LabellingPlan getLabellingPlan(LocalDateTime time, ChronoUnit formatPrecision) {
 		LocalDateTime gridStart = truncate(time, formatPrecision);
 		return switch(formatPrecision) {
-			case MILLIS -> new Axis.LabellingPlan(gridStart, MILLIS, List.of(1, 2, 5, 10, 50, 100));
-			case SECONDS -> new Axis.LabellingPlan(gridStart, SECONDS, List.of(1, 2, 5, 10, 30));
-			case MINUTES -> new Axis.LabellingPlan(gridStart, MINUTES, List.of(1, 2, 5, 10, 30));
-			case HOURS, HALF_DAYS, DAYS -> new Axis.LabellingPlan(gridStart, DAYS, List.of(1, 7));
-			case WEEKS -> new Axis.LabellingPlan(gridStart, WEEKS, List.of(1, 2));
-			case MONTHS, YEARS -> new Axis.LabellingPlan(gridStart, MONTHS, List.of(1, 2, 3, 4, 6));
-			case DECADES -> new Axis.LabellingPlan(gridStart, DECADES, List.of(1, 2, 5, 10));
-			case CENTURIES -> new Axis.LabellingPlan(gridStart, CENTURIES, List.of(1, 2, 5, 10));
-			default -> new Axis.LabellingPlan(gridStart, formatPrecision, List.of(1));
+			case MILLIS -> new LabellingPlan(gridStart, MILLIS, List.of(1, 2, 5, 10, 50, 100));
+			case SECONDS -> new LabellingPlan(gridStart, SECONDS, List.of(1, 2, 5, 10, 15, 20, 30));
+			case MINUTES -> new LabellingPlan(gridStart, MINUTES, List.of(1, 2, 5, 10, 15, 20, 30));
+			case HOURS -> new LabellingPlan(gridStart, HOURS, List.of(1, 2, 4, 5, 6, 8, 12));
+			case DAYS, WEEKS -> new LabellingPlan(gridStart, DAYS, List.of(1, 2, 7));
+			case MONTHS, YEARS -> new LabellingPlan(gridStart, MONTHS, List.of(1, 2, 3, 4, 6));
+			case DECADES -> new LabellingPlan(gridStart, DECADES, List.of(1, 2, 5, 10));
+			case CENTURIES -> new LabellingPlan(gridStart, CENTURIES, List.of(1, 2, 5, 10));
+			default -> new LabellingPlan(gridStart, formatPrecision, List.of(1));
 		};
+	}
+
+	record TimeFormatter(LabelFormat format, LabellingPlan plan, int step) {
 	}
 
 	/**
 	 * @param width_px The length of the x-axis in pixels.
 	 * @return Each entry of the Map gives the abscissa relative to the start of x-axis (in pixels), and the label.
 	 */
-	public static Map<Integer, String> computeXTimeLabels(long width_px, Axis.TimeRange timeRange) {
+	public static Map<Integer, String> computeXTimeLabels(long width_px, TimeRange timeRange) {
 		final long range_ms = timeRange.size_ms();
+		final long labelMargin_px = 10;
 
-		// Computing minimum space between 2 labels (time marks)
-		final double millisPerPixel = (double) range_ms / width_px;
-		final long labelSpaceMin_ms = (long) (100 * millisPerPixel);
-
-		// Choosing the best date format
-		Axis.LabelFormat format = Axis.LabelFormat.MSL;
-		for(Axis.LabelFormat _format : Axis.LabelFormat.values()) {
-			if(labelSpaceMin_ms >= _format.precision.getDuration().get(ChronoUnit.SECONDS) * 1000L) {
-				format = _format;
-			} else {
-				break;
+		TimeFormatter optimalFormat = null;
+		for(LabelFormat labelFormat : LabelFormat.values()) {
+			final LabellingPlan labellingPlan = getLabellingPlan(timeRange.min, labelFormat.precision);
+			for(Integer step : labellingPlan.preferredSteps) {
+				final long stepDuration_ms = estimateDuration_ms(step, labellingPlan.stepUnit);
+				double nbSteps = (double) range_ms / stepDuration_ms;
+				final long stepsLabelsWidth_px = (long) (nbSteps * (labelFormat.width_px() + labelMargin_px));
+				if(optimalFormat == null && stepsLabelsWidth_px < width_px) {
+					optimalFormat = new TimeFormatter(labelFormat, labellingPlan, step);
+				}
 			}
 		}
-		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format.pattern);
-
-		// The labelling plan defines which instants should be marked with label on x-axis
-		final Axis.LabellingPlan labellingPlan = computeLabellingPlan(timeRange.min, format.precision);
-		Integer stepFactor = 1;
-		for(Integer preferredStep : labellingPlan.preferredSteps) {
-			final long duration_ms = estimateDuration_ms(preferredStep, labellingPlan);
-			stepFactor = preferredStep;
-			if(duration_ms >= labelSpaceMin_ms) {
-				break;
-			}
-		}
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(optimalFormat.format().pattern);
 
 		// Computing the labels on x-axis
 		final Map<Integer, String> result = new TreeMap<>();
-		LocalDateTime time = labellingPlan.gridStart;
+		LocalDateTime time = optimalFormat.plan().gridStart;
 		while(time.isBefore(timeRange.max)) {
 			if(time.equals(timeRange.min) || time.isAfter(timeRange.min)) {
 				int relativeAbscissa_px = (int) ((double) getDuration_ms(timeRange.min, time) * width_px / range_ms);
 				String label = time.format(formatter);
 				result.put(relativeAbscissa_px, label);
 			}
-			time = time.plus(stepFactor, labellingPlan.stepUnit);
+			time = time.plus(optimalFormat.step(), optimalFormat.plan().stepUnit);
 		}
 
 		return result;
 	}
 
-	public static void addXLabelsAuto(UIGraph graph, int width_px, Axis.TimeRange timeRange, CoordinateTransformation.Range xRange) {
+	public static void addXLabelsAuto(UIGraph graph, int width_px, TimeRange timeRange, CoordinateTransformation.Range xRange) {
 		// labels are localised with pixels (relative to x-axis start)
 		final Map<Integer, String> labelsOnAxis_px = computeXTimeLabels(width_px, timeRange);
 
@@ -357,7 +352,7 @@ public class Axis {
 		}
 	}
 
-	public static void drawXAxis(SVG svg, Axis.TimeRange timeRange,
+	public static void drawXAxis(SVG svg, TimeRange timeRange,
 			SVGPoint start, int length_px,
 			int verticalSpaceForText_px, Color color) {
 		drawXAxis(svg, timeRange, start, length_px, verticalSpaceForText_px, color, null);
@@ -370,14 +365,14 @@ public class Axis {
 	 * @param length_px               The length of the x-axis in the SVG (pixels).
 	 * @param verticalSpaceForText_px The space available under the x-axis for the labels.
 	 */
-	public static void drawXAxisWithArrow(SVG svg, Axis.TimeRange timeRange,
+	public static void drawXAxisWithArrow(SVG svg, TimeRange timeRange,
 			SVGPoint start, long length_px,
 			long verticalSpaceForText_px, Color color) {
 		final SVGMarker endMarker = svg.addMarker(UIGraph.buildArrow(color));
 		drawXAxis(svg, timeRange, start, length_px, verticalSpaceForText_px, color, endMarker);
 	}
 
-	private static void drawXAxis(SVG svg, Axis.TimeRange timeRange,
+	private static void drawXAxis(SVG svg, TimeRange timeRange,
 			SVGPoint start, long length_px,
 			long verticalSpaceForText_px, Color color, @Nullable SVGMarker endMarker) {
 
