@@ -120,8 +120,14 @@ public class TestUtils {
 				browser.getRefreshButton(updatablePage.button().getLabel()).click();
 
 				webElement = getWebElementInPanel(browser, updatablePage);
-				LOG.debug("Testing refreshed HTML...");
-				elementTest.accept("refreshed HTML", webElement);
+				LOG.debug("Testing refreshed HTML 1/2...");
+				elementTest.accept("refreshed HTML 1/2", webElement);
+
+				browser.getRefreshButton(updatablePage.button().getLabel()).click();
+
+				webElement = getWebElementInPanel(browser, updatablePage);
+				LOG.debug("Testing refreshed HTML 2/2...");
+				elementTest.accept("refreshed HTML 2/2", webElement);
 			}
 		} catch(Exception e) {
 			throw new RuntimeException(e);
