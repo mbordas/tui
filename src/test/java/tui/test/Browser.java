@@ -79,6 +79,17 @@ public class Browser implements Closeable {
 		m_driver.quit();
 	}
 
+	public void waitClosedManually() {
+		while(true) {
+			try {
+				m_driver.getTitle();
+				Thread.sleep(500);
+			} catch(Throwable t) {
+				break;
+			}
+		}
+	}
+
 	// SECTIONS
 
 	public List<WebElement> getSections() {
