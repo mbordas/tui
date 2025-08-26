@@ -1260,10 +1260,20 @@ function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastIte
 // SVG
 
 function updateSVG(svgElement, json) {
-    const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg"); // Creating the SVG tag with same id
-    newElement.setAttribute('id', json['id']);
-    newElement.setAttribute('tui-source', json['tui-source']);
-    copySVGAttributes(json, newElement);  // Setting attributes given by backend
+    const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    if(svgElement.getAttribute('id') != null) {
+        newElement.setAttribute('id', svgElement.getAttribute('id'));
+    } else if(json['tuid'] != null){
+        newElement.setAttribute('id', json['tuid']);
+    }
+
+    if(json['tui-source'] != null) {
+        newElement.setAttribute('tui-source', json['tui-source']);
+    } else if(svgElement.getAttribute('tui-source') != null) {
+        newElement.setAttribute('tui-source', svgElement.getAttribute('tui-source'));
+    }
+
+    copySVGAttributes(json, newElement); // Setting attributes given by backend
 
     const svgContainer = svgElement.parentElement;
     if(svgContainer != null) {
