@@ -27,4 +27,8 @@ public class FormInputNumber extends FormInput {
 	public void setInitialValue(String value) {
 		m_initialValue = value;
 	}
+
+	public void setInitialValue(int value) {
+		m_initialValue = String.valueOf(value);
+	}
 }
