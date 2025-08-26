@@ -18,12 +18,16 @@ package tui.utils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tui.http.RequestReader;
+import tui.http.TUIBackend;
+import tui.test.Browser;
+import tui.ui.components.Page;
+import tui.ui.components.form.Search;
 import tui.ui.components.svg.SVG;
 import tui.ui.components.svg.SVGRectangle;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -98,62 +102,65 @@ public class TUIColorsTest {
 		check(endHSL, palette.get(2));
 	}
 
+	static SVG computePaletteSVG(int hueStart, int hueEnd, int saturation, int lightness) {
+		final int nbColors = 10;
+		final int y_px = 1;
+		final int height_px = 30;
+		final int width_px = 600 / nbColors;
+		final int margin_px = 5;
+
+		final SVG result = new SVG((width_px + margin_px) * nbColors, 100);
+
+		final List<TUIColors.ColorHSL> palette = TUIColors.palette(new TUIColors.ColorHSL(hueStart, saturation, lightness),
+				new TUIColors.ColorHSL(hueEnd, saturation, lightness),
+				nbColors);
+
+		int x_px = 1;
+		for(TUIColors.ColorHSL colorHSL : palette) {
+			result.add(new SVGRectangle(x_px, y_px, width_px, height_px))
+					.withFillColor(colorHSL.toRGB());
+			x_px += width_px + margin_px;
+		}
+
+		return result;
+	}
+
 	/**
-	 * Here we construct a {@link SVG} to display computed colors from a single Hue value as follows:
-	 * <ul>
-	 *     <li>A 2d grid shows Lightness (y-axis) and Saturation (x-axis)</li>
-	 *     <li>A row shows a palette computed using a very simple relation between Lightness and Saturation.</li>
-	 * </ul>
+	 * Opens a page that helps to create a palette of colors
 	 */
 	public static void main(String[] args) throws Exception {
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("\nHue (0 to 360 degrees): ");
-		String hueStr = scanner.nextLine();
-		int hue = Integer.parseInt(hueStr);
+		final int initialHueStart = 0;
+		final int initialHueEnd = 360;
+		final int initialSaturation = 70;
+		final int initialLightness = 80;
 
-		final SVG svg = new SVG(600, 600);
-		long width_px = 30;
-		long height_px = 20;
-		long x_px = 10;
-		long y_px = 10;
-		for(int lightness = 100; lightness >= 0; lightness -= 10) {
-			for(int saturation = 0; saturation <= 100; saturation += 10) {
-				final Color rgb = new TUIColors.ColorHSL(hue, saturation, lightness).toRGB();
-				svg.add(new SVGRectangle(x_px, y_px, width_px, height_px)
-						.withFillColor(rgb)
-						.withStrokeColor(null));
-				x_px += width_px + 5;
+		final Page page = new Page("Color palette", "/index");
+		final Search search = page.append(new Search("", "Compute palette"));
+		search.createInputNumber("Hue start (0 to 360 degrees)", "hueStart").setInitialValue(initialHueStart);
+		search.createInputNumber("Hue end (0 to 360 degrees)", "hueEnd").setInitialValue(initialHueEnd);
+		search.createInputNumber("Saturation (0 to 100)", "saturation").setInitialValue(initialSaturation);
+		search.createInputNumber("Lightness (0 to 100)", "lightness").setInitialValue(initialLightness);
+
+		final SVG svg = page.append(computePaletteSVG(initialHueStart, initialHueEnd, initialSaturation, initialLightness));
+		svg.setSource("/svg");
+		search.connectListener(svg);
+
+		try(final TUIBackend backend = new TUIBackend(8080)) {
+			backend.start();
+			backend.registerPage(page);
+			backend.registerWebService(svg.getSource(), (uri, request, response) -> {
+				final RequestReader reader = new RequestReader(request);
+				final int hueStart = reader.getIntParameter("hueStart");
+				final int hueEnd = reader.getIntParameter("hueEnd");
+				final int saturation = reader.getIntParameter("saturation");
+				final int lightness = reader.getIntParameter("lightness");
+				return computePaletteSVG(hueStart, hueEnd, saturation, lightness).toJsonMap();
+			});
+
+			try(final Browser browser = new Browser(backend.getPort())) {
+				browser.open(page.getSource());
+				browser.waitClosedManually();
 			}
-			x_px = 10;
-			y_px += height_px + 5;
 		}
-
-		// Palette from same hue
-		x_px = 10;
-		y_px += height_px + 5;
-		for(int lightness = 90; lightness >= 10; lightness -= 10) {
-			int saturation = 110 - lightness;
-			final Color rgb = new TUIColors.ColorHSL(hue, saturation, lightness).toRGB();
-			svg.add(new SVGRectangle(x_px, y_px, width_px, height_px)
-					.withFillColor(rgb)
-					.withStrokeColor(null));
-			x_px += width_px + 5;
-		}
-
-		// Palette with different hue
-		final TUIColors.ColorHSL colorStart = new TUIColors.ColorHSL(hue, 90, 40);
-		int hue2 = (hue + 280) % 360;
-		final TUIColors.ColorHSL colorEnd = new TUIColors.ColorHSL(hue2, 90, 40);
-		x_px = 10;
-		y_px += height_px + 5;
-		final List<TUIColors.ColorHSL> palette = TUIColors.palette(colorStart, colorEnd, 8);
-		for(TUIColors.ColorHSL color : palette) {
-			svg.add(new SVGRectangle(x_px, y_px, width_px, height_px)
-					.withFillColor(color.toRGB())
-					.withStrokeColor(null));
-			x_px += width_px + 5;
-		}
-
-		TestUtils.quickShow(svg);
 	}
 }
