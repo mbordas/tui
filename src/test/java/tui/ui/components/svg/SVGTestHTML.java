@@ -53,7 +53,7 @@ public class SVGTestHTML {
 					assertTrue(prefix, Browser.getClasses(componentRootElement).contains(SVG.HTML_CLASS_CONTAINER));
 
 					final WebElement svgElement = componentRootElement.findElement(By.tagName("svg"));
-
+					assertEquals(String.valueOf(svg.getTUID()), svgElement.getAttribute("id"));
 					checkSVGElement(svgElement);
 				});
 	}
