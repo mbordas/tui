@@ -95,6 +95,12 @@ public class Search extends UIComponent {
 		return result;
 	}
 
+	public FormInputNumber createInputNumber(String label, String name) {
+		final FormInputNumber result = new FormInputNumber(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
 	public FormInputDayHHmm createInputDayHHmm(String label, String name) {
 		final FormInputDayHHmm result = new FormInputDayHHmm(label, name);
 		m_inputs.add(result);
