@@ -128,7 +128,7 @@ public class TUIDocsPage extends Page {
 		final SVGRectangle headerRectangle = svg.add(new SVGRectangle(topLeft, width_px, height_px));
 		headerRectangle.withStrokeColor(new Color(209, 22, 255))
 				.withStrokeWidth(2)
-				.withFillColor(null);
+				.withNoFillColor();
 		svg.add(new SVGText(headerRectangle.getCenter(), text, SVGText.Anchor.MIDDLE, SVGText.DominantBaseline.MIDDLE));
 	}
 }

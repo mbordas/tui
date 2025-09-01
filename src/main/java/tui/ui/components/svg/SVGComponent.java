@@ -72,8 +72,18 @@ public abstract class SVGComponent {
 		return this;
 	}
 
+	public SVGComponent withNoFillColor() {
+		m_fillColor = null;
+		return this;
+	}
+
 	public SVGComponent withFillColor(Color color) {
 		m_fillColor = color;
+		return this;
+	}
+
+	public SVGComponent withFillColor(TUIColors.ColorHSL color) {
+		m_fillColor = color.toRGB();
 		return this;
 	}
 
