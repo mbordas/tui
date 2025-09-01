@@ -15,6 +15,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components;
 
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
@@ -28,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Page {
+
+	private static final Logger LOG = LoggerFactory.getLogger(Page.class);
 
 	public static final String JSON_TYPE = "page";
 	public static final String JSON_ATTRIBUTE_FETCH_TYPE = "fetchType";
@@ -78,8 +83,12 @@ public class Page {
 		m_fetchType = type;
 	}
 
-	public void setSessionParameter(String name, String value) {
-		m_sessionParameters.put(name, value);
+	public void setSessionParameter(String name, @Nullable String value) {
+		if(value == null) {
+			LOG.warn("Session parameter '{}' with null value will not be integrated.", name);
+		} else {
+			m_sessionParameters.put(name, value);
+		}
 	}
 
 	public void enableFavicon() {
@@ -187,12 +196,18 @@ public class Page {
 		return result;
 	}
 
+	/**
+	 * @param parameters Only entries with non-null values will be printed in the returned string.
+	 */
 	static String generateSessionParametersInitialization(String mapName, Map<String, String> parameters) {
 		final StringBuilder result = new StringBuilder();
 		result.append(String.format("const %s={", mapName));
 		final List<String> parameterAssignations = new ArrayList<>();
 		for(Map.Entry<String, String> entry : parameters.entrySet()) {
-			parameterAssignations.add(String.format("%s:'%s'", entry.getKey(), entry.getValue()));
+			final String value = entry.getValue();
+			if(value != null) {
+				parameterAssignations.add(String.format("%s:'%s'", entry.getKey(), value));
+			}
 		}
 		result.append(String.join(",", parameterAssignations));
 		result.append("};");
