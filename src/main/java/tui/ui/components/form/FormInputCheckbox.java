@@ -46,6 +46,8 @@ public class FormInputCheckbox extends FormInput {
 		final JsonMap result = super.toJsonObject();
 		if(m_checked) {
 			result.setAttribute("checked", "true");
+		} else {
+			result.setAttribute("checked", "false");
 		}
 		return result;
 	}

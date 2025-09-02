@@ -284,6 +284,8 @@ function createComponent(json, idMap) {
         result = createForm(json, idMap);
     } else if(type == 'modalform') {
         result = createModalForm(json, idMap);
+    } else if(type == 'search_form') {
+        result = createSearchForm(json, idMap);
     } else {
         result = null;
     }
@@ -590,42 +592,97 @@ function instrumentRefreshButton(buttonElement) {
 
 // SEARCH
 
+function createSearchForm(json, idMap) {
+    const formTUID = json['tuid'];
+
+    var result = document.createElement('search');
+    result.classList.add('tui-search');
+    result.setAttribute('tuid', formTUID);
+
+    // Title
+    var label = document.createElement('label');
+    label.textContent = json['title'];
+    if(json['hideTitle'] == 'true') {
+        label.setAttribute('display', 'none');
+    }
+    result.appendChild(label);
+
+    // Fields
+    json['inputs'].forEach(function(input) {
+        var inputDiv = createFormInput(result, input, formTUID);
+        inputDiv.classList.add('tui-search-input');
+        const labelElement = inputDiv.querySelector('label');
+        labelElement.classList.add('tui-search-input-label');
+    });
+
+    // Parameters
+    const parameters = json['parameters'];
+    for(let name in parameters) {
+        var value = parameters[name];
+        const parameterElement = document.createElement('input');
+        parameterElement.setAttribute('type', 'hidden');
+        parameterElement.setAttribute('name', name);
+        parameterElement.setAttribute('value', value);
+        result.appendChild(parameterElement);
+    }
+
+    // Submit button
+    var submitButton = document.createElement('button');
+    submitButton.textContent = json['submitLabel'];
+    if(json['hideButton'] == 'true') {
+        submitButton.setAttribute('display', 'none');
+    }
+    result.appendChild(submitButton);
+
+    if(json['refreshListeners'] != null) {
+        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
+    }
+
+    instrumentSearchForm(result);
+
+    return result;
+}
+
 function instrumentSearchForms() {
     const searchForms = document.querySelectorAll('.tui-search');
     searchForms.forEach(function(searchElement, i) {
-        const button = searchElement.querySelector('button');
-        button.addEventListener('click', function() {
-            const data = {};
-            searchElement.querySelectorAll('input').forEach(function(inputElement) {
-                if(inputElement.type == 'radio') {
-                    if(inputElement.checked) {
-                        data[inputElement.name] = inputElement.value;
-                    }
-                } else if(inputElement.type == 'checkbox') {
-                    if(inputElement.checked) {
-                        data[inputElement.name] = 'on';
-                    } else {
-                        data[inputElement.name] = 'off';
-                    }
-                } else {
-                    if(inputElement.type == 'search' || inputElement.value != '') {
-                        data[inputElement.name] = inputElement.value;
-                    }
-                }
-            });
-            searchElement.getAttribute('tui-refresh-listeners').split(",")
-                .forEach(function(id, i) {
-                    refreshComponent(id, data);
-                });
-        });
+        instrumentSearchForm(searchElement);
+    });
+}
 
-        searchElement.querySelectorAll("input[type='search']").forEach(function(searchInput, i) {
-            searchInput.addEventListener('keypress', function(event) {
-                if(event.key === 'Enter') {
-                    event.preventDefault();
-                    button.click();
+function instrumentSearchForm(searchElement) {
+    const button = searchElement.querySelector('button');
+    button.addEventListener('click', function() {
+        const data = {};
+        searchElement.querySelectorAll('input').forEach(function(inputElement) {
+            if(inputElement.type == 'radio') {
+                if(inputElement.checked) {
+                    data[inputElement.name] = inputElement.value;
                 }
+            } else if(inputElement.type == 'checkbox') {
+                if(inputElement.checked) {
+                    data[inputElement.name] = 'on';
+                } else {
+                    data[inputElement.name] = 'off';
+                }
+            } else {
+                if(inputElement.type == 'search' || inputElement.value != '') {
+                    data[inputElement.name] = inputElement.value;
+                }
+            }
+        });
+        searchElement.getAttribute('tui-refresh-listeners').split(",")
+            .forEach(function(id, i) {
+                refreshComponent(id, data);
             });
+    });
+
+    searchElement.querySelectorAll("input[type='search']").forEach(function(searchInput, i) {
+        searchInput.addEventListener('keypress', function(event) {
+            if(event.key === 'Enter') {
+                event.preventDefault();
+                button.click();
+            }
         });
     });
 }
@@ -695,7 +752,11 @@ function createFieldSet(form, json, isModal) {
 
     // Fields
     json['inputs'].forEach(function(input) {
-        createFormInput(inputsDiv, input, formTUID);
+        const formInput = createFormInput(inputsDiv, input, formTUID);
+        formInput.classList.add('tui-form-input');
+        const errorSpan = document.createElement('span');
+        errorSpan.classList.add('tui-input-error');
+        formInput.appendChild(errorSpan);
     });
 
     // Message
@@ -871,8 +932,6 @@ function prepareFormData(formElement) {
     return data;
 }
 
-
-
 function startFormPending(formElement) {
     const fieldset = formElement.querySelector('fieldset');
     fieldset.classList.add('form-pending');
@@ -937,7 +996,11 @@ function onFormResponse(formElement, json) {
                 const formTUID = formElement['id'];
                 const newInputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
                 formUpdate['inputs'].forEach(function(input) {
-                    createFormInput(newInputsDiv, input, formTUID);
+                    const formInput = createFormInput(newInputsDiv, input, formTUID);
+                    formInput.classList.add('tui-form-input');
+                    const errorSpan = document.createElement('span');
+                    errorSpan.classList.add('tui-input-error');
+                    formInput.appendChild(errorSpan);
                 });
                 fieldset.querySelector('div').replaceWith(newInputsDiv);
             }
@@ -978,26 +1041,27 @@ function onFormResponse(formElement, json) {
 function createFormInput(fieldsetElement, json, formTUID) {
     const inputDiv = document.createElement('div');
     fieldsetElement.append(inputDiv);
-    inputDiv.classList.add('tui-form-input');
     const inputId = formTUID + '-' + json['name'];
-
-    const errorSpan = document.createElement('span');
-    errorSpan.classList.add('tui-input-error');
-    inputDiv.appendChild(errorSpan);
 
     const inputLabel = document.createElement('label');
     inputDiv.append(inputLabel);
     inputLabel.setAttribute('for', inputId);
     inputLabel.textContent = json['label'];
 
-    if(json['type'] != 'from_input_checkbox') {
+    const inputElement = document.createElement('input');
+    inputDiv.append(inputElement);
+    inputElement.setAttribute('id', inputId);
+    inputElement.setAttribute('type', json['type']);
+    inputElement.setAttribute('name', json['name']);
+
+    if(json['type'] == 'checkbox') {
         inputLabel.classList.add('label-checkbox');
-        const inputElement = document.createElement('input');
-        inputDiv.append(inputElement);
-        inputElement.setAttribute('id', inputId);
-        inputElement.setAttribute('type', json['type']);
-        inputElement.setAttribute('name', json['name']);
+        if(json['checked'] == 'true') {
+            inputElement.checked = true;
+        }
     }
+
+    return inputDiv;
 }
 
 function hideSuccessMessage(formElement) {

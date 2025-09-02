@@ -113,20 +113,20 @@ public class TestUtils {
 			try(final Browser browser = new Browser(port)) {
 				browser.open(updatablePage.page().getSource());
 
-				WebElement webElement = getWebElementInPanel(browser, updatablePage);
 				LOG.debug("Testing initial HTML...");
+				WebElement webElement = getWebElementInPanel(browser, updatablePage);
 				elementTest.accept("initial HTML", webElement);
 
 				browser.getRefreshButton(updatablePage.button().getLabel()).click();
 
-				webElement = getWebElementInPanel(browser, updatablePage);
 				LOG.debug("Testing refreshed HTML 1/2...");
+				webElement = getWebElementInPanel(browser, updatablePage);
 				elementTest.accept("refreshed HTML 1/2", webElement);
 
 				browser.getRefreshButton(updatablePage.button().getLabel()).click();
 
-				webElement = getWebElementInPanel(browser, updatablePage);
 				LOG.debug("Testing refreshed HTML 2/2...");
+				webElement = getWebElementInPanel(browser, updatablePage);
 				elementTest.accept("refreshed HTML 2/2", webElement);
 			}
 		} catch(Exception e) {

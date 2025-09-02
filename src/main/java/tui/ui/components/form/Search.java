@@ -37,7 +37,7 @@ public class Search extends UIComponent {
 
 	public static final String JSON_TYPE = "search_form";
 	public static final String JSON_ATTRIBUTE_TITLE = "title";
-	public static final String JSON_ATTRIBUTE_HIDE_TITLE = "hideButton";
+	public static final String JSON_ATTRIBUTE_HIDE_TITLE = "hideTitle";
 	public static final String JSON_ATTRIBUTE_SUBMIT_LABEL = "submitLabel";
 	public static final String JSON_ATTRIBUTE_HIDE_BUTTON = "hideButton";
 	public static final String JSON_ATTRIBUTE_INPUTS = "inputs";
