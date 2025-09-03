@@ -479,7 +479,7 @@ function updateTabbedFlow(tabbedFlowElement, json, idMap) {
 function selectTab(tabId, tabLink) {
     const tabs = tabLink
         .parentElement // tabnav
-        .parentElement // tabbedFlow element, pdirect children are: tabsnav and tabs
+        .parentElement // tabbedFlow element, direct children are: tabsnav and tabs
         .querySelectorAll('.tui-tab');
     tabs.forEach(function(tab, i) {
         tab.style.display = 'none';
@@ -603,7 +603,7 @@ function createSearchForm(json, idMap) {
     var label = document.createElement('label');
     label.textContent = json['title'];
     if(json['hideTitle'] == 'true') {
-        label.setAttribute('display', 'none');
+        label.style.display = 'none';
     }
     result.appendChild(label);
 
@@ -648,7 +648,7 @@ function createSearchForm(json, idMap) {
     var submitButton = document.createElement('button');
     submitButton.textContent = json['submitLabel'];
     if(json['hideButton'] == 'true') {
-        submitButton.setAttribute('display', 'none');
+        submitButton.style.display = 'none';
     }
     result.appendChild(submitButton);
 
