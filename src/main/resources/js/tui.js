@@ -1079,6 +1079,12 @@ function createFormInput(fieldsetElement, json, formTUID) {
     inputElement.setAttribute('id', inputId);
     inputElement.setAttribute('type', json['type']);
     inputElement.setAttribute('name', json['name']);
+    if(json['initialValue'] != null) {
+        inputElement.setAttribute('value', json['initialValue']);
+    }
+    if(json['placeholder'] != null) {
+        inputElement.setAttribute('placeholder', json['placeholder']);
+    }
 
     if(json['type'] == 'checkbox') {
         inputLabel.classList.add('label-checkbox');

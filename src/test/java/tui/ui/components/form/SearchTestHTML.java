@@ -22,7 +22,6 @@ import tui.test.Browser;
 import tui.utils.TestUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -44,13 +43,13 @@ public class SearchTestHTML {
 					final WebElement titleElement = componentRootElement.findElement(By.tagName("label"));
 					assertEquals("Search title", titleElement.getText());
 
-					final WebElement inputElement = getInputChildByName(componentRootElement, "inputString");
+					final WebElement inputElement = Browser.getInputChildByName(componentRootElement, "inputString");
 					assertEquals("text", inputElement.getAttribute("type"));
 					final WebElement inputLabelElement = Browser.getParent(inputElement).findElement(By.tagName("label"));
 					assertEquals("String label", inputLabelElement.getText());
 					assertEquals(inputElement.getAttribute("id"), inputLabelElement.getAttribute("for"));
 
-					final WebElement parameter = getInputChildByName(componentRootElement, "parameterName");
+					final WebElement parameter = Browser.getInputChildByName(componentRootElement, "parameterName");
 					assertEquals("Parameter Value", parameter.getAttribute("value"));
 					assertEquals("hidden", parameter.getAttribute("type"));
 				});
@@ -65,11 +64,11 @@ public class SearchTestHTML {
 		TestUtils.assertHTMLProcedure(() -> search,
 				(prefix, componentRootElement) -> {
 
-					final WebElement checkboxOnElement = getInputChildByName(componentRootElement, "checkboxON");
+					final WebElement checkboxOnElement = Browser.getInputChildByName(componentRootElement, "checkboxON");
 					assertEquals("checkbox", checkboxOnElement.getAttribute("type"));
 					assertTrue(checkboxOnElement.isSelected());
 
-					final WebElement checkboxOffElement = getInputChildByName(componentRootElement, "checkboxOFF");
+					final WebElement checkboxOffElement = Browser.getInputChildByName(componentRootElement, "checkboxOFF");
 					assertEquals("checkbox", checkboxOffElement.getAttribute("type"));
 					assertFalse(checkboxOffElement.isSelected());
 				});
@@ -94,20 +93,9 @@ public class SearchTestHTML {
 
 					assertEquals(2, rowElements.size());
 					final List<WebElement> cellsOfRow1 = rowElements.get(0).findElements(By.tagName("td"));
-					final WebElement dayInputElement = getInputChildByName(cellsOfRow1.get(0), "day");
+					final WebElement dayInputElement = Browser.getInputChildByName(cellsOfRow1.get(0), "day");
 					TestUtils.assertClasses(List.of("tui-form-input"), Browser.getParent(dayInputElement));
 				});
-	}
-
-	private WebElement getInputChildByName(WebElement searchElement, String childName) {
-		final List<WebElement> inputElements = searchElement.findElements(By.tagName("input"));
-		final Optional<WebElement> anyInputStringElement = inputElements.stream()
-				.filter((inputElement) -> inputElement.getAttribute("name").equals(childName))
-				.findAny();
-		if(anyInputStringElement.isEmpty()) {
-			throw new RuntimeException(String.format("No child element of type 'input' with name='%s'", childName));
-		}
-		return anyInputStringElement.get();
 	}
 
 }

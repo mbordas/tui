@@ -451,6 +451,17 @@ public class Browser implements Closeable {
 		return childrenElements.get(0);
 	}
 
+	public static WebElement getInputChildByName(WebElement searchElement, String inputName) {
+		final List<WebElement> inputElements = searchElement.findElements(By.tagName("input"));
+		final Optional<WebElement> anyInputStringElement = inputElements.stream()
+				.filter((inputElement) -> inputElement.getAttribute("name").equals(inputName))
+				.findAny();
+		if(anyInputStringElement.isEmpty()) {
+			throw new RuntimeException(String.format("No child element of type 'input' with name='%s'", inputName));
+		}
+		return anyInputStringElement.get();
+	}
+
 	public static Collection<String> getClasses(WebElement element) {
 		return Arrays.asList(element.getAttribute("class").split(" "));
 	}
