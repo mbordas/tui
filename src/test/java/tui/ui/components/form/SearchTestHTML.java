@@ -75,6 +75,30 @@ public class SearchTestHTML {
 				});
 	}
 
+	@Test
+	public void displayLikeForm() {
+		final Search search = new Search("Search title", "Submit");
+		search.createInputDayHHmm("Day", "day");
+		search.createInputRadio("Radio", "radio")
+				.addOption("Option 1", "opt1")
+				.addOption("Option 2", "opt2")
+				.addOption("Option 3", "opt3");
+		search.createInputNumber("Number", "number");
+		search.displayLikeForm(2);
+
+		TestUtils.assertHTMLProcedure(() -> search,
+				(prefix, componentRootElement) -> {
+
+					final WebElement tableElement = componentRootElement.findElement(By.tagName("table"));
+					final List<WebElement> rowElements = tableElement.findElements(By.tagName("tr"));
+
+					assertEquals(2, rowElements.size());
+					final List<WebElement> cellsOfRow1 = rowElements.get(0).findElements(By.tagName("td"));
+					final WebElement dayInputElement = getInputChildByName(cellsOfRow1.get(0), "day");
+					TestUtils.assertClasses(List.of("tui-form-input"), Browser.getParent(dayInputElement));
+				});
+	}
+
 	private WebElement getInputChildByName(WebElement searchElement, String childName) {
 		final List<WebElement> inputElements = searchElement.findElements(By.tagName("input"));
 		final Optional<WebElement> anyInputStringElement = inputElements.stream()

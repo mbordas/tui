@@ -608,12 +608,30 @@ function createSearchForm(json, idMap) {
     result.appendChild(label);
 
     // Fields
-    json['inputs'].forEach(function(input) {
-        var inputDiv = createFormInput(result, input, formTUID);
-        inputDiv.classList.add('tui-search-input');
-        const labelElement = inputDiv.querySelector('label');
-        labelElement.classList.add('tui-search-input-label');
-    });
+    if(json['formDisplayColumns'] != null) {
+        const nbColumns = parseInt(json['formDisplayColumns']);
+        const tableElement = document.createElement('table');
+        result.appendChild(tableElement);
+        var rowElement = document.createElement('tr');
+        tableElement.appendChild(rowElement);
+        var index = 0;
+        json['inputs'].forEach(function(input) {
+            const cellElement = document.createElement('td');
+            rowElement.appendChild(cellElement);
+            var inputDiv = createSearchFormInput(result, input, formTUID, 'tui-form-input');
+            cellElement.appendChild(inputDiv);
+
+            index = index + 1;
+            if(index % nbColumns == 0) {
+                rowElement = document.createElement('tr');
+                tableElement.appendChild(rowElement);
+            }
+        });
+    } else {
+        json['inputs'].forEach(function(input) {
+            createSearchFormInput(result, input, formTUID, 'tui-search-input');
+        });
+    }
 
     // Parameters
     const parameters = json['parameters'];
@@ -641,6 +659,14 @@ function createSearchForm(json, idMap) {
     instrumentSearchForm(result);
 
     return result;
+}
+
+function createSearchFormInput(searchFormElement, jsonInput, searchFormTUID, cssClass) {
+    var inputDiv = createFormInput(searchFormElement, jsonInput, searchFormTUID);
+    inputDiv.classList.add(cssClass);
+    const labelElement = inputDiv.querySelector('label');
+    labelElement.classList.add('tui-search-input-label');
+    return inputDiv;
 }
 
 function instrumentSearchForms() {

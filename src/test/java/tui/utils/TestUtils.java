@@ -29,9 +29,14 @@ import tui.ui.components.UIRefreshableComponent;
 import tui.ui.components.layout.Panel;
 import tui.ui.style.Style;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+
+import static org.junit.Assert.assertTrue;
 
 public class TestUtils {
 
@@ -132,6 +137,25 @@ public class TestUtils {
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static void assertClasses(Collection<String> expectedClasses, WebElement element) {
+		final Collection<String> testedClasses = Browser.getClasses(element);
+		final List<String> missingClasses = new ArrayList<>();
+		final List<String> unexpectedClasses = new ArrayList<>();
+		for(String expectedClass : expectedClasses) {
+			if(!testedClasses.contains(expectedClass)) {
+				missingClasses.add(expectedClass);
+			}
+		}
+		for(String testedClass : testedClasses) {
+			if(!expectedClasses.contains(testedClass)) {
+				unexpectedClasses.add(testedClass);
+			}
+		}
+
+		String help = String.format("expected=%s / tested=%s", expectedClasses, testedClasses);
+		assertTrue(help, missingClasses.isEmpty() && unexpectedClasses.isEmpty());
 	}
 
 	private static @NotNull WebElement getWebElementInPanel(Browser browser, UpdatablePage updatablePage) {

@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.form;
 
+import org.jetbrains.annotations.NotNull;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonConstants;
@@ -42,6 +43,7 @@ public class Search extends UIComponent {
 	public static final String JSON_ATTRIBUTE_HIDE_BUTTON = "hideButton";
 	public static final String JSON_ATTRIBUTE_INPUTS = "inputs";
 	public static final String JSON_ATTRIBUTE_PARAMETERS = "parameters";
+	public static final String JSON_ATTRIBUTE_FORM_DISPLAY_COLUMNS = "formDisplayColumns";
 
 	private final String m_title;
 	private final String m_submitLabel;
@@ -154,9 +156,7 @@ public class Search extends UIComponent {
 			HTMLNode row = table.createChild("tr");
 			for(FormInput input : m_inputs) {
 				final HTMLNode cell = row.createChild("td");
-				final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
-				inputNode.addClass(Form.HTML_CLASS_FIELD);
-				inputNode.getDescendant("label").addClass("tui-search-input-label");
+				final HTMLNode inputNode = createInputNode(input, Form.HTML_CLASS_FIELD);
 				cell.append(inputNode);
 				index++;
 				if(index % m_displayLikeForm.columns() == 0) {
@@ -165,9 +165,7 @@ public class Search extends UIComponent {
 			}
 		} else {
 			for(FormInput input : m_inputs) {
-				final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
-				inputNode.addClass(HTML_CLASS_FIELD);
-				inputNode.getDescendant("label").addClass("tui-search-input-label");
+				final HTMLNode inputNode = createInputNode(input, HTML_CLASS_FIELD);
 				result.append(inputNode);
 			}
 		}
@@ -194,6 +192,13 @@ public class Search extends UIComponent {
 		return result;
 	}
 
+	private @NotNull HTMLNode createInputNode(FormInput input, String htmlClassField) {
+		final HTMLNode inputNode = Form.createInputNodeWithLabel(getTUID(), input);
+		inputNode.addClass(htmlClassField);
+		inputNode.getDescendant("label").addClass("tui-search-input-label");
+		return inputNode;
+	}
+
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
@@ -206,6 +211,9 @@ public class Search extends UIComponent {
 		final JsonMap parameters = result.createMap(JSON_ATTRIBUTE_PARAMETERS);
 		for(final Map.Entry<String, String> parameterEntry : m_parameters.entrySet()) {
 			parameters.setAttribute(parameterEntry.getKey(), parameterEntry.getValue());
+		}
+		if(m_displayLikeForm != null) {
+			result.setAttribute(JSON_ATTRIBUTE_FORM_DISPLAY_COLUMNS, m_displayLikeForm.columns());
 		}
 		return result;
 	}
