@@ -1419,6 +1419,16 @@ function instrumentSVG(svgElement) {
     svgElement.querySelectorAll('.tui-svg-clickable').forEach(function(clickableElement, i) {
         clickableElement.addEventListener("click", onClickSVGZone);
     });
+
+    svgElement.querySelectorAll('.tui-svg-hovering').forEach(function(hoveringElement, i) {
+        const connectedElementTUID = hoveringElement.getAttribute('connectedtuid');
+        hoveringElement.onmouseover = () => {
+            document.getElementById(connectedElementTUID).style.display = "inline";
+        };
+        hoveringElement.onmouseout = () => {
+            document.getElementById(connectedElementTUID).style.display = "none";
+        };
+    });
 }
 
 function onClickSVGZone(event) {

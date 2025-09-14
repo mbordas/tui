@@ -29,7 +29,7 @@ public abstract class UIComponent {
 
 	private static final AtomicLong m_counter = new AtomicLong(0L);
 
-	private final long m_tuid = m_counter.incrementAndGet();
+	private final long m_tuid = newTUID();
 
 	private LayoutStyleSet m_customLayoutStyle = null;
 
@@ -74,6 +74,10 @@ public abstract class UIComponent {
 				.map(UIComponent::getTUID)
 				.iterator();
 		return TUIUtils.toTUIDsSeparatedByComa(tuidIterator);
+	}
+
+	public static long newTUID() {
+		return m_counter.incrementAndGet();
 	}
 
 }

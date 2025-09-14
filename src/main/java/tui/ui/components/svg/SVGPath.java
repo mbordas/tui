@@ -81,7 +81,7 @@ public class SVGPath extends SVGComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap("path");
+		final JsonMap result = super.toJsonMap("path");
 		result.setAttribute("d", m_drawing.toString());
 		setStyleAttribute(result);
 		return result;

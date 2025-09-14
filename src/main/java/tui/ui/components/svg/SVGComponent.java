@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg;
 
+import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
 import tui.ui.components.svg.defs.SVGPatternStripes;
@@ -25,6 +26,8 @@ import java.util.Locale;
 
 public abstract class SVGComponent {
 
+	private Long m_tuid = null;
+	protected String m_display = "inline";
 	private Color m_strokeColor = Color.BLACK;
 	private int m_strokeWidth = 1;
 	private double m_strokeOpacity = 1.0;
@@ -37,6 +40,14 @@ public abstract class SVGComponent {
 	record StrokeDashArray(int length, int space) {
 	}
 
+	protected void setTUID(long tuid) {
+		m_tuid = tuid;
+	}
+
+	public Long getTUID() {
+		return m_tuid;
+	}
+
 	public abstract JsonMap toJsonMap();
 
 	protected JsonMap toJsonMap(String type) {
@@ -44,7 +55,14 @@ public abstract class SVGComponent {
 		if(m_title != null) {
 			result.setAttribute(SVG.JSON_ATTRIBUTE_TITLE, m_title);
 		}
+		if(m_tuid != null) {
+			result.setAttribute(HTMLConstants.ATTRIBUTE_ID, m_tuid);
+		}
 		return result;
+	}
+
+	public void hide() {
+		m_display = "none";
 	}
 
 	public SVGComponent withTitle(String title) {
@@ -98,7 +116,8 @@ public abstract class SVGComponent {
 	}
 
 	public String computeStyleAttribute() {
-		String result = String.format(Locale.US, "stroke:%s;stroke-width:%d;stroke-opacity:%.2f;fill:%s;fill-opacity:%.2f;",
+		String result = String.format(Locale.US, "display:%s;stroke:%s;stroke-width:%d;stroke-opacity:%.2f;fill:%s;fill-opacity:%.2f;",
+				m_display,
 				m_strokeColor == null ? "none" : TUIColors.toCSSHex(m_strokeColor),
 				m_strokeWidth, m_strokeOpacity,
 				computeFillProperty(),

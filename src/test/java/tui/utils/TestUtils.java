@@ -75,6 +75,7 @@ public class TestUtils {
 
 		final Browser browser = new Browser(backend.getPort());
 		browser.open(page.getSource());
+		browser.waitClosedManually();
 	}
 
 	public record UpdatablePage(Page page, Panel panel, RefreshButton button) {

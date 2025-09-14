@@ -24,6 +24,7 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonValue;
 import tui.test.components.BadComponentException;
+import tui.ui.components.UIComponent;
 import tui.ui.components.UIRefreshableComponent;
 import tui.ui.components.svg.defs.SVGMarker;
 import tui.ui.components.svg.defs.SVGPatternStripes;
@@ -41,18 +42,26 @@ public class SVG extends UIRefreshableComponent {
 	public static final String JSON_ATTRIBUTE_INNER_TEXT = "innerText";
 	public static final String JSON_ATTRIBUTE_TITLE = "title";
 	public static final String JSON_KEY_SUBCOMPONENTS = "components";
+
 	public static final String JSON_KEY_CLICKABLE_ZONES = "clickableZones";
 	public static final String JSON_KEY_CLICKABLE_ZONE_AREA = "area";
 	public static final String JSON_KEY_CLICKABLE_ZONE_PARAMETERS = "parameters";
 
+	public static final String JSON_KEY_HOVERING_COMPONENTS = "hoveringComponents";
+	public static final String JSON_KEY_HOVERING_AREA = "area";
+	public static final String JSON_KEY_HOVERING_CONNECTED_COMPONENT = "connectedComponent";
+
 	public static final String HTML_CLASS_CONTAINER = "tui-container-svg";
 	public static final String HTML_CLASS_CLICKABLE_ZONE = "tui-svg-clickable";
 	public static final String HTML_ATTRIBUTE_CLICKABLE_ZONE_PARAMETERS = "parameters";
+	public static final String HTML_CLASS_HOVERING_ZONE = "tui-svg-hovering";
+	public static final String HTML_ATTRIBUTE_HOVERING_CONNECTED_COMPONENT_TUID = "connectedTUID";
 
 	private final List<SVGComponent> m_markers = new ArrayList<>();
 	private final List<SVGComponent> m_patterns = new ArrayList<>();
 	private final List<SVGComponent> m_components = new ArrayList<>();
 	private final List<ClickableZone> m_clickableZones = new ArrayList<>();
+	private final List<HoveringZone> m_hoveringZones = new ArrayList<>();
 	private long m_width_px;
 	private long m_height_px;
 	private ViewBox m_viewBox = null;
@@ -78,8 +87,15 @@ public class SVG extends UIRefreshableComponent {
 	public record ClickableZone(SVGComponent area, Map<String, String> parameters) {
 	}
 
+	public record HoveringZone(SVGComponent area, SVGComponent componentToShow) {
+	}
+
 	public void addClickableZone(SVGComponent area, Map<String, String> parameters) {
 		m_clickableZones.add(new ClickableZone(area, parameters));
+	}
+
+	public void addHoveringZone(SVGComponent area, SVGComponent componentToShow) {
+		m_hoveringZones.add(new HoveringZone(area, componentToShow));
 	}
 
 	public long getWidth_px() {
@@ -141,10 +157,24 @@ public class SVG extends UIRefreshableComponent {
 			}
 		}
 
+		for(JsonObject component : jsonMap.getArray(JSON_KEY_HOVERING_COMPONENTS).getItems()) {
+			if(component instanceof JsonMap zoneMap) {
+				final JsonMap connectedComponentJsonMap = zoneMap.getMap(JSON_KEY_HOVERING_CONNECTED_COMPONENT);
+				final String connectedComponentTUID = connectedComponentJsonMap.getAttribute("id");
+				svgElement.append(toHTMLNode(connectedComponentJsonMap));
+
+				final HTMLNode zoneHTML = svgElement.append(toHTMLNode(zoneMap.getMap(JSON_KEY_HOVERING_AREA)));
+				zoneHTML.addClass(HTML_CLASS_HOVERING_ZONE);
+				zoneHTML.setAttribute(HTML_ATTRIBUTE_HOVERING_CONNECTED_COMPONENT_TUID, connectedComponentTUID);
+			} else {
+				throw new IllegalArgumentException("Bad json map");
+			}
+		}
+
 		return containedElement.getHigherNode();
 	}
 
-	static HTMLNode toHTMLNode(JsonObject json) {
+	public static HTMLNode toHTMLNode(JsonObject json) {
 		final HTMLNode result = new HTMLNode(json.getType());
 
 		if(json instanceof JsonMap map) {
@@ -205,6 +235,18 @@ public class SVG extends UIRefreshableComponent {
 			components.add(component.toJsonMap());
 		}
 
+		appendClickableComponents(result);
+		appendHoveringComponents(result);
+
+		if(!m_connectedComponents.isEmpty()) {
+			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
+		}
+
+		applyCustomStyle(result);
+		return result;
+	}
+
+	private void appendClickableComponents(JsonMap result) {
 		final JsonArray clickableComponents = result.createArray(JSON_KEY_CLICKABLE_ZONES);
 		for(ClickableZone clickableZone : m_clickableZones) {
 			final JsonMap zoneJsonMap = new JsonMap("clickableZone");
@@ -222,13 +264,22 @@ public class SVG extends UIRefreshableComponent {
 			zoneJsonMap.setChild(JSON_KEY_CLICKABLE_ZONE_PARAMETERS, zoneParametersJsonArray);
 			clickableComponents.add(zoneJsonMap);
 		}
+	}
 
-		if(!m_connectedComponents.isEmpty()) {
-			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
+	private void appendHoveringComponents(JsonMap result) {
+		final JsonArray hoveringComponents = result.createArray(JSON_KEY_HOVERING_COMPONENTS);
+		for(HoveringZone hoveringZone : m_hoveringZones) {
+			final JsonMap zoneJsonMap = new JsonMap("hoveringZone");
+			final JsonMap areaJsonMap = hoveringZone.area.toJsonMap();
+			zoneJsonMap.setChild(JSON_KEY_HOVERING_AREA, areaJsonMap);
+
+			hoveringZone.componentToShow.setTUID(UIComponent.newTUID());
+			hoveringZone.componentToShow.hide();
+			final JsonMap componentToShowJsonMap = hoveringZone.componentToShow.toJsonMap();
+			zoneJsonMap.setChild(JSON_KEY_HOVERING_CONNECTED_COMPONENT, componentToShowJsonMap);
+
+			hoveringComponents.add(zoneJsonMap);
 		}
-
-		applyCustomStyle(result);
-		return result;
 	}
 
 	private static JsonMap createDefs(Collection<? extends SVGComponent>... reusableCollections) {

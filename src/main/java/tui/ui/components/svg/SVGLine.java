@@ -33,7 +33,7 @@ public class SVGLine extends SVGComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap("line");
+		final JsonMap result = super.toJsonMap("line");
 		result.setAttribute("x1", String.valueOf(m_x1));
 		result.setAttribute("y1", String.valueOf(m_y1));
 		result.setAttribute("x2", String.valueOf(m_x2));

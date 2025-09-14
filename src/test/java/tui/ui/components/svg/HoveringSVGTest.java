@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2025, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,44 +15,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg;
 
-import tui.json.JsonMap;
+import org.junit.Ignore;
+import org.junit.Test;
+import tui.utils.TestUtils;
 
-public class SVGRectangle extends SVGComponent {
+import java.awt.*;
 
-	private long m_x, m_y, m_width, m_height;
-	private long m_rx = 0, m_ry = 0;
+public class HoveringSVGTest {
 
-	public SVGRectangle(long x, long y, long width, long height) {
-		m_x = x;
-		m_y = y;
-		m_width = width;
-		m_height = height;
-	}
+	@Ignore
+	@Test
+	public void hovering() throws Exception {
 
-	public SVGRectangle(SVGPoint topLeft, long width, long height) {
-		this(topLeft.x(), topLeft.y(), width, height);
-	}
+		final SVG svg = new SVG(300, 300);
 
-	public SVGPoint getCenter() {
-		return new SVGPoint(m_x + m_width / 2, m_y + m_height / 2);
-	}
+		final SVGGroup displayedZone = new SVGGroup();
+		displayedZone.add(new SVGRectangle(150, 150, 50, 50))
+				.withFillColor(Color.GREEN);
+		displayedZone.add(new SVGText(160, 160, "Tooltip", SVGText.Anchor.START));
 
-	public SVGRectangle withCornerRadius(long rx, long ry) {
-		m_rx = rx;
-		m_ry = ry;
-		return this;
-	}
+		final SVGRectangle hoveringArea = new SVGRectangle(50, 50, 50, 50);
+		hoveringArea.withFillOpacity(0.0);
+		hoveringArea.withStrokeColor(Color.BLACK)
+				.withStrokeWidth(3);
 
-	@Override
-	public JsonMap toJsonMap() {
-		final JsonMap result = super.toJsonMap("rect");
-		result.setAttribute("x", m_x);
-		result.setAttribute("y", m_y);
-		result.setAttribute("width", m_width);
-		result.setAttribute("height", m_height);
-		result.setAttribute("rx", m_rx);
-		result.setAttribute("ry", m_ry);
-		setStyleAttribute(result);
-		return result;
+		svg.addHoveringZone(hoveringArea, displayedZone);
+
+		TestUtils.quickShow(svg);
 	}
 }

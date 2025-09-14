@@ -57,7 +57,7 @@ public class SVGMarker extends SVGComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
+		final JsonMap result = super.toJsonMap(JSON_TYPE);
 		result.setAttribute("id", m_id);
 		result.setAttribute("refX", m_refX);
 		result.setAttribute("refY", m_refY);

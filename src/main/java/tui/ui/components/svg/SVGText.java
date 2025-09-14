@@ -65,7 +65,7 @@ public class SVGText extends SVGComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap("text");
+		final JsonMap result = super.toJsonMap("text");
 		result.setAttribute("x", String.valueOf(m_x));
 		result.setAttribute("y", String.valueOf(m_y));
 		result.setAttribute(SVG.JSON_ATTRIBUTE_INNER_TEXT, m_text);

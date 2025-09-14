@@ -45,7 +45,7 @@ public class SVGTest extends TestWithBackend {
 				.withFillColor(Color.BLUE);
 
 		assertEquals("""
-						data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect x='0' y='1' width='2' height='3' rx='0' ry='0' style='stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%230000ff;fill-opacity:1.00;'/></svg>""",
+						data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect x='0' y='1' width='2' height='3' rx='0' ry='0' style='display:inline;stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%230000ff;fill-opacity:1.00;'/></svg>""",
 				svg.toURLForCSS());
 	}
 
@@ -57,7 +57,7 @@ public class SVGTest extends TestWithBackend {
 		HTMLNode.PRETTY_PRINT = true;
 		assertEquals("""
 				<svg width="20" height="20">
-				  <rect x="5" y="10" width="15" height="20" rx="0" ry="0" style="stroke:#000000;stroke-width:1;stroke-opacity:1.00;fill:#000000;fill-opacity:1.00;"/>
+				  <rect x="5" y="10" width="15" height="20" rx="0" ry="0" style="display:inline;stroke:#000000;stroke-width:1;stroke-opacity:1.00;fill:#000000;fill-opacity:1.00;"/>
 				</svg>
 				""", svg.toHTMLNode().toHTML());
 	}
