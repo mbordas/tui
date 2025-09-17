@@ -22,6 +22,8 @@ public class FormInputTextArea extends FormInput {
 	public static final String HTML_TYPE = "textarea";
 	public static final String JSON_TYPE = HTML_TYPE;
 
+	private Integer m_rows = null;
+
 	public FormInputTextArea(String label, String name) {
 		super(JSON_TYPE, HTML_TYPE, label, name);
 		setPlaceHolder("Text");
@@ -29,6 +31,12 @@ public class FormInputTextArea extends FormInput {
 
 	public FormInputTextArea setInitialValue(String value) {
 		m_initialValue = value;
+		return this;
+	}
+
+	public FormInputTextArea withInitialRows(int number) {
+		assert number > 0;
+		m_rows = number;
 		return this;
 	}
 
@@ -41,6 +49,9 @@ public class FormInputTextArea extends FormInput {
 		}
 		if(m_placeHolder != null) {
 			result.setAttribute("placeholder", m_placeHolder);
+		}
+		if(m_rows != null) {
+			result.setAttribute("rows", m_rows);
 		}
 		return result;
 	}

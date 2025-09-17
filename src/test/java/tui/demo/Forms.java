@@ -99,7 +99,8 @@ public class Forms {
 	private static void createInputs(Form form) {
 		form.createInputCheckbox("Checkbox", "checkbox");
 		form.createInputString("String", "string");
-		form.createInputTextArea("Text area", "text");
+		form.createInputTextArea("Text area", "text")
+				.withInitialRows(10);
 		form.createInputNumber("Number", "number");
 		form.createInputDay("Day", "day");
 		form.createInputDayHHmm("Day HH:mm", "dayHHmm");
