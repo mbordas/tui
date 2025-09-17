@@ -28,7 +28,7 @@ public class HTMLNode {
 	public static boolean PRETTY_PRINT = false;
 
 	private boolean m_isRoot = false;
-	private final String m_name;
+	private String m_tagName;
 	private final Map<String, String> m_attributes = new LinkedHashMap<>();
 	private final Map<String, String> m_styleProperties = new TreeMap<>();
 	private final List<HTMLNode> m_children = new ArrayList<>();
@@ -36,12 +36,17 @@ public class HTMLNode {
 	private int m_prettyPrintDepth = 0;
 	private boolean m_decorateAttributesWithSimpleQuotes = false;
 
-	public HTMLNode(String name) {
-		m_name = name;
+	public HTMLNode(String tagName) {
+		m_tagName = tagName;
 	}
 
-	public String getName() {
-		return m_name;
+	public String getTagName() {
+		return m_tagName;
+	}
+
+	public HTMLNode setTagName(String tagName) {
+		m_tagName = tagName;
+		return this;
 	}
 
 	public void setRoot(boolean isRoot) {
@@ -93,6 +98,11 @@ public class HTMLNode {
 		return this;
 	}
 
+	public HTMLNode removeAttribute(String name) {
+		m_attributes.remove(name);
+		return this;
+	}
+
 	public void setDecorateAttributesWithSimpleQuotes(boolean enabled) {
 		m_decorateAttributesWithSimpleQuotes = enabled;
 	}
@@ -129,7 +139,7 @@ public class HTMLNode {
 			name = path;
 		}
 		for(HTMLNode child : m_children) {
-			if(child.m_name.equals(name)) {
+			if(child.m_tagName.equals(name)) {
 				return child;
 			}
 		}
@@ -145,7 +155,7 @@ public class HTMLNode {
 			endOfTag(result);
 		}
 
-		prettyPrintTab(result).append("<").append(m_name);
+		prettyPrintTab(result).append("<").append(m_tagName);
 		for(Map.Entry<String, String> attribute : m_attributes.entrySet()) {
 			result.append(" ").append(attribute.getKey());
 			if(attribute.getValue() != null) {
@@ -167,10 +177,13 @@ public class HTMLNode {
 
 		if(m_text.isEmpty()
 				&& m_children.isEmpty()
-				&& !"script".equals(m_name) // script node must have both opening and closing xml tags https://www.w3.org/TR/xhtml1/#h-4.8
+				// script node must have both opening and closing xml tags https://www.w3.org/TR/xhtml1/#h-4.8
+				&& !"script".equals(m_tagName)
+				// textarea must have both opening and closing xml tags https://www.w3.org/MarkUp/html-spec/Elements/TEXTAREA.html
+				&& !"textarea".equals(m_tagName)
 		) {
 			// Empty node
-			if("div".equals(m_name)) {
+			if("div".equals(m_tagName)) {
 				result.append("></div>");
 				endOfTag(result);
 			} else {
@@ -195,7 +208,7 @@ public class HTMLNode {
 			if(m_text.isEmpty()) {
 				prettyPrintTab(result);
 			}
-			result.append("</").append(m_name).append(">");
+			result.append("</").append(m_tagName).append(">");
 			endOfTag(result);
 		}
 		return result.toString();

@@ -79,11 +79,17 @@ public class RequestReader {
 	}
 
 	public String getStringParameter(String key, String defaultValue) {
-		return m_parameters.getOrDefault(key, defaultValue);
+		final String rawValue = m_parameters.getOrDefault(key, defaultValue);
+		if(rawValue != null) {
+			// In multi-line values from text areas, the browser seems to change \n to \r\n
+			return rawValue.replaceAll("\\r", "");
+		} else {
+			return null;
+		}
 	}
 
 	public String getStringParameter(String key) {
-		return m_parameters.getOrDefault(key, null);
+		return getStringParameter(key, null);
 	}
 
 	public Integer getIntegerParameter(String key) {

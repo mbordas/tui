@@ -93,6 +93,12 @@ public class Form extends UIComponent {
 		return result;
 	}
 
+	public FormInputTextArea createInputTextArea(String label, String name) {
+		final FormInputTextArea result = new FormInputTextArea(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
 	public FormInputNumber createInputNumber(String label, String name) {
 		final FormInputNumber result = new FormInputNumber(label, name);
 		m_inputs.add(result);

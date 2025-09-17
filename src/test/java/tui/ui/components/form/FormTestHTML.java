@@ -33,8 +33,8 @@ public class FormTestHTML {
 		form.createInputDayHHmm("Day", "day")
 				.setInitialValue(LocalDateTime.of(2025, Month.SEPTEMBER, 3, 11, 24));
 
-		TestUtils.assertHTMLProcedure(() -> form, (prefix, rootElement) -> {
-			final WebElement dayInputElement = Browser.getInputChildByName(rootElement, "day");
+		TestUtils.assertHTMLProcedure(() -> form, (prefix, formElement) -> {
+			final WebElement dayInputElement = Browser.getInputChildByName(formElement, "day");
 
 			assertEquals(prefix, "2025-09-03T11:24", dayInputElement.getAttribute("value"));
 		});
@@ -46,10 +46,25 @@ public class FormTestHTML {
 		form.createInputString("First name", "first_name")
 				.setPlaceHolder("ex: John");
 
-		TestUtils.assertHTMLProcedure(() -> form, (prefix, rootElement) -> {
-			final WebElement stringInputElement = Browser.getInputChildByName(rootElement, "first_name");
+		TestUtils.assertHTMLProcedure(() -> form, (prefix, formElement) -> {
+			final WebElement stringInputElement = Browser.getInputChildByName(formElement, "first_name");
 
 			assertEquals(prefix, "ex: John", stringInputElement.getAttribute("placeholder"));
+		});
+	}
+
+	@Test
+	public void supportForTextArea() {
+		final Form form = new Form("Form title", "/form");
+		form.createInputTextArea("Text area", "text")
+				.setInitialValue("Initial value");
+
+		TestUtils.assertHTMLProcedure(() -> form, (prefix, formElement) -> {
+			final WebElement textareaElement = Browser.getInputChildByName(formElement, "text");
+
+			assertEquals("textarea", textareaElement.getTagName());
+			assertEquals("text", textareaElement.getAttribute("name"));
+			assertEquals("Initial value", textareaElement.getText());
 		});
 	}
 }

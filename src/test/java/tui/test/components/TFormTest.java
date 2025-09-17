@@ -15,16 +15,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import tui.http.RequestReader;
 import tui.test.Browser;
+import tui.test.TestExecutionException;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.form.Form;
+import tui.ui.components.form.Search;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -95,7 +99,9 @@ public class TFormTest extends TestWithBackend {
 	}
 
 	public static Collection<WebElement> getFields(WebElement formElement) {
-		return formElement.findElements(By.className(Form.HTML_CLASS_FIELD));
+		final List<WebElement> result = formElement.findElements(By.className(Form.HTML_CLASS_FIELD));
+		result.addAll(formElement.findElements(By.className(Search.HTML_CLASS_FIELD)));
+		return result;
 	}
 
 	static String getFieldLabel(WebElement fieldElement) {
@@ -104,12 +110,26 @@ public class TFormTest extends TestWithBackend {
 	}
 
 	static String getFieldType(WebElement fieldElement) {
-		final WebElement inputElement = fieldElement.findElement(By.tagName("input"));
+		final WebElement inputElement = getInputElementsOfFieldElement(fieldElement).get(0);
 		return inputElement.getAttribute("type");
 	}
 
 	public static String getFieldName(WebElement fieldElement) {
-		final WebElement inputElement = fieldElement.findElement(By.tagName("input"));
+		final WebElement inputElement = getInputElementsOfFieldElement(fieldElement).get(0);
 		return inputElement.getAttribute("name");
+	}
+
+	/**
+	 * Caution: a radio field element may contain multiple input elements.
+	 */
+	public static @NotNull List<WebElement> getInputElementsOfFieldElement(WebElement fieldElement) {
+		final List<WebElement> foundElements = fieldElement.findElements(By.xpath(".//*")).stream()
+				.filter((element) -> element.getTagName().equals("input")
+						|| element.getTagName().equals("textarea"))
+				.toList();
+		if(foundElements.isEmpty()) {
+			throw new TestExecutionException("No input/textarea tag found");
+		}
+		return foundElements;
 	}
 }

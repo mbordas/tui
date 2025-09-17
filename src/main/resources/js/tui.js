@@ -955,6 +955,11 @@ function prepareFormData(formElement) {
             }
         }
     });
+    // Specific support for text areas
+    formElement.querySelectorAll('textarea').forEach(function(textareaElement) {
+        data.append(textareaElement.name, textareaElement.value);
+    });
+
     return data;
 }
 
@@ -1074,23 +1079,32 @@ function createFormInput(fieldsetElement, json, formTUID) {
     inputLabel.setAttribute('for', inputId);
     inputLabel.textContent = json['label'];
 
-    const inputElement = document.createElement('input');
-    inputDiv.append(inputElement);
-    inputElement.setAttribute('id', inputId);
-    inputElement.setAttribute('type', json['type']);
-    inputElement.setAttribute('name', json['name']);
-    if(json['initialValue'] != null) {
-        inputElement.setAttribute('value', json['initialValue']);
-    }
-    if(json['placeholder'] != null) {
-        inputElement.setAttribute('placeholder', json['placeholder']);
+    var inputElement = null;
+    if(json['type'] == 'textarea') {
+        inputElement = document.createElement('textarea');
+        if(json['initialValue'] != null) {
+            inputElement.textContent = json['initialValue'];
+        }
+    } else {
+        inputElement = document.createElement('input');
+        inputElement.setAttribute('type', json['type']);
+        if(json['initialValue'] != null) {
+            inputElement.setAttribute('value', json['initialValue']);
+        }
+
+        if(json['type'] == 'checkbox') {
+            inputLabel.classList.add('label-checkbox');
+            if(json['checked'] == 'true') {
+                inputElement.checked = true;
+            }
+        }
     }
 
-    if(json['type'] == 'checkbox') {
-        inputLabel.classList.add('label-checkbox');
-        if(json['checked'] == 'true') {
-            inputElement.checked = true;
-        }
+    inputDiv.append(inputElement);
+    inputElement.setAttribute('id', inputId);
+    inputElement.setAttribute('name', json['name']);
+    if(json['placeholder'] != null) {
+        inputElement.setAttribute('placeholder', json['placeholder']);
     }
 
     return inputDiv;

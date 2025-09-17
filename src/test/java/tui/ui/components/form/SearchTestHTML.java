@@ -36,20 +36,20 @@ public class SearchTestHTML {
 		search.addParameter("parameterName", "Parameter Value");
 
 		TestUtils.assertHTMLProcedure(() -> search,
-				(prefix, componentRootElement) -> {
-					assertEquals("search", componentRootElement.getTagName());
-					assertTrue(Browser.getClasses(componentRootElement).contains(Search.HTML_CLASS));
+				(prefix, searchElement) -> {
+					assertEquals("search", searchElement.getTagName());
+					assertTrue(Browser.getClasses(searchElement).contains(Search.HTML_CLASS));
 
-					final WebElement titleElement = componentRootElement.findElement(By.tagName("label"));
+					final WebElement titleElement = searchElement.findElement(By.tagName("label"));
 					assertEquals("Search title", titleElement.getText());
 
-					final WebElement inputElement = Browser.getInputChildByName(componentRootElement, "inputString");
+					final WebElement inputElement = Browser.getInputChildByName(searchElement, "inputString");
 					assertEquals("text", inputElement.getAttribute("type"));
 					final WebElement inputLabelElement = Browser.getParent(inputElement).findElement(By.tagName("label"));
 					assertEquals("String label", inputLabelElement.getText());
 					assertEquals(inputElement.getAttribute("id"), inputLabelElement.getAttribute("for"));
 
-					final WebElement parameter = Browser.getInputChildByName(componentRootElement, "parameterName");
+					final WebElement parameter = Browser.getFormParameterByName(searchElement, "parameterName");
 					assertEquals("Parameter Value", parameter.getAttribute("value"));
 					assertEquals("hidden", parameter.getAttribute("type"));
 				});
@@ -62,13 +62,13 @@ public class SearchTestHTML {
 		search.createInputCheckbox("Checkbox OFF", "checkboxOFF");
 
 		TestUtils.assertHTMLProcedure(() -> search,
-				(prefix, componentRootElement) -> {
+				(prefix, searchElement) -> {
 
-					final WebElement checkboxOnElement = Browser.getInputChildByName(componentRootElement, "checkboxON");
+					final WebElement checkboxOnElement = Browser.getInputChildByName(searchElement, "checkboxON");
 					assertEquals("checkbox", checkboxOnElement.getAttribute("type"));
 					assertTrue(checkboxOnElement.isSelected());
 
-					final WebElement checkboxOffElement = Browser.getInputChildByName(componentRootElement, "checkboxOFF");
+					final WebElement checkboxOffElement = Browser.getInputChildByName(searchElement, "checkboxOFF");
 					assertEquals("checkbox", checkboxOffElement.getAttribute("type"));
 					assertFalse(checkboxOffElement.isSelected());
 				});

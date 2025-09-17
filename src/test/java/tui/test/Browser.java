@@ -347,7 +347,12 @@ public class Browser implements Closeable {
 				.findAny();
 
 		if(anyFieldName.isPresent()) {
-			WebElement inputElement = anyFieldName.get().findElement(By.tagName("input"));
+			final WebElement inputElement = TFormTest.getInputElementsOfFieldElement(anyFieldName.get()).get(0);
+
+			// When running multiple tests, sendKeys() adds 20 spaces at the start of the value into 'textarea' tags!
+			// Calling element.clear() prevents this. I haven't found any explanation.
+			inputElement.clear();
+
 			inputElement.sendKeys(value);
 		} else {
 			throw new RuntimeException("Field input element not found: " + name);
@@ -451,15 +456,28 @@ public class Browser implements Closeable {
 		return childrenElements.get(0);
 	}
 
-	public static WebElement getInputChildByName(WebElement searchElement, String inputName) {
-		final List<WebElement> inputElements = searchElement.findElements(By.tagName("input"));
-		final Optional<WebElement> anyInputStringElement = inputElements.stream()
-				.filter((inputElement) -> inputElement.getAttribute("name").equals(inputName))
-				.findAny();
-		if(anyInputStringElement.isEmpty()) {
-			throw new RuntimeException(String.format("No child element of type 'input' with name='%s'", inputName));
+	public static @NotNull WebElement getInputChildByName(WebElement formElement, String inputName) {
+		for(WebElement field : TFormTest.getFields(formElement)) {
+			final Optional<WebElement> anyElement = TFormTest.getInputElementsOfFieldElement(field).stream()
+					.filter((element) -> element.getAttribute("name").equals(inputName))
+					.findAny();
+			if(anyElement.isPresent() && anyElement.get().getAttribute("name").equals(inputName)) {
+				return anyElement.get();
+			}
 		}
-		return anyInputStringElement.get();
+		throw new RuntimeException(String.format("No child element of type 'input' with name='%s'", inputName));
+	}
+
+	public static WebElement getFormParameterByName(WebElement formElement, String name) {
+		final Optional<WebElement> anyElement = formElement.findElements(By.tagName("input")).stream()
+				.filter((element) -> element.getAttribute("type").equals("hidden"))
+				.filter((element) -> element.getAttribute("name").equals(name))
+				.findAny();
+		if(anyElement.isPresent()) {
+			return anyElement.get();
+		} else {
+			throw new RuntimeException("Form parameter not found with name: " + name);
+		}
 	}
 
 	public static Collection<String> getClasses(WebElement element) {
