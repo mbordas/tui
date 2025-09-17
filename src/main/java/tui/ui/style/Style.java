@@ -475,6 +475,10 @@ public class Style {
 				    text-align: left;
 				    margin-left: 15px;
 				}
+				.tui-form-input>textarea {
+					width: 100%;
+					box-sizing: border-box;
+				}
 				.tui-form-input-invalid {
 				    border: 2px solid var(--global-color-red-state);
 				}
