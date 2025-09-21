@@ -1401,6 +1401,24 @@ function updateSVG(svgElement, json) {
         newElement.appendChild(svgComponentElement);
     });
 
+    const jsonHoveringEntries = Array.from(json['hoveringComponents']);
+    jsonHoveringEntries.forEach(function(jsonZoneMap, i) {
+        const jsonConnectedComponent = jsonZoneMap['connectedComponent'];
+        const connectedComponent = document.createElementNS("http://www.w3.org/2000/svg", jsonConnectedComponent['type']);
+        copySVGAttributes(jsonConnectedComponent, connectedComponent);
+        const connectedComponentTUID = jsonConnectedComponent['id'];
+        connectedComponent.setAttribute('id', connectedComponentTUID);
+        newElement.appendChild(connectedComponent);
+
+
+        const jsonArea = jsonZoneMap['area'];
+        const hoveringArea = document.createElementNS("http://www.w3.org/2000/svg", jsonArea['type']);
+        copySVGAttributes(jsonArea, hoveringArea);
+        hoveringArea.setAttribute('connectedtuid', connectedComponentTUID);
+        hoveringArea.classList.add('tui-svg-hovering');
+        newElement.appendChild(hoveringArea);
+    });
+
     instrumentSVG(newElement);
 
     return newElement;

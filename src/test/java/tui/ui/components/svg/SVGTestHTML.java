@@ -29,15 +29,31 @@ import static org.junit.Assert.assertTrue;
 public class SVGTestHTML {
 
 	@Test
+	public void addHoveringZone() {
+		final SVG svg = new SVG(200, 100);
+		svg.addHoveringZone(new SVGRectangle(50, 50, 30, 60), new SVGText(60, 60, "Tooltip", SVGText.Anchor.MIDDLE));
+
+		TestUtils.assertHTMLProcedure(() -> svg,
+				(prefix, svgElement) -> {
+					final WebElement connectedTextElement = svgElement.findElement(By.tagName("text"));
+					assertEquals("none", connectedTextElement.getCssValue("display"));
+					final String connectedTUID = connectedTextElement.getAttribute("id");
+					assertNotNull(connectedTUID);
+
+					final WebElement hoveringRectangleElement = svgElement.findElement(By.tagName("rect"));
+					assertTrue(prefix, Browser.getClasses(hoveringRectangleElement).contains(SVG.HTML_CLASS_HOVERING_ZONE));
+					assertEquals(connectedTUID, hoveringRectangleElement.getAttribute("connectedtuid"));
+				});
+	}
+
+	@Test
 	public void notRefreshable() {
 		final SVG svg = createSVGToTest();
 
 		TestUtils.assertHTMLProcedure(() -> svg,
 				(prefix, componentRootElement) -> {
 					assertEquals(prefix, "svg", componentRootElement.getTagName());
-
 					final WebElement svgElement = componentRootElement;
-
 					checkSVGElement(svgElement);
 				});
 	}

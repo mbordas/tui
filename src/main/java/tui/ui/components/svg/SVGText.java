@@ -58,7 +58,9 @@ public class SVGText extends SVGComponent {
 
 	@Override
 	public String computeStyleAttribute() {
-		return String.format("text-anchor:%s;dominant-baseline:%s;",
+		return super.computeStyleAttribute()
+				+ ";"
+				+ String.format("text-anchor:%s;dominant-baseline:%s;",
 				m_anchorAlignment.name().toLowerCase(),
 				m_dominantBaseline.name().toLowerCase());
 	}

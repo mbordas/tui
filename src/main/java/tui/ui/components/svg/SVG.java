@@ -61,7 +61,7 @@ public class SVG extends UIRefreshableComponent {
 	private final List<SVGComponent> m_patterns = new ArrayList<>();
 	private final List<SVGComponent> m_components = new ArrayList<>();
 	private final List<ClickableZone> m_clickableZones = new ArrayList<>();
-	private final List<HoveringZone> m_hoveringZones = new ArrayList<>();
+	private final List<HoveringEntry> m_hoveringEntries = new ArrayList<>();
 	private long m_width_px;
 	private long m_height_px;
 	private ViewBox m_viewBox = null;
@@ -87,7 +87,7 @@ public class SVG extends UIRefreshableComponent {
 	public record ClickableZone(SVGComponent area, Map<String, String> parameters) {
 	}
 
-	public record HoveringZone(SVGComponent area, SVGComponent componentToShow) {
+	public record HoveringEntry(SVGComponent area, SVGComponent componentToShow) {
 	}
 
 	public void addClickableZone(SVGComponent area, Map<String, String> parameters) {
@@ -95,7 +95,7 @@ public class SVG extends UIRefreshableComponent {
 	}
 
 	public void addHoveringZone(SVGComponent area, SVGComponent componentToShow) {
-		m_hoveringZones.add(new HoveringZone(area, componentToShow));
+		m_hoveringEntries.add(new HoveringEntry(area, componentToShow));
 	}
 
 	public long getWidth_px() {
@@ -268,17 +268,18 @@ public class SVG extends UIRefreshableComponent {
 
 	private void appendHoveringComponents(JsonMap result) {
 		final JsonArray hoveringComponents = result.createArray(JSON_KEY_HOVERING_COMPONENTS);
-		for(HoveringZone hoveringZone : m_hoveringZones) {
-			final JsonMap zoneJsonMap = new JsonMap("hoveringZone");
-			final JsonMap areaJsonMap = hoveringZone.area.toJsonMap();
-			zoneJsonMap.setChild(JSON_KEY_HOVERING_AREA, areaJsonMap);
+		for(HoveringEntry hoveringEntry : m_hoveringEntries) {
+			final JsonMap entryJsonMap = new JsonMap("hoveringZone");
 
-			hoveringZone.componentToShow.setTUID(UIComponent.newTUID());
-			hoveringZone.componentToShow.hide();
-			final JsonMap componentToShowJsonMap = hoveringZone.componentToShow.toJsonMap();
-			zoneJsonMap.setChild(JSON_KEY_HOVERING_CONNECTED_COMPONENT, componentToShowJsonMap);
+			final JsonMap areaJsonMap = hoveringEntry.area.toJsonMap();
+			entryJsonMap.setChild(JSON_KEY_HOVERING_AREA, areaJsonMap);
 
-			hoveringComponents.add(zoneJsonMap);
+			hoveringEntry.componentToShow.setTUID(UIComponent.newTUID());
+			hoveringEntry.componentToShow.hide();
+			final JsonMap componentToShowJsonMap = hoveringEntry.componentToShow.toJsonMap();
+			entryJsonMap.setChild(JSON_KEY_HOVERING_CONNECTED_COMPONENT, componentToShowJsonMap);
+
+			hoveringComponents.add(entryJsonMap);
 		}
 	}
 
