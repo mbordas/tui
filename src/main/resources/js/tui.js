@@ -1396,24 +1396,19 @@ function updateSVG(svgElement, json) {
     // Creating SVG components
     const jsonComponents = Array.from(json['components']);
     jsonComponents.forEach(function(jsonComponent, i) {
-        const svgComponentElement = document.createElementNS("http://www.w3.org/2000/svg", jsonComponent['type']);
-        copySVGAttributes(jsonComponent, svgComponentElement);
+        const svgComponentElement = createSVGComponent(jsonComponent);
         newElement.appendChild(svgComponentElement);
     });
 
     const jsonHoveringEntries = Array.from(json['hoveringComponents']);
     jsonHoveringEntries.forEach(function(jsonZoneMap, i) {
         const jsonConnectedComponent = jsonZoneMap['connectedComponent'];
-        const connectedComponent = document.createElementNS("http://www.w3.org/2000/svg", jsonConnectedComponent['type']);
-        copySVGAttributes(jsonConnectedComponent, connectedComponent);
+        const connectedComponent = createSVGComponent(jsonConnectedComponent);
         const connectedComponentTUID = jsonConnectedComponent['id'];
         connectedComponent.setAttribute('id', connectedComponentTUID);
         newElement.appendChild(connectedComponent);
 
-
-        const jsonArea = jsonZoneMap['area'];
-        const hoveringArea = document.createElementNS("http://www.w3.org/2000/svg", jsonArea['type']);
-        copySVGAttributes(jsonArea, hoveringArea);
+        const hoveringArea = createSVGComponent(jsonZoneMap['area']);
         hoveringArea.setAttribute('connectedtuid', connectedComponentTUID);
         hoveringArea.classList.add('tui-svg-hovering');
         newElement.appendChild(hoveringArea);
@@ -1422,6 +1417,19 @@ function updateSVG(svgElement, json) {
     instrumentSVG(newElement);
 
     return newElement;
+}
+
+function createSVGComponent(json) {
+    const resultElement = document.createElementNS("http://www.w3.org/2000/svg", json['type']);
+    if(json['type'] == 'g') {
+        const jsonComponents = Array.from(json['components']);
+        jsonComponents.forEach(function(jsonComponent, i) {
+            const svgComponentElement = createSVGComponent(jsonComponent);
+            resultElement.appendChild(svgComponentElement);
+        });
+    }
+    copySVGAttributes(json, resultElement);
+    return resultElement;
 }
 
 function copySVGAttributes(svgJson, svgElement) {
