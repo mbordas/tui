@@ -71,8 +71,6 @@ public class SVGText extends SVGComponent {
 		result.setAttribute("x", String.valueOf(m_x));
 		result.setAttribute("y", String.valueOf(m_y));
 		result.setAttribute(SVG.JSON_ATTRIBUTE_INNER_TEXT, m_text);
-		result.setAttribute("font-family", "\"Times New Roman\", \"Times\", \"Nimbus Roman 9L\", serif");
-		result.setAttribute("font-style", "normal");
 		result.setAttribute("font-size", String.format(Locale.US, "%.1fem", m_fontSize_em));
 		setStyleAttribute(result);
 		return result;

@@ -593,6 +593,12 @@ public class Style {
 					fill: transparent;
 				}
 				
+				svg text {
+					font-weight: normal;
+					font-family: sans-serif, Public Sans Web, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+					stroke: none;
+				}
+				
 				@media print {
 					thead {
 						display: table-header-group;
