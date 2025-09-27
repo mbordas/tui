@@ -390,7 +390,7 @@ public class Axis {
 			svg.add(new SVGPath(x_px, start.y() - 4).lineRelative(0, 8).withStrokeColor(color));
 			svg.add(new SVGText(x_px, start.y() + 4L * verticalSpaceForText_px / 5, entry.getValue(), SVGText.Anchor.MIDDLE)
 					.withFontSize_em(1.0f)
-					.withStrokeColor(color)
+					.withStrokeColor(null)
 					.withFillColor(color));
 		}
 	}
