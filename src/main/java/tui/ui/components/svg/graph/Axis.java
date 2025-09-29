@@ -130,7 +130,8 @@ public class Axis {
 			result.add(-y_px);
 			svg.add(new SVGPath(axisStart.x() - 4, axisStart.y() - y_px).lineRelative(8, 0).withStrokeColor(color));
 			svg.add(new SVGText(axisStart.x() - 10, axisStart.y() - y_px, entry.getValue(), SVGText.Anchor.END)
-					.withStrokeColor(color).withFillColor(color));
+					.withStrokeColor(null)
+					.withFillColor(color));
 		}
 
 		return result;
