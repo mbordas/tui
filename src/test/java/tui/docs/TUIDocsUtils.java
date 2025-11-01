@@ -24,19 +24,19 @@ public class TUIDocsUtils {
 	public static final Color COLOR_CONTAINER = new Color(209, 22, 255);
 	public static final Color COLOR_ELEMENT = new Color(27, 155, 255);
 
-	static <C extends UIComponent> C decorateContainer(C component) {
+	static <C extends UIComponent> C decorateContainer(C component, Color color) {
 		component.customStyle()
-				.setBorderColor(COLOR_CONTAINER)
+				.setBorderColor(color)
 				.setBorderWidth_px(2)
 				.setPadding(2, 2, 2, 2);
 		return component;
 	}
 
+	static <C extends UIComponent> C decorateContainer(C component) {
+		return decorateContainer(component, COLOR_CONTAINER);
+	}
+
 	static <C extends UIComponent> C decorateElement(C component) {
-		component.customStyle()
-				.setBorderColor(COLOR_ELEMENT)
-				.setBorderWidth_px(2)
-				.setPadding(2, 2, 2, 2);
-		return component;
+		return decorateContainer(component, COLOR_ELEMENT);
 	}
 }

@@ -107,16 +107,16 @@ public class TUIDocsGrids extends Page {
 		grid.setColumnWidthMaxContent(2);
 		int row = 0;
 		for(Email email : emails) {
-			grid.set(row, 0, createDateBadge(email.date));
-			grid.set(row, 1, createSubject(email.subject));
-			grid.set(row, 2, createButtons());
+			grid.set(row, 0, createDateBadge(row, email.date));
+			grid.set(row, 1, createSubject(row, email.subject));
+			grid.set(row, 2, createButtons(row));
 			row++;
 		}
 		displayingComponentsInRows.append(grid);
 	}
 
-	private UIComponent createButtons() {
-		final Panel result = new Panel(Panel.Align.VERTICAL_CENTER);
+	private UIComponent createButtons(int row) {
+		final Panel result = createCellPanel(row);
 		final Panel linePanel = result.append(new Panel(Panel.Align.STRETCH));
 		linePanel.append(new RefreshButton("Open"));
 		linePanel.append(new RefreshButton("Delete"));
@@ -124,17 +124,16 @@ public class TUIDocsGrids extends Page {
 		return result;
 	}
 
-	private UIComponent createSubject(String subject) {
-		final Panel result = new Panel(Panel.Align.VERTICAL_CENTER);
-		result.customStyle().setMargin(5, 0, 5, 0);
+	private UIComponent createSubject(int row, String subject) {
+		final Panel result = createCellPanel(row);
 		final Paragraph.Text text = result.append(new Paragraph.Text(subject));
 		text.customTextStyle().setTextAlign(Layouts.Align.LEFT);
 		text.customStyle().setMargin(0, 0, 0, 20);
 		return result;
 	}
 
-	private UIComponent createDateBadge(String date) {
-		final Panel result = new Panel(Panel.Align.VERTICAL_CENTER);
+	private UIComponent createDateBadge(int row, String date) {
+		final Panel result = createCellPanel(row);
 		final Paragraph.Text text = result.append(new Paragraph.Text(date));
 		text.customStyle()
 				.setBackgroundColor(Color.LIGHT_GRAY)
@@ -143,6 +142,17 @@ public class TUIDocsGrids extends Page {
 		text.customTextStyle()
 				.setTextSize_em(0.8f)
 				.disableTextWrap();
+		return result;
+	}
+
+	private Panel createCellPanel(int row) {
+		final Panel result = new Panel(Panel.Align.VERTICAL_CENTER);
+		result.customStyle().setBorderColor(Color.gray);
+		if(row == 0) {
+			result.customStyle().setBorderWidth_px(1 /* only on first row */, 0, 1, 0);
+		} else {
+			result.customStyle().setBorderWidth_px(0, 0, 1, 0);
+		}
 		return result;
 	}
 

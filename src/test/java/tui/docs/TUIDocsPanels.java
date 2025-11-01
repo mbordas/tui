@@ -19,9 +19,11 @@ import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Section;
+import tui.ui.components.layout.Grid;
 import tui.ui.components.layout.Panel;
 import tui.utils.TestUtils;
 
+import java.awt.*;
 import java.util.List;
 
 public class TUIDocsPanels extends Page {
@@ -87,6 +89,37 @@ public class TUIDocsPanels extends Page {
 			panel2.append(TUIDocsUtils.decorateElement(new Paragraph("2.2- text")));
 		}
 
+		final Section sectionPanelsInGrid = chapter.createSubSection("Panels in Grid");
+		sectionPanelsInGrid.appendParagraph(
+				"When inside a grid cell, and as long as you don't set a margin, the Panel is the size of the cell. The following code shows"
+						+ " how panels fit with the columns sizing configuration of a Grid:");
+		sectionPanelsInGrid.append(new CodeParagraph("""
+				Grid grid = sectionPanelsInGrid.append(new Grid(1, 3));
+						grid.setColumnWidth_px(0, 200);
+						grid.setColumnWidthMaxContent(1);
+						grid.setColumnWidthAuto(2);
+				
+						grid.set(0, 0, decoratedText("Column width = 200px"));
+						grid.set(0, 1, decoratedText("Column width = max content"));
+						grid.set(0, 2, decoratedText("Column width = auto"));"""));
+		sectionPanelsInGrid.appendParagraph("The grid has red borders, the panels have purple borders, and panels have blue borders.");
+
+		final Grid grid = sectionPanelsInGrid.append(new Grid(1, 3));
+		grid.setColumnWidth_px(0, 200);
+		grid.setColumnWidthMaxContent(1);
+		grid.setColumnWidthAuto(2);
+
+		TUIDocsUtils.decorateContainer(grid, Color.RED);
+		grid.set(0, 0, decoratedText("Column width = 200px"));
+		grid.set(0, 1, decoratedText("Column width = max content"));
+		grid.set(0, 2, decoratedText("Column width = auto"));
+	}
+
+	static Panel decoratedText(String label) {
+		final Panel result = TUIDocsUtils.decorateContainer(new Panel(Panel.Align.CENTER));
+		final Paragraph.Text text = result.append(new Paragraph.Text(label));
+		TUIDocsUtils.decorateElement(text);
+		return result;
 	}
 
 }
