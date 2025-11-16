@@ -65,7 +65,7 @@ public class StepLineSerie extends DataSerie {
 
 			if(point.y != null) {
 				final SVGCircle circle = new SVGCircle(coordinateTransformation.getX_px(point.x()),
-						coordinateTransformation.getY_px(point.y()), 3);
+						coordinateTransformation.getY_px(point.y()), 2);
 				circle.withTitle(point.label());
 				circle.withStrokeColor(m_color);
 				circle.withFillColor(m_color);
