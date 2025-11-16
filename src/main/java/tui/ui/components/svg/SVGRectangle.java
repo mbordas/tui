@@ -33,6 +33,11 @@ public class SVGRectangle extends SVGComponent {
 		this(topLeft.x(), topLeft.y(), width, height);
 	}
 
+	public SVGRectangle(SVGRectangle other) {
+		this(other.m_x, other.m_y, other.m_width, other.m_height);
+		withCornerRadius(other.m_rx, other.m_ry);
+	}
+
 	public SVGPoint getCenter() {
 		return new SVGPoint(m_x + m_width / 2, m_y + m_height / 2);
 	}
