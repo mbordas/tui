@@ -115,6 +115,14 @@ public abstract class SVGComponent {
 		return this;
 	}
 
+	/**
+	 * Sets the style so that the component is not visible but still can trigger mouse clicks.
+	 */
+	public SVGComponent setTransparent() {
+		withFillOpacity(0.0);
+		return withStrokeWidth(0);
+	}
+
 	public String computeStyleAttribute() {
 		String result = String.format(Locale.US, "display:%s;stroke:%s;stroke-width:%d;stroke-opacity:%.2f;fill:%s;fill-opacity:%.2f;",
 				m_display,
