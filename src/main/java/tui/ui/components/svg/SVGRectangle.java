@@ -38,8 +38,20 @@ public class SVGRectangle extends SVGComponent {
 		withCornerRadius(other.m_rx, other.m_ry);
 	}
 
+	public long getWidth() {
+		return m_width;
+	}
+
+	public long getHeight() {
+		return m_height;
+	}
+
 	public SVGPoint getCenter() {
 		return new SVGPoint(m_x + m_width / 2, m_y + m_height / 2);
+	}
+
+	public SVGPoint getTopLeftCorner() {
+		return new SVGPoint(m_x, m_y);
 	}
 
 	public SVGRectangle withCornerRadius(long rx, long ry) {
@@ -60,4 +72,5 @@ public class SVGRectangle extends SVGComponent {
 		setStyleAttribute(result);
 		return result;
 	}
+
 }
