@@ -38,6 +38,9 @@ public class SVGPoint {
 		return m_y;
 	}
 
+	/**
+	 * Returns a new point, does not modify this.
+	 */
 	public SVGPoint translate(long x, int y) {
 		return new SVGPoint(x() + x, y() + y);
 	}
