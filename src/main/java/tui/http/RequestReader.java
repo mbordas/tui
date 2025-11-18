@@ -142,9 +142,14 @@ public class RequestReader {
 		}
 	}
 
-	public static Date parseDate(String yyyMMdd_HHmm, Locale locale) throws ParseException {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", locale);
-		return formatter.parse(yyyMMdd_HHmm);
+	/**
+	 * @param yyyyMMdd_HHmmss Supports precision in minutes or seconds
+	 */
+	public static Date parseDate(String yyyyMMdd_HHmmss, Locale locale) throws ParseException {
+		SimpleDateFormat formatter = yyyyMMdd_HHmmss.length() == "yyyy-MM-ddTHH:mm".length() ?
+				new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", locale)
+				: new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", locale);
+		return formatter.parse(yyyyMMdd_HHmmss);
 	}
 
 	public static Date parseDay(String yyyMMdd_HHmm, Locale locale) throws ParseException {

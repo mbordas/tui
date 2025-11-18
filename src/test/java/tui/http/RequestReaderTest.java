@@ -128,9 +128,13 @@ public class RequestReaderTest {
 
 	@Test
 	public void parseDate() throws ParseException {
-		final Date date = RequestReader.parseDate("2025-03-13T18:11", Locale.FRANCE);
-		System.out.println(date.toString());
-		assertEquals(1741885860000L, date.getTime()); // as French local date
+		final Date dateWithMinutes = RequestReader.parseDate("2025-03-13T18:11", Locale.FRANCE);
+		System.out.println(dateWithMinutes.toString());
+		assertEquals(1741885860000L, dateWithMinutes.getTime()); // as French local date
+
+		final Date dateWithSeconds = RequestReader.parseDate("2025-03-13T18:11:35", Locale.FRANCE);
+		System.out.println(dateWithSeconds.toString());
+		assertEquals(1741885860000L + 35000L, dateWithSeconds.getTime()); // as French local date
 	}
 
 }
