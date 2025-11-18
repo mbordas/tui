@@ -34,6 +34,11 @@ public class FormInputCheckbox extends FormInput {
 		return this;
 	}
 
+	public FormInputCheckbox check(boolean checked) {
+		m_checked = checked;
+		return this;
+	}
+
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = super.toHTMLNode();
 		if(m_checked) {
