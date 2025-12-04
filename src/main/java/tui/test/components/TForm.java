@@ -46,9 +46,9 @@ public class TForm extends TComponent {
 	private String m_title;
 	private String m_target;
 
-	private final List<TFormField> m_inputs = new ArrayList<>();
-	private final Set<Long> m_refreshListeners = new TreeSet<>();
-	private String m_opensPageSource = null;
+	protected final List<TFormField> m_inputs = new ArrayList<>();
+	protected final Set<Long> m_refreshListeners = new TreeSet<>();
+	protected String m_opensPageSource = null;
 
 	static class TFormField {
 		String name;
@@ -72,11 +72,11 @@ public class TForm extends TComponent {
 		return m_title;
 	}
 
-	public void enterInput(String fieldName, String value) {
+	public void enterInput(String fieldLabel, String value) {
 		final Optional<TFormField> anyField = m_inputs.stream().filter(
-				(field) -> field.name.equals(fieldName)).findAny();
+				(field) -> field.label.equals(fieldLabel)).findAny();
 		if(anyField.isEmpty()) {
-			throw new TestExecutionException("No string input found in form '%s' with name: %s", m_title, fieldName);
+			throw new TestExecutionException("No string input found in form '%s' with label: %s", m_title, fieldLabel);
 		}
 		anyField.get().enteredValue = value;
 	}
@@ -122,11 +122,23 @@ public class TForm extends TComponent {
 
 	public static TForm parse(JsonMap json, TClient client) {
 		final long tuid = JsonConstants.readTUID(json);
-		final String title = json.getAttribute("title");
-		final String target = json.getAttribute("target");
+		final String title = json.getAttribute(Form.JSON_ATTRIBUTE_TITLE);
+		final String target = json.getAttribute(Form.JSON_ATTRIBUTE_TARGET);
 		final TForm result = new TForm(tuid, title, target, client);
 
-		final JsonArray array = json.getArray("inputs");
+		parseInputs(json, result);
+
+		result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
+
+		if(json.hasAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE)) {
+			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);
+		}
+
+		return result;
+	}
+
+	protected static void parseInputs(JsonMap json, TForm result) {
+		final JsonArray array = json.getArray(Form.JSON_ATTRIBUTE_INPUTS);
 		final Iterator<JsonObject> iterator = array.iterator();
 		while(iterator.hasNext()) {
 			final JsonObject input = iterator.next();
@@ -136,13 +148,5 @@ public class TForm extends TComponent {
 			final String label = FormInput.getLabel(map);
 			result.m_inputs.add(new TFormField(name, label, null));
 		}
-
-		result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
-
-		if(json.hasAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE)) {
-			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);
-		}
-
-		return result;
 	}
 }

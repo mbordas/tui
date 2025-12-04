@@ -39,6 +39,7 @@ public class FormTest extends TestWithBackend {
 	@Test
 	public void refresh() {
 		final String formTitle = "Form title";
+		final String inputStringLabel = "Label";
 		final String inputStringName = "string";
 
 		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
@@ -46,14 +47,14 @@ public class FormTest extends TestWithBackend {
 		try(final Browser browser = startAndBrowse(updatablePage.page()).browser()) {
 			final AtomicReference<RequestReader> referenceToReader = new AtomicReference<>();
 
-			registerWebServiceToRefreshPanelWithForm(updatablePage.panel().getSource(), formTitle, inputStringName);
+			registerWebServiceToRefreshPanelWithForm(updatablePage.panel().getSource(), formTitle, inputStringLabel, inputStringName);
 			registerWebServiceForFormSubmission(referenceToReader);
 
 			// Refreshing the form (frontend javascript)
 			browser.clickRefreshButton(updatablePage.button().getLabel()); // should fill the panel with the form given in json
 
 			// Testing the form
-			browser.typeFormField(formTitle, inputStringName, "my string");
+			browser.typeFormField(formTitle, inputStringLabel, "my string");
 			browser.submitForm(formTitle);
 
 			final RequestReader reader = referenceToReader.get();
@@ -68,11 +69,12 @@ public class FormTest extends TestWithBackend {
 		});
 	}
 
-	private void registerWebServiceToRefreshPanelWithForm(String panelSource, String formTitle, String inputStringName) {
+	private void registerWebServiceToRefreshPanelWithForm(String panelSource, String formTitle, String inputStringLabel,
+			String inputStringName) {
 		registerWebService(panelSource, (uri, request, response) -> {
 			final Panel result = new Panel(Panel.Align.CENTER);
 			final Form form = result.append(new Form(formTitle, "/form"));
-			form.createInputString("String", inputStringName);
+			form.createInputString(inputStringLabel, inputStringName);
 			return result.toJsonMap();
 		});
 	}
@@ -136,7 +138,7 @@ public class FormTest extends TestWithBackend {
 		page.append(form);
 
 		final Browser browser = startAndBrowse(page).browser();
-		browser.typeFormField(form.getTitle(), "message", "entered value");
+		browser.typeFormField(form.getTitle(), "Message", "entered value");
 		browser.submitForm(form.getTitle());
 		wait_s(0.1);
 
@@ -201,8 +203,8 @@ public class FormTest extends TestWithBackend {
 			return Form.buildSuccessfulSubmissionResponse();
 		});
 
-		browser.typeFormField(form.getTitle(), "name", "UploadedName.txt");
-		browser.selectFormFile(form.getTitle(), "file", fileToUpload);
+		browser.typeFormField(form.getTitle(), "Name", "UploadedName.txt");
+		browser.selectFormFile(form.getTitle(), "File", fileToUpload);
 		browser.submitForm(form.getTitle());
 		wait_s(1);
 

@@ -97,7 +97,7 @@ public class TClientTest {
 			final TForm myForm = client.getForm("My form");
 
 			assertTrue(myTable.isEmpty());
-			myForm.enterInput(parameterName, "My Name");
+			myForm.enterInput(columnName, "My Name");
 			myForm.submit(); // Sends form data then refreshes table
 
 			assertFalse(myTable.isEmpty());

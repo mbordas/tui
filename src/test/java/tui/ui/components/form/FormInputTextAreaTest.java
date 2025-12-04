@@ -48,7 +48,7 @@ public class FormInputTextAreaTest {
 
 			try(final Browser browser = new Browser(backend.getPort())) {
 				browser.open(page.getSource());
-				browser.typeFormField(form.getTitle(), "text", expectedValue);
+				browser.typeFormField(form.getTitle(), "Text", expectedValue);
 				browser.submitForm(form.getTitle());
 			}
 		}

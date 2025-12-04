@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tui.html.HTMLFetchErrorMessage;
 import tui.test.components.TFormTest;
+import tui.test.components.TModalFormTest;
 import tui.test.components.TSearchTest;
 import tui.test.components.TSectionTest;
 import tui.test.components.TTableTest;
@@ -49,6 +50,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 
+import static tui.test.components.TFormTest.getFieldLabel;
 import static tui.test.components.TFormTest.getFieldName;
 
 public class Browser implements Closeable {
@@ -316,6 +318,17 @@ public class Browser implements Closeable {
 		}
 	}
 
+	public void closeModalForm(String openButtonLabel) {
+		final Optional<WebElement> anyOpenFormButton = m_driver.findElements(By.className("tui-modal-form-open-button")).stream()
+				.filter((element) -> element.getText().equals(openButtonLabel))
+				.findAny();
+		if(anyOpenFormButton.isPresent()) {
+			getParent(anyOpenFormButton.get()).findElement(By.className("tui-form-close-button")).click();
+		} else {
+			throw new RuntimeException("ModalForm open button not found: " + openButtonLabel);
+		}
+	}
+
 	public WebElement getForm(String title) {
 		final Optional<WebElement> anyFormElement = getForms().stream()
 				.filter(WebElement::isDisplayed)
@@ -329,9 +342,27 @@ public class Browser implements Closeable {
 		}
 	}
 
+	public WebElement getModalForm(String openButtonLabel) {
+		final Optional<WebElement> anyFormElement = getModalForms().stream()
+				.filter(WebElement::isDisplayed)
+				.filter((element) -> openButtonLabel.equals(TModalFormTest.getOpenButtonLabel(element)))
+				.findAny();
+
+		if(anyFormElement.isPresent()) {
+			return anyFormElement.get();
+		} else {
+			throw new RuntimeException("ModalForm element not found: " + openButtonLabel);
+		}
+	}
+
 	public List<WebElement> getForms() {
 		final List<WebElement> result = new ArrayList<>();
 		result.addAll(m_driver.findElements(By.className(Form.HTML_CLASS)));
+		return result;
+	}
+
+	public List<WebElement> getModalForms() {
+		final List<WebElement> result = new ArrayList<>();
 		result.addAll(m_driver.findElements(By.className(ModalForm.HTML_CLASS)));
 		return result;
 	}
@@ -341,9 +372,14 @@ public class Browser implements Closeable {
 		return TFormTest.getFields(formElement);
 	}
 
-	public void typeFormField(String formTitle, String name, String value) {
+	public Collection<WebElement> getModalFormFields(String openButtonLabel) {
+		final WebElement formElement = getModalForm(openButtonLabel);
+		return TFormTest.getFields(formElement);
+	}
+
+	public void typeFormField(String formTitle, String label, String value) {
 		final Optional<WebElement> anyFieldName = getFormFields(formTitle).stream()
-				.filter((field) -> name.equals(getFieldName(field)))
+				.filter((field) -> label.equals(getFieldLabel(field)))
 				.findAny();
 
 		if(anyFieldName.isPresent()) {
@@ -355,7 +391,25 @@ public class Browser implements Closeable {
 
 			inputElement.sendKeys(value);
 		} else {
-			throw new RuntimeException("Field input element not found: " + name);
+			throw new RuntimeException("Field input element not found: " + label);
+		}
+	}
+
+	public void typeModalFormField(String openButtonLabel, String label, String value) {
+		final Optional<WebElement> anyFieldName = getModalFormFields(openButtonLabel).stream()
+				.filter((field) -> label.equals(getFieldLabel(field)))
+				.findAny();
+
+		if(anyFieldName.isPresent()) {
+			final WebElement inputElement = TFormTest.getInputElementsOfFieldElement(anyFieldName.get()).get(0);
+
+			// When running multiple tests, sendKeys() adds 20 spaces at the start of the value into 'textarea' tags!
+			// Calling element.clear() prevents this. I haven't found any explanation.
+			inputElement.clear();
+
+			inputElement.sendKeys(value);
+		} else {
+			throw new RuntimeException("ModalField input element not found: " + label);
 		}
 	}
 
@@ -378,21 +432,34 @@ public class Browser implements Closeable {
 		}
 	}
 
-	public void selectFormFile(String formTitle, String name, File localFile) {
+	public void selectFormFile(String formTitle, String label, File localFile) {
 		final Optional<WebElement> anyFieldName = getFormFields(formTitle).stream()
-				.filter((field) -> name.equals(getFieldName(field)))
+				.filter((field) -> label.equals(getFieldLabel(field)))
 				.findAny();
 
 		if(anyFieldName.isPresent()) {
 			WebElement inputElement = anyFieldName.get().findElement(By.tagName("input"));
 			inputElement.sendKeys(localFile.getAbsolutePath());
 		} else {
-			throw new RuntimeException("Field input element not found: " + name);
+			throw new RuntimeException("Field input element not found: " + label);
 		}
 	}
 
 	public void submitForm(String formTitle) {
 		final WebElement formElement = getForm(formTitle);
+		final Optional<WebElement> anySubmitButton = formElement.findElements(By.tagName("button")).stream()
+				.filter((button) -> "submit".equals(button.getAttribute("type")))
+				.filter((button) -> !getClasses(button).contains("tui-modal-form-open-button"))
+				.findAny();
+		if(anySubmitButton.isPresent()) {
+			anySubmitButton.get().click();
+		} else {
+			throw new RuntimeException("Submit button not found.");
+		}
+	}
+
+	public void submitModalForm(String openButtonLabel) {
+		final WebElement formElement = getModalForm(openButtonLabel);
 		final Optional<WebElement> anySubmitButton = formElement.findElements(By.tagName("button")).stream()
 				.filter((button) -> "submit".equals(button.getAttribute("type")))
 				.filter((button) -> !getClasses(button).contains("tui-modal-form-open-button"))

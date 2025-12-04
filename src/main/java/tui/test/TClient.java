@@ -21,6 +21,7 @@ import tui.json.JsonMap;
 import tui.json.JsonParser;
 import tui.test.components.TComponent;
 import tui.test.components.TForm;
+import tui.test.components.TModalForm;
 import tui.test.components.TPage;
 import tui.test.components.TPanel;
 import tui.test.components.TRefreshButton;
@@ -113,6 +114,12 @@ public class TClient {
 	public TForm getForm(String title) {
 		return finderOfClass(TForm.class)
 				.withCondition((form) -> form.getTitle().equals(title))
+				.getUnique();
+	}
+
+	public TModalForm getModalForm(String openButtonLabel) {
+		return finderOfClass(TModalForm.class)
+				.withCondition((form) -> form.getOpenButtonLabel().equals(openButtonLabel))
 				.getUnique();
 	}
 

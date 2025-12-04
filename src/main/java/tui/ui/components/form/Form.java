@@ -40,6 +40,10 @@ public class Form extends UIComponent {
 	public static final String JSON_TYPE = "form";
 	public static final String JSON_TYPE_FORM_SUBMISSION_RESPONSE = "formSubmissionResponse";
 	public static final String JSON_ATTRIBUTE_OPENS_PAGE_SOURCE = "opensPageSource";
+	public static final String JSON_ATTRIBUTE_TITLE = "title";
+	public static final String JSON_ATTRIBUTE_TARGET = "target";
+	public static final String JSON_ATTRIBUTE_INPUTS = "inputs";
+	public static final String JSON_ATTRIBUTE_SUBMIT_LABEL = "submitLabel";
 
 	private final String m_title;
 	private String m_submitLabel = "Submit";
@@ -227,13 +231,13 @@ public class Form extends UIComponent {
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
-		result.setAttribute("title", m_title);
-		result.setAttribute("target", m_target);
+		result.setAttribute(JSON_ATTRIBUTE_TITLE, m_title);
+		result.setAttribute(JSON_ATTRIBUTE_TARGET, m_target);
 		if(!m_refreshListeners.isEmpty()) {
 			result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));
 		}
-		result.createArray("inputs", m_inputs, FormInput::toJsonObject);
-		result.setAttribute("submitLabel", m_submitLabel);
+		result.createArray(JSON_ATTRIBUTE_INPUTS, m_inputs, FormInput::toJsonObject);
+		result.setAttribute(JSON_ATTRIBUTE_SUBMIT_LABEL, m_submitLabel);
 		if(m_opensPageSource != null) {
 			result.setAttribute(JSON_ATTRIBUTE_OPENS_PAGE_SOURCE, m_opensPageSource);
 		}

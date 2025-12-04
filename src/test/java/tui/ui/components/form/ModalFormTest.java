@@ -34,6 +34,7 @@ public class ModalFormTest extends TestWithBackend {
 	public void refresh() {
 		final String openButtonLabel = "Open form";
 		final String formTitle = "Form title";
+		final String inputStringLabel = "String";
 		final String inputStringName = "string";
 
 		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
@@ -43,7 +44,7 @@ public class ModalFormTest extends TestWithBackend {
 			registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> {
 				final Panel panel = new Panel();
 				final ModalForm form = new ModalForm(formTitle, openButtonLabel, "/form");
-				form.createInputString("String", inputStringName);
+				form.createInputString(inputStringLabel, inputStringName);
 				panel.append(form);
 				return panel.toJsonMap();
 			});
@@ -56,8 +57,8 @@ public class ModalFormTest extends TestWithBackend {
 			browser.clickRefreshButton(updatablePage.button().getLabel());
 			// panel then should contain the ModalForm
 			browser.openModalForm(openButtonLabel);
-			browser.typeFormField(formTitle, inputStringName, "my string");
-			browser.submitForm(formTitle);
+			browser.typeModalFormField(openButtonLabel, inputStringLabel, "my string");
+			browser.submitModalForm(openButtonLabel);
 
 			final RequestReader reader = referenceToReader.get();
 			assertEquals("my string", reader.getStringParameter(inputStringName));
@@ -80,7 +81,7 @@ public class ModalFormTest extends TestWithBackend {
 
 		final Browser browser = backendAndBrowser.browser();
 		browser.openModalForm(form.getOpenButtonLabel());
-		browser.submitForm(form.getTitle());
+		browser.submitModalForm(form.getOpenButtonLabel());
 
 		assertEquals(page2.getTitle(), browser.getTitle());
 	}

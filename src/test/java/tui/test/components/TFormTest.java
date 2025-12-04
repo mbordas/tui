@@ -71,8 +71,8 @@ public class TFormTest extends TestWithBackend {
 		checkField(fields, "Name", "text", "name");
 		checkField(fields, "Age", "number", "age");
 
-		browser.typeFormField("Test form", "name", "My name");
-		browser.typeFormField("Test form", "age", "42");
+		browser.typeFormField("Test form", "Name", "My name");
+		browser.typeFormField("Test form", "Age", "42");
 		browser.submitForm("Test form");
 
 		// Testing values received by the backend
@@ -81,7 +81,7 @@ public class TFormTest extends TestWithBackend {
 		assertEquals(42, submittedAge.get(), 0);
 	}
 
-	private static void checkField(Collection<WebElement> fields, String label, String type, String name) {
+	static void checkField(Collection<WebElement> fields, String label, String type, String name) {
 		final Optional<WebElement> anyFieldName = fields.stream()
 				.filter((field) -> label.equals(getFieldLabel(field)))
 				.findAny();
@@ -104,7 +104,7 @@ public class TFormTest extends TestWithBackend {
 		return result;
 	}
 
-	static String getFieldLabel(WebElement fieldElement) {
+	public static String getFieldLabel(WebElement fieldElement) {
 		final WebElement labelElement = fieldElement.findElement(By.tagName("label"));
 		return labelElement.getText();
 	}
