@@ -21,13 +21,53 @@ import tui.http.RequestReader;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
+import tui.ui.components.form.Form;
 import tui.ui.components.form.Search;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 
 public class FetchDataTest extends TestWithBackend {
+
+	/**
+	 * Here we refresh a Paragraph two times:
+	 * - when the user submits a Search filter -> we expect that the paragraph's web service receives the search parameter
+	 * - when the user submits a Form -> we expect that the paragraph's web service receives the search parameters again.
+	 */
+	@Test
+	public void cumulativeParameterWithForm() throws InterruptedException {
+		final Page page = new Page("Cumulative parameter with form", "/cumulativeParameterWithForm");
+		final Search search = page.append(new Search("Filter", "Apply", "searchInput"));
+		final Paragraph paragraph = page.append(new Paragraph("Response: "));
+		paragraph.setSource("/paragraph");
+		search.connectListener(paragraph);
+
+		final Form form = page.append(new Form("Form", "/form"));
+		form.createInputString("Value", "formInput");
+		form.registerRefreshListener(paragraph);
+
+		final AtomicInteger callsToRefreshParagraph = new AtomicInteger(0);
+		registerWebService(form.getTarget(), (uri, request, response) -> Form.buildSuccessfulSubmissionResponse());
+		registerWebService(paragraph.getSource(), (uri, request, response) -> {
+			final RequestReader reader = new RequestReader(request);
+			final String searchValue = reader.getStringParameter("searchInput", null);
+			return new Paragraph("Search param=%s / refresh=%d", searchValue, callsToRefreshParagraph.incrementAndGet()).toJsonMap();
+		});
+		startAndBrowse(page);
+
+		// Submitting the search filter -> the Paragraph should be refreshed
+		m_browser.typeSearch(search.getTitle(), "searchInput", "Search Input");
+		m_browser.submitSearch(search.getTitle());
+		assertEquals("Search param=Search Input / refresh=1", getParagraphText("Search param="));
+
+		// Submitting the form -> the Paragraph should be refreshed again
+		m_browser.typeFormField(form.getTitle(), "Value", "Form Input");
+		m_browser.submitForm(form.getTitle());
+		Thread.sleep(150);
+		assertEquals("Search param=Search Input / refresh=2", getParagraphText("Search param="));
+	}
 
 	@Test
 	public void cumulativeParameters() {
@@ -51,17 +91,17 @@ public class FetchDataTest extends TestWithBackend {
 		// Submitting first filter. Only the first parameter should be read by the backend
 		m_browser.typeSearch(search1.getTitle(), "search1", "my value 1");
 		m_browser.submitSearch(search1.getTitle());
-		assertEquals("Response: 1=my value 1 / 2=null", getParagraphText());
+		assertEquals("Response: 1=my value 1 / 2=null", getParagraphText("Response: "));
 
 		// Submitting the second filter. Now both parameters should be read by the backend.
 		m_browser.typeSearch(search2.getTitle(), "search2", "my value 2");
 		m_browser.submitSearch(search2.getTitle());
-		assertEquals("Response: 1=my value 1 / 2=my value 2", getParagraphText());
+		assertEquals("Response: 1=my value 1 / 2=my value 2", getParagraphText("Response: "));
 	}
 
-	private String getParagraphText() {
+	private String getParagraphText(String startsWith) {
 		final Optional<WebElement> anyParagraphElement = m_browser.getParagraphs().stream().filter(
-				(element) -> element.getText().startsWith("Response: ")).findAny();
+				(element) -> element.getText().startsWith(startsWith)).findAny();
 		assert anyParagraphElement.isPresent();
 		return anyParagraphElement.get().getText();
 	}
