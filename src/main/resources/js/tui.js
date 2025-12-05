@@ -38,6 +38,10 @@ function onload() {
 */
 async function refreshComponent(id, data) {
     const element = document.getElementById(id);
+    if(element == null) {
+        console.error('refreshComponent: element with id=' + id + ' not found.');
+        return;
+    }
     addFetchData(element, data); // new data are added to existing
     data = getFetchData(element); // we must get all data
     const component = document.getElementById(id);
@@ -175,13 +179,13 @@ function createComponent(json, idMap) {
         tableElement.classList.add('tui-table');
         tableElement.appendChild(document.createElement('thead'));
         tableElement.appendChild(document.createElement('tbody'));
-        updateTable(tableElement, json);
+        updateTable(tableElement, json, idMap);
     } else if(type == 'section') {
         result = document.createElement('section');
-        updateSection(result, json);
+        updateSection(result, json, idMap);
     } else if(type == 'paragraph') {
         result = document.createElement('p');
-        updateParagraph(result, json);
+        updateParagraph(result, json, idMap);
     } else if(type == 'text') {
         result = document.createElement('span');
         result.textContent = json['content'];
@@ -524,7 +528,7 @@ function updatePanel(panelElement, json, idMap) {
 
 // SECTIONS
 
-function updateSection(element, json) {
+function updateSection(element, json, idMap) {
     var elementForTitle = element;
     var elementForContent = element;
     if(json['disclosureType'] != 'NONE') {
@@ -550,19 +554,19 @@ function updateSection(element, json) {
         elementHeader.style.display = 'inline';
     }
     for(var fragment of json['content']) {
-        const component = createComponent(fragment);
+        const component = createComponent(fragment, idMap);
         element.appendChild(component);
     }
 }
 
 // PARAGRAPHS
 
-function updateParagraph(element, json) {
+function updateParagraph(element, json, idMap) {
     element.innerHTML = '';
     element.className = '';
     element.classList.add('tui-align-' + json['textAlign'].toLowerCase());
     for(var fragment of json['content']) {
-        const component = createComponent(fragment);
+        const component = createComponent(fragment, idMap);
         element.appendChild(component);
     }
 }
@@ -1314,7 +1318,7 @@ function instrumentTablePicker(tablePickerElement) {
 /*
     json may be either 'Table' or 'TableData'
 */
-async function updateTable(tableElement, json) {
+async function updateTable(tableElement, json, idMap) {
     var caption = tableElement.getElementsByTagName('caption')[0];
     if(caption == null) {
         caption = document.createElement('caption');
