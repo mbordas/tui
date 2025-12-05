@@ -785,6 +785,12 @@ function createFieldSet(form, json, isModal) {
         formInput.appendChild(errorSpan);
     });
 
+    // Hidden parameters
+    for(name in json['parameters']) {
+        const value = json['parameters'][name];
+        createFormHiddenInput(inputsDiv, name, value);
+    };
+
     // Message
     const messageDiv = document.createElement('div');
     messageDiv.setAttribute('id', 'form-message-' + json['tuid']);
@@ -1067,6 +1073,16 @@ function onFormResponse(formElement, json) {
             errorElement.textContent = json['errors'][key];
         });
     }
+}
+
+function createFormHiddenInput(fieldsetElement, name, value) {
+    const inputDiv = document.createElement('div');
+    fieldsetElement.append(inputDiv);
+    const inputElement = document.createElement('input');
+    inputElement.setAttribute('type', 'hidden');
+    inputElement.setAttribute('name', name);
+    inputElement.setAttribute('value', value);
+    inputDiv.appendChild(inputElement);
 }
 
 function createFormInput(fieldsetElement, json, formTUID) {

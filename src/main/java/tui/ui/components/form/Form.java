@@ -28,6 +28,7 @@ import tui.ui.components.layout.Panel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class Form extends UIComponent {
 	public static final String JSON_ATTRIBUTE_TITLE = "title";
 	public static final String JSON_ATTRIBUTE_TARGET = "target";
 	public static final String JSON_ATTRIBUTE_INPUTS = "inputs";
+	public static final String JSON_ATTRIBUTE_PARAMETERS = "parameters";
 	public static final String JSON_ATTRIBUTE_SUBMIT_LABEL = "submitLabel";
 
 	private final String m_title;
@@ -50,6 +52,7 @@ public class Form extends UIComponent {
 	private final String m_target; // Web service path
 	protected String m_opensPageSource = null; // Optional page to open when form is successfully submitted.
 
+	private final Map<String, String> m_parameters = new HashMap<>();
 	private final Set<FormInput> m_inputs = new LinkedHashSet<>();
 	private final Collection<UIComponent> m_refreshListeners = new ArrayList<>();
 
@@ -145,6 +148,11 @@ public class Form extends UIComponent {
 		return result;
 	}
 
+	public Form addParameter(String name, String value) {
+		m_parameters.put(name, value);
+		return this;
+	}
+
 	/**
 	 * Registered listener will be refreshed each time the form will be successfully submitted.
 	 */
@@ -184,6 +192,15 @@ public class Form extends UIComponent {
 			final HTMLNode inputDiv = inputsDiv.append(createInputNodeWithLabel(getTUID(), input));
 			inputDiv.addClass(HTML_CLASS_FIELD);
 			inputDiv.createChild("span").addClass("tui-input-error");
+		}
+
+		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
+			final String name = entry.getKey();
+			final String value = entry.getValue();
+			inputsDiv.createChild("input")
+					.setAttribute("type", "hidden")
+					.setAttribute("name", name)
+					.setAttribute("value", value);
 		}
 
 		result.createChild("div")
@@ -237,6 +254,10 @@ public class Form extends UIComponent {
 			result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));
 		}
 		result.createArray(JSON_ATTRIBUTE_INPUTS, m_inputs, FormInput::toJsonObject);
+		final JsonMap parameters = result.createMap(JSON_ATTRIBUTE_PARAMETERS);
+		for(final Map.Entry<String, String> parameterEntry : m_parameters.entrySet()) {
+			parameters.setAttribute(parameterEntry.getKey(), parameterEntry.getValue());
+		}
 		result.setAttribute(JSON_ATTRIBUTE_SUBMIT_LABEL, m_submitLabel);
 		if(m_opensPageSource != null) {
 			result.setAttribute(JSON_ATTRIBUTE_OPENS_PAGE_SOURCE, m_opensPageSource);

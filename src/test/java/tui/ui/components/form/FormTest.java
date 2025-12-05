@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components.form;
 
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import tui.http.RequestReader;
 import tui.test.Browser;
@@ -29,12 +30,46 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FormTest extends TestWithBackend {
+
+	public static final String HIDDEN_PARAMETER_NAME = "hiddenParameter";
+	public static final String HIDDEN_PARAMETER_VALUE = "Hidden value";
+
+	@Test
+	public void html() {
+		final Form form = new Form("Form title", "/form");
+		form.createInputString("Label", "string")
+				.setInitialValue("Initial value");
+		form.addParameter(HIDDEN_PARAMETER_NAME, HIDDEN_PARAMETER_VALUE);
+
+		TestUtils.assertHTMLProcedure(() -> form, (prefix, formElement) -> {
+			// div
+			assertEquals(prefix, "form", formElement.getTagName());
+			assertTrue(prefix, Browser.getClasses(formElement).contains(Form.HTML_CLASS));
+
+			// inputs
+			final List<WebElement> inputElements = formElement.findElements(By.tagName("input"));
+			assertEquals(prefix, 2, inputElements.size());
+			{
+				final WebElement inputStringElement = inputElements.get(0);
+				assertEquals(prefix, "text", inputStringElement.getAttribute("type"));
+				assertEquals(prefix, "string", inputStringElement.getAttribute("name"));
+				assertEquals(prefix, "Initial value", inputStringElement.getAttribute("value"));
+			}
+			{
+				final WebElement inputHiddenElement = inputElements.get(1);
+				assertEquals(prefix, "hidden", inputHiddenElement.getAttribute("type"));
+				assertEquals(prefix, HIDDEN_PARAMETER_NAME, inputHiddenElement.getAttribute("name"));
+				assertEquals(prefix, HIDDEN_PARAMETER_VALUE, inputHiddenElement.getAttribute("value"));
+			}
+		});
+	}
 
 	@Test
 	public void refresh() {
@@ -59,6 +94,7 @@ public class FormTest extends TestWithBackend {
 
 			final RequestReader reader = referenceToReader.get();
 			assertEquals("my string", reader.getStringParameter(inputStringName));
+			assertEquals(HIDDEN_PARAMETER_VALUE, reader.getStringParameter(HIDDEN_PARAMETER_NAME));
 		}
 	}
 
@@ -75,6 +111,7 @@ public class FormTest extends TestWithBackend {
 			final Panel result = new Panel(Panel.Align.CENTER);
 			final Form form = result.append(new Form(formTitle, "/form"));
 			form.createInputString(inputStringLabel, inputStringName);
+			form.addParameter(HIDDEN_PARAMETER_NAME, HIDDEN_PARAMETER_VALUE);
 			return result.toJsonMap();
 		});
 	}

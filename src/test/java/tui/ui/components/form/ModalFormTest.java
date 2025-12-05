@@ -36,6 +36,8 @@ public class ModalFormTest extends TestWithBackend {
 		final String formTitle = "Form title";
 		final String inputStringLabel = "String";
 		final String inputStringName = "string";
+		final String hiddenParameterName = "hiddenParameter";
+		final String hiddenParameterValue = "hidden value";
 
 		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
 
@@ -45,6 +47,7 @@ public class ModalFormTest extends TestWithBackend {
 				final Panel panel = new Panel();
 				final ModalForm form = new ModalForm(formTitle, openButtonLabel, "/form");
 				form.createInputString(inputStringLabel, inputStringName);
+				form.addParameter(hiddenParameterName, hiddenParameterValue);
 				panel.append(form);
 				return panel.toJsonMap();
 			});
@@ -62,6 +65,7 @@ public class ModalFormTest extends TestWithBackend {
 
 			final RequestReader reader = referenceToReader.get();
 			assertEquals("my string", reader.getStringParameter(inputStringName));
+			assertEquals(hiddenParameterValue, reader.getStringParameter(hiddenParameterName));
 		}
 	}
 
