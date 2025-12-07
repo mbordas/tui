@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
 import tui.test.components.TComponent;
+import tui.test.components.TDownloadButton;
 import tui.test.components.TForm;
 import tui.test.components.TModalForm;
 import tui.test.components.TPage;
@@ -30,6 +31,11 @@ import tui.test.components.TSearch;
 import tui.test.components.TSection;
 import tui.test.components.TTable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -111,6 +117,12 @@ public class TClient {
 				.getUnique();
 	}
 
+	public TDownloadButton getDownloadButton(String label) {
+		return finderOfClass(TDownloadButton.class)
+				.withCondition((button) -> button.getLabel().equals(label))
+				.getUnique();
+	}
+
 	public TForm getForm(String title) {
 		return finderOfClass(TForm.class)
 				.withCondition((form) -> form.getTitle().equals(title))
@@ -143,6 +155,24 @@ public class TClient {
 		params.putAll(m_currentPage.getSessionParameters());
 		params.putAll(parameters);
 		return m_httpClient.callBackend(target, params, multipart);
+	}
+
+	public File download(String target, Map<String, Object> parameters, String fileName, File outputDir) {
+		File file = new File(outputDir, fileName);
+		try(OutputStream output = new FileOutputStream(file)) {
+			download(target, parameters, output, false);
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+		return file;
+	}
+
+	private void download(String target, Map<String, Object> parameters, OutputStream outputStream, boolean multipart) {
+		try {
+			m_httpClient.download(target, parameters, outputStream, multipart);
+		} catch(URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public TComponent find(long tuid) {

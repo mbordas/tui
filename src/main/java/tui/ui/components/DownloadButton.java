@@ -27,6 +27,10 @@ public class DownloadButton extends UIComponent {
 
 	public static final String HTML_CLASS = "tui-download-button";
 	public static final String JSON_TYPE = "download_button";
+	public static final String JSON_ATTRIBUTE_LABEL = "label";
+	public static final String JSON_ATTRIBUTE_TARGET = "target";
+	public static final String JSON_ATTRIBUTE_DEFAULT_FILE_NAME = "downloadName";
+	public static final String JSON_MAP_PARAMETERS = "parameters";
 
 	private final String m_label;
 	private final String m_target;
@@ -77,11 +81,11 @@ public class DownloadButton extends UIComponent {
 
 	@Override
 	public JsonMap toJsonMap() {
-		final JsonMap result = new JsonMap(JSON_TYPE);
-		result.setAttribute("label", m_label);
-		result.setAttribute("target", m_target);
-		result.setAttribute("downloadName", m_defaultFileName);
-		final JsonMap parameters = result.setChild("parameters", new JsonMap(null));
+		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
+		result.setAttribute(JSON_ATTRIBUTE_LABEL, m_label);
+		result.setAttribute(JSON_ATTRIBUTE_TARGET, m_target);
+		result.setAttribute(JSON_ATTRIBUTE_DEFAULT_FILE_NAME, m_defaultFileName);
+		final JsonMap parameters = result.setChild(JSON_MAP_PARAMETERS, new JsonMap(null));
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
 			parameters.setAttribute(entry.getKey(), entry.getValue());
 		}

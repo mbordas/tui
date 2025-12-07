@@ -24,7 +24,10 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -41,9 +44,13 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TestHTTPClient {
@@ -158,5 +165,50 @@ public class TestHTTPClient {
 			throw new TestExecutionException(String.format("HTTP error %d", m_responseHandler.getLastStatusCode()));
 		}
 		return result;
+	}
+
+	public void download(String target, Map<String, Object> parameters, OutputStream outputStream, boolean multipart)
+			throws URISyntaxException, IOException {
+		final String url = String.format("http://%s:%d/%s", m_host, m_port,
+				target.startsWith("/") ? target.substring(1) : target);
+
+		if(multipart) {
+			final HttpPost post = new HttpPost(url);
+			List<NameValuePair> postParameters = new ArrayList<>();
+			parameters.forEach((str, obj) -> {
+				postParameters.add(new BasicNameValuePair(str, obj.toString()));
+			});
+			post.setEntity(new UrlEncodedFormEntity(postParameters, StandardCharsets.UTF_8));
+
+			try(CloseableHttpResponse response = m_httpClient.execute(post)) {
+				int status = response.getStatusLine().getStatusCode();
+				final HttpEntity entity = response.getEntity();
+				if(status >= 200 && status < 300) {
+					assert entity != null;
+					entity.writeTo(outputStream);
+				} else {
+					throw new IOException(String.format("HTTP error %d", status));
+				}
+			}
+
+		} else {
+			final URIBuilder uriBuilder = new URIBuilder(url);
+			parameters.forEach((str, obj) -> {
+				uriBuilder.addParameter(str, obj.toString());
+			});
+			final URI uri = uriBuilder.build();
+			final HttpGet get = new HttpGet(uri);
+
+			try(CloseableHttpResponse response = m_httpClient.execute(get)) {
+				int status = response.getStatusLine().getStatusCode();
+				final HttpEntity entity = response.getEntity();
+				if(status >= 200 && status < 300) {
+					assert entity != null;
+					entity.writeTo(outputStream);
+				} else {
+					throw new IOException(String.format("HTTP error %d", status));
+				}
+			}
+		}
 	}
 }

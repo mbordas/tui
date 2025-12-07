@@ -19,6 +19,7 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.json.JsonParser;
 import tui.test.TClient;
+import tui.ui.components.DownloadButton;
 import tui.ui.components.List;
 import tui.ui.components.NavLink;
 import tui.ui.components.Paragraph;
@@ -39,22 +40,24 @@ public class TComponentFactory {
 	public static TComponent parse(String json, TClient client) {
 		final JsonMap map = JsonParser.parseMap(json);
 		return switch(map.getType()) {
-			case TabbedFlow.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
+			case DownloadButton.JSON_TYPE -> TDownloadButton.parse(map, client);
+			case Form.JSON_TYPE -> TForm.parse(map, client);
+			case Grid.JSON_TYPE -> TGrid.parse(map, client);
+			case List.JSON_TYPE -> TList.parse(map, client);
+			case ModalForm.JSON_TYPE -> TModalForm.parse(map, client);
+			case NavLink.JSON_TYPE -> TNavLink.parse(map, client);
 			case Panel.JSON_TYPE -> TPanel.parse(map, client);
 			case Paragraph.JSON_TYPE -> TParagraph.parse(map, client);
 			case Paragraph.Text.JSON_TYPE -> TParagraph.TText.parse(map, client);
+			case RefreshButton.JSON_TYPE -> TRefreshButton.parse(map, client);
+			case Search.JSON_TYPE -> TSearch.parse(map, client);
 			case Section.JSON_TYPE -> TSection.parse(map, client);
 			case Table.JSON_TYPE -> TTable.parse(map, client);
 			case TablePicker.JSON_TYPE -> TTablePicker.parse(map, client);
-			case Form.JSON_TYPE -> TForm.parse(map, client);
-			case ModalForm.JSON_TYPE -> TModalForm.parse(map, client);
-			case Search.JSON_TYPE -> TSearch.parse(map, client);
-			case VerticalFlow.JSON_TYPE -> TVerticalFlow.parse(map, client);
 			case TabbedFlow.JSON_TYPE -> TTabbedFlow.parse(map, client);
-			case Grid.JSON_TYPE -> TGrid.parse(map, client);
-			case RefreshButton.JSON_TYPE -> TRefreshButton.parse(map, client);
-			case NavLink.JSON_TYPE -> TNavLink.parse(map, client);
-			case List.JSON_TYPE -> TList.parse(map, client);
+			case TabbedFlow.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
+			case VerticalFlow.JSON_TYPE -> TVerticalFlow.parse(map, client);
+
 			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
 		};
 	}

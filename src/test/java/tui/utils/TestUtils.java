@@ -101,7 +101,7 @@ public class TestUtils {
 	 *                        (created in HTML when opening the page), then after having refreshed this component.
 	 */
 	public static void assertHTMLProcedure(Supplier<UIComponent> componentToTest,
-			BiConsumer<String, WebElement> elementTest) {
+			BiConsumer<String /* test phase name (prefix) */, WebElement /* element to test */> elementTest) {
 
 		final UpdatablePage updatablePage = createPageWithUpdatablePanel();
 		updatablePage.panel().append(componentToTest.get());
