@@ -133,10 +133,33 @@ function addFetchData(element, data) {
     Gives the parameters map that are linked to the element. These parameters must be added to any refreshing Ajax request.
 */
 function getFetchData(element) {
-    const result = (typeof element.fetch_data === 'undefined') ? {} : element.fetch_data;
+    const result = {};
+
+    // 1. Session parameters
     for(let key in SESSION_PARAMS) {
         result[key] = SESSION_PARAMS[key];
     }
+
+    // 2. Parameters from the element itself
+    const parentElement = element.parentElement;
+    if(parentElement != null) {
+        if(parentElement.classList.contains('tui-refreshable-container')) {
+            const parametersDiv = parentElement.querySelector('.fetch-parameters');
+            if(parametersDiv != null) {
+                parametersDiv.querySelectorAll('input').forEach(input => {
+                    result[input.getAttribute('name')] = input.value;
+                });
+            }
+        }
+    }
+
+    // 3. Parameters from previous refreshing requests
+    if(typeof element.fetch_data !== 'undefined') {
+        for(let key in element.fetch_data) {
+            result[key] = element.fetch_data[key];
+        }
+    }
+
     return result;
 }
 
@@ -180,12 +203,36 @@ function createComponent(json, idMap) {
         tableElement.appendChild(document.createElement('thead'));
         tableElement.appendChild(document.createElement('tbody'));
         updateTable(tableElement, json, idMap);
+    } else if(type == 'paragraph') {
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('p', 'tui-container-paragraph');
+            updateParagraph(containedElement.element, json, idMap);
+            result = containedElement.container;
+        } else {
+            result = document.createElement('p');
+            updateParagraph(result, json, idMap);
+        }
+    } else if(type == 'grid') {
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('div', 'tui-container-grid');
+            updateGrid(containedElement.element, json, idMap);
+            result = containedElement.container;
+        } else {
+            result = document.createElement('div');
+            result.classList.add('tui-grid');
+            updateGrid(result, json, idMap);
+        }
+    } else if(type == 'svg') {
+        if(json['tui-source'] != null) {
+            const svgElement = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
+            const containedElement = createElementWithContainer('svg', 'tui-container-svg', svgElement);
+            result = containedElement.container;
+        } else {
+            result = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
+        }
     } else if(type == 'section') {
         result = document.createElement('section');
         updateSection(result, json, idMap);
-    } else if(type == 'paragraph') {
-        result = document.createElement('p');
-        updateParagraph(result, json, idMap);
     } else if(type == 'text') {
         result = document.createElement('span');
         result.textContent = json['content'];
@@ -201,10 +248,6 @@ function createComponent(json, idMap) {
             childContainer.appendChild(childElement);
             result.appendChild(childContainer);
         }
-    } else if(type == 'grid') {
-        result = document.createElement('div');
-        result.classList.add('tui-grid');
-        updateGrid(result, json, idMap);
     } else if(type == 'verticalFlow') {
         result = document.createElement('div');
         result.classList.add('tui-vertical-flow');
@@ -272,14 +315,6 @@ function createComponent(json, idMap) {
         result.classList.add('tui-navlink');
         result.setAttribute('href', json['target']);
         result.textContent = json['label'];
-    } else if(type == 'svg') {
-        if(json['tui-source'] != null) {
-            const svgElement = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
-            const containedElement = createElementWithContainer('svg', 'tui-container-svg', svgElement);
-            result = containedElement.container;
-        } else {
-            result = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
-        }
     } else if(type == 'image') {
         result = document.createElement('img');
         result.setAttribute('src', json['source']);
@@ -343,6 +378,7 @@ function adaptRefreshListeners(json, idMap) {
 */
 function createElementWithContainer(name, containerClass, containedElement) {
     const containerElement = document.createElement('div');
+    containerElement.classList.add('tui-refreshable-container');
     containerElement.classList.add(containerClass);
     const newElement = containedElement == null? document.createElement(name) : containedElement;
     containerElement.append(newElement);
@@ -350,6 +386,48 @@ function createElementWithContainer(name, containerClass, containedElement) {
     instrumentWithErrorMessage(containerElement);
 
     return {container: containerElement, element: newElement};
+}
+
+function instrumentWithParameters(container, json) {
+    if(json['parameters'] != null) {
+        const parametersDiv = document.createElement('div');
+        parametersDiv.classList.add('fetch-parameters');
+        container.appendChild(parametersDiv);
+        appendHiddenInputs(parametersDiv, json['parameters']);
+    }
+}
+
+/*
+    Updates the div that contains the hidden inputs with incoming component's parameters only if they are defined.
+    This is called only for refreshable components.
+    The parameters' div is a direct child of the container div, and only exists when the component has a source.
+*/
+function updateParameters(refreshableElement, json) {
+    if(json['parameters'] != null) {
+        const container = refreshableElement.parentElement;
+        if(container != null) {
+            let parametersDiv = container.querySelector('.fetch-parameters');
+            if(parametersDiv == null) {
+                parametersDiv = document.createElement('div');
+                parametersDiv.classList.add('fetch-parameters');
+                container.appendChild(parametersDiv);
+            } else {
+                parametersDiv.innerHTML = ''; // Resetting parameters
+            }
+            appendHiddenInputs(parametersDiv, json['parameters']);
+        }
+    }
+}
+
+function appendHiddenInputs(parametersDiv, jsonMap) {
+    for(let name in jsonMap) {
+        var value = jsonMap[name];
+        const hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', name);
+        hiddenInput.setAttribute('value', value);
+        parametersDiv.appendChild(hiddenInput);
+    }
 }
 
 function instrumentWithErrorMessage(element) {
@@ -395,6 +473,8 @@ function updateGrid(gridElement, json, idMap) {
             gridElement.appendChild(childElement);
         }
     }
+
+    updateParameters(gridElement, json);
 }
 
 // FLOWS
@@ -524,6 +604,8 @@ function updatePanel(panelElement, json, idMap) {
             panelElement.appendChild(element);
         }
     }
+
+    updateParameters(panelElement, json);
 }
 
 // SECTIONS
@@ -1376,6 +1458,7 @@ async function updateTable(tableElement, json, idMap) {
 
     tableElement.getElementsByTagName('tbody')[0].replaceWith(freshBody);
 
+    updateParameters(tableElement, json);
     instrumentTablePicker(tableElement.parentElement);
 }
 
@@ -1435,6 +1518,8 @@ function updateSVG(svgElement, json) {
     });
 
     instrumentSVG(newElement);
+
+    updateParameters(newElement, json);
 
     return newElement;
 }

@@ -144,11 +144,9 @@ public class Paragraph extends UIRefreshableComponent {
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
 		}
 		result.setAttribute(ATTRIBUTE_TEXT_ALIGN, m_textAlign.name());
-
 		result.createArray(ATTRIBUTE_CONTENT, m_content, UIComponent::toJsonMap);
-
+		appendParameters(result);
 		applyCustomStyle(result);
-
 		return result;
 	}
 

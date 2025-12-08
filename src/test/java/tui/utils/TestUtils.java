@@ -167,6 +167,9 @@ public class TestUtils {
 		if(anyWebElement.isEmpty()) {
 			throw new RuntimeException("Can't find the component to test.");
 		}
-		return anyWebElement.get().findElement(By.xpath("./*"));
+		final WebElement updatablePanelElement = anyWebElement.get();
+		return updatablePanelElement.findElements(By.xpath("./*")).stream()
+				.findAny()
+				.orElseThrow();
 	}
 }

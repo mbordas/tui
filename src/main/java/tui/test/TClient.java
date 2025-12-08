@@ -148,12 +148,14 @@ public class TClient {
 	}
 
 	/**
-	 * @param multipart Should be set for form submission
+	 * @param parameters Will be added to session parameters. When a given parameter has the same name as a session parameter, the session
+	 *                   parameter will be overridden.
+	 * @param multipart  Should be set for form submission
 	 */
 	public String callBackend(String target, Map<String, Object> parameters, boolean multipart) {
 		Map<String, Object> params = new HashMap<>();
-		params.putAll(m_currentPage.getSessionParameters());
-		params.putAll(parameters);
+		params.putAll(m_currentPage.getSessionParameters()); // 1. Session parameters
+		params.putAll(parameters); // 2. Complete and override
 		return m_httpClient.callBackend(target, params, multipart);
 	}
 

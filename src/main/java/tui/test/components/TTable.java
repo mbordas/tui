@@ -198,6 +198,7 @@ public class TTable extends TRefreshableComponent {
 	public static TTable parse(JsonMap map, TClient client) {
 		final BaseAttributes baseAttributes = parseBaseAttributes(map);
 		final TTable result = new TTable(baseAttributes.tuid, baseAttributes.title, baseAttributes.columns, baseAttributes.source, client);
+		result.readParameters(map);
 		loadRows(map, baseAttributes.columns, result);
 		loadPageInfo(map, result);
 		return result;
