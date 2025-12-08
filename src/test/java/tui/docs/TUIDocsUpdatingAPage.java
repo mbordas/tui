@@ -112,18 +112,25 @@ public class TUIDocsUpdatingAPage extends Page {
 		section.appendParagraph("""
 				When a component update is triggered, some parameters are sent to the web service which provides the updated version
 				 of the component.""");
-		section.appendParagraph("There a 3 kind of parameters that will be added to the update request:");
+		section.appendParagraph("There a 4 kind of parameters that will be added (overrides may occur) to the update request:");
 		section.append(new List(true))
 				.appendText("The session parameters. They are configured at the page level.")
+				.appendText("The parameters of the component to update.")
 				.appendText(
-						"The parameters given by the triggering component. They depend on the type of triggering component and its configuration.")
+						"The parameters previously given by any triggering component which has been activated. This allows to manage filtering.")
 				.appendText(
-						"The parameters previously given by any triggering component which has been activated. This allows to manage filtering.");
+						"The parameters given by the triggering component. They depend on the type of triggering component and its configuration.");
 
 		{
 			final Section subSection = section.createSubSection("Session parameters");
 			subSection.appendParagraph("Parameters are added to a %s as key-value pairs:", Page.class.getSimpleName());
 			subSection.append(new CodeParagraph("page.setSessionParameter(\"sessionId\", \"jr4cNuOn6m20ab8kSVgU0mpkF\");"));
+		}
+
+		{
+			final Section subSection = section.createSubSection("Parameters of the updated component");
+			subSection.appendParagraph("Parameters are added to a refreshable component as key-value pairs:");
+			subSection.append(new CodeParagraph("component.addParameter(\"name\", \"value\");"));
 		}
 
 		{

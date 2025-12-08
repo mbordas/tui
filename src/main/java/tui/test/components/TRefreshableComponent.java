@@ -29,6 +29,7 @@ public abstract class TRefreshableComponent extends TComponent {
 
 	private String m_source = null;
 	private Map<String, Object> m_fetchData = new HashMap<>();
+	private Map<String, String> m_parameters = new HashMap<>();
 
 	/**
 	 * @param tuid   Unique identifier.
@@ -48,8 +49,10 @@ public abstract class TRefreshableComponent extends TComponent {
 		if(data != null) {
 			m_fetchData.putAll(data);
 		}
-		final String response;
-		response = m_client.callBackend(m_source, m_fetchData, false);
+
+		final Map<String, Object> parameters = new HashMap<>(m_parameters);
+		parameters.putAll(m_fetchData);
+		final String response = m_client.callBackend(m_source, parameters, false);
 		final JsonMap map = JsonParser.parseMap(response);
 		update(map);
 	}
@@ -57,6 +60,13 @@ public abstract class TRefreshableComponent extends TComponent {
 	protected void readSource(JsonMap map) {
 		if(map.hasAttribute(UIRefreshableComponent.ATTRIBUTE_SOURCE)) {
 			setSource(map.getAttribute(UIRefreshableComponent.ATTRIBUTE_SOURCE));
+		}
+	}
+
+	protected void readParameters(JsonMap componentJson) {
+		final JsonMap parametersMap = componentJson.getMap(UIRefreshableComponent.JSON_ATTRIBUTE_PARAMETERS);
+		if(parametersMap != null) {
+			parametersMap.getAttributes().forEach((key, value) -> m_parameters.put(key, value.toString()));
 		}
 	}
 }

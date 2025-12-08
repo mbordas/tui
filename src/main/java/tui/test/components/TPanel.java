@@ -65,6 +65,7 @@ public class TPanel extends TRefreshableComponent {
 		final long tuid = JsonConstants.readTUID(map);
 		TPanel result = new TPanel(tuid, client);
 		result.readSource(map);
+		result.readParameters(map);
 		final JsonArray content = map.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {

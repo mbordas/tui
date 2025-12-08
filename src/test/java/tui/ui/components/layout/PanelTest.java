@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
@@ -27,37 +28,64 @@ import tui.ui.components.RefreshButton;
 import tui.utils.TestUtils;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 
 public class PanelTest extends TestWithBackend {
 
 	@Test
+	public void setParameter() throws Exception {
+		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
+		updatablePage.panel().setParameter("param1", "value1");
+
+		try(final TUIBackend backend = startBackend(updatablePage.page());
+				final Browser browser = startBrowser()) {
+
+			final AtomicReference<String> receivedValue = new AtomicReference<>();
+			backend.registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> {
+				receivedValue.set(new RequestReader(request).getStringParameter("param1"));
+				Panel panel = new Panel(Panel.Align.VERTICAL_TOP);
+				panel.setSource(updatablePage.panel().getSource());
+				panel.setParameter("param1", "value2"); // The refreshed Panel will have another value for 'param1'
+				return panel.toJsonMap();
+			});
+
+			browser.open(updatablePage.page().getSource());
+
+			browser.clickRefreshButton(updatablePage.button().getLabel());
+			assertEquals("value1", receivedValue.get()); // The first call to refresh sends 'value1'
+
+			browser.clickRefreshButton(updatablePage.button().getLabel());
+			assertEquals("value2", receivedValue.get()); // The second call to refresh sends 'value2'
+		}
+	}
+
+	@Test
 	public void noHorizontalMargin() throws Exception {
 		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
 
-		try(final TUIBackend backend = startBackend(updatablePage.page())) {
-			try(final Browser browser = startBrowser()) {
-				browser.open(updatablePage.page().getSource());
+		try(final TUIBackend backend = startBackend(updatablePage.page());
+				final Browser browser = startBrowser()) {
+			browser.open(updatablePage.page().getSource());
 
-				setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.VERTICAL_TOP);
-				checkMargin(browser, updatablePage.button(), "0px", "0px");
+			setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.VERTICAL_TOP);
+			checkMargin(browser, updatablePage.button(), "0px", "0px");
 
-				setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.VERTICAL_CENTER);
-				checkMargin(browser, updatablePage.button(), "0px", "0px");
+			setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.VERTICAL_CENTER);
+			checkMargin(browser, updatablePage.button(), "0px", "0px");
 
-				setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.LEFT);
-				checkMargin(browser, updatablePage.button(), "20px", "0px");
+			setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.LEFT);
+			checkMargin(browser, updatablePage.button(), "20px", "0px");
 
-				setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.CENTER);
-				checkMargin(browser, updatablePage.button(), "20px", "0px");
+			setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.CENTER);
+			checkMargin(browser, updatablePage.button(), "20px", "0px");
 
-				setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.STRETCH);
-				checkMargin(browser, updatablePage.button(), "20px", "0px");
+			setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.STRETCH);
+			checkMargin(browser, updatablePage.button(), "20px", "0px");
 
-				setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.RIGHT);
-				checkMargin(browser, updatablePage.button(), "20px", "0px");
-			}
+			setUpdatedPanel(updatablePage.panel().getSource(), Panel.Align.RIGHT);
+			checkMargin(browser, updatablePage.button(), "20px", "0px");
 		}
 	}
 

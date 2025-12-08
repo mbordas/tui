@@ -129,6 +129,7 @@ public class Grid extends UIRefreshableComponent {
 				}
 			}
 		}
+		appendParameters(result);
 		return result;
 	}
 

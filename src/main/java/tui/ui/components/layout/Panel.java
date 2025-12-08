@@ -96,6 +96,7 @@ public class Panel extends UIRefreshableComponent {
 		result.setAttribute("align", m_align.name());
 		result.setAttribute("spacing", m_spacing.name());
 		result.createArray("content", m_content, UIComponent::toJsonMap);
+		appendParameters(result);
 		applyCustomStyle(result);
 		return result;
 	}

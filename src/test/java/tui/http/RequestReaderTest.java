@@ -79,14 +79,14 @@ public class RequestReaderTest {
 			assertEquals("text updated with code=FormData and session=session", getParagraph(client).getText());
 
 			try(final Browser browser = new Browser(backend.getPort())) {
-				// Act with real browser
+				// Act with a real browser
 				browser.open(page.getSource());
 				browser.clickRefreshButton("Refresh");
 				final List<WebElement> paragraphs = browser.getParagraphs().stream()
 						.filter((paragraph) -> paragraph.getText().length() > 5)
 						.toList();
 
-				// Assert with real browser
+				// Assert with a real browser
 				assertFalse(paragraphs.isEmpty());
 				assertEquals("text updated with code=FormData and session=session", paragraphs.get(0).getText());
 			}

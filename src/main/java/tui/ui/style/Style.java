@@ -610,7 +610,11 @@ public class Style {
 				}
 				
 				
-				/* FETCH ERRORS */
+				/* FETCH DATA */
+				
+				.fetch-parameters {
+					display: none;
+				}
 				
 				.fetch-error {
 				    border: 2px solid var(--global-color-fetch-error);

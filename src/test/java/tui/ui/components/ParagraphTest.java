@@ -16,17 +16,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import tui.html.HTMLNode;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.components.layout.Panel;
 import tui.utils.TUIColors;
+import tui.utils.TestUtils;
 
 import java.awt.*;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ParagraphTest {
+
+	@Test
+	public void html() {
+		final Paragraph paragraph = new Paragraph("This is a paragraph.");
+		paragraph.setSource("/paragraph");
+		paragraph.setParameter("param1", "value1");
+
+		TestUtils.assertHTMLProcedure(() -> paragraph, (prefix, element) -> {
+			assertEquals(prefix, "div", element.getTagName());
+			assertTrue(prefix, Browser.getClasses(element).contains(Paragraph.HTML_CLASS_CONTAINER));
+
+			final WebElement paragraphElement = element.findElement(By.tagName("p"));
+			assertEquals(prefix, "p", paragraphElement.getTagName());
+
+			final List<WebElement> spans = paragraphElement.findElements(By.tagName("span"));
+			assertEquals(prefix, 1, spans.size());
+			assertEquals(prefix, "This is a paragraph.", spans.get(0).getText());
+		});
+	}
 
 	@Test
 	public void setTextWithoutArgsShouldNotInterpretFormat() {
@@ -37,6 +61,29 @@ public class ParagraphTest {
 	public void setTextWithFormat() {
 		final Paragraph.Text text = new Paragraph.Text("rate = %.0f%%", 50.23);
 		assertEquals("rate = 50%", text.toJsonMap().getAttribute(Paragraph.Text.JSON_ATTRIBUTE_CONTENT));
+	}
+
+	@Test
+	public void htmlWithParameters() {
+		final Paragraph paragraph = new Paragraph("This is a paragraph with parameter");
+		paragraph.setSource("/source");
+		paragraph.setParameter("param1", "value1");
+		paragraph.setParameter("param2", "value2");
+
+		HTMLNode.PRETTY_PRINT = true;
+		assertEquals(String.format("""
+						<div class="tui-container-paragraph tui-refreshable-container">
+						  <div class="fetch-error-message" style="display:none;"></div>
+						  <div class="fetch-parameters">
+						    <input type="hidden" name="param1" value="value1"/>
+						    <input type="hidden" name="param2" value="value2"/>
+						  </div>
+						  <p id="%d" tui-source="/source" class="tui-align-left">
+						    <span>This is a paragraph with parameter</span>
+						  </p>
+						</div>
+						""", paragraph.getTUID()),
+				paragraph.toHTMLNode().toHTML());
 	}
 
 	@Test

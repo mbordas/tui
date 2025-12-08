@@ -242,7 +242,7 @@ public class Table extends UIRefreshableComponent {
 			result.createArray(ATTRIBUTE_HIDDEN_COLUMNS,
 					computeHiddenColumnsIndexes(), (columnIndex) -> new JsonLong(columnIndex));
 		}
-
+		appendParameters(result);
 		TableData.fill(result, m_data);
 
 		return result;

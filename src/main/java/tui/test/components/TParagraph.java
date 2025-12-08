@@ -97,7 +97,7 @@ public class TParagraph extends TRefreshableComponent {
 		final long tuid = JsonConstants.readTUID(map);
 		final TParagraph result = new TParagraph(tuid, client);
 		result.readSource(map);
-
+		result.readParameters(map);
 		final JsonArray content = map.getArray(Paragraph.ATTRIBUTE_CONTENT);
 		for(int i = 0; i < content.size(); i++) {
 			final JsonMap entry = content.getMap(i);
