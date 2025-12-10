@@ -36,7 +36,11 @@ public abstract class UIRefreshableComponent extends UIComponent {
 		return m_source != null;
 	}
 
-	public void addParameter(String key, String value) {
+	/**
+	 * Sets a parameter to be sent to the server when fetching the component. This parameter may override a page session's parameter
+	 * and may be overridden by a parameter coming from a component that triggers the refresh of <code>this</code>.
+	 */
+	public void setParameter(String key, String value) {
 		if(m_source == null) {
 			throw new IllegalStateException("Can't add parameter to a component without source.");
 		}
