@@ -37,11 +37,7 @@ public class ParagraphTest {
 	public void html() {
 		final Paragraph paragraph = new Paragraph("This is a paragraph.");
 		paragraph.setSource("/paragraph");
-<<<<<<< HEAD
-		paragraph.addParameter("param1", "value1");
-=======
 		paragraph.setParameter("param1", "value1");
->>>>>>> localdev
 
 		TestUtils.assertHTMLProcedure(() -> paragraph, (prefix, element) -> {
 			assertEquals(prefix, "div", element.getTagName());
@@ -71,13 +67,8 @@ public class ParagraphTest {
 	public void htmlWithParameters() {
 		final Paragraph paragraph = new Paragraph("This is a paragraph with parameter");
 		paragraph.setSource("/source");
-<<<<<<< HEAD
-		paragraph.addParameter("param1", "value1");
-		paragraph.addParameter("param2", "value2");
-=======
 		paragraph.setParameter("param1", "value1");
 		paragraph.setParameter("param2", "value2");
->>>>>>> localdev
 
 		HTMLNode.PRETTY_PRINT = true;
 		assertEquals(String.format("""

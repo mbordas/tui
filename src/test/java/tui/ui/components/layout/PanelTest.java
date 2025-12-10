@@ -35,15 +35,9 @@ import static org.junit.Assert.assertEquals;
 public class PanelTest extends TestWithBackend {
 
 	@Test
-<<<<<<< HEAD
-	public void addParameter() throws Exception {
-		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
-		updatablePage.panel().addParameter("param1", "value1");
-=======
 	public void setParameter() throws Exception {
 		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
 		updatablePage.panel().setParameter("param1", "value1");
->>>>>>> localdev
 
 		try(final TUIBackend backend = startBackend(updatablePage.page());
 				final Browser browser = startBrowser()) {
@@ -53,11 +47,7 @@ public class PanelTest extends TestWithBackend {
 				receivedValue.set(new RequestReader(request).getStringParameter("param1"));
 				Panel panel = new Panel(Panel.Align.VERTICAL_TOP);
 				panel.setSource(updatablePage.panel().getSource());
-<<<<<<< HEAD
-				panel.addParameter("param1", "value2"); // The refreshed Panel will have another value for 'param1'
-=======
 				panel.setParameter("param1", "value2"); // The refreshed Panel will have another value for 'param1'
->>>>>>> localdev
 				return panel.toJsonMap();
 			});
 
