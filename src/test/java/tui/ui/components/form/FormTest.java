@@ -72,6 +72,27 @@ public class FormTest extends TestWithBackend {
 	}
 
 	@Test
+	public void emptyFieldsShouldBeSentToBackendToo() {
+		final Page page = new Page("FormTest", "/index");
+		final Form form = page.append(new Form("Form title", "/form"));
+		form.createInputString("Label", "string");
+		form.createInputEmail("Email", "email");
+
+		final AtomicReference<RequestReader> referenceToReader = new AtomicReference<>();
+		registerWebServiceForFormSubmission(referenceToReader);
+
+		try(final Browser browser = startAndBrowse(page).browser()) {
+			browser.typeFormField(form.getTitle(), "Label", "my string");
+			// Leaving the email field empty
+			browser.submitForm(form.getTitle());
+
+			final RequestReader reader = referenceToReader.get();
+			assertEquals("my string", reader.getStringParameter("string"));
+			assertEquals("", reader.getStringParameter("email"));
+		}
+	}
+
+	@Test
 	public void refresh() {
 		final String formTitle = "Form title";
 		final String inputStringLabel = "Label";

@@ -1036,15 +1036,13 @@ function prepareFormData(formElement) {
                 data.append(inputElement.name, inputElement.value);
             }
         } else if(inputElement.type == 'checkbox') {
-             if(inputElement.checked) {
-                 data.append(inputElement.name, 'on');
-             } else {
-                 data.append(inputElement.name, 'off');
-             }
-         } else {
-            if(inputElement.value != '') {
-                data.append(inputElement.name, inputElement.value);
+            if(inputElement.checked) {
+                data.append(inputElement.name, 'on');
+            } else {
+                data.append(inputElement.name, 'off');
             }
+        } else {
+            data.append(inputElement.name, inputElement.value);
         }
     });
     // Specific support for text areas
