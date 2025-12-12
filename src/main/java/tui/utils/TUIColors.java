@@ -33,6 +33,11 @@ public class TUIColors {
 			return TUIColors.toRGB(this);
 		}
 
+		/**
+		 * Computes a color with an increased lightness.
+		 *
+		 * @param percent The distance from current lightness to its maximum (100) will be reduced by this amount.
+		 */
 		public ColorHSL lighter(int percent) {
 			return new ColorHSL(hue, saturation, lightness + percent * (100 - lightness) / 100);
 		}
