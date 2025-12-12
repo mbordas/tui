@@ -471,6 +471,16 @@ public class Browser implements Closeable {
 		}
 	}
 
+	/**
+	 * Gives the functional message displayed right under the fields. This is the general text put into the form submission response.
+	 */
+	public String getFormMessage(String formTitle) {
+		final WebElement formElement = getForm(formTitle);
+		final WebElement messageElement = formElement.findElement(By.className("tui-form-message"));
+		assert messageElement.isDisplayed();
+		return messageElement.getText();
+	}
+
 	// LAYOUTS
 
 	// VerticalFlow
@@ -493,13 +503,20 @@ public class Browser implements Closeable {
 
 	// ERRORS
 
-	public boolean isOnError(WebElement element) {
+	/**
+	 * A technical error occurs when the backend returns an error HTML code.
+	 */
+	public boolean isOnTechnicalError(WebElement element) {
 		final WebElement containerElement = getParent(element);
 		final WebElement errorElement = containerElement.findElement(By.className(HTMLFetchErrorMessage.HTML_CLASS_ERROR_ELEMENT));
 		return errorElement.isDisplayed();
 	}
 
-	public String getErrorMessage(WebElement element) {
+	/**
+	 * A technical error occurs when the backend returns an error HTML code. In such a case, the component will have an orange border
+	 * and the error message will be displayed on top of the component.
+	 */
+	public String getTechnicalErrorMessage(WebElement element) {
 		final WebElement containerElement = getParent(element);
 		final WebElement errorElement = containerElement.findElement(By.className(HTMLFetchErrorMessage.HTML_CLASS_ERROR_ELEMENT));
 		return errorElement.getText();

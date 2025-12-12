@@ -46,6 +46,7 @@ public class Form extends UIComponent {
 	public static final String JSON_ATTRIBUTE_INPUTS = "inputs";
 	public static final String JSON_ATTRIBUTE_PARAMETERS = "parameters";
 	public static final String JSON_ATTRIBUTE_SUBMIT_LABEL = "submitLabel";
+	public static final String JSON_PARAMETER_SUBMISSION_MESSAGE = "message";
 
 	private final String m_title;
 	private String m_submitLabel = "Submit";
@@ -282,7 +283,7 @@ public class Form extends UIComponent {
 	public static JsonMap buildSuccessfulSubmissionResponse(String message) {
 		return new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
-				.setAttribute("message", message);
+				.setAttribute(JSON_PARAMETER_SUBMISSION_MESSAGE, message);
 	}
 
 	/**
@@ -292,7 +293,7 @@ public class Form extends UIComponent {
 	public static JsonMap buildSuccessfulSubmissionResponse(Map<String, String> parameters) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
-				.setAttribute("message", "form submitted");
+				.setAttribute(JSON_PARAMETER_SUBMISSION_MESSAGE, "form submitted");
 		final JsonMap parametersMap = result.setChild("parameters", new JsonMap(null));
 		for(Map.Entry<String, String> entry : parameters.entrySet()) {
 			parametersMap.setAttribute(entry.getKey(), entry.getValue());
@@ -303,7 +304,7 @@ public class Form extends UIComponent {
 	public static JsonMap buildFormUpdateSubmissionResponse(Form updatedForm) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
-				.setAttribute("message", "form submitted");
+				.setAttribute(JSON_PARAMETER_SUBMISSION_MESSAGE, "form submitted");
 		result.setChild("formUpdate", updatedForm.toJsonMap());
 		return result;
 	}
@@ -311,7 +312,7 @@ public class Form extends UIComponent {
 	public static JsonMap buildFailedSubmissionResponse(String message, Map<String, String> errorMessageByFieldName) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "nok")
-				.setAttribute("message", message);
+				.setAttribute(JSON_PARAMETER_SUBMISSION_MESSAGE, message);
 
 		final JsonMap fieldsErrorsMap = new JsonMap(null);
 		for(Map.Entry<String, String> errorEntry : errorMessageByFieldName.entrySet()) {

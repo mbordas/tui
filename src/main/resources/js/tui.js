@@ -1150,11 +1150,18 @@ function onFormResponse(formElement, json) {
             openForm.submit();
         }
     } else {
-         Object.keys(json['errors']).forEach(function(key) {
-            const field = formElement.querySelector("[name='" + key + "']");
-            field.classList.add("tui-form-input-invalid");
-            const errorElement = field.parentElement.querySelector('.tui-input-error');
-            errorElement.textContent = json['errors'][key];
+        hideInputsErrors(formElement);
+
+        // Show error message
+        const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+        messageElement.classList.add('tui-form-message-error');
+        messageElement.textContent = json['message'];
+
+        Object.keys(json['errors']).forEach(function(key) {
+           const field = formElement.querySelector("[name='" + key + "']");
+           field.classList.add("tui-form-input-invalid");
+           const errorElement = field.parentElement.querySelector('.tui-input-error');
+           errorElement.textContent = json['errors'][key];
         });
     }
 }

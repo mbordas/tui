@@ -498,6 +498,9 @@ public class Style {
 				    margin-top: 5px;
 				    margin-bottom: 5px;
 				}
+				.tui-form-message-error {
+				    color: var(--global-color-red-state);
+				}
 				.tui-form-close-button, .tui-form-reset-button {
 					background: none;
 					padding-left: 5px;

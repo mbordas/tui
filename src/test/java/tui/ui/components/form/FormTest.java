@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -69,6 +70,24 @@ public class FormTest extends TestWithBackend {
 				assertEquals(prefix, HIDDEN_PARAMETER_VALUE, inputHiddenElement.getAttribute("value"));
 			}
 		});
+	}
+
+	@Test
+	public void functionalErrorShouldBeDisplayed() throws IOException {
+		final Page page = new Page("FormTest", "/index");
+		final Form form = page.append(new Form("Form title", "/form"));
+		form.createInputString("Label", "string");
+
+		final String expectedErrorMessage = "Error message";
+
+		try(final BackendAndBrowser backendAndBrowser = startAndBrowse(page)) {
+			backendAndBrowser.backend().registerWebService(form.getTarget(),
+					(uri, request, response) -> Form.buildFailedSubmissionResponse(expectedErrorMessage, new HashMap<>()));
+
+			backendAndBrowser.browser().submitForm(form.getTitle());
+
+			assertEquals("Error message", backendAndBrowser.browser().getFormMessage(form.getTitle()));
+		}
 	}
 
 	@Test
@@ -202,8 +221,8 @@ public class FormTest extends TestWithBackend {
 
 		final WebElement formElement = browser.getForm(form.getTitle());
 
-		assertTrue(browser.isOnError(formElement));
-		assertEquals("Error: HTTP error, status = 500", browser.getErrorMessage(formElement));
+		assertTrue(browser.isOnTechnicalError(formElement));
+		assertEquals("Error: HTTP error, status = 500", browser.getTechnicalErrorMessage(formElement));
 	}
 
 	@Test

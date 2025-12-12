@@ -95,7 +95,7 @@ public class SVGTest extends TestWithBackend {
 		m_browser.clickRefreshButton(refreshButton.getLabel());
 		wait_s(1.0);
 
-		assertEquals("HTTP error, status = 500", m_browser.getErrorMessage(svgs.get(0)));
+		assertEquals("HTTP error, status = 500", m_browser.getTechnicalErrorMessage(svgs.get(0)));
 	}
 
 	public static void main(String[] args) throws Exception {
