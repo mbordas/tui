@@ -128,6 +128,16 @@ public class LayoutStyleSet extends StyleSet {
 		return this;
 	}
 
+	public LayoutStyleSet setWidthAuto() {
+		m_width = "auto";
+		return this;
+	}
+
+	public LayoutStyleSet setWidthFitContent() {
+		m_width = "fit-content";
+		return this;
+	}
+
 	public LayoutStyleSet setHeight_px(int height_px) {
 		m_height = String.format("%dpx", height_px);
 		return this;
