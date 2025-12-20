@@ -55,7 +55,7 @@ public class Grid extends UIRefreshableComponent {
 	}
 
 	public Grid setColumnWidthMaxContent(int columnIndex) {
-		m_columnsWidth[columnIndex] = "min-content";
+		m_columnsWidth[columnIndex] = "max-content";
 		return this;
 	}
 
