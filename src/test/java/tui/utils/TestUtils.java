@@ -59,6 +59,11 @@ public class TestUtils {
 		return CITIES[(int) (Math.random() * (CITIES.length - 1))];
 	}
 
+	public static String getRandomLoremIpsumFragment(int length) {
+		final int randomStartIndex = (int) (Math.random() * (LOREM_IPSUM.length() - length));
+		return LOREM_IPSUM.substring(randomStartIndex, randomStartIndex + length);
+	}
+
 	public static void quickShow(UIComponent component) throws Exception {
 		quickShow(component, null);
 	}
