@@ -67,9 +67,7 @@ public class FormInputRadio extends FormInput {
 
 	@Override
 	public JsonMap toJsonObject() {
-		final JsonMap result = new JsonMap(m_jsonType);
-		result.setAttribute("label", m_label);
-		result.setAttribute("name", m_name);
+		final JsonMap result = super.toJsonObject();
 		final JsonMap options = new JsonMap(null);
 		m_options.forEach(options::setAttribute);
 		result.setChild("options", options);

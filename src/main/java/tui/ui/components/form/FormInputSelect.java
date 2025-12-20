@@ -37,6 +37,14 @@ public class FormInputSelect extends FormInput {
 		return this;
 	}
 
+	public FormInputSelect setInitialValue(String value) {
+		if(!m_options.containsKey(value)) {
+			throw new IllegalArgumentException("Initial value is not a valid option");
+		}
+		m_initialValue = value;
+		return this;
+	}
+
 	@Override
 	public HTMLNode toHTMLNode() {
 		final HTMLNode result = new HTMLNode(HTML_TYPE);
@@ -48,15 +56,16 @@ public class FormInputSelect extends FormInput {
 			final HTMLNode option = result.append(new HTMLNode("option"));
 			option.setText(label);
 			option.setAttribute("value", value);
+			if(value.equals(m_initialValue)) {
+				option.setAttribute("selected", "selected");
+			}
 		}
 		return result;
 	}
 
 	@Override
 	public JsonMap toJsonObject() {
-		final JsonMap result = new JsonMap(m_jsonType);
-		result.setAttribute("label", m_label);
-		result.setAttribute("name", m_name);
+		final JsonMap result = super.toJsonObject();
 		final JsonMap options = new JsonMap(null);
 		m_options.forEach(options::setAttribute);
 		result.setChild("options", options);
