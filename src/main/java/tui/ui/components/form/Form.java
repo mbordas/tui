@@ -137,6 +137,12 @@ public class Form extends UIComponent {
 		return result;
 	}
 
+	public FormInputSelect createInputSelect(String label, String name) {
+		final FormInputSelect result = new FormInputSelect(label, name);
+		m_inputs.add(result);
+		return result;
+	}
+
 	public FormInputEmail createInputEmail(String label, String name) {
 		final FormInputEmail result = new FormInputEmail(label, name);
 		m_inputs.add(result);

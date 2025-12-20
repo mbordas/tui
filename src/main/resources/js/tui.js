@@ -1045,9 +1045,15 @@ function prepareFormData(formElement) {
             data.append(inputElement.name, inputElement.value);
         }
     });
-    // Specific support for text areas
+
+    // Support for text areas
     formElement.querySelectorAll('textarea').forEach(function(textareaElement) {
         data.append(textareaElement.name, textareaElement.value);
+    });
+
+    // Support for select
+    formElement.querySelectorAll('select').forEach(function(selectElement) {
+        data.append(selectElement.name, selectElement.value);
     });
 
     return data;
@@ -1092,7 +1098,8 @@ function onFormResponse(formElement, json) {
 
         // Show success message
         const messageElement = formElement.querySelector('#form-message-' + formElement.id);
-        messageElement.classList.add('tui-monitor-field-value-green');
+        messageElement.classList.remove('tui-form-message-error');
+        messageElement.classList.add('tui-form-message-success');
         messageElement.textContent = json['message'];
 
         if(formElement.hasAttribute('tui-refresh-listeners')) {
@@ -1154,6 +1161,7 @@ function onFormResponse(formElement, json) {
 
         // Show error message
         const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+        messageElement.classList.remove('tui-form-message-success');
         messageElement.classList.add('tui-form-message-error');
         messageElement.textContent = json['message'];
 
@@ -1192,6 +1200,15 @@ function createFormInput(fieldsetElement, json, formTUID) {
         if(json['initialValue'] != null) {
             inputElement.textContent = json['initialValue'];
         }
+    } else if(json['type'] == 'select') {
+        inputElement = document.createElement('select');
+        inputElement.setAttribute('name', json['name']);
+        Object.entries(json['options']).forEach(([key, value]) => {
+            const optionElement = document.createElement('option');
+            optionElement.textContent = value;
+            optionElement.value = key;
+            inputElement.appendChild(optionElement);
+        });
     } else {
         inputElement = document.createElement('input');
         inputElement.setAttribute('type', json['type']);

@@ -125,6 +125,7 @@ public class TFormTest extends TestWithBackend {
 	public static @NotNull List<WebElement> getInputElementsOfFieldElement(WebElement fieldElement) {
 		final List<WebElement> foundElements = fieldElement.findElements(By.xpath(".//*")).stream()
 				.filter((element) -> element.getTagName().equals("input")
+						|| element.getTagName().equals("select")
 						|| element.getTagName().equals("textarea"))
 				.toList();
 		if(foundElements.isEmpty()) {

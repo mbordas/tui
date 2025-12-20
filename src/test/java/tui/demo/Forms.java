@@ -109,6 +109,9 @@ public class Forms {
 				.addOption("Option 1", "option1")
 				.addOption("Option 2", "option2")
 				.addOption("Option 3", "option3");
+		form.createInputSelect("Select", "select")
+				.addOption("option1", "Option 1")
+				.addOption("option2", "Option 2");
 		form.createInputEmail("Email", "email");
 		form.createInputFile("File", "file");
 	}

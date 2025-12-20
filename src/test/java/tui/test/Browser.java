@@ -432,6 +432,25 @@ public class Browser implements Closeable {
 		}
 	}
 
+	public void selectFormOption(String formTitle, String name, String option) {
+		final Optional<WebElement> anyFieldName = getFormFields(formTitle).stream()
+				.filter((field) -> name.equals(getFieldName(field)))
+				.findAny();
+
+		if(anyFieldName.isPresent()) {
+			final Optional<WebElement> anyInput = anyFieldName.get().findElements(By.tagName("option")).stream()
+					.filter((input) -> input.getText().equals(option))
+					.findAny();
+			if(anyInput.isEmpty()) {
+				throw new RuntimeException(String.format("Option '%s' not found in select '%s'", option, name));
+			} else {
+				anyInput.get().click();
+			}
+		} else {
+			throw new RuntimeException("Field input element not found: " + name);
+		}
+	}
+
 	public void selectFormFile(String formTitle, String label, File localFile) {
 		final Optional<WebElement> anyFieldName = getFormFields(formTitle).stream()
 				.filter((field) -> label.equals(getFieldLabel(field)))

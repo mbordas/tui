@@ -53,7 +53,7 @@ public class RequestReader {
 		try {
 			if(contentType != null && contentType.startsWith("multipart/")) {
 				MultipartConfigElement multipartConfigElement =
-						new MultipartConfigElement("/tmp", 1024, 1024, 256);
+						new MultipartConfigElement("/tmp", 2048, 2048, 256);
 				request.setAttribute("org.eclipse.multipartConfig", multipartConfigElement);
 				request.setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement); // supports for older jetty version
 

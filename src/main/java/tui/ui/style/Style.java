@@ -32,7 +32,7 @@ public class Style {
 		Color cancel = new Color(222, 222, 222);
 		Color delete = new Color(252, 40, 3);
 		Color neutral = new Color(230, 230, 230);
-		Color greenState = new Color(115, 250, 70);
+		Color greenState = new Color(31, 170, 60);
 		Color redState = new Color(252, 40, 3);
 		Color tableRowHover = new Color(192, 240, 252);
 	}
@@ -497,6 +497,9 @@ public class Style {
 				    width: 100%;
 				    margin-top: 5px;
 				    margin-bottom: 5px;
+				}
+				.tui-form-message-success {
+				    color: var(--global-color-green-state);
 				}
 				.tui-form-message-error {
 				    color: var(--global-color-red-state);
