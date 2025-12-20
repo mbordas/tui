@@ -117,7 +117,7 @@ public class ParagraphTest {
 			final Paragraph result = new Paragraph()
 					.appendNormal("Current time is")
 					.append((layoutStyle, textStyle) -> {
-						textStyle.setTextColor(TUIColors.computeContrastColor(backgroundColor));
+						textStyle.setColor(TUIColors.computeContrastColor(backgroundColor));
 						layoutStyle.setBackgroundColor(backgroundColor);
 					}, " " + System.currentTimeMillis() + " ")
 					.appendNormal("ms.");

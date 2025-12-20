@@ -61,7 +61,7 @@ public class Style {
 
 	public Style() {
 
-		global().text().setTextColor("var(--global-color-text)");
+		global().text().setColor("var(--global-color-text)");
 		global().text().setFontFamily(
 				"Public Sans Web, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol");
 
@@ -73,43 +73,43 @@ public class Style {
 		header().layout().setPadding(10, 10, 10, 10);
 		header().layout().overrideProperty("vertical-align", "middle");
 		header().layout().setBorderWidth_px(0, 0, 1, 0);
-		header().text().setTextColor("var(--global-color-background-contrast)");
+		header().text().setColor("var(--global-color-background-contrast)");
 
 		headerLink().text().setTextAlign(Layouts.Align.CENTER);
-		headerLink().text().setNoTextDecoration();
+		headerLink().text().setNoDecoration();
 
 		headerSubmitButton().layout().setNoBackground();
 		headerSubmitButton().layout().setPadding(0, 5, 0, 5);
 		headerSubmitButton().layout().setNoBorder();
 		headerSubmitButton().layout().setCursorPointingHand();
-		headerSubmitButton().text().setTextUnderlined();
+		headerSubmitButton().text().setUnderlined();
 
 		footer().layout().setBackgroundColor("var(--global-color-background)");
 		footer().layout().setPadding(10, 10, 10, 10);
 		footer().layout().setBorderWidth_px(1, 0, 0, 0);
-		footer().text().setTextColor("var(--global-color-background-contrast)");
+		footer().text().setColor("var(--global-color-background-contrast)");
 
 		section().layout().setMargin(30, 0, 0, 0);
 		section().text().setTextAlign(Layouts.Align.LEFT);
 
 		heading(1).layout().setPadding(0, 0, 0, 0);
 		heading(1).layout().setMargin(10, 0, 5, 0);
-		heading(1).text().setTextSize_em(2);
+		heading(1).text().setSize_em(2);
 
 		heading(2).layout().setPadding(0, 0, 0, 0);
 		heading(2).layout().setMargin(10, 0, 5, 0);
-		heading(2).text().setTextSize_em(1.5f);
+		heading(2).text().setSize_em(1.5f);
 
 		heading(3).layout().setPadding(0, 0, 0, 0);
 		heading(3).layout().setMargin(10, 0, 5, 0);
-		heading(3).text().setTextSize_em(1.2f);
-		heading(3).text().setFontWeight("lighter");
+		heading(3).text().setSize_em(1.2f);
+		heading(3).text().setWeightLighter();
 
 		heading(4).layout().setPadding(0, 0, 0, 0);
 		heading(4).layout().setMargin(10, 0, 5, 0);
-		heading(4).text().setTextSize_em(1.1f);
-		heading(4).text().setTextItalic();
-		heading(4).text().setFontWeight("lighter");
+		heading(4).text().setSize_em(1.1f);
+		heading(4).text().setItalic();
+		heading(4).text().setWeightLighter();
 
 		paragraph().layout().setMargin(0, 0, 10, 0);
 		paragraph().layout().setPadding(0, 0, 0, 0);
@@ -117,7 +117,7 @@ public class Style {
 		paragraph().text().setTextAlign(Layouts.Align.LEFT);
 		paragraph().text().setLineHeight(1.4);
 
-		link().text().setTextColor("var(--global-color-action)");
+		link().text().setColor("var(--global-color-action)");
 
 		button().layout().setBorderRadius_px(2);
 		button().layout().setPadding(5, 20, 5, 20);
@@ -127,7 +127,7 @@ public class Style {
 		button().layout().setBorderColor("var(--global-color-borders)");
 		button().layout().setWidth_percent(100);
 		button().text().setTextAlign(Layouts.Align.CENTER);
-		button().text().setTextColor("var(--global-color-cancel-contrast)");
+		button().text().setColor("var(--global-color-cancel-contrast)");
 
 		downloadButton().layout().setIcon(DownloadButton.buildIcon());
 		downloadButton().layout().setBackgroundColor(Color.WHITE);
@@ -136,7 +136,7 @@ public class Style {
 
 		submitButton().layout().setBackgroundColor("var(--global-color-action)");
 		submitButton().layout().setBorderColor("var(--global-color-action)");
-		submitButton().text().setTextColor("var(--global-color-action-contrast)");
+		submitButton().text().setColor("var(--global-color-action-contrast)");
 	}
 
 	public void setColorForAction(Color color) {

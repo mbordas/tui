@@ -165,7 +165,7 @@ public class CodeParagraph extends Paragraph {
 	private StringBuilder flushLiteralString(StringBuilder currentStringLiteral) {
 		if(currentStringLiteral != null) {
 			// Applying color and font
-			append((layoutStyle, textStyle) -> textStyle.setTextColor(COLOR_STRING_LITERALS).setFontFamily(FONT_FAMILY).setLineHeight(1.4),
+			append((layoutStyle, textStyle) -> textStyle.setColor(COLOR_STRING_LITERALS).setFontFamily(FONT_FAMILY).setLineHeight(1.4),
 					currentStringLiteral.toString());
 		}
 		return null;
@@ -179,7 +179,7 @@ public class CodeParagraph extends Paragraph {
 							// Applying font only
 							(layoutStyle, textStyle) -> textStyle.setLineHeight(1.4).setFontFamily(FONT_FAMILY)
 							// font and color
-							: (layoutStyle, textStyle) -> textStyle.setTextColor(color).setLineHeight(1.4).setFontFamily(FONT_FAMILY),
+							: (layoutStyle, textStyle) -> textStyle.setColor(color).setLineHeight(1.4).setFontFamily(FONT_FAMILY),
 
 					currentWord.toString());
 		}

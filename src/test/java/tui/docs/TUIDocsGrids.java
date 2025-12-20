@@ -140,7 +140,7 @@ public class TUIDocsGrids extends Page {
 				.setBorderRadius_px(2)
 				.setPadding(1, 5, 1, 5);
 		text.customTextStyle()
-				.setTextSize_em(0.8f)
+				.setSize_em(0.8f)
 				.disableTextWrap();
 		return result;
 	}

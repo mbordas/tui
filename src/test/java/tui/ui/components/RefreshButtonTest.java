@@ -69,7 +69,7 @@ public class RefreshButtonTest extends TestWithBackend {
 			refreshedPanel.setSource(panel.getSource());
 			final RefreshButton refreshedButton = refreshedPanel.append(new RefreshButton("refreshed"));
 			refreshedButton.customStyle().setBackgroundColor(Color.RED);
-			refreshedButton.customTextStyle().setTextColor(Color.ORANGE);
+			refreshedButton.customTextStyle().setColor(Color.ORANGE);
 			refreshedButton.connectListener(refreshedPanel);
 			return refreshedPanel.toJsonMap();
 		});

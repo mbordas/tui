@@ -35,22 +35,22 @@ public class TextStyleSet extends StyleSet {
 	private String m_textWrap = null;
 	private Layouts.Align m_textAlign = null;
 
-	public TextStyleSet setTextColor(Color color) {
+	public TextStyleSet setColor(Color color) {
 		m_color = TUIColors.toCSSHex(color);
 		return this;
 	}
 
-	public TextStyleSet setTextColor(String cssValue) {
+	public TextStyleSet setColor(String cssValue) {
 		m_color = cssValue;
 		return this;
 	}
 
-	public TextStyleSet setTextSize_px(int size_px) {
+	public TextStyleSet setSize_px(int size_px) {
 		m_fontSize = String.format(Locale.US, "%dpx", size_px);
 		return this;
 	}
 
-	public TextStyleSet setTextSize_em(float size_em) {
+	public TextStyleSet setSize_em(float size_em) {
 		m_fontSize = String.format(Locale.US, "%fem", size_em);
 		return this;
 	}
@@ -65,22 +65,22 @@ public class TextStyleSet extends StyleSet {
 		return this;
 	}
 
-	public TextStyleSet setTextUpperCase() {
+	public TextStyleSet setUpperCase() {
 		m_textTransform = "uppercase";
 		return this;
 	}
 
-	public TextStyleSet setTextItalic() {
+	public TextStyleSet setItalic() {
 		m_fontStyle = "italic";
 		return this;
 	}
 
-	public TextStyleSet setNoTextDecoration() {
+	public TextStyleSet setNoDecoration() {
 		m_textDecoration = "none";
 		return this;
 	}
 
-	public TextStyleSet setTextUnderlined() {
+	public TextStyleSet setUnderlined() {
 		m_textDecoration = "underline";
 		return this;
 	}
@@ -95,8 +95,13 @@ public class TextStyleSet extends StyleSet {
 		return this;
 	}
 
-	public TextStyleSet setFontWeight(String fontWeight) {
-		m_fontWeight = fontWeight;
+	public TextStyleSet setBold() {
+		m_fontWeight = "bold";
+		return this;
+	}
+
+	public TextStyleSet setWeightLighter() {
+		m_fontWeight = "lighter";
 		return this;
 	}
 

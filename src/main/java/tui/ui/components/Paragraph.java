@@ -118,11 +118,11 @@ public class Paragraph extends UIRefreshableComponent {
 	}
 
 	public Paragraph appendBold(String format, Object... args) {
-		return append((layoutStyle, textStyle) -> textStyle.setFontWeight("bold"), format, args);
+		return append((layoutStyle, textStyle) -> textStyle.setBold(), format, args);
 	}
 
 	public Paragraph appendItalic(String format, Object... args) {
-		return append((layoutStyle, textStyle) -> textStyle.setTextItalic(), format, args);
+		return append((layoutStyle, textStyle) -> textStyle.setItalic(), format, args);
 	}
 
 	@Override
