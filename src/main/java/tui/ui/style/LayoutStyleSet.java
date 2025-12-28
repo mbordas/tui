@@ -29,6 +29,7 @@ public class LayoutStyleSet extends StyleSet {
 	private String m_borderColor = null;
 	private String m_borderWidth = null;
 	private String m_borderRadius_px = null;
+	private String m_boxShadow = null;
 
 	private String m_cursor = null;
 
@@ -80,6 +81,16 @@ public class LayoutStyleSet extends StyleSet {
 
 	public LayoutStyleSet setBorderRadius_px(Integer radius_px) {
 		m_borderRadius_px = String.format("%dpx", radius_px);
+		return this;
+	}
+
+	public LayoutStyleSet setBoxShadow(int x_px, int y_px, int blurRadius_px, int spreadRadius_px, TUIColors.ColorHSL color) {
+		m_boxShadow = String.format("%dpx %dpx %dpx %dpx %s", x_px, y_px, blurRadius_px, spreadRadius_px, TUIColors.toCSSHex(color));
+		return this;
+	}
+
+	public LayoutStyleSet setNoBoxShadow() {
+		m_boxShadow = "none";
 		return this;
 	}
 
@@ -160,6 +171,8 @@ public class LayoutStyleSet extends StyleSet {
 		setStylePropertyIfDefined(node, "border-color", m_borderColor, setter);
 		setStylePropertyIfDefined(node, "border-width", m_borderWidth, setter);
 		setStylePropertyIfDefined(node, "border-radius", m_borderRadius_px, setter);
+		setStylePropertyIfDefined(node, "box-shadow", m_boxShadow, setter);
+
 		setStylePropertyIfDefined(node, "cursor", m_cursor, setter);
 		setStylePropertyIfDefined(node, "width", m_width, setter);
 		setStylePropertyIfDefined(node, "height", m_height, setter);
