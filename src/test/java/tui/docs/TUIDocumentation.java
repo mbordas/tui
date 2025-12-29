@@ -35,8 +35,12 @@ public class TUIDocumentation {
 	private final java.util.List<Page> m_miscs = new ArrayList<>();
 	private final java.util.List<Page> m_components = new ArrayList<>();
 	private final java.util.List<Page> m_layouts = new ArrayList<>();
+	private final java.util.List<Page> m_styles = new ArrayList<>();
 
 	public TUIDocumentation() {
+		m_miscs.add(new TUIDocsFirstSteps());
+		m_miscs.add(new TUIDocsUpdatingAPage());
+
 		m_layouts.add(new TUIDocsPage());
 		m_layouts.add(new TUIDocsPanels());
 		m_layouts.add(new TUIDocsGrids());
@@ -47,10 +51,7 @@ public class TUIDocumentation {
 		m_components.add(new TUIDocsTablePicker());
 		m_components.add(new TUIDocsSVGs());
 
-		m_layouts.add(new TUIDocsStyle());
-		
-		m_miscs.add(new TUIDocsFirstSteps());
-		m_miscs.add(new TUIDocsUpdatingAPage());
+		m_styles.add(new TUIDocsStyle());
 	}
 
 	Page buildIndex() {
@@ -71,6 +72,12 @@ public class TUIDocumentation {
 		final List listLayouts = sectionLayouts.append(new List(false));
 		for(Page layoutPage : m_layouts) {
 			listLayouts.append(new NavLink(layoutPage.getTitle(), layoutPage.getSource()));
+		}
+
+		final Section sectionStyles = sectionMisc.createSubSection("Style");
+		final List listStyles = sectionStyles.append(new List(false));
+		for(Page stylePage : m_styles) {
+			listStyles.append(new NavLink(stylePage.getTitle(), stylePage.getSource()));
 		}
 
 		return result;
