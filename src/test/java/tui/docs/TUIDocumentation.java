@@ -90,6 +90,7 @@ public class TUIDocumentation {
 		pages.addAll(m_miscs);
 		pages.addAll(m_components);
 		pages.addAll(m_layouts);
+		pages.addAll(m_styles);
 
 		for(Page page : pages) {
 			try {
