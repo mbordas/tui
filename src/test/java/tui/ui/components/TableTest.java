@@ -161,13 +161,15 @@ public class TableTest extends TestWithBackend {
 
 		page.append(table);
 
-		final TUIBackend backend = new TUIBackend(8080);
-		backend.registerPage(page);
-		backend.registerWebService(table.getSource(), buildWebServiceTableLoad(table.clone()));
-		backend.start();
+		try(final TUIBackend backend = new TUIBackend(8080);
+				final Browser browser = new Browser(backend.getPort())) {
+			backend.registerPage(page);
+			backend.registerWebService(table.getSource(), buildWebServiceTableLoad(table.clone()));
+			backend.start();
 
-		final Browser browser = new Browser(backend.getPort());
-		browser.open("/index");
+			browser.open("/index");
+			browser.waitClosedManually();
+		}
 	}
 
 }
