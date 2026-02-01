@@ -31,7 +31,7 @@ public class WebServiceSpy {
 		m_component = component;
 	}
 
-	TUIWebService buildWebService() {
+	public TUIWebService buildWebService() {
 		return (uri, request, response) -> {
 			m_reader = new RequestReader(request);
 			return m_component.toJsonMap();

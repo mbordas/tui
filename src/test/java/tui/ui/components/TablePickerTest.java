@@ -23,6 +23,7 @@ import tui.http.TUIBackend;
 import tui.http.TUIWebService;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
+import tui.test.WebServiceSpy;
 import tui.ui.components.form.Search;
 import tui.ui.components.layout.Panel;
 
@@ -32,10 +33,37 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class TablePickerTest extends TestWithBackend {
 
 	public record Item(String id, String name, String content) {
+	}
+
+	@Test
+	public void onlyTextCellsShouldBeSentAsParameters() {
+		final Page page = new Page("Home", "/index");
+		final TablePicker tablePicker = page.append(new TablePicker("Table picker", List.of("A", "B")));
+		final Paragraph paragraph = page.append(new Paragraph("nothing is selected"));
+		paragraph.setSource("/paragraph");
+		tablePicker.connectListener(paragraph);
+
+		tablePicker.append(Map.of("A", "textA", "B", new RefreshButton("button")));
+
+		final TUIBackend backend = startBackend(page);
+
+		final WebServiceSpy webServiceSpy = new WebServiceSpy(paragraph);
+		backend.registerWebService(paragraph.getSource(), webServiceSpy.buildWebService());
+
+		final Browser browser = startBrowser();
+		browser.open(page.getSource());
+
+		browser.getTableCellByText(browser.getTable(tablePicker.getTitle()),
+						(value) -> value.equals("textA"))
+				.click();
+
+		assertEquals("textA", webServiceSpy.getRequestReader().getStringParameter("A"));
+		assertNull(webServiceSpy.getRequestReader().getStringParameter("B"));
 	}
 
 	/**

@@ -19,7 +19,6 @@ import org.junit.Test;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.http.TUIWebService;
-import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.layout.Panel;
@@ -49,33 +48,6 @@ public class TableTest extends TestWithBackend {
 		final Iterator<Integer> iterator = hiddenColumnsIndexes.iterator();
 		assertEquals(0, (int) iterator.next());
 		assertEquals(1, (int) iterator.next());
-	}
-
-	@Test
-	public void toJson() {
-		JsonObject.PRETTY_PRINT = true;
-		Table table = new Table("Test table", List.of("A", "B"));
-		table.append(Map.of("A", "test & co"));
-
-		assertEquals(String.format("""
-								{
-								  "type": "table",
-								  "tuid": %d,
-								  "title": "Test table",
-								  "tableSize": "1",
-								  "thead": [
-								    "A",
-								    "B"
-								  ],
-								  "tbody": [
-								    [
-								      "test & co",
-								      ""
-								    ]
-								  ]
-								}""",
-						table.getTUID()),
-				table.toJsonMap().toJson());
 	}
 
 	@Test

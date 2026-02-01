@@ -1397,16 +1397,27 @@ function instrumentTablePicker(tablePickerElement) {
     }
 
     if(refreshListenersAttribute != null) {
-    /* if(tablePickerElement.hasAttribute('tui-refresh-listeners')) {  */
         const columns = Array.from(tablePickerElement.querySelectorAll("th")).map(cell => cell.textContent);
 
         for(const row of tablePickerElement.querySelectorAll("tbody tr")) {
-            const values = Array.from(row.querySelectorAll("td")).map(cell => cell.textContent);
+            const values = Array.from(row.querySelectorAll("td"))
+                .map(td => {
+                    if(td.firstElementChild == null) {
+                        return td.textContent;
+                    } else if(td.firstElementChild.tagName.toUpperCase() == 'SPAN') {
+                        return td.textContent;
+                    } else { // Any other UIComponent
+                        return null;
+                    }
+                });
 
             const data = {};
             var colIndex = 0;
             for(const column of columns) {
-                data[column] = values[colIndex++];
+                const value = values[colIndex++];
+                if(value != null) {
+                    data[column] = value;
+                }
             }
 
             row.addEventListener("click", function () {
@@ -1467,7 +1478,7 @@ async function updateTable(tableElement, json, idMap) {
                 freshCell.classList.add("tui-hidden-column");
             }
             freshRow.append(freshCell);
-            freshCell.textContent = cell;
+            freshCell.append(createComponent(cell, idMap));
         }
         freshBody.append(freshRow);
     }

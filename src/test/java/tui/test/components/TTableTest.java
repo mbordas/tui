@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TTableTest extends TestWithBackend {
 
@@ -65,11 +66,16 @@ public class TTableTest extends TestWithBackend {
 		assertEquals(columnB, result.getColumns().get(1));
 		// Checking rows
 		assertEquals(2, result.size());
-		final List<List<Object>> rows = result.getRows();
-		assertEquals("value 1A", rows.get(0).get(0));
-		assertEquals("value 1B", rows.get(0).get(1));
-		assertEquals("value 2A", rows.get(1).get(0));
-		assertEquals("value 2B", rows.get(1).get(1));
+		final List<List<TComponent>> rows = result.getRows();
+		assertTText("value 1A", rows.get(0).get(0));
+		assertTText("value 1B", rows.get(0).get(1));
+		assertTText("value 2A", rows.get(1).get(0));
+		assertTText("value 2B", rows.get(1).get(1));
+	}
+
+	private void assertTText(String exepected, TComponent tested) {
+		assertTrue(tested instanceof TParagraph.TText);
+		assertEquals(exepected, ((TParagraph.TText) tested).getText());
 	}
 
 	@Test

@@ -39,7 +39,7 @@ public class TTable extends TRefreshableComponent {
 
 	private String m_title;
 	final List<String> m_columns;
-	final List<List<Object>> m_rows = new ArrayList<>();
+	final List<List<TComponent>> m_rows = new ArrayList<>();
 	private TableData.PageInfo m_pageInfo = null;
 	private Integer m_lastPageNumber = null;
 
@@ -58,17 +58,17 @@ public class TTable extends TRefreshableComponent {
 		return new ArrayList<>(m_columns);
 	}
 
-	public List<List<Object>> getRows() {
+	public List<List<TComponent>> getRows() {
 		return m_rows;
 	}
 
-	public Map<String, Object> getRow(int index) {
-		final List<Object> values = m_rows.get(index);
+	public Map<String, TComponent> getRow(int index) {
+		final List<TComponent> values = m_rows.get(index);
 		int colIndex = 0;
 
-		final Map<String, Object> result = new LinkedHashMap<>();
+		final Map<String, TComponent> result = new LinkedHashMap<>();
 		for(String column : m_columns) {
-			Object value = values.get(colIndex);
+			TComponent value = values.get(colIndex);
 			result.put(column, value);
 			colIndex++;
 		}
@@ -91,7 +91,13 @@ public class TTable extends TRefreshableComponent {
 		return m_pageInfo;
 	}
 
-	public boolean anyCellMatch(String columnName, Object valueEquals) {
+	public boolean anyCellMatch(String columnName, String valueEquals) {
+		final TParagraph.TText tText = new TParagraph.TText(m_client);
+		tText.setText(valueEquals);
+		return anyCellMatch(columnName, tText);
+	}
+
+	public boolean anyCellMatch(String columnName, TComponent valueEquals) {
 		int columnIndex = 0;
 		for(String column : m_columns) {
 			if(column.equals(columnName)) {
@@ -100,7 +106,7 @@ public class TTable extends TRefreshableComponent {
 			columnIndex++;
 		}
 
-		for(List<Object> row : m_rows) {
+		for(List<TComponent> row : m_rows) {
 			final Object testedValue = row.get(columnIndex);
 			if(valueEquals == null && testedValue == null) {
 				return true;
@@ -111,8 +117,8 @@ public class TTable extends TRefreshableComponent {
 		return false;
 	}
 
-	public void append(Map<String, Object> values) {
-		final List<Object> row = new ArrayList<>();
+	private void append(Map<String, TComponent> values) {
+		final List<TComponent> row = new ArrayList<>();
 		for(String column : m_columns) {
 			row.add(values.get(column));
 		}
@@ -132,7 +138,7 @@ public class TTable extends TRefreshableComponent {
 	@Override
 	public void update(JsonMap map) {
 		m_rows.clear();
-		loadRows(map, m_columns, this);
+		loadRows(map, m_columns, this, m_client);
 		loadPageInfo(map, this);
 	}
 
@@ -199,16 +205,9 @@ public class TTable extends TRefreshableComponent {
 		final BaseAttributes baseAttributes = parseBaseAttributes(map);
 		final TTable result = new TTable(baseAttributes.tuid, baseAttributes.title, baseAttributes.columns, baseAttributes.source, client);
 		result.readParameters(map);
-		loadRows(map, baseAttributes.columns, result);
+		loadRows(map, baseAttributes.columns, result, client);
 		loadPageInfo(map, result);
 		return result;
-	}
-
-	private void parseUpdate(String json) {
-		final JsonMap map = JsonParser.parseMap(json);
-		m_rows.clear();
-		loadRows(map, m_columns, this);
-		loadPageInfo(map, this);
 	}
 
 	private static void loadPageInfo(JsonMap map, TTable result) {
@@ -223,18 +222,19 @@ public class TTable extends TRefreshableComponent {
 		}
 	}
 
-	public static void loadRows(JsonMap map, Collection<String> columns, TTable result) {
+	public static void loadRows(JsonMap map, Collection<String> columns, TTable result, TClient client) {
 		final JsonArray array = map.getArray("tbody");
 		final Iterator<JsonObject> rowIterator = array.iterator();
 		while(rowIterator.hasNext()) {
 			final JsonObject rowObject = rowIterator.next();
 			if(rowObject instanceof JsonArray rowArray) {
-				Map<String, Object> row = new LinkedHashMap<>();
+				Map<String, TComponent> row = new LinkedHashMap<>();
 				int c = 0;
 				for(String column : columns) {
 					final JsonObject cellObject = rowArray.get(c++);
-					if(cellObject instanceof JsonString cellString) {
-						row.put(column, cellString.getValue());
+					if(cellObject instanceof JsonMap componentObject) {
+						final TComponent tComponent = TComponentFactory.parse(componentObject, client);
+						row.put(column, tComponent);
 					} else {
 						throw new JsonException("Unexpected json type: %s", cellObject.getClass().getCanonicalName());
 					}

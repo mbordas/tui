@@ -20,6 +20,8 @@ import org.junit.Test;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.TClient;
+import tui.test.components.TComponent;
+import tui.test.components.TParagraph;
 import tui.test.components.TSearch;
 import tui.test.components.TTable;
 import tui.ui.components.Page;
@@ -102,9 +104,9 @@ public class OverviewExample {
 
 			table = client.getTable("Found items");
 			assertFalse(table.isEmpty());
-			for(List<Object> row : table.getRows()) {
-				final String name = row.get(1).toString();
-				assertTrue(name.contains("al"));
+			for(List<TComponent> row : table.getRows()) {
+				final TParagraph.TText cell = (TParagraph.TText) row.get(1);
+				assertTrue(cell.getText().contains("al"));
 			}
 
 		}

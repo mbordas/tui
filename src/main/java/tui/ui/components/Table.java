@@ -197,7 +197,14 @@ public class Table extends UIRefreshableComponent {
 			final HTMLNode row = body.createChild("tr");
 			int colIndex = 0;
 			for(Object _cell : _row) {
-				final HTMLNode td = row.createChild("td").setText(_cell == null ? "" : String.valueOf(_cell));
+				final HTMLNode td = row.createChild("td");
+				if(_cell == null) {
+					td.setText("");
+				} else if(_cell instanceof UIComponent component) {
+					td.append(component.toHTMLNode());
+				} else {
+					td.setText(String.valueOf(_cell));
+				}
 				if(hiddenColumnsIndexes.contains(colIndex)) {
 					td.addClass("tui-hidden-column");
 				}

@@ -39,6 +39,10 @@ public class TParagraph extends TRefreshableComponent {
 			return m_content;
 		}
 
+		public void setText(String content) {
+			m_content = content;
+		}
+
 		@Override
 		public TComponent find(long tuid) {
 			return null;
@@ -47,6 +51,11 @@ public class TParagraph extends TRefreshableComponent {
 		@Override
 		public Collection<TComponent> getChildrenComponents() {
 			return List.of();
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			return other instanceof TText && m_content.equals(((TText) other).m_content);
 		}
 
 		public static TText parse(JsonMap map, TClient client) {

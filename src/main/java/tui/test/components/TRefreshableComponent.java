@@ -45,7 +45,7 @@ public abstract class TRefreshableComponent extends TComponent {
 
 	public abstract void update(JsonMap jsonMap);
 
-	public void refresh(@Nullable Map<String, Object> data) throws TestExecutionException {
+	public void refresh(@Nullable Map<String, ?> data) throws TestExecutionException {
 		if(data != null) {
 			m_fetchData.putAll(data);
 		}

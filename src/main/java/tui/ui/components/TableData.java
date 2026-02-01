@@ -16,7 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import tui.json.JsonArray;
-import tui.json.JsonException;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 
@@ -148,10 +147,10 @@ public class TableData {
 			for(Object _cell : _row) {
 				if(_cell == null) {
 					row.add("");
-				} else if(_cell instanceof String cellString) {
-					row.add(cellString);
+				} else if(_cell instanceof UIComponent component) {
+					row.add(component.toJsonMap());
 				} else {
-					throw new JsonException("Unsupported type: %s", _cell.getClass().getCanonicalName());
+					row.add(new Paragraph.Text(String.valueOf(_cell)).toJsonMap());
 				}
 			}
 			if(data.m_pageInfo != null && rowNumber >= data.m_pageInfo.pageSize()) {
