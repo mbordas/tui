@@ -23,8 +23,10 @@ import tui.http.TUIBackend;
 import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
 import tui.ui.components.Section;
 import tui.ui.components.Table;
+import tui.ui.components.UIComponent;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInputString;
 import tui.ui.components.form.ModalForm;
@@ -59,7 +61,8 @@ public class DemoServer {
 		final String columnSerialNumber = "Serial number";
 		final Table table = new Table("Refreshable table", List.of(columnVendor, columnSerialNumber));
 		for(Map.Entry<String, String> row : initialRows.entrySet()) {
-			table.append(Map.of("Vendor", row.getKey(), "Serial number", row.getValue()));
+			table.append(Map.of("Vendor", new Paragraph.Text(row.getKey()),
+					"Serial number", new Paragraph.Text(row.getValue())));
 		}
 		table.setSource("/demo/table/1");
 		panel1.append(table);
@@ -87,9 +90,9 @@ public class DemoServer {
 			final RequestReader reader = new RequestReader(request);
 			final String serialNumber = reader.getStringParameter(inputSerialNumber.getName());
 			final String vendor = reader.getStringParameter(inputVendor.getName());
-			Map<String, Object> row = new LinkedHashMap<>();
-			row.put(columnVendor, vendor);
-			row.put(columnSerialNumber, serialNumber);
+			Map<String, UIComponent> row = new LinkedHashMap<>();
+			row.put(columnVendor, new Paragraph.Text(vendor));
+			row.put(columnSerialNumber, new Paragraph.Text(serialNumber));
 			table.append(row);
 			return Form.buildSuccessfulSubmissionResponse();
 		});

@@ -58,7 +58,9 @@ public class NavigationWithTablePicker {
 		mailSelector.hideColumn("date");
 		mailSelector.hideHead();
 		for(MailViewer.Email email : emails) {
-			mailSelector.append(Map.of("id", email.id(), "date", email.date(), "subject", email.subject()));
+			mailSelector.append(Map.of("id", new Paragraph.Text(email.id()),
+					"date", new Paragraph.Text(email.date()),
+					"subject", new Paragraph.Text(email.subject())));
 		}
 
 		final Grid mailView = new Grid(2, 1);
@@ -77,7 +79,9 @@ public class NavigationWithTablePicker {
 			final TablePicker table = new TablePicker(mailSelector.getTitle(), mailSelector.getColumns());
 			emails.stream()
 					.filter((email) -> email.subject().contains(searched))
-					.forEach((email) -> table.append(Map.of("id", email.id(), "date", email.date(), "subject", email.subject())));
+					.forEach((email) -> table.append(Map.of("id", new Paragraph.Text(email.id()),
+							"date", new Paragraph.Text(email.date()),
+							"subject", new Paragraph.Text(email.subject()))));
 			table.hideColumn("id");
 			table.hideColumn("date");
 			table.hideHead();

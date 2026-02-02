@@ -38,7 +38,9 @@ public class LayoutsDemo {
 			final String city = TestUtils.CITIES[i];
 			final int code = (int) (Math.random() * 90000);
 			final long inhabitants = (long) (10_000L + Math.random() * 1_000_000L);
-			result.append(Map.of("City", city, "Code", String.valueOf(code), "Inhabitants", String.valueOf(inhabitants)));
+			result.append(Map.of("City", new Paragraph.Text(city),
+					"Code", new Paragraph.Text(String.valueOf(code)),
+					"Inhabitants", new Paragraph.Text(String.valueOf(inhabitants))));
 		}
 		return result;
 	}

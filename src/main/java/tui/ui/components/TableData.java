@@ -39,7 +39,7 @@ public class TableData {
 	public static final String ATTRIBUTE_LAST_ITEM_NUMBER = "lastItemNumber";
 
 	final List<String> m_columns = new ArrayList<>();
-	final List<List<Object>> m_rows = new ArrayList<>();
+	final List<List<UIComponent>> m_rows = new ArrayList<>();
 	private int m_tableSize; // The size of the whole table.
 
 	public record PageInfo(int pageNumber, int pageSize, int firstItemNumber, int lastItemNumber) {
@@ -56,7 +56,7 @@ public class TableData {
 		return m_columns;
 	}
 
-	public List<List<Object>> getRows() {
+	public List<List<UIComponent>> getRows() {
 		return m_rows;
 	}
 
@@ -83,15 +83,15 @@ public class TableData {
 	}
 
 	public void copy(TableData data) {
-		for(List<Object> row : data.getRows()) {
+		for(List<UIComponent> row : data.getRows()) {
 			m_rows.add(List.copyOf(row));
 		}
 		m_pageInfo = data.m_pageInfo;
 		m_tableSize = data.m_tableSize;
 	}
 
-	public void append(Map<String, Object> values) {
-		final List<Object> row = new ArrayList<>();
+	public void append(Map<String, UIComponent> values) {
+		final List<UIComponent> row = new ArrayList<>();
 		for(String column : m_columns) {
 			row.add(values.get(column));
 		}
@@ -142,15 +142,13 @@ public class TableData {
 		}
 		final JsonArray tbody = jsonMap.createArray("tbody");
 		int rowNumber = 1;
-		for(List<Object> _row : data.getRows()) {
+		for(List<UIComponent> _row : data.getRows()) {
 			final JsonArray row = tbody.createArray();
-			for(Object _cell : _row) {
-				if(_cell == null) {
+			for(UIComponent component : _row) {
+				if(component == null) {
 					row.add("");
-				} else if(_cell instanceof UIComponent component) {
-					row.add(component.toJsonMap());
 				} else {
-					row.add(new Paragraph.Text(String.valueOf(_cell)).toJsonMap());
+					row.add(component.toJsonMap());
 				}
 			}
 			if(data.m_pageInfo != null && rowNumber >= data.m_pageInfo.pageSize()) {

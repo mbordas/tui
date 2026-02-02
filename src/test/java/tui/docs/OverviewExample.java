@@ -25,6 +25,7 @@ import tui.test.components.TParagraph;
 import tui.test.components.TSearch;
 import tui.test.components.TTable;
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
 import tui.ui.components.Table;
 import tui.ui.components.form.Search;
 import tui.utils.TestUtils;
@@ -70,8 +71,9 @@ public class OverviewExample {
 					allItems.stream()
 							.filter((item) -> nameContains.trim().isEmpty() || item.name.contains(nameContains))
 							.forEach((item) -> filteredTable.append(
-									Map.of("Reference", item.reference, "Name", item.name, "Price",
-											String.format("%.2f €", item.price_Euro))));
+									Map.of("Reference", new Paragraph.Text(item.reference),
+											"Name", new Paragraph.Text(item.name),
+											"Price", new Paragraph.Text(String.format("%.2f €", item.price_Euro)))));
 					return filteredTable.toJsonMap();
 				});
 	}

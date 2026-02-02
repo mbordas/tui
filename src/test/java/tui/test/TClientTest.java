@@ -22,6 +22,7 @@ import tui.http.TUIBackend;
 import tui.test.components.TForm;
 import tui.test.components.TTable;
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
 import tui.ui.components.Table;
 import tui.ui.components.form.Form;
 
@@ -58,13 +59,13 @@ public class TClientTest {
 		{
 			m_backend = new TUIBackend(90);
 			final Table dataTable = new Table("My table", List.of(columnName));
-			dataTable.append(Map.of(columnName, "John Doe"));
+			dataTable.append(Map.of(columnName, new Paragraph.Text("John Doe")));
 			m_backend.registerWebService(endPointGetTable, (uri, request, response) -> dataTable.toJsonMap());
 			m_backend.registerWebService(endPointAppendTable, (uri, request, response) -> {
 				final RequestReader reader = new RequestReader(request);
 				final String nameValue = reader.getStringParameter(parameterName);
 				assert nameValue != null;
-				dataTable.append(Map.of(columnName, nameValue));
+				dataTable.append(Map.of(columnName, new Paragraph.Text(nameValue)));
 				return Form.buildSuccessfulSubmissionResponse();
 			});
 			m_backend.start();

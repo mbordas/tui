@@ -29,6 +29,7 @@ import tui.test.components.TSectionTest;
 import tui.test.components.TTableTest;
 import tui.ui.components.NavButton;
 import tui.ui.components.NavLink;
+import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Table;
 import tui.ui.components.form.Form;
@@ -217,7 +218,10 @@ public class Browser implements Closeable {
 	public WebElement getTableCellByText(WebElement table, Predicate<String> conditionOnText) {
 		final List<WebElement> cells = table.findElements(By.tagName("td"));
 		final Optional<WebElement> anyCell = cells.stream()
-				.filter((cell) -> conditionOnText.test(cell.getText()))
+				.filter((cell) -> {
+					final List<WebElement> spans = cell.findElements(By.tagName(Paragraph.Text.HTML_TAG));
+					return spans.stream().anyMatch((span) -> conditionOnText.test(span.getText()));
+				})
 				.findAny();
 		return anyCell.orElse(null);
 	}

@@ -23,10 +23,12 @@ import org.openqa.selenium.WebElement;
 import tui.test.TClient;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
 import tui.ui.components.Table;
 import tui.ui.components.TableData;
 import tui.ui.components.TablePickerTest;
 import tui.ui.components.TableTest;
+import tui.ui.components.UIComponent;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -164,10 +166,10 @@ public class TTableTest extends TestWithBackend {
 		}
 	}
 
-	private static Map<String, Object> row(String colA, String valA, String colB, String valB) {
-		final Map<String, Object> result = new LinkedHashMap<>();
-		result.put(colA, valA);
-		result.put(colB, valB);
+	private static Map<String, UIComponent> row(String colA, String valA, String colB, String valB) {
+		final Map<String, UIComponent> result = new LinkedHashMap<>();
+		result.put(colA, new Paragraph.Text(valA));
+		result.put(colB, new Paragraph.Text(valB));
 		return result;
 	}
 }

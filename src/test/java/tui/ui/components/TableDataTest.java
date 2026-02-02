@@ -27,10 +27,10 @@ public class TableDataTest {
 	@Test
 	public void getPageWithPageNumberOverflow() {
 		final TableData data = new TableData(List.of("A"), 4);
-		data.append(Map.of("A", "1"));
-		data.append(Map.of("A", "2"));
-		data.append(Map.of("A", "3"));
-		data.append(Map.of("A", "4"));
+		data.append(Map.of("A", new Paragraph.Text("1")));
+		data.append(Map.of("A", new Paragraph.Text("2")));
+		data.append(Map.of("A", new Paragraph.Text("3")));
+		data.append(Map.of("A", new Paragraph.Text("4")));
 
 		// Trying to get page #3 should return page #1 because there is no page #3
 		final TableData result = data.getPage(3, 2, 2);

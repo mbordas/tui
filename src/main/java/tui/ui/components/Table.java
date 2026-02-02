@@ -90,7 +90,7 @@ public class Table extends UIRefreshableComponent {
 		return m_data.getColumns();
 	}
 
-	public List<List<Object>> getRows() {
+	public List<List<UIComponent>> getRows() {
 		return m_data.getRows();
 	}
 
@@ -114,14 +114,14 @@ public class Table extends UIRefreshableComponent {
 		return m_sourcePath;
 	}
 
-	public void append(Map<String, Object> values) {
+	public void append(Map<String, UIComponent> values) {
 		m_data.append(values);
 		m_data.incrementTableSize();
 	}
 
 	public void append(TableData data) {
-		for(List<Object> row : data.getRows()) {
-			Map<String, Object> values = new LinkedHashMap<>();
+		for(List<UIComponent> row : data.getRows()) {
+			Map<String, UIComponent> values = new LinkedHashMap<>();
 			int i = 0;
 			for(String column : data.getColumns()) {
 				values.put(column, row.get(i++));
@@ -193,17 +193,15 @@ public class Table extends UIRefreshableComponent {
 
 		final HTMLNode body = tableElement.createChild("tbody");
 		int rowNumber = 1;
-		for(List<Object> _row : getRows()) {
+		for(List<UIComponent> _row : getRows()) {
 			final HTMLNode row = body.createChild("tr");
 			int colIndex = 0;
-			for(Object _cell : _row) {
+			for(UIComponent component : _row) {
 				final HTMLNode td = row.createChild("td");
-				if(_cell == null) {
+				if(component == null) {
 					td.setText("");
-				} else if(_cell instanceof UIComponent component) {
-					td.append(component.toHTMLNode());
 				} else {
-					td.setText(String.valueOf(_cell));
+					td.append(component.toHTMLNode());
 				}
 				if(hiddenColumnsIndexes.contains(colIndex)) {
 					td.addClass("tui-hidden-column");

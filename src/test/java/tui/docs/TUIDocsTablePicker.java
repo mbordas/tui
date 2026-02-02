@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.docs;
 
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
 import tui.ui.components.Section;
 import tui.ui.components.TablePicker;
 import tui.ui.components.layout.Panel;
@@ -42,9 +43,9 @@ public class TUIDocsTablePicker extends Page {
 
 		subSection.appendParagraph("Lets see an example:");
 		final TablePicker tablePicker = new TablePicker("Example TablePicker", List.of("id", "name", "age"));
-		tablePicker.append(Map.of("id", "1", "name", "Pierre", "age", "39"));
-		tablePicker.append(Map.of("id", "2", "name", "Paul", "age", "42"));
-		tablePicker.append(Map.of("id", "3", "name", "Jacques", "age", "24"));
+		tablePicker.append(Map.of("id", new Paragraph.Text("1"), "name", new Paragraph.Text("Pierre"), "age", new Paragraph.Text("39")));
+		tablePicker.append(Map.of("id", new Paragraph.Text("2"), "name", new Paragraph.Text("Paul"), "age", new Paragraph.Text("42")));
+		tablePicker.append(Map.of("id", new Paragraph.Text("3"), "name", new Paragraph.Text("Jacques"), "age", new Paragraph.Text("24")));
 		subSection.append(new Panel(Panel.Align.CENTER)).append(tablePicker);
 
 		subSection.appendParagraph(

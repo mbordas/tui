@@ -107,7 +107,8 @@ public class TableTest extends TestWithBackend {
 
 	public static void putItemsInTable(Collection<TablePickerTest.Item> items, Table table) {
 		for(TablePickerTest.Item item : items) {
-			table.append(Map.of("Id", item.id(), "Name", item.name()));
+			table.append(Map.of("Id", new Paragraph.Text(item.id()),
+					"Name", new Paragraph.Text(item.name())));
 		}
 	}
 

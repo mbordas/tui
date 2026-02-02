@@ -49,7 +49,9 @@ public class MailViewer {
 		mailSelector.hideColumn("id");
 		mailSelector.hideHead();
 		for(Email email : emails) {
-			mailSelector.append(Map.of("id", email.id, "date", email.date, "subject", email.subject));
+			mailSelector.append(Map.of("id", new Paragraph.Text(email.id),
+					"date", new Paragraph.Text(email.date),
+					"subject", new Paragraph.Text(email.subject)));
 		}
 		page.append(mailSelector);
 

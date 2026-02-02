@@ -118,8 +118,8 @@ public class TableTestHTML {
 	 */
 	private static @NotNull Table createTable4Cells() {
 		final Table table = new Table("Table title", List.of("A", "B"));
-		table.append(Map.of("A", "1", "B", "2"));
-		table.append(Map.of("A", "3", "B", "4"));
+		table.append(Map.of("A", new Paragraph.Text("1"), "B", new Paragraph.Text("2")));
+		table.append(Map.of("A", new Paragraph.Text("3"), "B", new Paragraph.Text("4")));
 		return table;
 	}
 

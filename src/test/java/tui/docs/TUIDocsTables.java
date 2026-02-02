@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.docs;
 
 import tui.ui.components.Page;
+import tui.ui.components.Paragraph;
 import tui.ui.components.Section;
 import tui.ui.components.Table;
 import tui.ui.components.layout.Panel;
@@ -42,9 +43,11 @@ public class TUIDocsTables extends Page {
 
 		final List<String> columns = List.of("Person", "Hobby", "Age");
 		final Table table = new Table("Hobbies", columns);
-		table.append(Map.of("Person", "Pierre", "Hobby", "Pétanque", "Age", "42"));
-		table.append(Map.of("Person", "Paul", "Hobby", "Rugby", "Age", "35"));
-		table.append(Map.of("Person", "Jacques", "Hobby", "Cycling", "Age", "50"));
+		table.append(
+				Map.of("Person", new Paragraph.Text("Pierre"), "Hobby", new Paragraph.Text("Pétanque"), "Age", new Paragraph.Text("42")));
+		table.append(Map.of("Person", new Paragraph.Text("Paul"), "Hobby", new Paragraph.Text("Rugby"), "Age", new Paragraph.Text("35")));
+		table.append(
+				Map.of("Person", new Paragraph.Text("Jacques"), "Hobby", new Paragraph.Text("Cycling"), "Age", new Paragraph.Text("50")));
 
 		chapter.append(new Panel())
 				.setAlign(Panel.Align.CENTER)

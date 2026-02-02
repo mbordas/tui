@@ -48,7 +48,7 @@ public class TablePickerTest extends TestWithBackend {
 		paragraph.setSource("/paragraph");
 		tablePicker.connectListener(paragraph);
 
-		tablePicker.append(Map.of("A", "textA", "B", new RefreshButton("button")));
+		tablePicker.append(Map.of("A", new Paragraph.Text("textA"), "B", new RefreshButton("button")));
 
 		final TUIBackend backend = startBackend(page);
 
@@ -101,7 +101,7 @@ public class TablePickerTest extends TestWithBackend {
 
 			// Building table with all filtered items
 			final TableData data = new TableData(tablePicker.getColumns(), filteredItems.size());
-			filteredItems.forEach((item -> data.append(Map.of("Id", item.id, "Name", item.name))));
+			filteredItems.forEach((item -> data.append(Map.of("Id", new Paragraph.Text(item.id), "Name", new Paragraph.Text(item.name)))));
 
 			// Returning only the selected page
 			return data.getPage(pageNumber, pageSize, data.size()).toJsonMap();

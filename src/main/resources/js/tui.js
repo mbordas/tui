@@ -1405,7 +1405,7 @@ function instrumentTablePicker(tablePickerElement) {
                     if(td.firstElementChild == null) {
                         return td.textContent;
                     } else if(td.firstElementChild.tagName.toUpperCase() == 'SPAN') {
-                        return td.textContent;
+                        return td.firstElementChild.textContent;
                     } else { // Any other UIComponent
                         return null;
                     }
