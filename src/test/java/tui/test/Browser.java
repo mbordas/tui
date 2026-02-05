@@ -563,6 +563,16 @@ public class Browser implements Closeable {
 		return childrenElements.get(0);
 	}
 
+	public static @Nullable WebElement getFirstMatchingChild(WebElement element, Predicate<WebElement> condition) {
+		final List<WebElement> childrenElements = element.findElements(By.xpath("./*"));
+		for(WebElement childElement : childrenElements) {
+			if(condition.test(childElement)) {
+				return childElement;
+			}
+		}
+		return null;
+	}
+
 	public static @NotNull WebElement getInputChildByName(WebElement formElement, String inputName) {
 		for(WebElement field : TFormTest.getFields(formElement)) {
 			final Optional<WebElement> anyElement = TFormTest.getInputElementsOfFieldElement(field).stream()

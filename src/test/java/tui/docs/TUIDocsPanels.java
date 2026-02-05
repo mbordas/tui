@@ -20,6 +20,7 @@ import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Section;
 import tui.ui.components.layout.Grid;
+import tui.ui.components.layout.ModalPanel;
 import tui.ui.components.layout.Panel;
 import tui.utils.TestUtils;
 
@@ -113,6 +114,20 @@ public class TUIDocsPanels extends Page {
 		grid.set(0, 0, decoratedText("Column width = 200px"));
 		grid.set(0, 1, decoratedText("Column width = max content"));
 		grid.set(0, 2, decoratedText("Column width = auto"));
+
+		final Section sectionModalPanels = chapter.createSubSection("Modal panels");
+		sectionModalPanels.appendParagraph("""
+				A ModalPanel opens and closes with buttons. It is hidden by default.
+				It behaves like a Panel, but its content is displayed in a modal window.""");
+		sectionModalPanels.append(new CodeParagraph("""
+				ModalPanel modalPanel = new ModalPanel(Panel.Align.VERTICAL_TOP, "Details");"""));
+
+		sectionModalPanels.append(new Panel(Panel.Align.CENTER))
+				.append(new ModalPanel(Panel.Align.VERTICAL_TOP, "Details"));
+
+		sectionModalPanels.appendParagraph("""
+				Here the ModalPanel could not open because this static page does not contain the tui script that makes the page dynamic, sorry.""");
+
 	}
 
 	static Panel decoratedText(String label) {

@@ -50,6 +50,7 @@ import tui.ui.components.form.ModalForm;
 import tui.ui.components.form.Search;
 import tui.ui.components.layout.Grid;
 import tui.ui.components.layout.Layouts;
+import tui.ui.components.layout.ModalPanel;
 import tui.ui.components.layout.Panel;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
@@ -100,7 +101,8 @@ public class CodeParagraph extends Paragraph {
 
 		registerClassForColor(UIComponent.class, UIRefreshableComponent.class);
 		registerClassForColor(HTMLNode.class);
-		registerClassForColor(Grid.class, Layouts.class, Panel.class, TabbedFlow.class, VerticalFlow.class, VerticalScroll.class);
+		registerClassForColor(Grid.class, Layouts.class, Panel.class, ModalPanel.class, TabbedFlow.class, VerticalFlow.class,
+				VerticalScroll.class);
 		registerClassForColor(DownloadButton.class, Page.class, Image.class, NavButton.class, NavLink.class, Paragraph.class,
 				Paragraph.Text.class, RefreshButtonTest.class, Section.class, Table.class, TableData.class, TablePicker.class);
 		registerClassForColor(Form.class, FormInput.class, FormInputCheckbox.class, FormInputDay.class, FormInputDayHHmm.class,

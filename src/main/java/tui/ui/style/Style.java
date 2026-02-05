@@ -320,6 +320,19 @@ public class Style {
 				    flex-direction: column;
 				    justify-content: center;
 				}
+				.tui-panel-close-button {
+					width: auto;
+					background: none;
+					padding-left: 5px;
+					padding-right: 5px;
+					border: none;
+					color: var(--global-color-background-contrast);
+					text-decoration: underline;
+					cursor: pointer;
+				}
+				.tui-modal-panel > .modal {
+				    max-width: 80%;
+				}
 				
 				/* TABS */
 				
@@ -515,9 +528,9 @@ public class Style {
 				}
 				.tui-form-radio-inline {
 					display: inline-block;
-				     margin-right: 10px;
+				    margin-right: 10px;
 				}
-				.modal {
+				.tui-modal-form > .modal {
 				    max-width: 50ch;
 				}
 				.modal::backdrop {

@@ -25,6 +25,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function onload() {
     instrumentForms();
     instrumentModalForms();
+    instrumentModalPanels();
     instrumentNavButtons();
     instrumentTables();
     instrumentRefreshButtons();
@@ -104,6 +105,8 @@ async function refreshComponent(id, data) {
                 updateGrid(component, json);
             } else if(type == 'panel') {
                 updatePanel(component, json);
+            } else if(type == 'modalpanel') {
+                updateModalPanel(component, json);
             } else {
                 console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
             }
@@ -188,6 +191,16 @@ function createComponent(json, idMap) {
             result = document.createElement('div');
             result.classList.add('tui-panel');
             updatePanel(result, json, idMap);
+        }
+    } else if(type == 'modalpanel') {
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('div', 'tui-container-modalpanel');
+            updateModalPanel(containedElement.element, json, idMap);
+            result = containedElement.container;
+        } else {
+            result = document.createElement('div');
+            result.classList.add('tui-modal-panel');
+            updateModalPanel(result, json, idMap);
         }
     } else if(type == 'table') {
         var tableElement;
@@ -606,6 +619,55 @@ function updatePanel(panelElement, json, idMap) {
     }
 
     updateParameters(panelElement, json);
+}
+
+function updateModalPanel(panelElement, json) {
+    const button = document.createElement('button');
+    button.classList.add('tui-modal-panel-open-button');
+    button.textContent = json['openButtonLabel'];
+    panelElement.appendChild(button);
+
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('modal');
+    panelElement.appendChild(dialog);
+
+    const flow = document.createElement('div');
+    updatePanel(flow, json);
+    dialog.appendChild(flow);
+
+    const footer = document.createElement('div');
+    footer.classList.add('tui-modalpanel-footer');
+    footer.classList.add('tui-panel-right'); // Align.RIGHT
+    dialog.appendChild(footer);
+
+    const closeButton = document.createElement('button');
+    closeButton.classList.add('tui-panel-close-button');
+    closeButton.textContent = 'Close';
+    footer.appendChild(closeButton);
+
+    instrumentModalPanel(panelElement);
+}
+
+function instrumentModalPanels() {
+    const modalPanelElementss = document.querySelectorAll('.tui-modal-panel');
+    modalPanelElementss.forEach(function(modalPanelElement, i) {
+        instrumentModalPanel(modalPanelElement);
+    });
+}
+
+function instrumentModalPanel(modalPanelElement) {
+    const openButton = modalPanelElement.querySelector('button');
+
+    const dialog = modalPanelElement.querySelector('dialog');
+    const panel = dialog.querySelector('div');
+    const closeButton = dialog.querySelector('.tui-panel-close-button');
+
+    openButton.addEventListener('click', () => {
+        dialog.showModal();
+    });
+    closeButton.addEventListener('click', () => {
+        dialog.close();
+    });
 }
 
 // SECTIONS

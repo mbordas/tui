@@ -73,18 +73,21 @@ public class Panel extends UIRefreshableComponent {
 	public HTMLNode toHTMLNode() {
 		final ContainedElement containedElement = createContainedNode("div", HTML_CLASS_CONTAINER);
 		containedElement.element().addClass(HTML_CLASS);
-		containedElement.element().addClass(m_align.getHTMLClass());
 
-		final HTMLNode node = containedElement.element();
+		fillDivElement(containedElement.element());
+
+		return containedElement.getHigherNode();
+	}
+
+	protected void fillDivElement(HTMLNode divElement) {
+		divElement.addClass(m_align.getHTMLClass());
 		for(UIComponent component : getContent()) {
 			final HTMLNode componentNode = component.toHTMLNode();
 			if(m_align != Align.VERTICAL_TOP && m_align != Align.VERTICAL_CENTER) {
 				componentNode.addClass(m_spacing.getHTMLClass().replaceAll("spacing", "horizontal-spacing"));
 			}
-			node.append(componentNode);
+			divElement.append(componentNode);
 		}
-
-		return containedElement.getHigherNode();
 	}
 
 	@Override
