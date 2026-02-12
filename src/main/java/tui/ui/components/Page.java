@@ -151,16 +151,17 @@ public class Page {
 						.setText(cssResource.contentOrLink().replaceAll("\\n", ""));
 			}
 		}
-		final HTMLNode script = head.createChild("script")
-				.setText(generateSessionParametersInitialization(SESSION_PARAMS_MAP_NAME, m_sessionParameters));
-		script.appendText("const FETCH_TYPE='%s'", m_fetchType.name());
+		final HTMLNode script = head.createChild("script");
+		script.setDecorateNewLineWithBR(false);
+		script.appendText(generateSessionParametersInitialization(SESSION_PARAMS_MAP_NAME, m_sessionParameters));
+		script.appendText("const FETCH_TYPE='%s';", m_fetchType.name());
 
 		if(scriptResource != null) {
 			if(scriptResource.isExternal()) {
-				head.createChild("script")
-						.setAttribute("type", HTMLConstants.JAVASCRIPT_CONTENT_TYPE)
-						.setAttribute("src", scriptResource.contentOrLink())
-						.setAttribute("defer", null); // the script is meant to be executed after the document has been parsed
+				HTMLNode tuiJavascript = head.createChild("script");
+				tuiJavascript.setAttribute("type", HTMLConstants.JAVASCRIPT_CONTENT_TYPE);
+				tuiJavascript.setAttribute("src", scriptResource.contentOrLink());
+				tuiJavascript.setAttribute("defer", null); // the script is meant to be executed after the document has been parsed
 			} else {
 				script.appendText(scriptResource.contentOrLink());
 			}

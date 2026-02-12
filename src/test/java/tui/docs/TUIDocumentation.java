@@ -27,6 +27,8 @@ import tui.ui.style.Style;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -110,11 +112,23 @@ public class TUIDocumentation {
 	static void save(Page page, Style style, File dir) throws IOException {
 		final File file = new File(dir, page.getSource());
 		try(FileOutputStream outputStream = new FileOutputStream(file)) {
-			final HTMLNode htmlNode = page.toHTMLNode(new Page.Resource(false, style.toCSS()), null);
+			final HTMLNode htmlNode = page.toHTMLNode(
+					new Page.Resource(false, style.toCSS()),
+					new Page.Resource(false, getTUIJavascriptContent()));
 			byte[] strToBytes = htmlNode.toHTML().getBytes();
 			outputStream.write(strToBytes);
 		}
 		System.out.println("Page saved: " + file.getAbsolutePath());
+	}
+
+	public static String getTUIJavascriptContent() throws IOException {
+		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("js/tui.js");
+		String result = null;
+		if(is != null) {
+			result = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+			is.close();
+		}
+		return result;
 	}
 
 	public static void main(String[] args) throws IOException {

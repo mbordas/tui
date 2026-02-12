@@ -35,6 +35,7 @@ public class HTMLNode {
 	private StringBuilder m_text = new StringBuilder();
 	private int m_prettyPrintDepth = 0;
 	private boolean m_decorateAttributesWithSimpleQuotes = false;
+	private boolean m_decorateNewLineWithBR = true;
 
 	public HTMLNode(String tagName) {
 		m_tagName = tagName;
@@ -107,6 +108,10 @@ public class HTMLNode {
 		m_decorateAttributesWithSimpleQuotes = enabled;
 	}
 
+	public void setDecorateNewLineWithBR(boolean enabled) {
+		m_decorateNewLineWithBR = enabled;
+	}
+
 	public HTMLNode setText(String text) {
 		m_text = new StringBuilder();
 		m_text.append(text);
@@ -114,7 +119,11 @@ public class HTMLNode {
 	}
 
 	public HTMLNode appendText(String format, Object... args) {
-		m_text.append(String.format(format, args));
+		if(args.length > 0) {
+			m_text.append(String.format(format, args));
+		} else {
+			m_text.append(format);
+		}
 		return this;
 	}
 
@@ -196,7 +205,11 @@ public class HTMLNode {
 
 			if(!m_text.isEmpty()) {
 				final String text = m_text.toString();
-				result.append(text.replaceAll("\\n", "<br/>"));
+				if(m_decorateNewLineWithBR) {
+					result.append(text.replaceAll("\\n", "<br/>"));
+				} else {
+					result.append(text);
+				}
 			} else {
 				endOfTag(result);
 			}
