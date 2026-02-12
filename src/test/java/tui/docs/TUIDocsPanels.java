@@ -120,14 +120,15 @@ public class TUIDocsPanels extends Page {
 				A ModalPanel opens and closes with buttons. It is hidden by default.
 				It behaves like a Panel, but its content is displayed in a modal window.""");
 		sectionModalPanels.append(new CodeParagraph("""
-				ModalPanel modalPanel = new ModalPanel(Panel.Align.VERTICAL_TOP, "Details");"""));
+				ModalPanel modalPanel = new ModalPanel(Panel.Align.VERTICAL_TOP, "Details");
+				modalPanel.append(new Paragraph.Text("This is the content of the modal panel."));"""));
 
-		sectionModalPanels.append(new Panel(Panel.Align.CENTER))
-				.append(new ModalPanel(Panel.Align.VERTICAL_TOP, "Details"));
+		sectionModalPanels.append(new Paragraph.Text("Produces:"));
 
-		sectionModalPanels.appendParagraph("""
-				Here the ModalPanel could not open because this static page does not contain the tui script that makes the page dynamic, sorry.""");
+		final ModalPanel modalPanel = new ModalPanel(Panel.Align.VERTICAL_TOP, "Details");
+		modalPanel.append(new Paragraph.Text("This is the content of the modal panel."));
 
+		sectionModalPanels.append(new Panel(Panel.Align.CENTER)).append(modalPanel);
 	}
 
 	static Panel decoratedText(String label) {

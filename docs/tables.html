@@ -1,1 +1,1703 @@
-<!DOCTYPE html><?xml version='1.0' encoding='UTF-8'?><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Tables</title><link rel="shortcut icon" href="data:,"/><style>:root{--global-color-background: #ffffff;--global-color-background-contrast: #000000;--global-color-text: #2e2e2e;--global-color-text-contrast: #ffffff;--global-color-border: #b4b4b4;--global-color-border-contrast: #000000;--global-color-action: #00c6fc;--global-color-action-contrast: #000000;--global-color-cancel: #dedede;--global-color-cancel-contrast: #000000;--global-color-delete: #fc2803;--global-color-delete-contrast: #ffffff;--global-color-neutral-state: #e6e6e6;--global-color-neutral-state-contrast: #000000;--global-color-green-state: #1faa3c;--global-color-green-state-contrast: #ffffff;--global-color-red-state: #fc2803;--global-color-red-state-contrast: #ffffff;--global-color-fetch-error: #ffc800;--global-color-fetch-error-contrast: #000000;--table-color-row-hover: #c0f0fc;--table-color-row-hover-contrast: #000000;}* {  }* { color:var(--global-color-text);font-family:Public Sans Web, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol; }body { padding:0px 0px 0px 0px;margin:0px 0px 0px 0px; }h1 { padding:0px 0px 0px 0px;margin:10px 0px 5px 0px; }h1 { font-size:2.000000em; }h1 * { font-size:2.000000em; }h2 { padding:0px 0px 0px 0px;margin:10px 0px 5px 0px; }h2 { font-size:1.500000em; }h2 * { font-size:1.500000em; }h3 { padding:0px 0px 0px 0px;margin:10px 0px 5px 0px; }h3 { font-weight:lighter;font-size:1.200000em; }h3 * { font-weight:lighter;font-size:1.200000em; }h4 { padding:0px 0px 0px 0px;margin:10px 0px 5px 0px; }h4 { font-weight:lighter;font-size:1.100000em;font-style:italic; }h4 * { font-weight:lighter;font-size:1.100000em;font-style:italic; }a { color:var(--global-color-action); }a * { color:var(--global-color-action); }header { background-color:var(--global-color-background);padding:10px 10px 10px 10px;border-width:0px 0px 1px 0px; }header { color:var(--global-color-background-contrast); }header * { color:var(--global-color-background-contrast); }header a { text-decoration:none;text-align:center; }header a * { text-decoration:none;text-align:center; }header button[type='submit'] { background-color:transparent;cursor:pointer;padding:0px 5px 0px 5px;border-style:none; }header button[type='submit'] { text-decoration:underline; }header button[type='submit'] * { text-decoration:underline; }footer { background-color:var(--global-color-background);padding:10px 10px 10px 10px;border-width:1px 0px 0px 0px;height:50px; }footer { color:var(--global-color-background-contrast); }footer * { color:var(--global-color-background-contrast); }section { margin:30px 0px 0px 0px; }section { text-align:left; }section * { text-align:left; }p { padding:0px 0px 0px 0px;margin:0px 0px 10px 0px;page-break-inside:avoid; }p { line-height:1.4;text-align:left; }p * { line-height:1.4;text-align:left; }.loading {	pointer-events: none;	position: relative;}.loading::after {	content: '';	position: absolute;	top: 0;	left: 0;	width: 100%;	height: 100%;	background: rgba(128, 128, 128, 0.4);	z-index: 10;}.loading::before {	content: 'Loading...';	font-size: 0.9em;	color: white;	position: absolute;	top: 50%;	left: 50%;	transform: translate(-50%, -50%);	z-index: 11;}p button {	width: auto;}.tui-reading-normal-area { /* In NORMAL layout, the width of central area is given. */    width: 70em;}.tui-reading-wide-margin { /* In WIDE layout, the width of margins are given. */   width: 20px;}.tui-align-left {    text-align: left;}.tui-align-right {    text-align: right;    display: flex;	justify-content: end;}.tui-align-center {    text-align: center;    display: flex;	justify-content: center;}.tui-align-stretch {    text-align: justify;    display: flex;	justify-content: space-between;}/* PANEL */.tui-container-panel {	display: block;}.tui-panel-left {    display: flex;    flex-direction: row;	justify-content: start;}.tui-panel-right {    display: flex;    flex-direction: row;	justify-content: end;}.tui-panel-center {    display: flex;    flex-direction: row;	justify-content: center;}.tui-panel-stretch {    display: flex;    flex-direction: row;	justify-content: space-between;}.tui-panel-vertical_top {    display: flex;    flex-direction: column;}.tui-panel-vertical_center {	display: flex;    flex-direction: column;    justify-content: center;}.tui-panel-close-button {	width: auto;	background: none;	padding-left: 5px;	padding-right: 5px;	border: none;	color: var(--global-color-background-contrast);	text-decoration: underline;	cursor: pointer;}.tui-modal-panel > .modal {    max-width: 80%;}/* TABS */.tui-tabnav {    display: flex;    justify-content: left;    align-items: center;}.tui-tablink {    font-size: 1em;    white-space: nowrap;    padding-left: 30px;    padding-right: 30px;    cursor: pointer;    background: none;    border-radius: 0px;    border-left: none;    border-top: none;    border-right: none;    border-bottom: 1px solid var(--global-color-border);}.tui-tablink-active {    border-bottom: 3px solid var(--global-color-action);}/* LAYOUTS */.tui-vertical-spacing-fit {    padding-top: 0px;}.tui-vertical-spacing-compact {    padding-top: 10px;}.tui-vertical-spacing-normal {    padding-top: 20px;}.tui-vertical-spacing-large {    padding-top: 30px;}.tui-horizontal-spacing-fit {    margin-right: 0px;}.tui-horizontal-spacing-compact:not(:last-child) {    margin-right: 10px;}.tui-horizontal-spacing-normal:not(:last-child) {    margin-right: 20px;}.tui-horizontal-spacing-large:not(:last-child) {    margin-right: 30px;}.tui-grid {    display: grid;    width: 100%;    margin: 0px;    padding: 0px;    justify-items: stretch;}.tui-vertical-scroll {    overflow-y: auto;}/* SEARCH */tui-search {	margin: 10px 0px 10px 0px;}.tui-search-input-label {	margin-right: 10px;}.tui-search-input {	display: inline-block;    margin-top: 10px;    margin-right: 10px;    text-align: left;}search>label { /* search's legend */	margin-right: 10px;}search>button {    width: auto; /* overrides the 100% value of button */}search table {	border: none;}search td {	border: none;}/* FORM */tui-form {    margin: 10px 0px 10px 0px;    width: 400px;}fieldset {    border: 1px solid var(--global-color-border);    background: var(--global-color-background);    position: relative;}/* https://www.youtube.com/watch?v=ezP4kbOvs_E */@property --angle {    syntax: "<angle>";    initial-value: 0deg;    inherits: false;}.form-pending::after {    content: '';    position: absolute;    height: 100%;    width: 100%;    top: 50%;    left: 50%;    translate: -50% -50%;    z-index: -1;    padding: 3px;    background-image: conic-gradient(from var(--angle), var(--global-color-background) 0% 50%, var(--global-color-action) 50% 100%);    animation: 1s spin linear infinite;}@keyframes spin {    from {        --angle: 0deg;    }    to {        --angle: 360deg;    }}.tui-form-input {    margin-top: 10px;    text-align: left;}.tui-form-input>label {    display: block;    width: 100%;    text-align: left;    vertical-align: top;}.tui-form-input>input {    width: 100%;    padding-left: 15px;    box-sizing: border-box;}.tui-form-input>.label-checkbox {    display: inline;    width: auto;}.tui-form-input>input[type='checkbox'] {    display: inline;    width: auto;    text-align: left;    margin-left: 15px;}.tui-form-input>textarea {	width: 100%;	box-sizing: border-box;}.tui-form-input-invalid {    border: 2px solid var(--global-color-red-state);}.tui-input-error {    color: red;    font-size: smaller;}.tui-form-footer {    margin-top: 15px;}.tui-form-footer>button {    margin-right: 5px;    width: auto; /* overrides the 100% value of button */}.tui-form-message {    width: 100%;    margin-top: 5px;    margin-bottom: 5px;}.tui-form-message-success {    color: var(--global-color-green-state);}.tui-form-message-error {    color: var(--global-color-red-state);}.tui-form-close-button, .tui-form-reset-button {	background: none;	padding-left: 5px;	padding-right: 5px;	border: none;	color: var(--global-color-background-contrast);	text-decoration: underline;	cursor: pointer;}.tui-form-radio-inline {	display: inline-block;    margin-right: 10px;}.tui-modal-form > .modal {    max-width: 50ch;}.modal::backdrop {    background: var(--global-color-background-contrast);    opacity: .5}button { background-color:var(--global-color-cancel);border-radius:2px;cursor:pointer;padding:5px 20px 5px 20px;width:100%;border-color:var(--global-color-borders);border-width:1px;border-style:solid; }button { color:var(--global-color-cancel-contrast);text-align:center; }button * { color:var(--global-color-cancel-contrast);text-align:center; }button.tui-download-button { background-color:#ffffff;padding:2px 5px 2px 20px;background-repeat:no-repeat;background-size:16px 16px;border-color:#808080;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><line x1='10' y1='5' x2='10' y2='15' style='display:inline;stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%23000000;fill-opacity:1.00;'/><line x1='10' y1='15' x2='5' y2='10' style='display:inline;stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%23000000;fill-opacity:1.00;'/><line x1='10' y1='15' x2='15' y2='10' style='display:inline;stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%23000000;fill-opacity:1.00;'/><line x1='5' y1='15' x2='15' y2='15' style='display:inline;stroke:%23000000;stroke-width:2;stroke-opacity:1.00;fill:%23000000;fill-opacity:1.00;'/></svg>");background-position:left center;border-style:solid; }button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button { background-color:var(--global-color-action);border-color:var(--global-color-action);border-style:solid; }button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button { color:var(--global-color-action-contrast); }button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button * { color:var(--global-color-action-contrast); }/* NAV BUTTON */.tui-navbutton {    display: inline;}/* Overriding some style of submit buttons */.tui-navbutton button {	background-color: var(--global-color-cancel);	border: 1px solid var(--global-color-border);	color: var(--global-color-text);}/* TABLE */table {    border-collapse: collapse;    border-radius: 2px;    border: 1px solid var(--global-color-border);    margin: 10px 0px 10px 0px;}th, td {    border: 1px solid var(--global-color-border);;}th {    text-align: center;    padding: 5px 10px 5px 10px;    font-weight: bold;}td {    text-align: left;    padding: 2px 10px 2px 10px;    vertical-align: middle;}.tui-table .tui-hidden-column {    display: none;}.tui-table .tui-hidden-head {    display: none;}.tui-table tr:hover {    background-color: var(--table-color-row-hover);}.tui-tablepicker td {    cursor: pointer;}.tui-table-container {	display: flex;	flex-direction: column;}.tui-table-navigation {    padding-top: 5px;    padding-bottom: 5px;}.tui-table-navigation>button {	margin-right: 5px;	width: auto; /* overrides 100% value for buttons */}/*	SVG*/.tui-svg-clickable {	cursor: pointer;	fill: transparent;}svg text {	font-weight: normal;	font-family: sans-serif, Public Sans Web, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;	stroke: none;}@media print {	thead {		display: table-header-group;	}	tfoot {		display: table-footer-group;	}}/* FETCH DATA */.fetch-parameters {	display: none;}.fetch-error {    border: 2px solid var(--global-color-fetch-error);}.fetch-error-message {    font-size: 0.7em;    background-color: var(--global-color-fetch-error);    color: var(--global-color-fetch-error-contrast);}</style><script>const SESSION_PARAMS={};const FETCH_TYPE='JSON'</script></head><body class="tui-grid" style="grid-template-columns:100%;grid-template-rows:min-content auto min-content;"><main><div class="tui-grid tui-vertical-flow" style="grid-template-columns:minmax(20px,1fr) minmax(65em,1fr) minmax(20px,1fr);grid-template-rows:auto;justify-self:stretch;place-items:center;"><p/><div class="tui-grid" style="grid-template-columns:1fr;"><div class="tui-vertical-spacing-normal" style="text-align:center;"><section style="margin:auto;"><h1>Tables</h1><p class="tui-align-left"><span>The Table object displays string data. Any formating must be done before values are put into a Table.</span></p><p class="tui-align-left"><span>Example code:</span></p><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="color:#b66025;font-family:Consolas;line-height:1.4;">final</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">List</span><span style="font-family:Consolas;line-height:1.4;"><</span><span style="font-family:Consolas;line-height:1.4;">String</span><span style="font-family:Consolas;line-height:1.4;">> </span><span style="font-family:Consolas;line-height:1.4;">columns</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">List</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Person"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">);<br/>		</span><span style="color:#b66025;font-family:Consolas;line-height:1.4;">final</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="color:#b66025;font-family:Consolas;line-height:1.4;">new</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobbies"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="font-family:Consolas;line-height:1.4;">columns</span><span style="font-family:Consolas;line-height:1.4;">);<br/>		</span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">append</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">Map</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Person"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Pierre"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Pétanque"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"42"</span><span style="font-family:Consolas;line-height:1.4;">));<br/>		</span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">append</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">Map</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Person"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Paul"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Rugby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"35"</span><span style="font-family:Consolas;line-height:1.4;">));<br/>		</span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">append</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">Map</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Person"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Jacques"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Cycling"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"50"</span><span style="font-family:Consolas;line-height:1.4;">));</span></p><p class="tui-align-left"><span>produces:</span></p><div class="tui-panel tui-panel-center"><table class="tui-table tui-horizontal-spacing-normal"><caption>Hobbies</caption><thead><tr><th>Person</th><th>Hobby</th><th>Age</th></tr></thead><tbody><tr><td><span>Pierre</span></td><td><span>Pétanque</span></td><td><span>42</span></td></tr><tr><td><span>Paul</span></td><td><span>Rugby</span></td><td><span>35</span></td></tr><tr><td><span>Jacques</span></td><td><span>Cycling</span></td><td><span>50</span></td></tr></tbody></table></div><section><h2>Display options</h2><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">hideHead</span><span style="font-family:Consolas;line-height:1.4;">();</span></p><div class="tui-panel tui-panel-center"><table class="tui-table tui-horizontal-spacing-normal" tui-hidden-head="true"><caption>Hobbies</caption><thead><tr class="tui-hidden-head"><th>Person</th><th>Hobby</th><th>Age</th></tr></thead><tbody><tr><td><span>Pierre</span></td><td><span>Pétanque</span></td><td><span>42</span></td></tr><tr><td><span>Paul</span></td><td><span>Rugby</span></td><td><span>35</span></td></tr><tr><td><span>Jacques</span></td><td><span>Cycling</span></td><td><span>50</span></td></tr></tbody></table></div><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">hideColumn</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">);</span></p><div class="tui-panel tui-panel-center"><table class="tui-table tui-horizontal-spacing-normal" tui-hidden-columns="2"><caption>Hobbies</caption><thead><tr><th>Person</th><th>Hobby</th><th class="tui-hidden-column">Age</th></tr></thead><tbody><tr><td><span>Pierre</span></td><td><span>Pétanque</span></td><td class="tui-hidden-column"><span>42</span></td></tr><tr><td><span>Paul</span></td><td><span>Rugby</span></td><td class="tui-hidden-column"><span>35</span></td></tr><tr><td><span>Jacques</span></td><td><span>Cycling</span></td><td class="tui-hidden-column"><span>50</span></td></tr></tbody></table></div><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">hideTitle</span><span style="font-family:Consolas;line-height:1.4;">();</span></p><div class="tui-panel tui-panel-center"><table class="tui-table tui-horizontal-spacing-normal"><caption style="display:none;">Hobbies</caption><thead><tr><th>Person</th><th>Hobby</th><th>Age</th></tr></thead><tbody><tr><td><span>Pierre</span></td><td><span>Pétanque</span></td><td><span>42</span></td></tr><tr><td><span>Paul</span></td><td><span>Rugby</span></td><td><span>35</span></td></tr><tr><td><span>Jacques</span></td><td><span>Cycling</span></td><td><span>50</span></td></tr></tbody></table></div></section><section><h2>Pagination</h2><p class="tui-align-left"><span>When the table is too long to be displayed at once, then you can configure a pagination. Of course it is not available on<br/>a static Table, you will need the Table to have a source and a corresponding web service on backend side.</span></p><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="color:#b66025;font-family:Consolas;line-height:1.4;">int</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">pageSize</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">12</span><span style="font-family:Consolas;line-height:1.4;">;<br/></span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">setPaging</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">pageSize</span><span style="font-family:Consolas;line-height:1.4;">);</span></p><p class="tui-align-left"><span>Once you have set a paging size on your table, it will be displayed with page information and navigation buttons.</span></p><p class="tui-align-left"><span>The page your are reading is static, that's why it is not possible to show any example of pagination, sorry.</span></p><p class="tui-align-left"><span>At the backend side, you must provider a TableData object which contains the rows of the selected page, and the pagination information. There is a convenient way to obtain a TableData instance from either a Table, a TablePicker or a TableData, this is the method getPage:</span></p><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="font-family:Consolas;line-height:1.4;">// </span><span style="font-family:Consolas;line-height:1.4;">Getting</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">or</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">building</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">the</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;"><br/></span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;"> = [...]<br/><br/>// </span><span style="font-family:Consolas;line-height:1.4;">Reading</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">page</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">number</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">and</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">page</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">size</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">from</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">request</span><span style="font-family:Consolas;line-height:1.4;"><br/></span><span style="color:#b66025;font-family:Consolas;line-height:1.4;">int</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">pageNumber</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">reader</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">getIntParameter</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">PARAMETER</span><span style="font-family:Consolas;line-height:1.4;">_</span><span style="font-family:Consolas;line-height:1.4;">PAGE</span><span style="font-family:Consolas;line-height:1.4;">_</span><span style="font-family:Consolas;line-height:1.4;">NUMBER</span><span style="font-family:Consolas;line-height:1.4;">);<br/></span><span style="color:#b66025;font-family:Consolas;line-height:1.4;">int</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">pageSize</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">reader</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">getIntParameter</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">PARAMETER</span><span style="font-family:Consolas;line-height:1.4;">_</span><span style="font-family:Consolas;line-height:1.4;">PAGE</span><span style="font-family:Consolas;line-height:1.4;">_</span><span style="font-family:Consolas;line-height:1.4;">SIZE</span><span style="font-family:Consolas;line-height:1.4;">);<br/><br/>// </span><span style="font-family:Consolas;line-height:1.4;">Giving</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">back</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">the</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">TableData</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">selected</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">page</span><span style="font-family:Consolas;line-height:1.4;"><br/></span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">TableData</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">dataToRespond</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">getPage</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">pageNumber</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="font-family:Consolas;line-height:1.4;">pageSize</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">size</span><span style="font-family:Consolas;line-height:1.4;">());<br/></span></p></section></section></div></div><p/></div></main><footer><div class="tui-panel tui-panel-left"></div></footer></body></html>
+<!DOCTYPE html><?xml version='1.0' encoding='UTF-8'?><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Tables</title><link rel="shortcut icon" href="data:,"/><style>:root{--global-color-background: #ffffff;--global-color-background-contrast: #000000;--global-color-text: #2e2e2e;--global-color-text-contrast: #ffffff;--global-color-border: #b4b4b4;--global-color-border-contrast: #000000;--global-color-action: #00c6fc;--global-color-action-contrast: #000000;--global-color-cancel: #dedede;--global-color-cancel-contrast: #000000;--global-color-delete: #fc2803;--global-color-delete-contrast: #ffffff;--global-color-neutral-state: #e6e6e6;--global-color-neutral-state-contrast: #000000;--global-color-green-state: #1faa3c;--global-color-green-state-contrast: #ffffff;--global-color-red-state: #fc2803;--global-color-red-state-contrast: #ffffff;--global-color-fetch-error: #ffc800;--global-color-fetch-error-contrast: #000000;--table-color-row-hover: #c0f0fc;--table-color-row-hover-contrast: #000000;}* {  }* { color:var(--global-color-text);font-family:Public Sans Web, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol; }body { padding:0px 0px 0px 0px;margin:0px 0px 0px 0px; }h1 { padding:0px 0px 0px 0px;margin:10px 0px 5px 0px; }h1 { font-size:2.000000em; }h1 * { font-size:2.000000em; }h2 { padding:0px 0px 0px 0px;margin:10px 0px 5px 0px; }h2 { font-size:1.500000em; }h2 * { font-size:1.500000em; }h3 { padding:0px 0px 0px 0px;margin:10px 0px 5px 0px; }h3 { font-weight:lighter;font-size:1.200000em; }h3 * { font-weight:lighter;font-size:1.200000em; }h4 { padding:0px 0px 0px 0px;margin:10px 0px 5px 0px; }h4 { font-weight:lighter;font-size:1.100000em;font-style:italic; }h4 * { font-weight:lighter;font-size:1.100000em;font-style:italic; }a { color:var(--global-color-action); }a * { color:var(--global-color-action); }header { background-color:var(--global-color-background);padding:10px 10px 10px 10px;border-width:0px 0px 1px 0px; }header { color:var(--global-color-background-contrast); }header * { color:var(--global-color-background-contrast); }header a { text-decoration:none;text-align:center; }header a * { text-decoration:none;text-align:center; }header button[type='submit'] { background-color:transparent;cursor:pointer;padding:0px 5px 0px 5px;border-style:none; }header button[type='submit'] { text-decoration:underline; }header button[type='submit'] * { text-decoration:underline; }footer { background-color:var(--global-color-background);padding:10px 10px 10px 10px;border-width:1px 0px 0px 0px;height:50px; }footer { color:var(--global-color-background-contrast); }footer * { color:var(--global-color-background-contrast); }section { margin:30px 0px 0px 0px; }section { text-align:left; }section * { text-align:left; }p { padding:0px 0px 0px 0px;margin:0px 0px 10px 0px;page-break-inside:avoid; }p { line-height:1.4;text-align:left; }p * { line-height:1.4;text-align:left; }.loading {	pointer-events: none;	position: relative;}.loading::after {	content: '';	position: absolute;	top: 0;	left: 0;	width: 100%;	height: 100%;	background: rgba(128, 128, 128, 0.4);	z-index: 10;}.loading::before {	content: 'Loading...';	font-size: 0.9em;	color: white;	position: absolute;	top: 50%;	left: 50%;	transform: translate(-50%, -50%);	z-index: 11;}p button {	width: auto;}.tui-reading-normal-area { /* In NORMAL layout, the width of central area is given. */    width: 70em;}.tui-reading-wide-margin { /* In WIDE layout, the width of margins are given. */   width: 20px;}.tui-align-left {    text-align: left;}.tui-align-right {    text-align: right;    display: flex;	justify-content: end;}.tui-align-center {    text-align: center;    display: flex;	justify-content: center;}.tui-align-stretch {    text-align: justify;    display: flex;	justify-content: space-between;}/* PANEL */.tui-container-panel {	display: block;}.tui-panel-left {    display: flex;    flex-direction: row;	justify-content: start;}.tui-panel-right {    display: flex;    flex-direction: row;	justify-content: end;}.tui-panel-center {    display: flex;    flex-direction: row;	justify-content: center;}.tui-panel-stretch {    display: flex;    flex-direction: row;	justify-content: space-between;}.tui-panel-vertical_top {    display: flex;    flex-direction: column;}.tui-panel-vertical_center {	display: flex;    flex-direction: column;    justify-content: center;}.tui-panel-close-button {	width: auto;	background: none;	padding-left: 5px;	padding-right: 5px;	border: none;	color: var(--global-color-background-contrast);	text-decoration: underline;	cursor: pointer;}.tui-modal-panel > .modal {    max-width: 80%;}/* TABS */.tui-tabnav {    display: flex;    justify-content: left;    align-items: center;}.tui-tablink {    font-size: 1em;    white-space: nowrap;    padding-left: 30px;    padding-right: 30px;    cursor: pointer;    background: none;    border-radius: 0px;    border-left: none;    border-top: none;    border-right: none;    border-bottom: 1px solid var(--global-color-border);}.tui-tablink-active {    border-bottom: 3px solid var(--global-color-action);}/* LAYOUTS */.tui-vertical-spacing-fit {    padding-top: 0px;}.tui-vertical-spacing-compact {    padding-top: 10px;}.tui-vertical-spacing-normal {    padding-top: 20px;}.tui-vertical-spacing-large {    padding-top: 30px;}.tui-horizontal-spacing-fit {    margin-right: 0px;}.tui-horizontal-spacing-compact:not(:last-child) {    margin-right: 10px;}.tui-horizontal-spacing-normal:not(:last-child) {    margin-right: 20px;}.tui-horizontal-spacing-large:not(:last-child) {    margin-right: 30px;}.tui-grid {    display: grid;    width: 100%;    margin: 0px;    padding: 0px;    justify-items: stretch;}.tui-vertical-scroll {    overflow-y: auto;}/* SEARCH */tui-search {	margin: 10px 0px 10px 0px;}.tui-search-input-label {	margin-right: 10px;}.tui-search-input {	display: inline-block;    margin-top: 10px;    margin-right: 10px;    text-align: left;}search>label { /* search's legend */	margin-right: 10px;}search>button {    width: auto; /* overrides the 100% value of button */}search table {	border: none;}search td {	border: none;}/* FORM */tui-form {    margin: 10px 0px 10px 0px;    width: 400px;}fieldset {    border: 1px solid var(--global-color-border);    background: var(--global-color-background);    position: relative;}/* https://www.youtube.com/watch?v=ezP4kbOvs_E */@property --angle {    syntax: "<angle>";    initial-value: 0deg;    inherits: false;}.form-pending::after {    content: '';    position: absolute;    height: 100%;    width: 100%;    top: 50%;    left: 50%;    translate: -50% -50%;    z-index: -1;    padding: 3px;    background-image: conic-gradient(from var(--angle), var(--global-color-background) 0% 50%, var(--global-color-action) 50% 100%);    animation: 1s spin linear infinite;}@keyframes spin {    from {        --angle: 0deg;    }    to {        --angle: 360deg;    }}.tui-form-input {    margin-top: 10px;    text-align: left;}.tui-form-input>label {    display: block;    width: 100%;    text-align: left;    vertical-align: top;}.tui-form-input>input {    width: 100%;    padding-left: 15px;    box-sizing: border-box;}.tui-form-input>.label-checkbox {    display: inline;    width: auto;}.tui-form-input>input[type='checkbox'] {    display: inline;    width: auto;    text-align: left;    margin-left: 15px;}.tui-form-input>textarea {	width: 100%;	box-sizing: border-box;}.tui-form-input-invalid {    border: 2px solid var(--global-color-red-state);}.tui-input-error {    color: red;    font-size: smaller;}.tui-form-footer {    margin-top: 15px;}.tui-form-footer>button {    margin-right: 5px;    width: auto; /* overrides the 100% value of button */}.tui-form-message {    width: 100%;    margin-top: 5px;    margin-bottom: 5px;}.tui-form-message-success {    color: var(--global-color-green-state);}.tui-form-message-error {    color: var(--global-color-red-state);}.tui-form-close-button, .tui-form-reset-button {	background: none;	padding-left: 5px;	padding-right: 5px;	border: none;	color: var(--global-color-background-contrast);	text-decoration: underline;	cursor: pointer;}.tui-form-radio-inline {	display: inline-block;    margin-right: 10px;}.tui-modal-form > .modal {    max-width: 50ch;}.modal::backdrop {    background: var(--global-color-background-contrast);    opacity: .5}button { background-color:var(--global-color-cancel);border-radius:2px;cursor:pointer;padding:5px 20px 5px 20px;width:100%;border-color:var(--global-color-borders);border-width:1px;border-style:solid; }button { color:var(--global-color-cancel-contrast);text-align:center; }button * { color:var(--global-color-cancel-contrast);text-align:center; }button.tui-download-button { background-color:#ffffff;padding:2px 5px 2px 20px;background-repeat:no-repeat;background-size:16px 16px;border-color:#808080;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><line x1='10' y1='5' x2='10' y2='15' style='display:inline;stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%23000000;fill-opacity:1.00;'/><line x1='10' y1='15' x2='5' y2='10' style='display:inline;stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%23000000;fill-opacity:1.00;'/><line x1='10' y1='15' x2='15' y2='10' style='display:inline;stroke:%23000000;stroke-width:1;stroke-opacity:1.00;fill:%23000000;fill-opacity:1.00;'/><line x1='5' y1='15' x2='15' y2='15' style='display:inline;stroke:%23000000;stroke-width:2;stroke-opacity:1.00;fill:%23000000;fill-opacity:1.00;'/></svg>");background-position:left center;border-style:solid; }button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button { background-color:var(--global-color-action);border-color:var(--global-color-action);border-style:solid; }button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button { color:var(--global-color-action-contrast); }button[type=submit],.tui-modal-form-submit-button,.tui-modal-form-open-button * { color:var(--global-color-action-contrast); }/* NAV BUTTON */.tui-navbutton {    display: inline;}/* Overriding some style of submit buttons */.tui-navbutton button {	background-color: var(--global-color-cancel);	border: 1px solid var(--global-color-border);	color: var(--global-color-text);}/* TABLE */table {    border-collapse: collapse;    border-radius: 2px;    border: 1px solid var(--global-color-border);    margin: 10px 0px 10px 0px;}th, td {    border: 1px solid var(--global-color-border);;}th {    text-align: center;    padding: 5px 10px 5px 10px;    font-weight: bold;}td {    text-align: left;    padding: 2px 10px 2px 10px;    vertical-align: middle;}.tui-table .tui-hidden-column {    display: none;}.tui-table .tui-hidden-head {    display: none;}.tui-table tr:hover {    background-color: var(--table-color-row-hover);}.tui-tablepicker td {    cursor: pointer;}.tui-table-container {	display: flex;	flex-direction: column;}.tui-table-navigation {    padding-top: 5px;    padding-bottom: 5px;}.tui-table-navigation>button {	margin-right: 5px;	width: auto; /* overrides 100% value for buttons */}/*	SVG*/.tui-svg-clickable {	cursor: pointer;	fill: transparent;}svg text {	font-weight: normal;	font-family: sans-serif, Public Sans Web, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;	stroke: none;}@media print {	thead {		display: table-header-group;	}	tfoot {		display: table-footer-group;	}}/* FETCH DATA */.fetch-parameters {	display: none;}.fetch-error {    border: 2px solid var(--global-color-fetch-error);}.fetch-error-message {    font-size: 0.7em;    background-color: var(--global-color-fetch-error);    color: var(--global-color-fetch-error-contrast);}</style><script>const SESSION_PARAMS={};const FETCH_TYPE='JSON';/* Copyright (c) 2024, Mathieu Bordas
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1- Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+2- Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+3- Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+    Naming the functions
+    - instrumentXXX: completes the DOM structure, adds triggers and code.
+    - updateXXX: updates the content and the display.
+    - refreshXXX: calls the backend in order to get fresh data, then updates and instruments when needed.
+*/
+
+"use strict";
+
+function onload() {
+    instrumentForms();
+    instrumentModalForms();
+    instrumentModalPanels();
+    instrumentNavButtons();
+    instrumentTables();
+    instrumentRefreshButtons();
+    instrumentSearchForms();
+    instrumentSVGs();
+}
+
+/*
+    Calls the backend web service defined as 'source' in the component's attributes.
+    Optional 'data' is a regular Object which contains attributes as (key, value) strings that will be sent as content (HTTP POST).
+*/
+async function refreshComponent(id, data) {
+    const element = document.getElementById(id);
+    if(element == null) {
+        console.error('refreshComponent: element with id=' + id + ' not found.');
+        return;
+    }
+    addFetchData(element, data); // new data are added to existing
+    data = getFetchData(element); // we must get all data
+    const component = document.getElementById(id);
+    const sourcePath = component.getAttribute('tui-source');
+    console.log('refreshing component ' + id + ' with source: ' + sourcePath);
+
+     if(data === undefined) {
+         data = new Map();
+         Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
+            data.set(key, value);
+            console.log(`${key}: ${value}`);
+         });
+     } else {
+         for(let key in SESSION_PARAMS) {
+            data[key] = SESSION_PARAMS[key];
+         }
+    }
+
+    var body;
+    var headers;
+
+    if(FETCH_TYPE == 'JSON') {
+        if(data instanceof Map) {
+            body = JSON.stringify(Array.from(data.entries()));
+        } else {
+            body = JSON.stringify(Array.from(Object.entries(data)));
+        }
+        headers = { 'Content-Type': 'application/json' };
+    } else if(FETCH_TYPE == 'FORM_DATA') {
+        body = new FormData();
+        for(let key in data) {
+            body.append(key, data[key]);
+        }
+        headers = {};
+    }
+
+    element.classList.add('loading');
+
+    fetch(sourcePath, {
+            method: 'POST',
+            headers: headers,
+            body: body,
+        })
+        .then(response => {
+            if(!response.ok) {
+                throw new Error(`HTTP error, status = ${response.status}`);
+            }
+            hideFetchError(component);
+            return response.json();
+        })
+        .then((json) => {
+            const type = json['type'];
+            if(type == 'paragraph') {
+                updateParagraph(component, json);
+            } else if(type == 'table' || type == 'tablepicker' || type == 'table-data') {
+                updateTable(component, json);
+            } else if(type == 'svg') {
+                updateSVG(component, json);
+            } else if(type == 'grid') {
+                updateGrid(component, json);
+            } else if(type == 'panel') {
+                updatePanel(component, json);
+            } else if(type == 'modalpanel') {
+                updateModalPanel(component, json);
+            } else {
+                console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
+            }
+        })
+        .catch(error => {
+            showFetchError(component, error);
+        })
+        .finally(() => {
+            element.classList.remove('loading');
+        });
+}
+
+/*
+    Links parameters map 'data' to the element so that it will be used to complete the future Ajax requests when refreshing the element.
+*/
+function addFetchData(element, data) {
+    if(typeof element.fetch_data === 'undefined') {
+        element.fetch_data = data;
+    } else {
+         for(let key in data) {
+            element.fetch_data[key] = data[key];
+        }
+    }
+}
+
+/*
+    Gives the parameters map that are linked to the element. These parameters must be added to any refreshing Ajax request.
+*/
+function getFetchData(element) {
+    const result = {};
+
+    // 1. Session parameters
+    for(let key in SESSION_PARAMS) {
+        result[key] = SESSION_PARAMS[key];
+    }
+
+    // 2. Parameters from the element itself
+    const parentElement = element.parentElement;
+    if(parentElement != null) {
+        if(parentElement.classList.contains('tui-refreshable-container')) {
+            const parametersDiv = parentElement.querySelector('.fetch-parameters');
+            if(parametersDiv != null) {
+                parametersDiv.querySelectorAll('input').forEach(input => {
+                    result[input.getAttribute('name')] = input.value;
+                });
+            }
+        }
+    }
+
+    // 3. Parameters from previous refreshing requests
+    if(typeof element.fetch_data !== 'undefined') {
+        for(let key in element.fetch_data) {
+            result[key] = element.fetch_data[key];
+        }
+    }
+
+    return result;
+}
+
+function setTextAlignClass(element, textAlign) {
+    element.classList.remove('tui-align-left');
+    element.classList.remove('tui-align-center');
+    element.classList.remove('tui-align-right');
+    element.classList.remove('tui-align-stretch');
+    element.classList.add('tui-align-' + textAlign.toLowerCase());
+}
+
+/*
+    idMap (optional) gives some TUID given by backend to be replaced in order to match the frontend current ids.
+    This map should be passed to any element that contains other elements.
+*/
+function createComponent(json, idMap) {
+    const type = json['type'];
+    var result;
+    var elementToBeStyled = null; // is overridden when style must be applied on it instead of result
+    if(type == 'panel') {
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('div', 'tui-container-panel');
+            updatePanel(containedElement.element, json, idMap);
+            result = containedElement.container;
+        } else {
+            result = document.createElement('div');
+            result.classList.add('tui-panel');
+            updatePanel(result, json, idMap);
+        }
+    } else if(type == 'modalpanel') {
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('div', 'tui-container-modalpanel');
+            updateModalPanel(containedElement.element, json, idMap);
+            result = containedElement.container;
+        } else {
+            result = document.createElement('div');
+            result.classList.add('tui-modal-panel');
+            updateModalPanel(result, json, idMap);
+        }
+    } else if(type == 'table') {
+        var tableElement;
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('table', 'tui-table-container');
+            result = containedElement.container;
+            tableElement = containedElement.element;
+        } else {
+            result = document.createElement('table');
+            tableElement = result;
+        }
+        tableElement.classList.add('tui-table');
+        tableElement.appendChild(document.createElement('thead'));
+        tableElement.appendChild(document.createElement('tbody'));
+        updateTable(tableElement, json, idMap);
+    } else if(type == 'paragraph') {
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('p', 'tui-container-paragraph');
+            updateParagraph(containedElement.element, json, idMap);
+            result = containedElement.container;
+        } else {
+            result = document.createElement('p');
+            updateParagraph(result, json, idMap);
+        }
+    } else if(type == 'grid') {
+        if(json['tui-source'] != null) {
+            const containedElement = createElementWithContainer('div', 'tui-container-grid');
+            updateGrid(containedElement.element, json, idMap);
+            result = containedElement.container;
+        } else {
+            result = document.createElement('div');
+            result.classList.add('tui-grid');
+            updateGrid(result, json, idMap);
+        }
+    } else if(type == 'svg') {
+        if(json['tui-source'] != null) {
+            const svgElement = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
+            const containedElement = createElementWithContainer('svg', 'tui-container-svg', svgElement);
+            result = containedElement.container;
+        } else {
+            result = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
+        }
+    } else if(type == 'section') {
+        result = document.createElement('section');
+        updateSection(result, json, idMap);
+    } else if(type == 'text') {
+        result = document.createElement('span');
+        result.textContent = json['content'];
+    } else if(type == 'list') {
+        if(json['isOrdered' == 'true']) {
+            result = document.createElement('ol');
+        } else {
+            result = document.createElement('ul');
+        }
+        for(var child of json['content']) {
+            const childContainer = document.createElement('li');
+            const childElement = createComponent(child, idMap);
+            childContainer.appendChild(childElement);
+            result.appendChild(childContainer);
+        }
+    } else if(type == 'verticalFlow') {
+        result = document.createElement('div');
+        result.classList.add('tui-vertical-flow');
+        result.classList.add('tui-grid');
+        updateVerticalFlow(result, json, idMap);
+    } else if(type == 'tabbedFlow') {
+        result = document.createElement('div');
+        result.classList.add('tui-tabbedflow');
+        updateTabbedFlow(result, json, idMap);
+    } else if(type == 'verticalScroll') {
+        result = document.createElement('div');
+        result.classList.add('tui-vertical-scroll');
+        updateVerticalScroll(result, json, idMap);
+    } else if(type == 'refreshButton') {
+        result = document.createElement('div');
+        result.classList.add('tui-refresh-button-container');
+        Object.entries(json['parameters']).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', key);
+            input.setAttribute('value', value);
+            result.appendChild(input);
+        });
+        const button = document.createElement('button');
+        button.classList.add('tui-refresh-button');
+        button.setAttribute('type', 'button');
+        button.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
+        button.textContent = json['label'];
+        result.appendChild(button);
+        instrumentRefreshButton(button);
+        elementToBeStyled = button;
+    } else if (type == 'navbutton') {
+        result = document.createElement('form');
+        result.classList.add('tui-navbutton');
+        result.setAttribute('method', 'POST');
+        result.setAttribute('action', json['target']);
+        Object.entries(json['parameters']).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', key);
+            input.setAttribute('value', value);
+            result.appendChild(input);
+        });
+        const button = document.createElement('button');
+        button.setAttribute('type', 'submit');
+        button.textContent = json['label'];
+        result.appendChild(button);
+        instrumentNavButton(result);
+    } else if (type == 'download_button') {
+        result = document.createElement('button');
+        result.classList.add('tui-download-button');
+        result.textContent = json['label'];
+        result.setAttribute('target', json['target']);
+        result.setAttribute('downloadName', json['downloadName']);
+        Object.entries(json['parameters']).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', key);
+            input.setAttribute('value', value);
+            result.appendChild(input);
+        });
+        result.setAttribute('onClick', 'downloadFromButton(this)');
+    } else if(type == 'navlink') {
+        result = document.createElement('a');
+        result.classList.add('tui-navlink');
+        result.setAttribute('href', json['target']);
+        result.textContent = json['label'];
+    } else if(type == 'image') {
+        result = document.createElement('img');
+        result.setAttribute('src', json['source']);
+        result.setAttribute('alt', json['text']);
+    } else if(type == 'form') {
+        result = createForm(json, idMap);
+    } else if(type == 'modalform') {
+        result = createModalForm(json, idMap);
+    } else if(type == 'search_form') {
+        result = createSearchForm(json, idMap);
+    } else {
+        result = null;
+    }
+
+    if(elementToBeStyled == null) {
+        elementToBeStyled = result;
+    }
+    if(elementToBeStyled != null && json['style'] != null) {
+        var style = '';
+        Object.entries(json['style']).forEach(([key, value]) => {
+            style += key + ':' + value + ';';
+        });
+        elementToBeStyled.setAttribute('style', style);
+    }
+
+    return result;
+}
+
+/*
+    Replaces 'idsSeparatedByComa' where ids are found in 'idMap'.
+    @param idMap gives: TUID found in fresh json -> TUID in current page's elements
+*/
+function adaptRefreshListeners(json, idMap) {
+    const idsSeparatedByComa = json['refreshListeners'];
+    if(idsSeparatedByComa == null) {
+        console.warn("Attribute 'refreshListeners' in json of type '" + json['type'] + "'.");
+    } else {
+        if(idMap == null) {
+            return idsSeparatedByComa;
+        } else {
+            var result = '';
+            idsSeparatedByComa.split(",").forEach(function(id, i) {
+                if(idMap.has(id)) {
+                    result = result + idMap.get(id) + ',';
+                } else {
+                    result = result + id + ',';
+                }
+            });
+            if(result.endsWith(',')) {
+                return result.slice(0, -1);
+            } else {
+                return result;
+            }
+        }
+    }
+}
+
+/*
+    @param name The tag name for the contained element to create.
+    @param containedElement    optional. When given, it is used as the contained element (then parameter 'name' is not used).
+*/
+function createElementWithContainer(name, containerClass, containedElement) {
+    const containerElement = document.createElement('div');
+    containerElement.classList.add('tui-refreshable-container');
+    containerElement.classList.add(containerClass);
+    const newElement = containedElement == null? document.createElement(name) : containedElement;
+    containerElement.append(newElement);
+
+    instrumentWithErrorMessage(containerElement);
+
+    return {container: containerElement, element: newElement};
+}
+
+function instrumentWithParameters(container, json) {
+    if(json['parameters'] != null) {
+        const parametersDiv = document.createElement('div');
+        parametersDiv.classList.add('fetch-parameters');
+        container.appendChild(parametersDiv);
+        appendHiddenInputs(parametersDiv, json['parameters']);
+    }
+}
+
+/*
+    Updates the div that contains the hidden inputs with incoming component's parameters only if they are defined.
+    This is called only for refreshable components.
+    The parameters' div is a direct child of the container div, and only exists when the component has a source.
+*/
+function updateParameters(refreshableElement, json) {
+    if(json['parameters'] != null) {
+        const container = refreshableElement.parentElement;
+        if(container != null) {
+            let parametersDiv = container.querySelector('.fetch-parameters');
+            if(parametersDiv == null) {
+                parametersDiv = document.createElement('div');
+                parametersDiv.classList.add('fetch-parameters');
+                container.appendChild(parametersDiv);
+            } else {
+                parametersDiv.innerHTML = ''; // Resetting parameters
+            }
+            appendHiddenInputs(parametersDiv, json['parameters']);
+        }
+    }
+}
+
+function appendHiddenInputs(parametersDiv, jsonMap) {
+    for(let name in jsonMap) {
+        var value = jsonMap[name];
+        const hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', name);
+        hiddenInput.setAttribute('value', value);
+        parametersDiv.appendChild(hiddenInput);
+    }
+}
+
+function instrumentWithErrorMessage(element) {
+     const errorMessageElement = document.createElement('div');
+     errorMessageElement.setAttribute('class', 'fetch-error-message');
+     element.insertBefore(errorMessageElement,element.firstChild);
+}
+
+function showFetchError(element, error) {
+    const containerElement = element.parentElement;
+    containerElement.classList.add('fetch-error');
+    const errorDiv = containerElement.querySelectorAll('.fetch-error-message')[0];
+    errorDiv.innerText = error.message;
+    errorDiv.style.display = 'block';
+}
+
+function hideFetchError(element) {
+    const containerElement = element.parentElement;
+    containerElement.classList.remove('fetch-error');
+    const errorDiv = containerElement.querySelectorAll('.fetch-error-message')[0];
+    errorDiv.innerText = '';
+    errorDiv.style.display = 'none';
+}
+
+// GRIDS
+
+function updateGrid(gridElement, json, idMap) {
+    const rows = parseInt(json['rows']);
+    const columns = parseInt(json['columns']);
+    gridElement.style.gridTemplateRows = json['rows-width'];
+    gridElement.style.gridTemplateColumns = json['columns-width'];
+    gridElement.innerHTML = '';
+
+    for(var row = 0; row < rows; row++) {
+        for(var column = 0; column < columns; column++) {
+            const childName = '' + row + '_' + column;
+            var childElement;
+            if(Object.hasOwn(json, childName)) {
+                childElement = createComponent(json[childName], idMap);
+            } else {
+                childElement = document.createElement('p');
+            }
+            gridElement.appendChild(childElement);
+        }
+    }
+
+    updateParameters(gridElement, json);
+}
+
+// FLOWS
+
+function updateVerticalFlow(flowElement, json, idMap) {
+    flowElement.style.placeItems = 'center';
+    flowElement.style.gridTemplateRows = 'auto';
+    switch(json['width']) {
+        case 'MAX': flowElement.style.gridTemplateColumns = '0% 100% 0%'; break;
+        case 'WIDE': flowElement.style.gridTemplateColumns = 'min-content 1fr min-content'; break;
+        case 'NORMAL': flowElement.style.gridTemplateColumns = '1fr min-content 1fr'; break;
+    }
+    const preParagraph = document.createElement('p');
+    giveMarginReadingProperties(preParagraph, json['width']);
+    flowElement.appendChild(preParagraph);
+    const flowContainer = document.createElement('div');
+    flowElement.appendChild(flowContainer);
+    flowContainer.style.display = 'grid';
+    flowContainer.style.gridTemplateRows = 'auto';
+    for(var child of json['content']) {
+        const childContainer = document.createElement('div');
+        flowContainer.appendChild(childContainer);
+        childContainer.style.textAlign = 'center';
+        const childElement = createComponent(child, idMap);
+        childContainer.appendChild(childElement);
+    }
+    const postParagraph = document.createElement('p');
+    giveMarginReadingProperties(postParagraph, json['width']);
+    flowElement.appendChild(postParagraph);
+}
+
+function giveCenterReadingProperties(centerContainer, width) {
+    if(width == 'NORMAL') {
+        pElement.classList.add('tui-reading-normal-area');
+    }
+}
+
+function giveMarginReadingProperties(pElement, width) {
+    if(width == 'WIDE') {
+        pElement.classList.add('tui-reading-wide-margin');
+    }
+}
+
+function updateVerticalScroll(scrollElement, json, idMap) {
+    scrollElement.style.height = '' + json['height_px'] + 'px';
+    for(var child of json['content']) {
+        const childElement = createComponent(child, idMap);
+        scrollElement.appendChild(childElement);
+    }
+}
+
+// TABS
+
+function updateTabbedFlow(tabbedFlowElement, json, idMap) {
+    const tabsNav = document.createElement('div');
+    tabbedFlowElement.appendChild(tabsNav);
+    tabsNav.classList.add('tui-tabnav');
+
+    var index = 1;
+    for(var tab of json['tabs']) {
+        const flowTUID = tab['content']['tuid'];
+        const flow = createComponent(tab['content'], idMap);
+        flow.setAttribute('id', flowTUID);
+        flow.style.width = '100%';
+        flow.classList.add('tui-tab');
+        tabbedFlowElement.appendChild(flow);
+
+        const button = document.createElement('button');
+        button.classList.add('tui-tablink');
+        tabsNav.appendChild(button);
+        if(index == 1) {
+            button.classList.add('tui-tablink-active');
+            flow.style.display = 'block';
+        } else {
+            flow.style.display = 'none';
+        }
+        button.textContent = tab['title'];
+        button.onclick = function() {
+            selectTab(flowTUID, this);
+        };
+
+        index++;
+    }
+}
+
+function selectTab(tabId, tabLink) {
+    const tabs = tabLink
+        .parentElement // tabnav
+        .parentElement // tabbedFlow element, direct children are: tabsnav and tabs
+        .querySelectorAll('.tui-tab');
+    tabs.forEach(function(tab, i) {
+        tab.style.display = 'none';
+    });
+
+    document.getElementById(tabId).style.display = 'block';
+
+    const tabLinks = document.querySelectorAll('.tui-tablink');
+    tabLinks.forEach(function(link, i) {
+        link.setAttribute('class', 'tui-tablink');
+    });
+    tabLink.setAttribute('class', 'tui-tablink tui-tablink-active');
+}
+
+// PANELS
+
+function updatePanel(panelElement, json, idMap) {
+    panelElement.innerHTML = '';
+    panelElement.className = ''; // clears classList
+    panelElement.classList.add('tui-panel');
+    panelElement.classList.add('tui-panel-' + json['align'].toLowerCase());
+
+    const itemSpacingClass =
+        json['align'] == 'VERTICAL_TOP' || json['align'] == 'VERTICAL_CENTER' ?
+        null : 'tui-horizontal-spacing-' + json['spacing'].toLowerCase();
+    if(idMap == null) {
+        idMap = new Map();
+    }
+    idMap.set(json['tuid'].toString(), panelElement.id);
+    for(var child of json['content']) {
+        const element = createComponent(child, idMap);
+        if(element == null) {
+            console.error('Unable to create component from type: ' + child['type']);
+        } else {
+            if(itemSpacingClass != null) {
+                element.classList.add(itemSpacingClass);
+            }
+            panelElement.appendChild(element);
+        }
+    }
+
+    updateParameters(panelElement, json);
+}
+
+function updateModalPanel(panelElement, json) {
+    const button = document.createElement('button');
+    button.classList.add('tui-modal-panel-open-button');
+    button.textContent = json['openButtonLabel'];
+    panelElement.appendChild(button);
+
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('modal');
+    panelElement.appendChild(dialog);
+
+    const flow = document.createElement('div');
+    updatePanel(flow, json);
+    dialog.appendChild(flow);
+
+    const footer = document.createElement('div');
+    footer.classList.add('tui-modalpanel-footer');
+    footer.classList.add('tui-panel-right'); // Align.RIGHT
+    dialog.appendChild(footer);
+
+    const closeButton = document.createElement('button');
+    closeButton.classList.add('tui-panel-close-button');
+    closeButton.textContent = 'Close';
+    footer.appendChild(closeButton);
+
+    instrumentModalPanel(panelElement);
+}
+
+function instrumentModalPanels() {
+    const modalPanelElementss = document.querySelectorAll('.tui-modal-panel');
+    modalPanelElementss.forEach(function(modalPanelElement, i) {
+        instrumentModalPanel(modalPanelElement);
+    });
+}
+
+function instrumentModalPanel(modalPanelElement) {
+    const openButton = modalPanelElement.querySelector('button');
+
+    const dialog = modalPanelElement.querySelector('dialog');
+    const panel = dialog.querySelector('div');
+    const closeButton = dialog.querySelector('.tui-panel-close-button');
+
+    openButton.addEventListener('click', () => {
+        dialog.showModal();
+    });
+    closeButton.addEventListener('click', () => {
+        dialog.close();
+    });
+}
+
+// SECTIONS
+
+function updateSection(element, json, idMap) {
+    var elementForTitle = element;
+    var elementForContent = element;
+    if(json['disclosureType'] != 'NONE') {
+        elementForContent = document.createElement('details');
+        result.appendChild(elementForContent);
+        if(json['disclosureType'] == 'STARTS_OPENED') {
+            elementForContent.setAttribute("open");
+        }
+        elementForTitle = document.createElement('summary');
+        containerNodeForContent.appendChild(elementForTitle);
+    }
+    if(json['customStyleHeader'] != null) {
+        var style = '';
+        Object.entries(json['customStyleHeader']).forEach(([key, value]) => {
+            style += key + ':' + value + ';';
+        });
+        elementForTitle.setAttribute('style', style);
+    }
+    const elementHeader = document.createElement('h' + json['depth']);
+    elementForTitle.appendChild(elementHeader);
+    elementHeader.textContent = json['title'];
+    if(json['disclosureType'] != 'NONE') {
+        elementHeader.style.display = 'inline';
+    }
+    for(var fragment of json['content']) {
+        const component = createComponent(fragment, idMap);
+        element.appendChild(component);
+    }
+}
+
+// PARAGRAPHS
+
+function updateParagraph(element, json, idMap) {
+    element.innerHTML = '';
+    element.className = '';
+    element.classList.add('tui-align-' + json['textAlign'].toLowerCase());
+    for(var fragment of json['content']) {
+        const component = createComponent(fragment, idMap);
+        element.appendChild(component);
+    }
+}
+
+// REFRESH BUTTONS
+
+function instrumentRefreshButtons() {
+    const refreshButtons = document.querySelectorAll('.tui-refresh-button');
+    refreshButtons.forEach(function(button, i) {
+       instrumentRefreshButton(button);
+    });
+}
+
+function instrumentRefreshButton(buttonElement) {
+     buttonElement.addEventListener('click', function() {
+        const data = {};
+        // Button parameters are inside button's container
+        buttonElement.parentElement.querySelectorAll('input').forEach(function(input) {
+            data[input.getAttribute('name')] = input.getAttribute('value');
+        });
+        buttonElement.getAttribute('tui-refresh-listeners').split(",")
+        .forEach(function(id, i) {
+            refreshComponent(id, data);
+        });
+    });
+}
+
+// SEARCH
+
+function createSearchForm(json, idMap) {
+    const formTUID = json['tuid'];
+
+    var result = document.createElement('search');
+    result.classList.add('tui-search');
+    result.setAttribute('tuid', formTUID);
+
+    // Title
+    var label = document.createElement('label');
+    label.textContent = json['title'];
+    if(json['hideTitle'] == 'true') {
+        label.style.display = 'none';
+    }
+    result.appendChild(label);
+
+    // Fields
+    if(json['formDisplayColumns'] != null) {
+        const nbColumns = parseInt(json['formDisplayColumns']);
+        const tableElement = document.createElement('table');
+        result.appendChild(tableElement);
+        var rowElement = document.createElement('tr');
+        tableElement.appendChild(rowElement);
+        var index = 0;
+        json['inputs'].forEach(function(input) {
+            const cellElement = document.createElement('td');
+            rowElement.appendChild(cellElement);
+            var inputDiv = createSearchFormInput(result, input, formTUID, 'tui-form-input');
+            cellElement.appendChild(inputDiv);
+
+            index = index + 1;
+            if(index % nbColumns == 0) {
+                rowElement = document.createElement('tr');
+                tableElement.appendChild(rowElement);
+            }
+        });
+    } else {
+        json['inputs'].forEach(function(input) {
+            createSearchFormInput(result, input, formTUID, 'tui-search-input');
+        });
+    }
+
+    // Parameters
+    const parameters = json['parameters'];
+    for(let name in parameters) {
+        var value = parameters[name];
+        const parameterElement = document.createElement('input');
+        parameterElement.setAttribute('type', 'hidden');
+        parameterElement.setAttribute('name', name);
+        parameterElement.setAttribute('value', value);
+        result.appendChild(parameterElement);
+    }
+
+    // Submit button
+    var submitButton = document.createElement('button');
+    submitButton.textContent = json['submitLabel'];
+    if(json['hideButton'] == 'true') {
+        submitButton.style.display = 'none';
+    }
+    result.appendChild(submitButton);
+
+    if(json['refreshListeners'] != null) {
+        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
+    }
+
+    instrumentSearchForm(result);
+
+    return result;
+}
+
+function createSearchFormInput(searchFormElement, jsonInput, searchFormTUID, cssClass) {
+    var inputDiv = createFormInput(searchFormElement, jsonInput, searchFormTUID);
+    inputDiv.classList.add(cssClass);
+    const labelElement = inputDiv.querySelector('label');
+    labelElement.classList.add('tui-search-input-label');
+    return inputDiv;
+}
+
+function instrumentSearchForms() {
+    const searchForms = document.querySelectorAll('.tui-search');
+    searchForms.forEach(function(searchElement, i) {
+        instrumentSearchForm(searchElement);
+    });
+}
+
+function instrumentSearchForm(searchElement) {
+    const button = searchElement.querySelector('button');
+    button.addEventListener('click', function() {
+        const data = {};
+        searchElement.querySelectorAll('input').forEach(function(inputElement) {
+            if(inputElement.type == 'radio') {
+                if(inputElement.checked) {
+                    data[inputElement.name] = inputElement.value;
+                }
+            } else if(inputElement.type == 'checkbox') {
+                if(inputElement.checked) {
+                    data[inputElement.name] = 'on';
+                } else {
+                    data[inputElement.name] = 'off';
+                }
+            } else {
+                if(inputElement.type == 'search' || inputElement.value != '') {
+                    data[inputElement.name] = inputElement.value;
+                }
+            }
+        });
+        searchElement.getAttribute('tui-refresh-listeners').split(",")
+            .forEach(function(id, i) {
+                refreshComponent(id, data);
+            });
+    });
+
+    searchElement.querySelectorAll("input[type='search']").forEach(function(searchInput, i) {
+        searchInput.addEventListener('keypress', function(event) {
+            if(event.key === 'Enter') {
+                event.preventDefault();
+                button.click();
+            }
+        });
+    });
+}
+
+// FORMS
+
+function createForm(json, idMap) {
+    var result = createFormBase(json, idMap); // Global attributes
+    result.classList.add('tui-form');
+
+    createFieldSet(result, json, false);
+    instrumentForm(result);
+
+    return result;
+}
+
+function createModalForm(json, idMap) {
+    var result = document.createElement('div');
+    result.classList.add('tui-modal-form');
+
+    // Button open
+    const buttonOpen = document.createElement('button');
+    buttonOpen.classList.add('tui-modal-form-open-button');
+    buttonOpen.textContent = json['openButtonLabel'];
+    result.appendChild(buttonOpen);
+
+    // Dialog
+    const dialog = document.createElement('dialog');
+    result.appendChild(dialog);
+    dialog.classList.add('modal');
+
+    var form = createFormBase(json, idMap); // Global attributes
+    dialog.appendChild(form);
+    createFieldSet(form, json, true);
+
+    instrumentModalForm(result);
+
+    return result;
+}
+
+function createFormBase(json, idMap) {
+    var result = document.createElement('form');
+    result.setAttribute('id', json['tuid']);
+    instrumentWithErrorMessage(result);
+    result.setAttribute('action', json['target']);
+    result.setAttribute('method', 'post');
+    result.setAttribute('enctype', 'multipart/form-data');
+    if(json['opensPageSource'] != null) {
+        result.setAttribute('tui-opens-page', json['opensPageSource']);
+    }
+    if(json['refreshListeners'] != null) {
+        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
+    }
+    return result;
+}
+
+function createFieldSet(form, json, isModal) {
+
+    const fieldset = document.createElement('fieldset');
+    form.appendChild(fieldset);
+    const legend = document.createElement('legend');
+    legend.textContent = json['title'];
+    fieldset.appendChild(legend);
+    const inputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
+    fieldset.appendChild(inputsDiv);
+    const formTUID = form.getAttribute('tuid');
+
+    // Fields
+    json['inputs'].forEach(function(input) {
+        const formInput = createFormInput(inputsDiv, input, formTUID);
+        formInput.classList.add('tui-form-input');
+        const errorSpan = document.createElement('span');
+        errorSpan.classList.add('tui-input-error');
+        formInput.appendChild(errorSpan);
+    });
+
+    // Hidden parameters
+    for(name in json['parameters']) {
+        const value = json['parameters'][name];
+        createFormHiddenInput(inputsDiv, name, value);
+    };
+
+    // Message
+    const messageDiv = document.createElement('div');
+    messageDiv.setAttribute('id', 'form-message-' + json['tuid']);
+    messageDiv.classList.add('tui-form-message');
+    messageDiv.textContent = ' ';
+    fieldset.appendChild(messageDiv);
+
+    // Footer
+    const footerPanelDiv = createElementWithContainer('div', 'tui-container-panel').container;
+    fieldset.appendChild(footerPanelDiv);
+    footerPanelDiv.classList.add('tui-panel');
+    footerPanelDiv.classList.add('tui-panel-right');
+    footerPanelDiv.classList.add('tui-form-footer');
+
+    if(isModal) {
+        // Button close
+        const buttonClose = document.createElement('button');
+        buttonClose.setAttribute('type', 'button');
+        buttonClose.classList.add('tui-form-close-button');
+        buttonClose.textContent = 'Close';
+        footerPanelDiv.appendChild(buttonClose);
+    }
+
+    // Button reset
+    const buttonReset = document.createElement('button');
+    buttonReset.setAttribute('type', 'reset');
+    buttonReset.classList.add('tui-form-reset-button');
+    buttonReset.textContent = 'Reset';
+    footerPanelDiv.appendChild(buttonReset);
+    // Button submit
+    const buttonSubmit = document.createElement('button');
+    buttonSubmit.setAttribute('type', 'submit');
+    buttonSubmit.textContent = json['submitLabel'];
+    footerPanelDiv.appendChild(buttonSubmit);
+}
+
+function instrumentForms() {
+    const forms = document.querySelectorAll('.tui-form');
+    forms.forEach(function(form, i) {
+        instrumentForm(form);
+    });
+}
+
+function instrumentForm(formElement) {
+    instrumentWithErrorMessage(formElement);
+
+    const resetButton = formElement.querySelector('.tui-form-reset-button');
+    resetButton.addEventListener('click', () => {
+        formElement.reset();
+        completeFormReset(formElement);
+    });
+
+    formElement.addEventListener('submit', e => {
+        e.preventDefault();
+
+        const url = formElement.action;
+        hideFetchErrorInElement(formElement);
+        hideSuccessMessage(formElement);
+        startFormPending(formElement);
+        fetch(url, {
+                method: formElement.method,
+                enctype: 'multipart/form-data',
+                body: prepareFormData(formElement)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    throw new Error(`HTTP error, status = ${response.status}`);
+                }
+                hideFetchErrorInElement(formElement);
+                stopFormPending(formElement);
+                return response.json();
+            })
+            .then((json) => {
+                onFormResponse(formElement, json);
+            })
+            .catch(error => {
+                stopFormPending(formElement);
+                showFetchErrorInElement(formElement, error)
+            });
+    })
+}
+
+function instrumentModalForms() {
+    const modalFormsContainers = document.querySelectorAll('.tui-modal-form');
+    modalFormsContainers.forEach(function(formContainer, i) {
+        instrumentModalForm(formContainer);
+    });
+}
+
+function instrumentModalForm(formContainer) {
+    const openButton = formContainer.querySelector('button');
+    const dialog = formContainer.querySelector('dialog');
+    const form = dialog.querySelector('form');
+    const closeButton = form.querySelector('.tui-form-close-button');
+    const submitButton = form.querySelector('.tui-form-submit-button');
+
+    openButton.addEventListener('click', () => {
+        dialog.showModal();
+    });
+    closeButton.addEventListener('click', () => {
+        hideSuccessMessage(form);
+        dialog.close();
+    });
+    form.addEventListener('reset', e => {
+        form.reset();
+        completeFormReset(form);
+    });
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const url = form.action;
+        hideFetchErrorInElement(form);
+        hideSuccessMessage(form);
+        startFormPending(form);
+        fetch(url, {
+                method: form.method,
+                enctype: 'multipart/form-data',
+                body: prepareFormData(form)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    throw new Error(`HTTP error, status = ${response.status}`);
+                }
+                hideFetchErrorInElement(form);
+                stopFormPending(form);
+                return response.json();
+            })
+            .then((json) => {
+                onFormResponse(form, json);
+            })
+            .catch(error => {
+                stopFormPending(form);
+                showFetchErrorInElement(form, error);
+            });
+    });
+}
+
+/*
+    Builds the body to be sent to backend with the following rules:
+    - A file input is renamed with prefixed '_file_' so it can be easily detected by the backend.
+    - Any other type of input is added without modification
+    - Any session parameter is added, but may be overridden by input with same name
+*/
+function prepareFormData(formElement) {
+    const data = new FormData();
+
+    // Session parameters
+    for(let key in SESSION_PARAMS) {
+        data.append(key, SESSION_PARAMS[key]);
+    }
+
+    // Form inputs
+    formElement.querySelectorAll('input').forEach(function(inputElement) {
+        if(inputElement.type == 'file' && inputElement.files[0] != null) {
+            data.append('_file_' + inputElement.name, inputElement.files[0], inputElement.files[0].name);
+        } else if(inputElement.type == 'radio') {
+            if(inputElement.checked) {
+                data.append(inputElement.name, inputElement.value);
+            }
+        } else if(inputElement.type == 'checkbox') {
+            if(inputElement.checked) {
+                data.append(inputElement.name, 'on');
+            } else {
+                data.append(inputElement.name, 'off');
+            }
+        } else {
+            data.append(inputElement.name, inputElement.value);
+        }
+    });
+
+    // Support for text areas
+    formElement.querySelectorAll('textarea').forEach(function(textareaElement) {
+        data.append(textareaElement.name, textareaElement.value);
+    });
+
+    // Support for select
+    formElement.querySelectorAll('select').forEach(function(selectElement) {
+        data.append(selectElement.name, selectElement.value);
+    });
+
+    return data;
+}
+
+function startFormPending(formElement) {
+    const fieldset = formElement.querySelector('fieldset');
+    fieldset.classList.add('form-pending');
+    fieldset.disabled = true;
+}
+
+function stopFormPending(formElement) {
+    const fieldset = formElement.querySelector('fieldset');
+    fieldset.classList.remove('form-pending');
+    fieldset.disabled = false;
+}
+
+function completeFormReset(formElement) {
+    hideSuccessMessage(formElement);
+    hideFetchErrorInElement(formElement);
+    hideInputsErrors(formElement);
+}
+
+function hideInputsErrors(formElement) {
+    const fields = formElement.querySelectorAll('input');
+    fields.forEach(function (field) {
+        field.removeAttribute('title');
+        field.classList.remove("tui-form-input-invalid");
+        const errorElement = field.parentElement.querySelector('.tui-input-error');
+        if(errorElement != null) { // input elements of type radio option do not have an error element.
+            errorElement.textContent = '';
+        }
+    });
+}
+
+function onFormResponse(formElement, json) {
+    hideFetchErrorInElement(formElement);
+    stopFormPending(formElement);
+
+    if(json['status'] == 'ok') {
+        hideInputsErrors(formElement);
+
+        // Show success message
+        const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+        messageElement.classList.remove('tui-form-message-error');
+        messageElement.classList.add('tui-form-message-success');
+        messageElement.textContent = json['message'];
+
+        if(formElement.hasAttribute('tui-refresh-listeners')) {
+            formElement.getAttribute('tui-refresh-listeners').split(",")
+                .forEach(function(id, i) {
+                    refreshComponent(id);
+                })
+        }
+
+        if(json['formUpdate'] != null) {
+            const formUpdate = json['formUpdate'];
+            if(formUpdate['type'] != 'form') {
+                console.error('Unexpected type: ' + formUpdate['type']);
+            } else {
+                formElement.setAttribute('action', formUpdate['target']); // Updating target
+                formElement.querySelector("button[type='submit']").textContent = formUpdate['submitLabel']; // Updating submit label
+
+                const fieldset = formElement.querySelector('fieldset');
+                const legend = fieldset.querySelector('legend'); // Updating title
+                legend.textContent = formUpdate['title'];
+
+                const formTUID = formElement['id'];
+                const newInputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
+                formUpdate['inputs'].forEach(function(input) {
+                    const formInput = createFormInput(newInputsDiv, input, formTUID);
+                    formInput.classList.add('tui-form-input');
+                    const errorSpan = document.createElement('span');
+                    errorSpan.classList.add('tui-input-error');
+                    formInput.appendChild(errorSpan);
+                });
+                fieldset.querySelector('div').replaceWith(newInputsDiv);
+            }
+        } else if(formElement.getAttribute('tui-opens-page') != null) {
+            const openForm = document.createElement('form');
+            openForm.setAttribute('method', 'POST');
+            openForm.setAttribute('action', formElement.getAttribute('tui-opens-page'));
+            openForm.setAttribute('target', '_self');
+            for(let key in SESSION_PARAMS) {
+                const parameterInput = document.createElement('input');
+                parameterInput.setAttribute('type', 'hidden');
+                parameterInput.setAttribute('name', key);
+                parameterInput.setAttribute('value', SESSION_PARAMS[key]);
+                openForm.appendChild(parameterInput);
+            }
+            if(json['parameters'] != null) {
+                for(let key in json['parameters']) {
+                    const parameterInput = document.createElement('input');
+                    parameterInput.setAttribute('type', 'hidden');
+                    parameterInput.setAttribute('name', key);
+                    parameterInput.setAttribute('value', json['parameters'][key]);
+                    openForm.appendChild(parameterInput);
+                }
+            }
+            formElement.appendChild(openForm);
+            openForm.submit();
+        }
+    } else {
+        hideInputsErrors(formElement);
+
+        // Show error message
+        const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+        messageElement.classList.remove('tui-form-message-success');
+        messageElement.classList.add('tui-form-message-error');
+        messageElement.textContent = json['message'];
+
+        Object.keys(json['errors']).forEach(function(key) {
+           const field = formElement.querySelector("[name='" + key + "']");
+           field.classList.add("tui-form-input-invalid");
+           const errorElement = field.parentElement.querySelector('.tui-input-error');
+           errorElement.textContent = json['errors'][key];
+        });
+    }
+}
+
+function createFormHiddenInput(fieldsetElement, name, value) {
+    const inputDiv = document.createElement('div');
+    fieldsetElement.append(inputDiv);
+    const inputElement = document.createElement('input');
+    inputElement.setAttribute('type', 'hidden');
+    inputElement.setAttribute('name', name);
+    inputElement.setAttribute('value', value);
+    inputDiv.appendChild(inputElement);
+}
+
+function createFormInput(fieldsetElement, json, formTUID) {
+    const inputDiv = document.createElement('div');
+    fieldsetElement.append(inputDiv);
+    const inputId = formTUID + '-' + json['name'];
+
+    const inputLabel = document.createElement('label');
+    inputDiv.append(inputLabel);
+    inputLabel.setAttribute('for', inputId);
+    inputLabel.textContent = json['label'];
+
+    var inputElement = null;
+    if(json['type'] == 'textarea') {
+        inputElement = document.createElement('textarea');
+        if(json['initialValue'] != null) {
+            inputElement.textContent = json['initialValue'];
+        }
+    } else if(json['type'] == 'select') {
+        inputElement = document.createElement('select');
+        inputElement.setAttribute('name', json['name']);
+        Object.entries(json['options']).forEach(([key, value]) => {
+            const optionElement = document.createElement('option');
+            optionElement.textContent = value;
+            optionElement.value = key;
+            inputElement.appendChild(optionElement);
+        });
+    } else {
+        inputElement = document.createElement('input');
+        inputElement.setAttribute('type', json['type']);
+        if(json['initialValue'] != null) {
+            inputElement.setAttribute('value', json['initialValue']);
+        }
+
+        if(json['type'] == 'checkbox') {
+            inputLabel.classList.add('label-checkbox');
+            if(json['checked'] == 'true') {
+                inputElement.checked = true;
+            }
+        }
+    }
+
+    inputDiv.append(inputElement);
+    inputElement.setAttribute('id', inputId);
+    inputElement.setAttribute('name', json['name']);
+    if(json['placeholder'] != null) {
+        inputElement.setAttribute('placeholder', json['placeholder']);
+    }
+
+    return inputDiv;
+}
+
+function hideSuccessMessage(formElement) {
+    const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+    messageElement.textContent = ' ';
+}
+
+function showFetchErrorInElement(formElement, error) {
+    console.log(error);
+    formElement.classList.add('fetch-error');
+    const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
+    errorDiv.innerText = error;
+    errorDiv.style.display = 'block';
+}
+
+function hideFetchErrorInElement(formElement) {
+    formElement.classList.remove('fetch-error');
+    const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
+    errorDiv.innerText = '';
+    errorDiv.style.display = 'none';
+}
+
+// NAV BUTTONS
+
+function instrumentNavButtons() {
+    const navbuttons = document.querySelectorAll('.tui-navbutton');
+    navbuttons.forEach(function(navbutton, i) {
+        instrumentNavButton(navbutton);
+    });
+}
+
+function instrumentNavButton(element) {
+     for(let key in SESSION_PARAMS) {
+        const parameterInput = document.createElement('input');
+        parameterInput.setAttribute('type', 'hidden');
+        parameterInput.setAttribute('name', key);
+        parameterInput.setAttribute('value', SESSION_PARAMS[key]);
+        element.appendChild(parameterInput);
+    }
+}
+
+// DOWNLOAD BUTTONS
+
+function downloadFromButton(buttonElement) {
+    const url = buttonElement.getAttribute('target');
+    const downloadName = buttonElement.getAttribute('downloadName');
+
+    const data = {};
+    // Button parameters
+    buttonElement.querySelectorAll('input').forEach(function(input) {
+        data[input.getAttribute('name')] = input.getAttribute('value');
+    });
+    // Session parameters
+    Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
+        data[key] = value;
+    });
+
+    // Preparing headers depends on the fetch type
+    var body;
+    var headers;
+    if(FETCH_TYPE == 'JSON') {
+        body = JSON.stringify(Array.from(Object.entries(data)));
+        headers = { 'Content-Type': 'application/json', };
+    } else if(FETCH_TYPE == 'FORM_DATA') {
+        body = new FormData();
+        for(let key in data) {
+            body.append(key, data[key]);
+        }
+        headers = {};
+    }
+
+    fetch(url, {
+        method: 'POST',
+        headers: headers,
+        responseType: 'blob',
+        body: body,
+    })
+    .then(response => {
+        if(!response.ok) {
+            throw new Error(`HTTP error, status = ${response.status}`);
+        }
+        return response.blob()
+        })
+    .then(blob => {
+        const volatileLink = document.createElement('a');
+        volatileLink.href = window.URL.createObjectURL(blob);
+        volatileLink.download = downloadName;
+        document.body.appendChild(volatileLink);
+        volatileLink.click();
+        document.body.removeChild(volatileLink);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+
+// TABLES
+
+function instrumentTables() {
+    const tables = document.querySelectorAll('table.tui-table, table.tui-tablepicker');
+    tables.forEach(function(table, i) {
+        if(table.hasAttribute('tui-source')) {
+            const sourcePath = table.getAttribute('tui-source');
+
+            if(table.hasAttribute('tui-page-size')) {
+                const pageSize = parseInt(table.getAttribute('tui-page-size'));
+                const tableNavigation = document.createElement('div');
+                tableNavigation.classList.add('tui-table-navigation');
+
+                const previousPageButton = document.createElement('button');
+                previousPageButton.type = 'button';
+                previousPageButton.innerHTML = '<';
+                previousPageButton.onclick = function() {
+                    const pageNumber = parseInt(table.getAttribute('tui-page-number'));
+                    const fetchData = getFetchData(table);
+                    fetchData.page_size = pageSize;
+                    fetchData.page_number = Math.max(1, pageNumber - 1);
+                    refreshComponent(table.id, fetchData);
+                };
+                tableNavigation.append(previousPageButton);
+
+                const nextPageButton = document.createElement('button');
+                nextPageButton.type = 'button';
+                nextPageButton.innerHTML = '>';
+                nextPageButton.onclick = function() {
+                    const pageNumber = parseInt(table.getAttribute('tui-page-number'));
+                    const lastPageNumber = parseInt(table.getAttribute('tui-last-page-number'));
+                    const fetchData = getFetchData(table);
+                    fetchData.page_size = pageSize;
+                    fetchData.page_number = Math.min(pageNumber + 1, lastPageNumber);
+                    refreshComponent(table.id, fetchData);
+                };
+                tableNavigation.append(nextPageButton);
+
+                const pageLocationSpan = document.createElement('span');
+                tableNavigation.append(pageLocationSpan);
+
+                const tableContainer = table.parentElement;
+                tableContainer.append(tableNavigation);
+
+                const tableSize = parseInt(table.getAttribute('tui-table-size'));
+                const firstItemNumber = parseInt(table.getAttribute('tui-first-item-number'));
+                const lastItemNumber = parseInt(table.getAttribute('tui-last-item-number'));
+                updateTableNavigation(table, tableSize, firstItemNumber, lastItemNumber);
+            }
+        }
+
+        instrumentTablePicker(table);
+    });
+}
+
+function instrumentTablePicker(tablePickerElement) {
+
+    // Getting optional refresh listeners ids, either from table attributes or in table's container attributes.
+    var refreshListenersAttribute = null;
+    if(tablePickerElement.hasAttribute('tui-refresh-listeners')) { // table has the attribute
+        refreshListenersAttribute = tablePickerElement.getAttribute('tui-refresh-listeners');
+    } else {
+        var optionalContainerElement = tablePickerElement.parentElement;
+        if(optionalContainerElement) { // table is in a container that has the attribute
+            refreshListenersAttribute = optionalContainerElement.getAttribute('tui-refresh-listeners');
+        }
+    }
+
+    if(refreshListenersAttribute != null) {
+        const columns = Array.from(tablePickerElement.querySelectorAll("th")).map(cell => cell.textContent);
+
+        for(const row of tablePickerElement.querySelectorAll("tbody tr")) {
+            const values = Array.from(row.querySelectorAll("td"))
+                .map(td => {
+                    if(td.firstElementChild == null) {
+                        return td.textContent;
+                    } else if(td.firstElementChild.tagName.toUpperCase() == 'SPAN') {
+                        return td.firstElementChild.textContent;
+                    } else { // Any other UIComponent
+                        return null;
+                    }
+                });
+
+            const data = {};
+            var colIndex = 0;
+            for(const column of columns) {
+                const value = values[colIndex++];
+                if(value != null) {
+                    data[column] = value;
+                }
+            }
+
+            row.addEventListener("click", function () {
+                refreshListenersAttribute.split(",")
+                    .forEach(function(id, i) {
+                        refreshComponent(id, data);
+                    })
+            });
+        }
+    }
+}
+
+/*
+    json may be either 'Table' or 'TableData'
+*/
+async function updateTable(tableElement, json, idMap) {
+    var caption = tableElement.getElementsByTagName('caption')[0];
+    if(caption == null) {
+        caption = document.createElement('caption');
+        tableElement.append(caption);
+    }
+    if(json['title'] != null) {
+        caption.textContent = json['title'];
+    }
+    if(json['hiddenTitle'] == 'true') {
+        caption.style.display = 'none';
+    }
+
+    const hiddenColumnsIndexes = 'hiddenColumns' in json? json['hiddenColumns'] : [];
+
+    if(json['type'] == 'table') {
+        const freshHead = document.createElement('thead');
+        const headRow = document.createElement('tr');
+        freshHead.append(headRow);
+        for(var c = 0; c < json['thead'].length; c++) {
+            const cell = json['thead'][c];
+            const freshCell = document.createElement("th");
+            if(hiddenColumnsIndexes.includes(c)) {
+                freshCell.classList.add("tui-hidden-column");
+            }
+            headRow.append(freshCell);
+            freshCell.textContent = cell;
+        }
+        if(json['hiddenHead'] == 'true') {
+            headRow.classList.add('tui-hidden-head');
+        }
+        tableElement.getElementsByTagName('thead')[0].replaceWith(freshHead);
+    }
+
+    const freshBody = document.createElement('tbody');
+    for(var r = 0; r < json['tbody'].length; r++) {
+        const row = json['tbody'][r];
+        const freshRow = document.createElement("tr");
+        for(var c = 0; c < row.length; c++) {
+            const cell = row[c];
+            const freshCell = document.createElement("td");
+            if(hiddenColumnsIndexes.includes(c)) {
+                freshCell.classList.add("tui-hidden-column");
+            }
+            freshRow.append(freshCell);
+            freshCell.append(createComponent(cell, idMap));
+        }
+        freshBody.append(freshRow);
+    }
+
+    if('pageNumber' in json) {
+        tableElement.setAttribute('tui-page-number', json['pageNumber']);
+        tableElement.setAttribute('tui-last-page-number', json['lastPageNumber']);
+        updateTableNavigation(tableElement, json['tableSize'], json['firstItemNumber'], json['lastItemNumber']);
+    }
+
+    tableElement.getElementsByTagName('tbody')[0].replaceWith(freshBody);
+
+    updateParameters(tableElement, json);
+    instrumentTablePicker(tableElement.parentElement);
+}
+
+function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastItemNumber) {
+    tableElement
+        .parentElement
+        .getElementsByClassName('tui-table-navigation')[0]
+        .getElementsByTagName('span')[0]
+        .innerText = `${firstItemNumber} - ${lastItemNumber} (${tableSize})`;
+}
+
+// SVG
+
+function updateSVG(svgElement, json) {
+    const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    if(svgElement.getAttribute('id') != null) {
+        newElement.setAttribute('id', svgElement.getAttribute('id'));
+    } else if(json['tuid'] != null){
+        newElement.setAttribute('id', json['tuid']);
+    }
+
+    if(json['tui-source'] != null) {
+        newElement.setAttribute('tui-source', json['tui-source']);
+    } else if(svgElement.getAttribute('tui-source') != null) {
+        newElement.setAttribute('tui-source', svgElement.getAttribute('tui-source'));
+    }
+
+    copySVGAttributes(json, newElement); // Setting attributes given by backend
+
+    const svgContainer = svgElement.parentElement;
+    if(svgContainer != null) {
+        svgContainer.removeChild(svgElement);
+        svgContainer.appendChild(newElement);
+    } else {
+        svgElement.replaceWith(newElement);
+    }
+
+    // Creating SVG components
+    const jsonComponents = Array.from(json['components']);
+    jsonComponents.forEach(function(jsonComponent, i) {
+        const svgComponentElement = createSVGComponent(jsonComponent);
+        newElement.appendChild(svgComponentElement);
+    });
+
+    const jsonHoveringEntries = Array.from(json['hoveringComponents']);
+    jsonHoveringEntries.forEach(function(jsonZoneMap, i) {
+        const jsonConnectedComponent = jsonZoneMap['connectedComponent'];
+        const connectedComponent = createSVGComponent(jsonConnectedComponent);
+        const connectedComponentTUID = jsonConnectedComponent['id'];
+        connectedComponent.setAttribute('id', connectedComponentTUID);
+        newElement.appendChild(connectedComponent);
+
+        const hoveringArea = createSVGComponent(jsonZoneMap['area']);
+        hoveringArea.setAttribute('connectedtuid', connectedComponentTUID);
+        hoveringArea.classList.add('tui-svg-hovering');
+        newElement.appendChild(hoveringArea);
+    });
+
+    instrumentSVG(newElement);
+
+    updateParameters(newElement, json);
+
+    return newElement;
+}
+
+function createSVGComponent(json) {
+    const resultElement = document.createElementNS("http://www.w3.org/2000/svg", json['type']);
+    if(json['type'] == 'g') {
+        const jsonComponents = Array.from(json['components']);
+        jsonComponents.forEach(function(jsonComponent, i) {
+            const svgComponentElement = createSVGComponent(jsonComponent);
+            resultElement.appendChild(svgComponentElement);
+        });
+    }
+    copySVGAttributes(json, resultElement);
+    return resultElement;
+}
+
+function copySVGAttributes(svgJson, svgElement) {
+    for(let key in svgJson) {
+        if(svgJson.hasOwnProperty(key)) {
+            if(key == 'title') {
+                const title = document.createElementNS("http://www.w3.org/2000/svg", 'title');
+                title.textContent = svgJson[key];
+                svgElement.appendChild(title);
+            } else if(key == 'innerText') {
+                svgElement.textContent = svgJson[key];
+            } else if(key != 'type' && key != 'components') {
+                svgElement.setAttribute(key, svgJson[key]);
+            }
+        }
+    }
+}
+
+function instrumentSVGs() {
+    const svgs = document.querySelectorAll('svg');
+    svgs.forEach(function(svgElement, i) {
+        instrumentSVG(svgElement);
+    });
+}
+
+function instrumentSVG(svgElement) {
+    svgElement.querySelectorAll('.tui-svg-clickable').forEach(function(clickableElement, i) {
+        clickableElement.addEventListener("click", onClickSVGZone);
+    });
+
+    svgElement.querySelectorAll('.tui-svg-hovering').forEach(function(hoveringElement, i) {
+        const connectedElementTUID = hoveringElement.getAttribute('connectedtuid');
+        hoveringElement.onmouseover = () => {
+            document.getElementById(connectedElementTUID).style.display = "inline";
+        };
+        hoveringElement.onmouseout = () => {
+            document.getElementById(connectedElementTUID).style.display = "none";
+        };
+    });
+}
+
+function onClickSVGZone(event) {
+    const clickedElement = event.target;
+    const ancestorSGVElement = getAncestorSVG(clickedElement);
+    if(ancestorSGVElement == null) {
+        console.error("No ancestor SVG found for clicked zone: " + clickedElement);
+        return
+    }
+
+    const parametersAsString = clickedElement.getAttribute("parameters");
+    console.log("parameters: " + parametersAsString);
+    const data = {};
+    const parameters = JSON.parse(parametersAsString);
+    parameters.forEach(parameter => {
+        data[parameter.name] = parameter.value;
+    });
+
+    ancestorSGVElement.getAttribute('tui-refresh-listeners').split(",")
+        .forEach(function(id, i) {
+            refreshComponent(id, data);
+        });
+}
+
+function getAncestorSVG(svgComponentElement) {
+    let currentElement = svgComponentElement;
+    while(currentElement && currentElement.nodeName.toLowerCase() !== "svg") {
+        currentElement = currentElement.parentNode;
+    }
+    return currentElement;
+}
+</script></head><body onload="onload()" class="tui-grid" style="grid-template-columns:100%;grid-template-rows:min-content auto min-content;"><main><div class="tui-grid tui-vertical-flow" style="grid-template-columns:minmax(20px,1fr) minmax(65em,1fr) minmax(20px,1fr);grid-template-rows:auto;justify-self:stretch;place-items:center;"><p/><div class="tui-grid" style="grid-template-columns:1fr;"><div class="tui-vertical-spacing-normal" style="text-align:center;"><section style="margin:auto;"><h1>Tables</h1><p class="tui-align-left"><span>The Table object displays string data. Any formating must be done before values are put into a Table.</span></p><p class="tui-align-left"><span>Example code:</span></p><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="color:#b66025;font-family:Consolas;line-height:1.4;">final</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">List</span><span style="font-family:Consolas;line-height:1.4;"><</span><span style="font-family:Consolas;line-height:1.4;">String</span><span style="font-family:Consolas;line-height:1.4;">> </span><span style="font-family:Consolas;line-height:1.4;">columns</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">List</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Person"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">);<br/>		</span><span style="color:#b66025;font-family:Consolas;line-height:1.4;">final</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="color:#b66025;font-family:Consolas;line-height:1.4;">new</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobbies"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="font-family:Consolas;line-height:1.4;">columns</span><span style="font-family:Consolas;line-height:1.4;">);<br/>		</span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">append</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">Map</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Person"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Pierre"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Pétanque"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"42"</span><span style="font-family:Consolas;line-height:1.4;">));<br/>		</span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">append</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">Map</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Person"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Paul"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Rugby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"35"</span><span style="font-family:Consolas;line-height:1.4;">));<br/>		</span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">append</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">Map</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Person"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Jacques"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Hobby"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Cycling"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"50"</span><span style="font-family:Consolas;line-height:1.4;">));</span></p><p class="tui-align-left"><span>produces:</span></p><div class="tui-panel tui-panel-center"><table class="tui-table tui-horizontal-spacing-normal"><caption>Hobbies</caption><thead><tr><th>Person</th><th>Hobby</th><th>Age</th></tr></thead><tbody><tr><td><span>Pierre</span></td><td><span>Pétanque</span></td><td><span>42</span></td></tr><tr><td><span>Paul</span></td><td><span>Rugby</span></td><td><span>35</span></td></tr><tr><td><span>Jacques</span></td><td><span>Cycling</span></td><td><span>50</span></td></tr></tbody></table></div><section><h2>Display options</h2><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">hideHead</span><span style="font-family:Consolas;line-height:1.4;">();</span></p><div class="tui-panel tui-panel-center"><table class="tui-table tui-horizontal-spacing-normal" tui-hidden-head="true"><caption>Hobbies</caption><thead><tr class="tui-hidden-head"><th>Person</th><th>Hobby</th><th>Age</th></tr></thead><tbody><tr><td><span>Pierre</span></td><td><span>Pétanque</span></td><td><span>42</span></td></tr><tr><td><span>Paul</span></td><td><span>Rugby</span></td><td><span>35</span></td></tr><tr><td><span>Jacques</span></td><td><span>Cycling</span></td><td><span>50</span></td></tr></tbody></table></div><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">hideColumn</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#22c143;font-family:Consolas;line-height:1.4;">"Age"</span><span style="font-family:Consolas;line-height:1.4;">);</span></p><div class="tui-panel tui-panel-center"><table class="tui-table tui-horizontal-spacing-normal" tui-hidden-columns="2"><caption>Hobbies</caption><thead><tr><th>Person</th><th>Hobby</th><th class="tui-hidden-column">Age</th></tr></thead><tbody><tr><td><span>Pierre</span></td><td><span>Pétanque</span></td><td class="tui-hidden-column"><span>42</span></td></tr><tr><td><span>Paul</span></td><td><span>Rugby</span></td><td class="tui-hidden-column"><span>35</span></td></tr><tr><td><span>Jacques</span></td><td><span>Cycling</span></td><td class="tui-hidden-column"><span>50</span></td></tr></tbody></table></div><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">hideTitle</span><span style="font-family:Consolas;line-height:1.4;">();</span></p><div class="tui-panel tui-panel-center"><table class="tui-table tui-horizontal-spacing-normal"><caption style="display:none;">Hobbies</caption><thead><tr><th>Person</th><th>Hobby</th><th>Age</th></tr></thead><tbody><tr><td><span>Pierre</span></td><td><span>Pétanque</span></td><td><span>42</span></td></tr><tr><td><span>Paul</span></td><td><span>Rugby</span></td><td><span>35</span></td></tr><tr><td><span>Jacques</span></td><td><span>Cycling</span></td><td><span>50</span></td></tr></tbody></table></div></section><section><h2>Pagination</h2><p class="tui-align-left"><span>When the table is too long to be displayed at once, then you can configure a pagination. Of course it is not available on<br/>a static Table, you will need the Table to have a source and a corresponding web service on backend side.</span></p><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="color:#b66025;font-family:Consolas;line-height:1.4;">int</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">pageSize</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">12</span><span style="font-family:Consolas;line-height:1.4;">;<br/></span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">setPaging</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">pageSize</span><span style="font-family:Consolas;line-height:1.4;">);</span></p><p class="tui-align-left"><span>Once you have set a paging size on your table, it will be displayed with page information and navigation buttons.</span></p><p class="tui-align-left"><span>The page your are reading is static, that's why it is not possible to show any example of pagination, sorry.</span></p><p class="tui-align-left"><span>At the backend side, you must provider a TableData object which contains the rows of the selected page, and the pagination information. There is a convenient way to obtain a TableData instance from either a Table, a TablePicker or a TableData, this is the method getPage:</span></p><p class="tui-align-left" style="background-color:#f0f0f0;border-color:#c8c8c8;border-radius:3px;border-style:solid;border-width:1px;padding:5px 5px 5px 5px;page-break-inside:avoid;"><span style="font-family:Consolas;line-height:1.4;">// </span><span style="font-family:Consolas;line-height:1.4;">Getting</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">or</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">building</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">the</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;"><br/></span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;"> = [...]<br/><br/>// </span><span style="font-family:Consolas;line-height:1.4;">Reading</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">page</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">number</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">and</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">page</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">size</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">from</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">request</span><span style="font-family:Consolas;line-height:1.4;"><br/></span><span style="color:#b66025;font-family:Consolas;line-height:1.4;">int</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">pageNumber</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">reader</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">getIntParameter</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">PARAMETER</span><span style="font-family:Consolas;line-height:1.4;">_</span><span style="font-family:Consolas;line-height:1.4;">PAGE</span><span style="font-family:Consolas;line-height:1.4;">_</span><span style="font-family:Consolas;line-height:1.4;">NUMBER</span><span style="font-family:Consolas;line-height:1.4;">);<br/></span><span style="color:#b66025;font-family:Consolas;line-height:1.4;">int</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">pageSize</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">reader</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">getIntParameter</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">Table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">PARAMETER</span><span style="font-family:Consolas;line-height:1.4;">_</span><span style="font-family:Consolas;line-height:1.4;">PAGE</span><span style="font-family:Consolas;line-height:1.4;">_</span><span style="font-family:Consolas;line-height:1.4;">SIZE</span><span style="font-family:Consolas;line-height:1.4;">);<br/><br/>// </span><span style="font-family:Consolas;line-height:1.4;">Giving</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">back</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">the</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">TableData</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">of</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">selected</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">page</span><span style="font-family:Consolas;line-height:1.4;"><br/></span><span style="color:#123dc3;font-family:Consolas;line-height:1.4;">TableData</span><span style="font-family:Consolas;line-height:1.4;"> </span><span style="font-family:Consolas;line-height:1.4;">dataToRespond</span><span style="font-family:Consolas;line-height:1.4;"> = </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">getPage</span><span style="font-family:Consolas;line-height:1.4;">(</span><span style="font-family:Consolas;line-height:1.4;">pageNumber</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="font-family:Consolas;line-height:1.4;">pageSize</span><span style="font-family:Consolas;line-height:1.4;">, </span><span style="font-family:Consolas;line-height:1.4;">table</span><span style="font-family:Consolas;line-height:1.4;">.</span><span style="font-family:Consolas;line-height:1.4;">size</span><span style="font-family:Consolas;line-height:1.4;">());<br/></span></p></section></section></div></div><p/></div></main><footer><div class="tui-panel tui-panel-left"></div></footer></body></html>
