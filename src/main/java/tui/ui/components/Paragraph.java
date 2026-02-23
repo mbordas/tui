@@ -42,6 +42,7 @@ public class Paragraph extends UIRefreshableComponent {
 	public static class Text extends UIComponentWithText {
 
 		public static final String HTML_TAG = "span";
+		public static final String HTML_CLASS = "tui-text";
 		public static final String JSON_TYPE = "text";
 		public static final String JSON_ATTRIBUTE_CONTENT = "content";
 
@@ -58,7 +59,8 @@ public class Paragraph extends UIRefreshableComponent {
 		@Override
 		public HTMLNode toHTMLNode() {
 			final HTMLNode result = new HTMLNode(HTML_TAG);
-			result.setText(m_text.replaceAll("\\n", "<br/>"));
+			result.addClass(HTML_CLASS);
+			result.setText(m_text);
 			applyCustomStyle(result);
 			return result;
 		}

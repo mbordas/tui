@@ -38,8 +38,7 @@ public class TUIDocsPanels extends Page {
 
 		final Section sectionAlignment = chapter.createSubSection("Alignment");
 		sectionAlignment.appendParagraph("""
-				Different 'Align' options provide different ways to organize the elements inside the panel. The following examples show
-				how components are displayed in a panel depending on the panel's align option.""");
+				Different 'Align' options provide different ways to organize the elements inside the panel. The following examples show how components are displayed in a panel depending on the panel's align option.""");
 		for(Panel.Align align : Panel.Align.values()) {
 			if(!align.name().startsWith("VERTICAL")) {
 				sectionAlignment.appendParagraph("Example with ").appendBold("align = " + align);

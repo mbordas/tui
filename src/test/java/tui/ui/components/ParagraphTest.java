@@ -49,6 +49,7 @@ public class ParagraphTest {
 			final List<WebElement> spans = paragraphElement.findElements(By.tagName("span"));
 			assertEquals(prefix, 1, spans.size());
 			assertEquals(prefix, "This is a paragraph.", spans.get(0).getText());
+			assertTrue(prefix, Browser.getClasses(spans.get(0)).contains(Paragraph.Text.HTML_CLASS));
 		});
 	}
 
@@ -79,21 +80,10 @@ public class ParagraphTest {
 						    <input type="hidden" name="param2" value="value2"/>
 						  </div>
 						  <p id="%d" tui-source="/source" class="tui-align-left">
-						    <span>This is a paragraph with parameter</span>
+						    <span class="tui-text">This is a paragraph with parameter</span>
 						  </p>
 						</div>
 						""", paragraph.getTUID()),
-				paragraph.toHTMLNode().toHTML());
-	}
-
-	@Test
-	public void htmlMultiLine() {
-		final Paragraph paragraph = new Paragraph("""
-				Multi-line
-				content""");
-
-		HTMLNode.PRETTY_PRINT = false;
-		assertEquals("<p class=\"tui-align-left\"><span>Multi-line<br/>content</span></p>",
 				paragraph.toHTMLNode().toHTML());
 	}
 

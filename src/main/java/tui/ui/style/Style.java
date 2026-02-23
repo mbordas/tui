@@ -253,6 +253,10 @@ public class Style {
 					z-index: 11;
 				}
 				
+				.tui-text {
+					white-space: pre-wrap;
+				}
+				
 				p button {
 					width: auto;
 				}

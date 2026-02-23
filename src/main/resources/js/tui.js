@@ -248,6 +248,7 @@ function createComponent(json, idMap) {
         updateSection(result, json, idMap);
     } else if(type == 'text') {
         result = document.createElement('span');
+        result.classList.add('tui-text');
         result.textContent = json['content'];
     } else if(type == 'list') {
         if(json['isOrdered' == 'true']) {
