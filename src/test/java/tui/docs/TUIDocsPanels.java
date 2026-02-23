@@ -95,13 +95,13 @@ public class TUIDocsPanels extends Page {
 						+ " how panels fit with the columns sizing configuration of a Grid:");
 		sectionPanelsInGrid.append(new CodeParagraph("""
 				Grid grid = sectionPanelsInGrid.append(new Grid(1, 3));
-						grid.setColumnWidth_px(0, 200);
-						grid.setColumnWidthMaxContent(1);
-						grid.setColumnWidthAuto(2);
+				grid.setColumnWidth_px(0, 200);
+				grid.setColumnWidthMaxContent(1);
+				grid.setColumnWidthAuto(2);
 				
-						grid.set(0, 0, decoratedText("Column width = 200px"));
-						grid.set(0, 1, decoratedText("Column width = max content"));
-						grid.set(0, 2, decoratedText("Column width = auto"));"""));
+				grid.set(0, 0, decoratedText("Column width = 200px"));
+				grid.set(0, 1, decoratedText("Column width = max content"));
+				grid.set(0, 2, decoratedText("Column width = auto"));"""));
 		sectionPanelsInGrid.appendParagraph("The grid has red borders, the panels have purple borders, and text spans have blue borders.");
 
 		final Grid grid = sectionPanelsInGrid.append(new Grid(1, 3));
