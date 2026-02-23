@@ -41,6 +41,7 @@ import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import tui.ui.components.form.FormInputFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -138,7 +139,7 @@ public class TestHTTPClient {
 					for(Map.Entry<String, Object> entry : parameters.entrySet()) {
 						final Object value = entry.getValue();
 						if(value instanceof File file) {
-							meb.addBinaryBody(file.getName(), file);
+							meb.addBinaryBody(FormInputFile.INPUT_NAME_PREFIX + entry.getKey(), file);
 						} else {
 							meb.addTextBody(entry.getKey(), entry.getValue().toString(),
 									ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), StandardCharsets.UTF_8));

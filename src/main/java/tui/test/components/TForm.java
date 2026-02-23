@@ -72,11 +72,11 @@ public class TForm extends TComponent {
 		return m_title;
 	}
 
-	public void enterInput(String fieldLabel, String value) {
+	public void enterInput(String fieldLabel, Object value) {
 		final Optional<TFormField> anyField = m_inputs.stream().filter(
 				(field) -> field.label.equals(fieldLabel)).findAny();
 		if(anyField.isEmpty()) {
-			throw new TestExecutionException("No string input found in form '%s' with label: %s", m_title, fieldLabel);
+			throw new TestExecutionException("No input found in form '%s' with label: %s", m_title, fieldLabel);
 		}
 		anyField.get().enteredValue = value;
 	}
@@ -128,7 +128,10 @@ public class TForm extends TComponent {
 
 		parseInputs(json, result);
 
-		result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
+		if(json.hasAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)) {
+			result.m_refreshListeners.addAll(
+					TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
+		}
 
 		if(json.hasAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE)) {
 			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);

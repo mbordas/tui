@@ -150,6 +150,7 @@ public class Form extends UIComponent {
 	}
 
 	public FormInputFile createInputFile(String label, String name) {
+		assert !name.startsWith(FormInputFile.INPUT_NAME_PREFIX);
 		final FormInputFile result = new FormInputFile(label, name);
 		m_inputs.add(result);
 		return result;

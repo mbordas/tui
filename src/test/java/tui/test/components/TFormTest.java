@@ -20,13 +20,21 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import tui.http.RequestReader;
+import tui.http.TUIBackend;
 import tui.test.Browser;
+import tui.test.TClient;
 import tui.test.TestExecutionException;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.form.Form;
+import tui.ui.components.form.FormInputFile;
 import tui.ui.components.form.Search;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +44,50 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TFormTest extends TestWithBackend {
+
+	@Test
+	public void uploadFile() throws Exception {
+		final Page page = new Page("Home", "/index");
+		final Form form = new Form("Test form", "/form");
+		final FormInputFile formInputFile = form.createInputFile("File to upload", "file");
+		page.append(form);
+
+		final File originalFile = new File("target/test-classes/form/file_to_upload.txt");
+		final File uploadedFile = new File("target/test-classes/form/uploaded_file.txt");
+
+		try(TUIBackend backend = startBackend(page)) {
+
+			backend.registerWebService(form.getTarget(), (uri, request, response) -> {
+				System.out.println("URI = " + uri);
+				final RequestReader reader = new RequestReader(request);
+
+				final InputStream inputStream = reader.getFileInputStream(formInputFile.getName());
+
+				try(FileOutputStream fos = new FileOutputStream(uploadedFile)) {
+					fos.write(inputStream.readAllBytes());
+				}
+
+				return Form.buildSuccessfulSubmissionResponse();
+			});
+
+			final TClient client = new TClient(backend.getPort());
+
+			client.open(page.getSource());
+			final TForm tForm = client.getForm(form.getTitle());
+			tForm.enterInput(formInputFile.getLabel(), originalFile);
+			tForm.submit();
+
+			assertTrue(uploadedFile.exists());
+
+			String testedContent;
+			try(FileInputStream fis = new FileInputStream(uploadedFile)) {
+				testedContent = new String(fis.readAllBytes());
+			} catch(IOException e) {
+				throw new RuntimeException(e);
+			}
+			assertEquals("Uploaded content.", testedContent);
+		}
+	}
 
 	@Test
 	public void browse() {

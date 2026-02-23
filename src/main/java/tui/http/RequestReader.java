@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tui.ui.components.form.FormInputFile;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletInputStream;
@@ -60,8 +61,8 @@ public class RequestReader {
 				for(Part part : request.getParts()) {
 					final String name = part.getName();
 
-					if(name.startsWith("_file_")) {
-						m_files.put(name.substring("_file_".length()),
+					if(name.startsWith(FormInputFile.INPUT_NAME_PREFIX)) {
+						m_files.put(name.substring(FormInputFile.INPUT_NAME_PREFIX.length()),
 								new FileInput(part.getSubmittedFileName(), part.getInputStream()));
 					} else {
 						m_parameters.put(name, new String(part.getInputStream().readAllBytes()));

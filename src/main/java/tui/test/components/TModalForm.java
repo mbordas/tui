@@ -54,7 +54,7 @@ public class TModalForm extends TForm {
 	}
 
 	@Override
-	public void enterInput(String fieldName, String value) {
+	public void enterInput(String fieldName, Object value) {
 		checkIsOpened();
 		super.enterInput(fieldName, value);
 	}
