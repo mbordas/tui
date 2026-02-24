@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2026, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -20,58 +20,63 @@ import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.test.TClient;
+import tui.ui.components.layout.ModalPanel;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
-public class TPanel extends TRefreshableComponent {
+public class TModalPanel extends TPanel {
 
-	private String m_source;
-	protected final List<TComponent> m_content = new ArrayList<>();
+	private final String m_openButtonLabel;
+	private boolean m_opened = false;
 
 	/**
 	 * @param tuid   Unique identifier.
 	 * @param client This client object will help acting on some component, and determining if they are reachable.
 	 */
-	protected TPanel(long tuid, TClient client) {
+	protected TModalPanel(long tuid, TClient client, String openButtonLabel) {
 		super(tuid, client);
+		m_openButtonLabel = openButtonLabel;
+		m_isVisible = m_opened;
 	}
 
-	@Override
-	public void update(JsonMap map) {
-		final TPanel panel = parse(map, null);
-		m_source = panel.m_source;
-		m_content.clear();
-		m_content.addAll(panel.m_content);
+	public String getOpenButtonLabel() {
+		return m_openButtonLabel;
 	}
 
-	public List<TComponent> getContent() {
-		return m_content;
+	public void open() {
+		if(m_opened) {
+			throw new IllegalStateException("ModalPanel is already opened");
+		}
+		m_opened = true;
+		m_isVisible = true;
 	}
 
-	@Override
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
+	public void close() {
+		if(!m_opened) {
+			throw new IllegalStateException("ModalPanel is already closed");
+		}
+		m_opened = false;
+		m_isVisible = true;
 	}
 
-	@Override
-	public Collection<TComponent> getChildrenComponents() {
-		return new ArrayList<>(m_content);
+	public boolean isOpened() {
+		return m_opened;
 	}
 
-	public static TPanel parse(JsonMap map, TClient client) {
-		final long tuid = JsonConstants.readTUID(map);
-		TPanel result = new TPanel(tuid, client);
-		result.readSource(map);
-		result.readParameters(map);
-		final JsonArray content = map.getArray("content");
+	public static TModalPanel parse(JsonMap json, TClient client) {
+		final long tuid = JsonConstants.readTUID(json);
+		final String openButtonLabel = json.getAttribute(ModalPanel.JSON_OPEN_BUTTON_LABEL);
+		final TModalPanel result = new TModalPanel(tuid, client, openButtonLabel);
+
+		result.readSource(json);
+		result.readParameters(json);
+		final JsonArray content = json.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {
 			final JsonObject componentJson = contentIterator.next();
 			result.m_content.add(TComponentFactory.parse(componentJson, client));
 		}
+
 		return result;
 	}
 }

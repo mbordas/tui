@@ -31,6 +31,7 @@ import tui.ui.components.form.Form;
 import tui.ui.components.form.ModalForm;
 import tui.ui.components.form.Search;
 import tui.ui.components.layout.Grid;
+import tui.ui.components.layout.ModalPanel;
 import tui.ui.components.layout.Panel;
 import tui.ui.components.layout.TabbedFlow;
 import tui.ui.components.layout.VerticalFlow;
@@ -47,6 +48,7 @@ public class TComponentFactory {
 			case ModalForm.JSON_TYPE -> TModalForm.parse(map, client);
 			case NavLink.JSON_TYPE -> TNavLink.parse(map, client);
 			case Panel.JSON_TYPE -> TPanel.parse(map, client);
+			case ModalPanel.JSON_TYPE -> TModalPanel.parse(map, client);
 			case Paragraph.JSON_TYPE -> TParagraph.parse(map, client);
 			case Paragraph.Text.JSON_TYPE -> TParagraph.TText.parse(map, client);
 			case RefreshButton.JSON_TYPE -> TRefreshButton.parse(map, client);

@@ -23,6 +23,7 @@ import tui.test.components.TComponent;
 import tui.test.components.TDownloadButton;
 import tui.test.components.TForm;
 import tui.test.components.TModalForm;
+import tui.test.components.TModalPanel;
 import tui.test.components.TPage;
 import tui.test.components.TPanel;
 import tui.test.components.TRefreshButton;
@@ -109,6 +110,12 @@ public class TClient {
 
 	public List<TPanel> getPanels() {
 		return finderOfClass(TPanel.class).findAll();
+	}
+
+	public TModalPanel getModalPanel(String openButtonLabel) {
+		final TComponentFinder<TModalPanel> finder = finderOfClass(TModalPanel.class);
+		finder.withCondition((modalPanel) -> modalPanel.getOpenButtonLabel().equals(openButtonLabel));
+		return finder.getUnique();
 	}
 
 	public TTable getTable(String title) {
