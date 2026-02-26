@@ -66,6 +66,7 @@ public class TPanel extends TRefreshableComponent {
 		TPanel result = new TPanel(tuid, client);
 		result.readSource(map);
 		result.readParameters(map);
+		result.readCustomTag(map);
 		final JsonArray content = map.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {

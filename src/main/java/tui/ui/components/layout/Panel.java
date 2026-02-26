@@ -76,6 +76,8 @@ public class Panel extends UIRefreshableComponent {
 
 		fillDivElement(containedElement.element());
 
+		applyCustomTag(containedElement.element());
+
 		return containedElement.getHigherNode();
 	}
 
@@ -101,6 +103,7 @@ public class Panel extends UIRefreshableComponent {
 		result.createArray("content", m_content, UIComponent::toJsonMap);
 		appendParameters(result);
 		applyCustomStyle(result);
+		applyCustomTag(result);
 		return result;
 	}
 

@@ -32,6 +32,7 @@ import tui.ui.components.NavLink;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.Table;
+import tui.ui.components.UIComponent;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.ModalForm;
 import tui.ui.components.form.Search;
@@ -599,6 +600,10 @@ public class Browser implements Closeable {
 
 	public static Collection<String> getClasses(WebElement element) {
 		return Arrays.asList(element.getAttribute("class").split(" "));
+	}
+
+	public static String getCustomTag(WebElement element) {
+		return element.getAttribute(UIComponent.HTML_ATTRIBUTE_CUSTOM_TAG);
 	}
 
 	public static Map<String, String> parseStyleProperties(WebElement element) {

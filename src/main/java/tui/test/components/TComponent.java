@@ -15,8 +15,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import tui.json.JsonMap;
 import tui.test.TClient;
 import tui.test.TComponentFinder;
+import tui.ui.components.UIComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import java.util.function.Predicate;
 public abstract class TComponent {
 
 	private final Long m_tuid;
+	private String m_customTag;
 	protected final TClient m_client;
 	protected boolean m_isVisible = true;
 
@@ -45,6 +48,16 @@ public abstract class TComponent {
 
 	public Long getTUID() {
 		return m_tuid;
+	}
+
+	protected void readCustomTag(JsonMap map) {
+		if(map.hasAttribute(UIComponent.JSON_ATTRIBUTE_CUSTOM_TAG)) {
+			m_customTag = map.getAttribute(UIComponent.JSON_ATTRIBUTE_CUSTOM_TAG);
+		}
+	}
+
+	public String getCustomTag() {
+		return m_customTag;
 	}
 
 	public abstract TComponent find(long tuid);

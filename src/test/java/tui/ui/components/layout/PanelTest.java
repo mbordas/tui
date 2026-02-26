@@ -35,6 +35,18 @@ import static org.junit.Assert.assertEquals;
 public class PanelTest extends TestWithBackend {
 
 	@Test
+	public void customTagShouldBePresentInHTMLAttributes() {
+		final Panel panel = new Panel(Panel.Align.CENTER);
+		final String customTag = "My custom Tag";
+		panel.setCustomTag(customTag);
+
+		TestUtils.assertHTMLProcedure(() -> panel, (prefix, rootElement) -> {
+			assertEquals(prefix, customTag, Browser.getCustomTag(rootElement));
+		});
+
+	}
+
+	@Test
 	public void setParameter() throws Exception {
 		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
 		updatablePage.panel().setParameter("param1", "value1");

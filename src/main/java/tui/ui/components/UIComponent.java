@@ -27,9 +27,13 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class UIComponent {
 
+	public static final String HTML_ATTRIBUTE_CUSTOM_TAG = "data-custom-tag";
+	public static final String JSON_ATTRIBUTE_CUSTOM_TAG = "customTag";
+
 	private static final AtomicLong m_counter = new AtomicLong(0L);
 
 	private final long m_tuid = newTUID();
+	private String m_customTag = null; // Developer's value used to find the component in tests.
 
 	private LayoutStyleSet m_customLayoutStyle = null;
 
@@ -42,12 +46,32 @@ public abstract class UIComponent {
 		if(withTUID) {
 			result.setAttribute("id", HTMLConstants.toId(getTUID()));
 		}
+		if(m_customTag != null) {
+			result.setAttribute(HTML_ATTRIBUTE_CUSTOM_TAG, m_customTag);
+		}
+		applyCustomStyle(result);
+		return result;
+	}
+
+	protected JsonMap toJsonMap(String type, boolean withTUID) {
+		JsonMap result = withTUID ? new JsonMap(type, getTUID()) : new JsonMap(type);
+		if(m_customTag != null) {
+			result.setAttribute(JSON_ATTRIBUTE_CUSTOM_TAG, m_customTag);
+		}
 		applyCustomStyle(result);
 		return result;
 	}
 
 	public long getTUID() {
 		return m_tuid;
+	}
+
+	public void setCustomTag(String customTag) {
+		m_customTag = customTag;
+	}
+
+	public String getCustomTag() {
+		return m_customTag;
 	}
 
 	public LayoutStyleSet customStyle() {
@@ -63,9 +87,21 @@ public abstract class UIComponent {
 		}
 	}
 
+	protected void applyCustomTag(HTMLNode htmlNode) {
+		if(m_customTag != null) {
+			htmlNode.setAttribute(HTML_ATTRIBUTE_CUSTOM_TAG, m_customTag);
+		}
+	}
+
 	protected void applyCustomStyle(JsonMap jsonMap) {
 		if(m_customLayoutStyle != null) {
 			m_customLayoutStyle.apply(jsonMap);
+		}
+	}
+
+	protected void applyCustomTag(JsonMap jsonMap) {
+		if(m_customTag != null) {
+			jsonMap.setAttribute(JSON_ATTRIBUTE_CUSTOM_TAG, m_customTag);
 		}
 	}
 

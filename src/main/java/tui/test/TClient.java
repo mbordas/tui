@@ -102,6 +102,11 @@ public class TClient {
 		return TComponentFinder.ofClass(type, m_currentPage);
 	}
 
+	public <T extends TComponent> TComponentFinder<T> finderOfClassWithCustomTag(Class<T> type, String customTag) {
+		assert customTag != null;
+		return TComponentFinder.ofClass(type, m_currentPage).withCondition((component) -> customTag.equals(component.getCustomTag()));
+	}
+
 	public TSection getSection(String title) {
 		return finderOfClass(TSection.class)
 				.withCondition((section) -> section.getTitle().equals(title))

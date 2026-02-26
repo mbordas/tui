@@ -354,6 +354,12 @@ function createComponent(json, idMap) {
         elementToBeStyled.setAttribute('style', style);
     }
 
+    if(result != null) {
+        if(json['customTag'] != null) {
+            result.setAttribute('data-custom-tag', json['customTag']);
+        }
+    }
+
     return result;
 }
 
