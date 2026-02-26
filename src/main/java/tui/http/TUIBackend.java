@@ -19,8 +19,6 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.html.HTMLConstants;
 import tui.json.JsonObject;
 import tui.ui.UIConfigurationException;
@@ -39,10 +37,12 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TUIBackend implements AutoCloseable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TUIBackend.class);
+	private static final Logger LOG = Logger.getLogger(TUIBackend.class.getName());
 
 	public static final String PATH_TO_CSS = "/css/tui.css";
 	public static final String PATH_TO_SCRIPT = "/js/tui.js";
@@ -82,7 +82,7 @@ public class TUIBackend implements AutoCloseable {
 			public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse response)
 					throws IOException {
 				final String uri = request.getRequestURI();
-				LOG.info("URI: {}", uri);
+				LOG.log(Level.INFO, String.format("URI: %s", uri));
 
 				if(m_fileServices.containsKey(uri)) {
 					try {
@@ -91,7 +91,7 @@ public class TUIBackend implements AutoCloseable {
 						response.setStatus(200);
 						request.setHandled(true);
 					} catch(Throwable t) {
-						LOG.error(t.getMessage(), t);
+						LOG.log(Level.SEVERE, t.getMessage(), t);
 						response.setStatus(500);
 						request.setHandled(true);
 					}
@@ -117,7 +117,7 @@ public class TUIBackend implements AutoCloseable {
 						response.setStatus(200);
 						request.setHandled(true);
 					} catch(Throwable t) {
-						LOG.error(t.getMessage(), t);
+						LOG.log(Level.SEVERE, t.getMessage(), t);
 						response.setStatus(500);
 						request.setHandled(true);
 					}
@@ -131,7 +131,7 @@ public class TUIBackend implements AutoCloseable {
 						response.setStatus(200);
 						request.setHandled(true);
 					} catch(Throwable t) {
-						LOG.error(t.getMessage(), t);
+						LOG.log(Level.SEVERE, t.getMessage(), t);
 						response.setStatus(500);
 						request.setHandled(true);
 					}
@@ -186,7 +186,7 @@ public class TUIBackend implements AutoCloseable {
 		});
 		LOG.info("Starting WebServer @port " + m_httpPort);
 		m_server.start();
-		LOG.info("Web server listening on :{}", m_httpPort);
+		LOG.log(Level.INFO, String.format("Web server listening on :%d", m_httpPort));
 	}
 
 	public void stop() throws Exception {
@@ -195,7 +195,7 @@ public class TUIBackend implements AutoCloseable {
 			try {
 				m_server.stop();
 			} catch(Exception t) {
-				t.printStackTrace();
+				LOG.log(Level.SEVERE, t.getMessage(), t);
 				throw t;
 			}
 		}

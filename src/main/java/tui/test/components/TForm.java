@@ -15,8 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -38,10 +36,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TForm extends TComponent {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TForm.class);
+	private static Logger LOG = Logger.getLogger(TForm.class.getSimpleName());
 
 	private String m_title;
 	private String m_target;
@@ -105,7 +105,7 @@ public class TForm extends TComponent {
 			for(Map.Entry<String, JsonValue<?>> entry : responseParameters.getAttributes().entrySet()) {
 				params.put(entry.getKey(), entry.getValue().toString());
 			}
-			LOG.trace("Form submission opening page {}...", m_opensPageSource);
+			LOG.log(Level.INFO, String.format("Form submission opening page %s...", m_opensPageSource));
 			m_client.open(m_opensPageSource, params);
 		}
 	}

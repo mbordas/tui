@@ -17,8 +17,6 @@ package tui.ui.style;
 
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
@@ -33,8 +31,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class LoadingTest extends TestWithBackend {
-
-	private static final Logger LOG = LoggerFactory.getLogger(LoadingTest.class);
 
 	private static final long delayForLoadingToBeDisplayed_ms = 300;
 	private static final long delayForBackendToRespond_ms = 600;
@@ -95,7 +91,6 @@ public class LoadingTest extends TestWithBackend {
 
 	private static List<String> getClasses(WebElement element) {
 		final String classes = element.getAttribute("class");
-		LOG.debug("Element classes: {}", classes);
 		return Arrays.asList(classes.split(" "));
 	}
 

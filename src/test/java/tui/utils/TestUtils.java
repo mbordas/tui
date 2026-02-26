@@ -18,8 +18,6 @@ package tui.utils;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.components.Page;
@@ -35,12 +33,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 
 public class TestUtils {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
+	private static final Logger LOG = Logger.getLogger(TestUtils.class.getName());
 
 	public static final String LOREM_IPSUM = """
 			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.
@@ -124,19 +124,19 @@ public class TestUtils {
 			try(final Browser browser = new Browser(port)) {
 				browser.open(updatablePage.page().getSource());
 
-				LOG.debug("Testing initial HTML...");
+				LOG.log(Level.INFO, "Testing initial HTML...");
 				WebElement webElement = getWebElementInPanel(browser, updatablePage);
 				elementTest.accept("initial HTML", webElement);
 
 				browser.getRefreshButton(updatablePage.button().getLabel()).click();
 
-				LOG.debug("Testing refreshed HTML 1/2...");
+				LOG.log(Level.INFO, "Testing refreshed HTML 1/2...");
 				webElement = getWebElementInPanel(browser, updatablePage);
 				elementTest.accept("refreshed HTML 1/2", webElement);
 
 				browser.getRefreshButton(updatablePage.button().getLabel()).click();
 
-				LOG.debug("Testing refreshed HTML 2/2...");
+				LOG.log(Level.INFO, "Testing refreshed HTML 2/2...");
 				webElement = getWebElementInPanel(browser, updatablePage);
 				elementTest.accept("refreshed HTML 2/2", webElement);
 			}

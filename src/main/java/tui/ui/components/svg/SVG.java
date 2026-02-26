@@ -15,8 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.ui.components.svg;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonArray;
@@ -35,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SVG extends UIRefreshableComponent {
-
-	private static final Logger LOG = LoggerFactory.getLogger(SVG.class);
 
 	public static final String JSON_TYPE = "svg";
 	public static final String JSON_ATTRIBUTE_INNER_TEXT = "innerText";

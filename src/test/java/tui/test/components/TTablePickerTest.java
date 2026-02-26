@@ -17,8 +17,6 @@ package tui.test.components;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.test.TClient;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
@@ -36,8 +34,6 @@ import static tui.ui.components.TableTest.buildItems;
 import static tui.ui.components.TableTest.putItemsInTable;
 
 public class TTablePickerTest extends TestWithBackend {
-
-	private static final Logger LOG = LoggerFactory.getLogger(TTablePickerTest.class);
 
 	@Test
 	public void browseAndClick() {
@@ -73,7 +69,6 @@ public class TTablePickerTest extends TestWithBackend {
 				.getUnique();
 
 		assertNotNull(tparagraph);
-		LOG.debug("Id of paragraph: {}", tparagraph.getTUID());
 
 		assertEquals("Reloadable panel", tparagraph.getText()); // Initial text
 

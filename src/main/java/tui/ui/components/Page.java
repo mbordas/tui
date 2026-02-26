@@ -16,8 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.ui.components;
 
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.html.HTMLConstants;
 import tui.html.HTMLNode;
 import tui.json.JsonMap;
@@ -29,10 +27,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Page {
 
-	private static final Logger LOG = LoggerFactory.getLogger(Page.class);
+	private static Logger LOG = Logger.getLogger(Page.class.getSimpleName());
 
 	public static final String JSON_TYPE = "page";
 	public static final String JSON_ATTRIBUTE_FETCH_TYPE = "fetchType";
@@ -85,7 +85,7 @@ public class Page {
 
 	public void setSessionParameter(String name, @Nullable String value) {
 		if(value == null) {
-			LOG.warn("Session parameter '{}' with null value will not be integrated.", name);
+			LOG.log(Level.SEVERE, String.format("Session parameter '%s' with null value will not be integrated.", name));
 		} else {
 			m_sessionParameters.put(name, value);
 		}

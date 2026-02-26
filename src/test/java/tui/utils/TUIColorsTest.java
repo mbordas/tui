@@ -16,8 +16,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.utils;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
 import tui.test.Browser;
@@ -28,12 +26,14 @@ import tui.ui.components.svg.SVGRectangle;
 
 import java.awt.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 
 public class TUIColorsTest {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TUIColorsTest.class);
+	private static final Logger LOG = Logger.getLogger(TUIColorsTest.class.getName());
 
 	@Test
 	public void toCSS() {
@@ -57,7 +57,7 @@ public class TUIColorsTest {
 	}
 
 	private void check(TUIColors.ColorHSL expected, TUIColors.ColorHSL tested) {
-		LOG.debug("expected {}| tested {}", expected, tested);
+		LOG.log(Level.FINE, String.format("expected %s | tested %s", expected, tested));
 		assertEquals(expected.hue(), tested.hue());
 		assertEquals(expected.saturation(), tested.saturation());
 		assertEquals(expected.lightness(), tested.lightness());
@@ -79,7 +79,7 @@ public class TUIColorsTest {
 	}
 
 	private void check(Color expected, Color tested) {
-		LOG.debug("expected {}| tested {}", expected, tested);
+		LOG.log(Level.FINE, String.format("expected %s | tested %s", expected, tested));
 		assertEquals(expected.getRed(), tested.getRed());
 		assertEquals(expected.getGreen(), tested.getGreen());
 		assertEquals(expected.getBlue(), tested.getBlue());

@@ -17,8 +17,6 @@ package tui.ui.components.form;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.test.WebServiceSpy;
@@ -29,8 +27,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class SearchTest extends TestWithBackend {
-
-	private static final Logger LOG = LoggerFactory.getLogger(SearchTest.class);
 
 	record Item(long serialNumber, String manufacturer, String code, String label, double price_Euro) {
 	}

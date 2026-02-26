@@ -18,8 +18,6 @@ package tui.ui.components.svg;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.html.HTMLNode;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
@@ -35,8 +33,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertEquals;
 
 public class SVGTest extends TestWithBackend {
-
-	private static final Logger LOG = LoggerFactory.getLogger(SVGTest.class);
 
 	@Test
 	public void toURLForCSS() {

@@ -17,8 +17,6 @@ package tui.http;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.ui.components.form.FormInputFile;
 
 import javax.servlet.MultipartConfigElement;
@@ -35,10 +33,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RequestReader {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RequestReader.class);
+	private static Logger LOG = Logger.getLogger(RequestReader.class.getSimpleName());
 
 	public static final String FORM_ENCTYPE = "multipart/form-data";
 	public static final String FORMAT_DAY = "yyyy-MM-dd";
@@ -223,7 +223,7 @@ public class RequestReader {
 				}
 			}
 		} catch(Exception e) {
-			LOG.error("Exception parsing json: {}", json);
+			LOG.log(Level.SEVERE, String.format("Exception parsing json: %s", json));
 			throw e;
 		}
 		return result;

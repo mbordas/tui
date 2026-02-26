@@ -19,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.html.HTMLFetchErrorMessage;
 import tui.test.components.TFormTest;
 import tui.test.components.TModalFormTest;
@@ -56,8 +54,6 @@ import static tui.test.components.TFormTest.getFieldLabel;
 import static tui.test.components.TFormTest.getFieldName;
 
 public class Browser implements Closeable {
-
-	private static final Logger LOG = LoggerFactory.getLogger(Browser.class);
 
 	private final FirefoxDriver m_driver;
 	private final String m_host;
@@ -555,10 +551,6 @@ public class Browser implements Closeable {
 	public static WebElement getUniqueChild(WebElement element) {
 		final List<WebElement> childrenElements = element.findElements(By.xpath("./*"));
 		if(childrenElements.size() != 1) {
-			LOG.error("{} children found", childrenElements.size());
-			for(WebElement childElement : childrenElements) {
-				LOG.debug("Child of type: {}", childElement.getTagName());
-			}
 			throw new TestExecutionException("Child is not unique");
 		}
 		return childrenElements.get(0);

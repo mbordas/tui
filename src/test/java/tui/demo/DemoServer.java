@@ -15,8 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.demo;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.html.HTMLNode;
 import tui.http.RequestReader;
 import tui.http.TUIBackend;
@@ -39,8 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 public class DemoServer {
-
-	private static final Logger LOG = LoggerFactory.getLogger(DemoServer.class);
 
 	public static void main(String[] args) throws Exception {
 
@@ -103,7 +99,6 @@ public class DemoServer {
 		backend.registerWebService(modalForm.getTarget(), (uri, request, response) -> {
 			final RequestReader reader = new RequestReader(request);
 			final String nameValue = reader.getStringParameter(modalFormFieldName.getName());
-			LOG.info("Modal form submitted with parameter name=" + nameValue);
 			if(nameValue.isEmpty()) {
 				Map<String, String> errors = new HashMap<>();
 				errors.put(modalFormFieldName.getName(), "Value cannot be empty");

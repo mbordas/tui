@@ -15,8 +15,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tui.json.JsonMap;
 import tui.json.JsonParser;
 import tui.test.components.TComponent;
@@ -42,10 +40,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TClient {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TClient.class);
+	private static Logger LOG = Logger.getLogger(TClient.class.getSimpleName());
 
 	private TPage m_currentPage;
 	private final TestHTTPClient m_httpClient;
@@ -80,8 +80,8 @@ public class TClient {
 		try {
 			m_currentPage = TPage.parse(jsonMap, this);
 		} catch(Exception e) {
-			LOG.error("Error when opening page '{}': {}", endPoint, e.getMessage());
-			LOG.debug("JsonMap:\n{}", jsonMap.toJson());
+			LOG.log(Level.SEVERE, String.format("Error when opening page '%s': %s%n", endPoint, e.getMessage()));
+			LOG.log(Level.FINEST, String.format("JsonMap:\n%s", jsonMap.toJson()));
 			throw e;
 		}
 	}
