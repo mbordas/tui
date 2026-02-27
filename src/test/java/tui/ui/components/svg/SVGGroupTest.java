@@ -15,7 +15,7 @@ public class SVGGroupTest {
 		HTMLNode.PRETTY_PRINT = true;
 		assertEquals("""
 				<g style="display:inline">
-				  <rect x="1" y="2" width="3" height="4" rx="0" ry="0" style="display:inline;stroke:#000000;stroke-width:1;stroke-opacity:1.00;fill:#000000;fill-opacity:1.00;"/>
+				  <rect x="1" y="2" width="3" height="4" rx="0" ry="0" style="display:inline;stroke:#000000;stroke-width:1;stroke-opacity:1.00;fill:#000000;fill-opacity:1.00;"></rect>
 				</g>
 				""", SVG.toHTMLNode(group.toJsonMap()).toHTML());
 		HTMLNode.PRETTY_PRINT = false;

@@ -24,6 +24,17 @@ import static org.junit.Assert.assertEquals;
 
 public class HTMLNodeTest {
 
+	/**
+	 * At least with Firefox
+	 */
+	@Test
+	public void emptyHeadingsShouldNotAutoclose() {
+		final HTMLNode h1 = new HTMLNode("h1");
+		h1.setText("");
+
+		assertEquals("<h1></h1>", h1.toHTML());
+	}
+
 	@Test
 	public void setStyleProperty() {
 		HTMLNode.PRETTY_PRINT = false;

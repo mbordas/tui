@@ -76,8 +76,8 @@ public class ParagraphTest {
 						<div class="tui-container-paragraph tui-refreshable-container">
 						  <div class="fetch-error-message" style="display:none;"></div>
 						  <div class="fetch-parameters">
-						    <input type="hidden" name="param1" value="value1"/>
-						    <input type="hidden" name="param2" value="value2"/>
+						    <input type="hidden" name="param1" value="value1">
+						    <input type="hidden" name="param2" value="value2">
 						  </div>
 						  <p id="%d" tui-source="/source" class="tui-align-left">
 						    <span class="tui-text">This is a paragraph with parameter</span>

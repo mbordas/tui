@@ -27,6 +27,10 @@ public class HTMLNode {
 
 	public static boolean PRETTY_PRINT = false;
 
+	// https://developer.mozilla.org/en-US/docs/Glossary/Void_element
+	public static final List<String> VOID_TAGS = List.of("area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta",
+			"param", "source", "track", "wbr");
+
 	private boolean m_isRoot = false;
 	private String m_tagName;
 	private final Map<String, String> m_attributes = new LinkedHashMap<>();
@@ -192,13 +196,16 @@ public class HTMLNode {
 				&& !"textarea".equals(m_tagName)
 		) {
 			// Empty node
-			if("div".equals(m_tagName)) {
-				result.append("></div>");
+			if(VOID_TAGS.contains(m_tagName)) {
+				result.append(">"); // HTML5 standard
 				endOfTag(result);
 			} else {
-				result.append("/>");
+				result.append("></")
+						.append(m_tagName)
+						.append(">");
 				endOfTag(result);
 			}
+
 		} else {
 			// Node with content
 			result.append(">"); // ending node's opening tag
