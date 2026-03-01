@@ -77,6 +77,8 @@ public class TModalPanel extends TPanel {
 			result.m_content.add(TComponentFactory.parse(componentJson, client));
 		}
 
+		result.readCustomTag(json);
+
 		return result;
 	}
 }

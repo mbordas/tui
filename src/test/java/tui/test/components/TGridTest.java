@@ -16,11 +16,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.junit.Test;
+import tui.ui.components.layout.Grid;
+import tui.utils.TestUtils;
 
 public class TGridTest {
 
 	@Test
-	public void parse() {
-
+	public void customTag() {
+		final Grid grid = new Grid(1, 1);
+		TestUtils.assertCustomTagInTClientProcedure(() -> grid, TGrid.class);
 	}
 }

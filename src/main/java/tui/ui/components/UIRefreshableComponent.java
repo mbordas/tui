@@ -83,10 +83,16 @@ public abstract class UIRefreshableComponent extends UIComponent {
 				element.setAttribute("id", HTMLConstants.toId(getTUID()));
 				element.setAttribute(ATTRIBUTE_SOURCE, getSource());
 			}
+
+			applyCustomTag(element);
+
 			return new ContainedElement(container, element);
 		} else {
 			final HTMLNode element = new HTMLNode(tagName);
+
 			applyCustomStyle(element);
+			applyCustomTag(element);
+
 			return new ContainedElement(null, element);
 		}
 	}

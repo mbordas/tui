@@ -39,7 +39,10 @@ public class NavLink extends UIComponentWithText {
 		final HTMLNode result = super.toHTMLNode("a", true);
 		result.setAttribute("href", m_target);
 		result.setText(m_label);
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 
@@ -48,7 +51,10 @@ public class NavLink extends UIComponentWithText {
 		final JsonMap result = new JsonMap(JSON_TYPE, getTUID());
 		result.setAttribute(JSON_ATTRIBUTE_LABEL, m_label);
 		result.setAttribute(JSON_ATTRIBUTE_TARGET, m_target);
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+		
 		return result;
 	}
 }

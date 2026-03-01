@@ -81,6 +81,10 @@ public class ModalForm extends Form {
 		final JsonMap result = super.toJsonMap();
 		result.setType(JSON_TYPE);
 		result.setAttribute(JSON_OPEN_BUTTON_LABEL, m_openButtonLabel);
+
+		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 }

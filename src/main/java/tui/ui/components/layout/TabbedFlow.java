@@ -27,7 +27,7 @@ import java.util.Map;
 public class TabbedFlow extends UIComponent {
 
 	public static final String JSON_TYPE = "tabbedFlow";
-	public static final String TABBED_PANEL_JSON_TYPE = "tab";
+	public static final String TABBED_PANEL_JSON_TYPE = "tab"; // Each 'tab' will have a title and contain a VerticalFlow as its content attribute
 
 	public static final String HTML_CLASS = "tui-tabbedflow";
 	public static final String HTML_CLASS_TAB = "tui-tab";
@@ -73,6 +73,9 @@ public class TabbedFlow extends UIComponent {
 
 			index++;
 		}
+
+		applyCustomTag(result);
+
 		return result;
 	}
 
@@ -88,6 +91,7 @@ public class TabbedFlow extends UIComponent {
 			tab.setChild("content", flow.toJsonMap());
 			tabsArray.add(tab);
 		}
+		applyCustomTag(result);
 		return result;
 	}
 

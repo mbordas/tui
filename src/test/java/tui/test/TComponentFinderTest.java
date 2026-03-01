@@ -83,7 +83,7 @@ public class TComponentFinderTest {
 			TComponentFinder.ofClass(TParagraph.TText.class, PAGE).getUnique();
 			fail();
 		} catch(TestExecutionException e) {
-			assertEquals("Too many TText found: 3", e.getMessage());
+			assertEquals("Too many TText found matching condition(s): 3", e.getMessage());
 		}
 	}
 

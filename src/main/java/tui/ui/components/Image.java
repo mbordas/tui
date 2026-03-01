@@ -44,6 +44,10 @@ public class Image extends UIComponent {
 		if(m_text != null) {
 			result.setAttribute("alt", m_text);
 		}
+
+		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 
@@ -54,7 +58,10 @@ public class Image extends UIComponent {
 		if(m_text != null) {
 			result.setAttribute("text", m_text);
 		}
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+		
 		return result;
 	}
 }

@@ -189,6 +189,8 @@ public class Search extends UIComponent {
 			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_refreshListeners));
 		}
 
+		applyCustomTag(result);
+
 		return result;
 	}
 
@@ -215,6 +217,9 @@ public class Search extends UIComponent {
 		if(m_displayLikeForm != null) {
 			result.setAttribute(JSON_ATTRIBUTE_FORM_DISPLAY_COLUMNS, m_displayLikeForm.columns());
 		}
+
+		applyCustomTag(result);
+
 		return result;
 	}
 

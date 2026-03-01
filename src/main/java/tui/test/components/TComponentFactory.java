@@ -57,7 +57,7 @@ public class TComponentFactory {
 			case Table.JSON_TYPE -> TTable.parse(map, client);
 			case TablePicker.JSON_TYPE -> TTablePicker.parse(map, client);
 			case TabbedFlow.JSON_TYPE -> TTabbedFlow.parse(map, client);
-			case TabbedFlow.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
+			//			case TabbedFlow.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
 			case VerticalFlow.JSON_TYPE -> TVerticalFlow.parse(map, client);
 
 			default -> throw new IllegalStateException("Unexpected value: " + map.getType());

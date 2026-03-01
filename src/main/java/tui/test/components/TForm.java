@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -116,7 +117,7 @@ public class TForm extends TComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		return List.of();
 	}
 
@@ -136,6 +137,8 @@ public class TForm extends TComponent {
 		if(json.hasAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE)) {
 			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);
 		}
+
+		result.readCustomTag(json);
 
 		return result;
 	}

@@ -23,6 +23,7 @@ import tui.test.TClient;
 import tui.test.TestWithBackend;
 import tui.ui.components.DownloadButton;
 import tui.ui.components.Page;
+import tui.utils.TestUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -30,6 +31,12 @@ import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 
 public class TDownloadButtonTest extends TestWithBackend {
+
+	@Test
+	public void customTag() {
+		final DownloadButton downloadButton = new DownloadButton("label", "/target", "default_file_name.txt");
+		TestUtils.assertCustomTagInTClientProcedure(() -> downloadButton, TDownloadButton.class);
+	}
 
 	/**
 	 * Here the backend generates a text file using the value of one parameter. This ensures that the parameter is

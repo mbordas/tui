@@ -1,4 +1,4 @@
-/* Copyright (c) 2025, Mathieu Bordas
+/* Copyright (c) 2026, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,60 +15,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import org.jetbrains.annotations.NotNull;
-import tui.json.JsonConstants;
-import tui.json.JsonMap;
-import tui.test.TClient;
-import tui.ui.components.NavLink;
+import org.junit.Test;
+import tui.ui.components.layout.VerticalFlow;
+import tui.utils.TestUtils;
 
-import java.util.Collection;
-import java.util.List;
+public class TVerticalFlowTest {
 
-public class TNavLink extends TComponent {
-
-	private final String m_label;
-	private final String m_target;
-
-	/**
-	 * @param tuid   Unique identifier.
-	 * @param client This client object will help acting on some component, and determining if they are reachable.
-	 */
-	protected TNavLink(long tuid, TClient client, String label, String target) {
-		super(tuid, client);
-		m_label = label;
-		m_target = target;
+	@Test
+	public void customTag() {
+		final VerticalFlow verticalFlow = new VerticalFlow();
+		TestUtils.assertCustomTagInTClientProcedure(() -> verticalFlow, TVerticalFlow.class);
 	}
 
-	public String getLabel() {
-		return m_label;
-	}
-
-	public String getTarget() {
-		return m_target;
-	}
-
-	@Override
-	public TComponent find(long tuid) {
-		return null;
-	}
-
-	@Override
-	public @NotNull Collection<TComponent> getChildrenComponents() {
-		return List.of();
-	}
-
-	@Override
-	public String toString() {
-		return super.toString(m_label) + " -> " + m_target;
-	}
-
-	public static TComponent parse(JsonMap json, TClient tClient) {
-		final long tuid = JsonConstants.readTUID(json);
-		final String label = json.getAttribute(NavLink.JSON_ATTRIBUTE_LABEL);
-		final String target = json.getAttribute(NavLink.JSON_ATTRIBUTE_TARGET);
-		final TNavLink result = new TNavLink(tuid, tClient, label, target);
-		result.readCustomTag(json);
-
-		return result;
-	}
 }

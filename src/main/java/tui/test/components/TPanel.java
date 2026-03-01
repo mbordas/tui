@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -57,7 +58,7 @@ public class TPanel extends TRefreshableComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		return new ArrayList<>(m_content);
 	}
 

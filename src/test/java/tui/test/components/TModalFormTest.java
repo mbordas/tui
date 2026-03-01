@@ -25,6 +25,7 @@ import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.ModalForm;
+import tui.utils.TestUtils;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,6 +36,12 @@ import static org.junit.Assert.assertTrue;
 import static tui.test.components.TFormTest.checkField;
 
 public class TModalFormTest extends TestWithBackend {
+
+	@Test
+	public void customTag() {
+		final ModalForm modalForm = new ModalForm("title", "open", "/target");
+		TestUtils.assertCustomTagInTClientProcedure(() -> modalForm, TModalForm.class);
+	}
 
 	private void buildPageAndStartBackend() {
 		// UI: building the page

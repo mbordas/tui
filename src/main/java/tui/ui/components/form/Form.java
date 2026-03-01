@@ -270,6 +270,10 @@ public class Form extends UIComponent {
 		if(m_opensPageSource != null) {
 			result.setAttribute(JSON_ATTRIBUTE_OPENS_PAGE_SOURCE, m_opensPageSource);
 		}
+
+		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 

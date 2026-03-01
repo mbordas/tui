@@ -40,25 +40,28 @@ public class TComponentFinder<C extends TComponent> {
 	}
 
 	public List<C> findAll() {
-		return findAll(m_root, m_children);
+		if(m_children == null) {
+			return List.of();
+		} else {
+			return findAll(m_root, m_children);
+		}
 	}
 
-	private List<C> findAll(TComponent parent, Collection<TComponent> children) {
+	private List<C> findAll(TComponent parent, @NotNull Collection<TComponent> children) {
 		final List<C> result = new ArrayList<>();
-		children.forEach((c) -> {
+		children.forEach((child) -> {
 
 			// Testing child 'c'
 			if((parent == null || (m_parentOfClass.test(parent) && m_parentCondition.test(parent)))
-					&& m_type.isAssignableFrom(c.getClass())) {
-				C typedComponent = (C) c;
+					&& m_type.isAssignableFrom(child.getClass())) {
+				C typedComponent = (C) child;
 				if(m_thisCondition.test(typedComponent)) {
 					result.add(typedComponent);
 				}
 			}
 
 			// Recursive call on c's children
-			result.addAll(findAll(c, c.getChildrenComponents()));
-			//			c.getChildrenComponents().forEach((c3) -> result.addAll(findAll(c3, c3.getChildrenComponents())));
+			result.addAll(findAll(child, child.getChildrenComponents()));
 		});
 		return result;
 	}
@@ -66,9 +69,9 @@ public class TComponentFinder<C extends TComponent> {
 	public @NotNull C getUnique() {
 		final List<C> components = findAll();
 		if(components.isEmpty()) {
-			throw new TestExecutionException("No %s found in current page.", m_type.getSimpleName());
+			throw new TestExecutionException("No %s found matching condition(s).", m_type.getSimpleName());
 		} else if(components.size() > 1) {
-			throw new TestExecutionException("Too many %s found: %d", m_type.getSimpleName(), components.size());
+			throw new TestExecutionException("Too many %s found matching condition(s): %d", m_type.getSimpleName(), components.size());
 		} else {
 			return components.get(0);
 		}

@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonValue;
@@ -66,26 +67,28 @@ public class TRefreshButton extends TComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		return List.of();
 	}
 
-	public static TRefreshButton parse(JsonMap jsonMap, TClient tClient) {
-		final long tuid = JsonConstants.readTUID(jsonMap);
-		final String label = jsonMap.getAttribute(RefreshButton.JSON_ATTRIBUTE_LABEL);
+	public static TRefreshButton parse(JsonMap json, TClient tClient) {
+		final long tuid = JsonConstants.readTUID(json);
+		final String label = json.getAttribute(RefreshButton.JSON_ATTRIBUTE_LABEL);
 		final TRefreshButton result = new TRefreshButton(tuid, tClient, label);
 
-		final JsonMap parameters = jsonMap.getMap(RefreshButton.JSON_ATTRIBUTE_PARAMETERS);
+		final JsonMap parameters = json.getMap(RefreshButton.JSON_ATTRIBUTE_PARAMETERS);
 		for(Map.Entry<String, JsonValue<?>> entry : parameters.getAttributes().entrySet()) {
 			final String name = entry.getKey();
 			final String value = entry.getValue().toString();
 			result.m_parameters.put(name, value);
 		}
 
-		final String refreshListenersTUIDs = jsonMap.getAttributeOrNull(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS);
+		final String refreshListenersTUIDs = json.getAttributeOrNull(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS);
 		if(refreshListenersTUIDs != null) {
 			result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(refreshListenersTUIDs));
 		}
+
+		result.readCustomTag(json);
 
 		return result;
 	}

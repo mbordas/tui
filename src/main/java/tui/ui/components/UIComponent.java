@@ -46,19 +46,19 @@ public abstract class UIComponent {
 		if(withTUID) {
 			result.setAttribute("id", HTMLConstants.toId(getTUID()));
 		}
-		if(m_customTag != null) {
-			result.setAttribute(HTML_ATTRIBUTE_CUSTOM_TAG, m_customTag);
-		}
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 
 	protected JsonMap toJsonMap(String type, boolean withTUID) {
-		JsonMap result = withTUID ? new JsonMap(type, getTUID()) : new JsonMap(type);
-		if(m_customTag != null) {
-			result.setAttribute(JSON_ATTRIBUTE_CUSTOM_TAG, m_customTag);
-		}
+		final JsonMap result = withTUID ? new JsonMap(type, getTUID()) : new JsonMap(type);
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 

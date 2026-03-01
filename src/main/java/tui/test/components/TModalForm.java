@@ -89,6 +89,7 @@ public class TModalForm extends TForm {
 		}
 
 		result.m_openButtonLabel = json.getAttribute(ModalForm.JSON_OPEN_BUTTON_LABEL);
+		result.readCustomTag(json);
 
 		return result;
 	}

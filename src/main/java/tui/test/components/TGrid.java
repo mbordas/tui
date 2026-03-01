@@ -15,12 +15,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.TClient;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class TGrid extends TComponent {
@@ -41,19 +41,23 @@ public class TGrid extends TComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		final Collection<TComponent> result = new ArrayList<>();
 		for(final TComponent[] rowOfComponents : m_components) {
-			result.addAll(Arrays.asList(rowOfComponents).subList(0, m_components[0].length));
+			for(TComponent component : rowOfComponents) {
+				if(component != null) {
+					result.add(component);
+				}
+			}
 		}
 		return result;
 	}
 
-	public static TGrid parse(JsonMap jsonMap, TClient tClient) {
-		final long tuid = JsonConstants.readTUID(jsonMap);
+	public static TGrid parse(JsonMap json, TClient tClient) {
+		final long tuid = JsonConstants.readTUID(json);
 
-		final int rows = Integer.parseInt(jsonMap.getAttribute("rows"));
-		final int columns = Integer.parseInt(jsonMap.getAttribute("columns"));
+		final int rows = Integer.parseInt(json.getAttribute("rows"));
+		final int columns = Integer.parseInt(json.getAttribute("columns"));
 
 		final TGrid result = new TGrid(tuid, tClient);
 		result.m_components = new TComponent[rows][columns];
@@ -61,13 +65,15 @@ public class TGrid extends TComponent {
 		for(int row = 0; row < rows; row++) {
 			for(int column = 0; column < columns; column++) {
 				final String childName = String.format("%s_%s", row, column);
-				final JsonMap childMap = jsonMap.getMap(childName);
+				final JsonMap childMap = json.getMap(childName);
 				if(childMap != null) {
 					final TComponent childComponent = TComponentFactory.parse(childMap, tClient);
 					result.m_components[row][column] = childComponent;
 				}
 			}
 		}
+
+		result.readCustomTag(json);
 
 		return result;
 	}

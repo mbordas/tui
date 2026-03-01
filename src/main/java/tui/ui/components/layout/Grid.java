@@ -86,6 +86,8 @@ public class Grid extends UIRefreshableComponent {
 			}
 		}
 
+		applyCustomTag(gridElement);
+
 		return containedElement.getHigherNode();
 	}
 
@@ -130,6 +132,9 @@ public class Grid extends UIRefreshableComponent {
 			}
 		}
 		appendParameters(result);
+
+		applyCustomTag(result);
+
 		return result;
 	}
 

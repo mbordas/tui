@@ -29,6 +29,7 @@ import tui.ui.components.TableData;
 import tui.ui.components.TablePickerTest;
 import tui.ui.components.TableTest;
 import tui.ui.components.UIComponent;
+import tui.utils.TestUtils;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -39,6 +40,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TTableTest extends TestWithBackend {
+
+	@Test
+	public void customTag() {
+		final Table table = new Table("title", List.of("A", "B"));
+		TestUtils.assertCustomTagInTClientProcedure(() -> table, TTable.class);
+	}
 
 	public static @Nullable String getTitle(WebElement tableElement) {
 		final WebElement caption = tableElement.findElement(By.tagName("caption"));

@@ -63,6 +63,8 @@ public class NavButton extends UIComponentWithText {
 				.setText(m_label);
 
 		applyCustomStyle(button);
+		applyCustomTag(result);
+
 		return result;
 	}
 
@@ -75,7 +77,10 @@ public class NavButton extends UIComponentWithText {
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
 			parameters.setAttribute(entry.getKey(), entry.getValue());
 		}
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+		
 		return result;
 	}
 }

@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -42,16 +43,17 @@ public class TSection extends TComponent {
 		return m_title;
 	}
 
-	public static TSection parse(JsonMap jsonMap, TClient tClient) {
-		final String title = jsonMap.getAttribute("title");
-		final long tuid = JsonConstants.readTUID(jsonMap);
+	public static TSection parse(JsonMap json, TClient tClient) {
+		final String title = json.getAttribute("title");
+		final long tuid = JsonConstants.readTUID(json);
 		TSection result = new TSection(tuid, title, tClient);
-		final JsonArray content = jsonMap.getArray("content");
+		final JsonArray content = json.getArray("content");
 		final Iterator<JsonObject> contentIterator = content.iterator();
 		while(contentIterator.hasNext()) {
 			final JsonObject componentJson = contentIterator.next();
 			result.m_content.add(TComponentFactory.parse(componentJson, tClient));
 		}
+		result.readCustomTag(json);
 		return result;
 	}
 
@@ -61,7 +63,7 @@ public class TSection extends TComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		return new ArrayList<>(m_content);
 	}
 

@@ -23,12 +23,19 @@ import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
 import tui.ui.components.layout.ModalPanel;
 import tui.ui.components.layout.Panel;
+import tui.utils.TestUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TModalPanelTest extends TestWithBackend {
+
+	@Test
+	public void customTag() {
+		final ModalPanel modalPanel = new ModalPanel(Panel.Align.VERTICAL_TOP, "Open");
+		TestUtils.assertCustomTagInTClientProcedure(() -> modalPanel, TModalPanel.class);
+	}
 
 	@Test
 	public void contentShouldNotBeReachableWhenPanelIsClosed() {

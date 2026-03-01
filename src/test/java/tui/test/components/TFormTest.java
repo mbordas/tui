@@ -29,6 +29,7 @@ import tui.ui.components.Page;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInputFile;
 import tui.ui.components.form.Search;
+import tui.utils.TestUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +45,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TFormTest extends TestWithBackend {
+
+	@Test
+	public void customTag() {
+		final Form form = new Form("title", "/target");
+		TestUtils.assertCustomTagInTClientProcedure(() -> form, TForm.class);
+	}
 
 	@Test
 	public void uploadFile() throws Exception {

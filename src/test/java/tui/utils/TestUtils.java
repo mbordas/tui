@@ -20,6 +20,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import tui.http.TUIBackend;
 import tui.test.Browser;
+import tui.test.TClient;
+import tui.test.components.TComponent;
 import tui.ui.components.Page;
 import tui.ui.components.RefreshButton;
 import tui.ui.components.UIComponent;
@@ -36,6 +38,8 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestUtils {
@@ -98,6 +102,49 @@ public class TestUtils {
 		final RefreshButton button = page.append(new RefreshButton("Refresh"));
 		button.connectListener(panel);
 		return new UpdatablePage(page, panel, button);
+	}
+
+	/**
+	 * @param componentToTest Must return the {@link UIComponent} instance to be tested.
+	 */
+	public static <T extends TComponent> void assertCustomTagInHTMLProcedure(Supplier<UIComponent> componentToTest) {
+		final String customTag = "assertCustomTagProcedure";
+		final UIComponent component = componentToTest.get();
+		component.setCustomTag(customTag);
+
+		final UpdatablePage updatablePage = createPageWithUpdatablePanel();
+		updatablePage.panel().append(component);
+
+		assertHTMLProcedure(() -> component, (prefix, element) -> {
+			assertEquals(customTag, element.getAttribute(UIComponent.HTML_ATTRIBUTE_CUSTOM_TAG));
+		});
+	}
+
+	/**
+	 * @param componentToTest Must return the {@link UIComponent} instance to be tested.
+	 * @param type            The T-class (which must be a subclass of {@link TComponent}) is used by the {@link TClient} to look for the component.
+	 */
+	public static <T extends TComponent> void assertCustomTagInTClientProcedure(Supplier<UIComponent> componentToTest, Class<T> type) {
+		final String customTag = "assertCustomTagProcedure";
+		final UIComponent component = componentToTest.get();
+		component.setCustomTag(customTag);
+
+		final UpdatablePage updatablePage = createPageWithUpdatablePanel();
+		updatablePage.panel().append(component);
+
+		try(final TUIBackend backend = new TUIBackend(8080)) {
+			backend.registerPage(updatablePage.page());
+			backend.start();
+
+			final TClient tClient = new TClient(backend.getPort());
+			tClient.open(updatablePage.page().getSource());
+			System.out.println(tClient.branchString());
+			final T tComponent = tClient.finderOfClassWithCustomTag(type, customTag).getUnique();
+
+			assertNotNull(tComponent);
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

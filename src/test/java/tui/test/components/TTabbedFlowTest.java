@@ -29,6 +29,12 @@ import java.util.List;
 
 public class TTabbedFlowTest extends TestWithBackend {
 
+	@Test
+	public void customTag() {
+		final TabbedFlow tabbedFlow = new TabbedFlow();
+		TestUtils.assertCustomTagInTClientProcedure(() -> tabbedFlow, TTabbedFlow.class);
+	}
+
 	/**
 	 * Here we check that the components under the TTabbedFlow can be found.
 	 */

@@ -238,7 +238,10 @@ public class SVG extends UIRefreshableComponent {
 			result.setAttribute(HTMLConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
 		appendParameters(result);
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+		
 		return result;
 	}
 

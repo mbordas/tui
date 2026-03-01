@@ -52,6 +52,8 @@ public class List extends UIComponent {
 		});
 
 		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 
@@ -61,7 +63,10 @@ public class List extends UIComponent {
 		result.setAttribute(JSON_ATTRIBUTE_IS_ORDERED, Boolean.toString(m_isOrdered));
 		final JsonArray contentArray = result.createArray(JSON_ARRAY_ELEMENTS);
 		m_content.forEach((component) -> contentArray.add(component.toJsonMap()));
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 

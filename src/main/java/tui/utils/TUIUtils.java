@@ -38,8 +38,12 @@ public class TUIUtils {
 	}
 
 	public static Set<Long> parseTUIDsSeparatedByComa(String input) {
-		return Arrays.stream(input.split(","))
-				.map(Long::valueOf)
-				.collect(Collectors.toSet());
+		if("".equals(input)) {
+			return Set.of();
+		} else {
+			return Arrays.stream(input.split(","))
+					.map(Long::valueOf)
+					.collect(Collectors.toSet());
+		}
 	}
 }

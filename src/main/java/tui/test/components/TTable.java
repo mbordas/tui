@@ -16,6 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.apache.http.HttpException;
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonException;
@@ -131,7 +132,7 @@ public class TTable extends TRefreshableComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		return List.of();
 	}
 
@@ -201,12 +202,14 @@ public class TTable extends TRefreshableComponent {
 	/**
 	 * Parses a json map describing a complete table. When you need to parse table update only, you should call parseUpdate.
 	 */
-	public static TTable parse(JsonMap map, TClient client) {
-		final BaseAttributes baseAttributes = parseBaseAttributes(map);
+	public static TTable parse(JsonMap json, TClient client) {
+		final BaseAttributes baseAttributes = parseBaseAttributes(json);
 		final TTable result = new TTable(baseAttributes.tuid, baseAttributes.title, baseAttributes.columns, baseAttributes.source, client);
-		result.readParameters(map);
-		loadRows(map, baseAttributes.columns, result, client);
-		loadPageInfo(map, result);
+		result.readParameters(json);
+		loadRows(json, baseAttributes.columns, result, client);
+		loadPageInfo(json, result);
+
+		result.readCustomTag(json);
 		return result;
 	}
 

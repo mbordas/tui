@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.http.RequestReader;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
@@ -98,7 +99,7 @@ public class TSearch extends TComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		return List.of();
 	}
 
@@ -128,6 +129,8 @@ public class TSearch extends TComponent {
 		parametersMap.getAttributes().forEach((key, value) -> result.m_parameters.put(key, value.toString()));
 
 		result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
+
+		result.readCustomTag(json);
 
 		return result;
 	}

@@ -25,6 +25,7 @@ import tui.test.WebServiceSpy;
 import tui.ui.components.Page;
 import tui.ui.components.form.Search;
 import tui.ui.components.layout.Panel;
+import tui.utils.TestUtils;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -36,6 +37,12 @@ import java.util.Locale;
 import static org.junit.Assert.assertEquals;
 
 public class TSearchTest extends TestWithBackend {
+
+	@Test
+	public void customTag() {
+		final Search search = new Search("label", "search");
+		TestUtils.assertCustomTagInTClientProcedure(() -> search, TSearch.class);
+	}
 
 	@Test
 	public void initialValue() throws Exception {

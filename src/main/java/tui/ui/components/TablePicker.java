@@ -50,6 +50,7 @@ public class TablePicker extends Table {
 		if(!m_connectedComponents.isEmpty()) {
 			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
+		applyCustomTag(result);
 		return result;
 	}
 
@@ -58,6 +59,7 @@ public class TablePicker extends Table {
 		if(!m_connectedComponents.isEmpty()) {
 			result.setAttribute(ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
+		applyCustomTag(result);
 		return result;
 	}
 

@@ -81,6 +81,8 @@ public class RefreshButton extends UIComponentWithText {
 		}
 
 		applyCustomStyle(button);
+		applyCustomTag(button);
+
 		return container;
 	}
 
@@ -95,7 +97,10 @@ public class RefreshButton extends UIComponentWithText {
 		if(!m_connectedComponents.isEmpty()) {
 			result.setAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS, getTUIsSeparatedByComa(m_connectedComponents));
 		}
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 

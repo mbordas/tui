@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.TClient;
@@ -70,18 +71,19 @@ public class TDownloadButton extends TComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		return List.of();
 	}
 
-	public static TDownloadButton parse(JsonMap map, TClient client) {
-		final long tuid = JsonConstants.readTUID(map);
-		final String label = map.getAttribute(DownloadButton.JSON_ATTRIBUTE_LABEL);
-		final String target = map.getAttribute(DownloadButton.JSON_ATTRIBUTE_TARGET);
-		final String defaultFileName = map.getAttribute(DownloadButton.JSON_ATTRIBUTE_DEFAULT_FILE_NAME);
+	public static TDownloadButton parse(JsonMap json, TClient client) {
+		final long tuid = JsonConstants.readTUID(json);
+		final String label = json.getAttribute(DownloadButton.JSON_ATTRIBUTE_LABEL);
+		final String target = json.getAttribute(DownloadButton.JSON_ATTRIBUTE_TARGET);
+		final String defaultFileName = json.getAttribute(DownloadButton.JSON_ATTRIBUTE_DEFAULT_FILE_NAME);
 		final TDownloadButton result = new TDownloadButton(tuid, label, target, defaultFileName, client);
-		final JsonMap parametersMap = map.getMap(DownloadButton.JSON_MAP_PARAMETERS);
+		final JsonMap parametersMap = json.getMap(DownloadButton.JSON_MAP_PARAMETERS);
 		parametersMap.getAttributes().forEach((key, value) -> result.m_parameters.put(key, value.toString()));
+		result.readCustomTag(json);
 		return result;
 	}
 

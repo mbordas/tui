@@ -62,6 +62,7 @@ public class Paragraph extends UIRefreshableComponent {
 			result.addClass(HTML_CLASS);
 			result.setText(m_text);
 			applyCustomStyle(result);
+			applyCustomTag(result);
 			return result;
 		}
 
@@ -70,6 +71,7 @@ public class Paragraph extends UIRefreshableComponent {
 			final JsonMap result = new JsonMap(JSON_TYPE);
 			result.setAttribute(JSON_ATTRIBUTE_CONTENT, m_text);
 			applyCustomStyle(result);
+			applyCustomTag(result);
 			return result;
 		}
 	}
@@ -137,6 +139,9 @@ public class Paragraph extends UIRefreshableComponent {
 		for(UIComponent fragment : m_content) {
 			paragraphElement.append(fragment.toHTMLNode());
 		}
+
+		applyCustomTag(paragraphElement);
+
 		return containedElement.getHigherNode();
 	}
 
@@ -149,7 +154,10 @@ public class Paragraph extends UIRefreshableComponent {
 		result.setAttribute(ATTRIBUTE_TEXT_ALIGN, m_textAlign.name());
 		result.createArray(ATTRIBUTE_CONTENT, m_content, UIComponent::toJsonMap);
 		appendParameters(result);
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+
 		return result;
 	}
 

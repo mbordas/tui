@@ -97,6 +97,8 @@ public class VerticalFlow extends UIComponent {
 
 		createMargin(result);
 
+		applyCustomTag(result);
+
 		return result;
 	}
 
@@ -107,6 +109,7 @@ public class VerticalFlow extends UIComponent {
 		result.setAttribute("spacing", m_spacing.name());
 		result.createArray("content", m_content, UIComponent::toJsonMap);
 		applyCustomStyle(result);
+		applyCustomTag(result);
 		return result;
 	}
 

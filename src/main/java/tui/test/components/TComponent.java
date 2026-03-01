@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonMap;
 import tui.test.TClient;
 import tui.test.TComponentFinder;
@@ -62,7 +63,7 @@ public abstract class TComponent {
 
 	public abstract TComponent find(long tuid);
 
-	public abstract Collection<TComponent> getChildrenComponents();
+	public abstract @NotNull Collection<TComponent> getChildrenComponents();
 
 	public Collection<TComponent> getReachableSubComponents() {
 		final Collection<TComponent> result = new ArrayList<>();
@@ -108,6 +109,9 @@ public abstract class TComponent {
 		final StringBuilder result = new StringBuilder(getClass().getSimpleName());
 		if(m_tuid != null) {
 			result.append(" #").append(m_tuid);
+		}
+		if(m_customTag != null) {
+			result.append(" @").append(m_customTag);
 		}
 		if(title != null) {
 			result.append(" '").append(title).append("'");

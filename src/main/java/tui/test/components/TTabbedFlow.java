@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -24,11 +25,14 @@ import tui.test.TClient;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TTabbedFlow extends TComponent {
 
-	private final Map<String /* title */, TVerticalFlow> m_content = new LinkedHashMap<>();
+	private final Map<String /* title */, Collection<TComponent>> m_content = new LinkedHashMap<>();
+
+	private String m_openTabTitle = null;
 
 	/**
 	 * @param tuid   Unique identifier.
@@ -40,27 +44,42 @@ public class TTabbedFlow extends TComponent {
 
 	@Override
 	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content.values());
+		for(Collection<TComponent> tabComponents : m_content.values()) {
+			final TComponent foundComponent = TComponent.find(tuid, tabComponents);
+			if(foundComponent != null) {
+				return foundComponent;
+			}
+		}
+
+		return null;
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
-		return m_content.values().stream()
-				.map((flow) -> (TComponent) flow)
-				.toList();
+	public @NotNull Collection<TComponent> getChildrenComponents() {
+		if(!m_isVisible) {
+			return List.of();
+		} else {
+			return m_content.get(m_openTabTitle).stream()
+					.map((flow) -> (TComponent) flow)
+					.toList();
+		}
 	}
 
-	public static TTabbedFlow parse(JsonMap jsonMap, TClient tClient) {
-		final long tuid = JsonConstants.readTUID(jsonMap);
+	public static TTabbedFlow parse(JsonMap json, TClient tClient) {
+		final long tuid = JsonConstants.readTUID(json);
 		final TTabbedFlow result = new TTabbedFlow(tuid, tClient);
-		final JsonArray tabs = jsonMap.getArray("tabs");
+		final JsonArray tabs = json.getArray("tabs");
 		final Iterator<JsonObject> contentIterator = tabs.iterator();
 		while(contentIterator.hasNext()) {
 			final JsonMap tabEntryJson = (JsonMap) contentIterator.next();
 			final String tabTitle = tabEntryJson.getAttribute("title");
+			if(result.m_openTabTitle == null) {
+				result.m_openTabTitle = tabTitle;
+			}
 			final TVerticalFlow tabFlow = TVerticalFlow.parse(tabEntryJson.getMap("content"), tClient);
-			result.m_content.put(tabTitle, tabFlow);
+			result.m_content.put(tabTitle, tabFlow.getChildrenComponents());
 		}
+		result.readCustomTag(json);
 		return result;
 	}
 }

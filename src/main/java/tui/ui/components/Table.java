@@ -214,6 +214,8 @@ public class Table extends UIRefreshableComponent {
 			}
 		}
 
+		applyCustomTag(tableElement);
+
 		return containedElement.getHigherNode();
 	}
 
@@ -249,6 +251,8 @@ public class Table extends UIRefreshableComponent {
 		}
 		appendParameters(result);
 		TableData.fill(result, m_data);
+
+		applyCustomTag(result);
 
 		return result;
 	}

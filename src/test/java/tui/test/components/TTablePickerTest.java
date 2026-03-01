@@ -24,6 +24,7 @@ import tui.ui.components.Paragraph;
 import tui.ui.components.TablePicker;
 import tui.ui.components.TablePickerTest;
 import tui.ui.components.layout.Panel;
+import tui.utils.TestUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +35,12 @@ import static tui.ui.components.TableTest.buildItems;
 import static tui.ui.components.TableTest.putItemsInTable;
 
 public class TTablePickerTest extends TestWithBackend {
+
+	@Test
+	public void customTag() {
+		final TablePicker tablePicker = new TablePicker("title", List.of("A", "B"));
+		TestUtils.assertCustomTagInTClientProcedure(() -> tablePicker, TTable.class);
+	}
 
 	@Test
 	public void browseAndClick() {

@@ -75,6 +75,7 @@ public class DownloadButton extends UIComponent {
 		}
 
 		applyCustomStyle(result);
+		applyCustomTag(result);
 
 		return result;
 	}
@@ -89,7 +90,10 @@ public class DownloadButton extends UIComponent {
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
 			parameters.setAttribute(entry.getKey(), entry.getValue());
 		}
+
 		applyCustomStyle(result);
+		applyCustomTag(result);
+		
 		return result;
 	}
 

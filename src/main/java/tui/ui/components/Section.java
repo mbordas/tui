@@ -115,6 +115,7 @@ public class Section extends UIComponent {
 		}
 
 		section.applyCustomStyle(result);
+		section.applyCustomTag(result);
 
 		return result;
 	}
@@ -142,6 +143,9 @@ public class Section extends UIComponent {
 				contentArray.add(component.toJsonMap());
 			}
 		}
+
+		section.applyCustomStyle(result);
+		section.applyCustomTag(result);
 
 		return result;
 	}

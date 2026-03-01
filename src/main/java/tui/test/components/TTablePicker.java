@@ -28,16 +28,20 @@ public class TTablePicker extends TTable {
 		super(tuid, title, columns, sourcePath, tClient);
 	}
 
-	public static TTablePicker parse(JsonMap map, TClient client) {
-		final BaseAttributes baseAttributes = parseBaseAttributes(map);
+	public static TTablePicker parse(JsonMap json, TClient client) {
+		final BaseAttributes baseAttributes = parseBaseAttributes(json);
 
 		final TTablePicker result = new TTablePicker(baseAttributes.tuid(), baseAttributes.title(), baseAttributes.columns(),
 				baseAttributes.source(), client);
 
-		loadRows(map, baseAttributes.columns(), result, client);
+		loadRows(json, baseAttributes.columns(), result, client);
 
-		final String refreshListenersTUIDs = map.getAttribute(TablePicker.ATTRIBUTE_REFRESH_LISTENERS);
-		result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(refreshListenersTUIDs));
+		if(json.hasAttribute(TablePicker.ATTRIBUTE_REFRESH_LISTENERS)) {
+			final String refreshListenersTUIDs = json.getAttribute(TablePicker.ATTRIBUTE_REFRESH_LISTENERS);
+			result.m_refreshListeners.addAll(TUIUtils.parseTUIDsSeparatedByComa(refreshListenersTUIDs));
+		}
+
+		result.readCustomTag(json);
 
 		return result;
 	}

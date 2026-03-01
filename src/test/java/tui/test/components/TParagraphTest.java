@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Mathieu Bordas
+/* Copyright (c) 2026, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,56 +15,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
-import tui.json.JsonArray;
-import tui.json.JsonConstants;
-import tui.json.JsonMap;
-import tui.json.JsonObject;
-import tui.test.TClient;
+import org.junit.Test;
+import tui.ui.components.Paragraph;
+import tui.utils.TestUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+public class TParagraphTest {
 
-public class TTabbedPanel extends TComponent {
-
-	private final String m_title;
-
-	private final List<TComponent> m_content = new ArrayList<>();
-
-	/**
-	 * @param tuid   Unique identifier.
-	 * @param client This client object will help acting on some component, and determining if they are reachable.
-	 */
-	protected TTabbedPanel(long tuid, String title, TClient client) {
-		super(tuid, client);
-		m_title = title;
+	@Test
+	public void customTagOnParagraph() {
+		final Paragraph paragraph = new Paragraph();
+		TestUtils.assertCustomTagInTClientProcedure(() -> paragraph, TParagraph.class);
 	}
 
-	public String getTitle() {
-		return m_title;
+	@Test
+	public void customTagOnText() {
+		final Paragraph.Text text = new Paragraph.Text("text");
+		TestUtils.assertCustomTagInTClientProcedure(() -> text, TParagraph.TText.class);
 	}
 
-	public static TComponent parse(JsonMap map, TClient client) {
-		final long tuid = JsonConstants.readTUID(map);
-		final String title = map.getAttribute("title");
-		final TTabbedPanel result = new TTabbedPanel(tuid, title, client);
-		final JsonArray content = map.getArray("content");
-		final Iterator<JsonObject> contentIterator = content.iterator();
-		while(contentIterator.hasNext()) {
-			final JsonObject componentJson = contentIterator.next();
-			result.m_content.add(TComponentFactory.parse(componentJson, client));
-		}
-		return result;
-	}
-
-	@Override
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
-	}
-
-	@Override
-	public Collection<TComponent> getChildrenComponents() {
-		return new ArrayList<>(m_content);
-	}
 }

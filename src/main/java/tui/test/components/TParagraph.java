@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -49,7 +50,7 @@ public class TParagraph extends TRefreshableComponent {
 		}
 
 		@Override
-		public Collection<TComponent> getChildrenComponents() {
+		public @NotNull Collection<TComponent> getChildrenComponents() {
 			return List.of();
 		}
 
@@ -58,9 +59,10 @@ public class TParagraph extends TRefreshableComponent {
 			return other instanceof TText && m_content.equals(((TText) other).m_content);
 		}
 
-		public static TText parse(JsonMap map, TClient client) {
+		public static TText parse(JsonMap json, TClient client) {
 			final TText result = new TText(client);
-			result.m_content = map.getAttribute(Paragraph.Text.JSON_ATTRIBUTE_CONTENT);
+			result.m_content = json.getAttribute(Paragraph.Text.JSON_ATTRIBUTE_CONTENT);
+			result.readCustomTag(json);
 			return result;
 		}
 	}
@@ -98,21 +100,22 @@ public class TParagraph extends TRefreshableComponent {
 	}
 
 	@Override
-	public Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getChildrenComponents() {
 		return m_content;
 	}
 
-	public static TParagraph parse(JsonMap map, TClient client) {
-		final long tuid = JsonConstants.readTUID(map);
+	public static TParagraph parse(JsonMap json, TClient client) {
+		final long tuid = JsonConstants.readTUID(json);
 		final TParagraph result = new TParagraph(tuid, client);
-		result.readSource(map);
-		result.readParameters(map);
-		final JsonArray content = map.getArray(Paragraph.ATTRIBUTE_CONTENT);
+		result.readSource(json);
+		result.readParameters(json);
+		final JsonArray content = json.getArray(Paragraph.ATTRIBUTE_CONTENT);
 		for(int i = 0; i < content.size(); i++) {
 			final JsonMap entry = content.getMap(i);
 			final TComponent component = TComponentFactory.parse(entry, client);
 			result.m_content.add(component);
 		}
+		result.readCustomTag(json);
 
 		return result;
 	}

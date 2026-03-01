@@ -15,12 +15,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import tui.ui.components.Section;
+import tui.utils.TestUtils;
 
 import java.util.Optional;
 
 public class TSectionTest {
+
+	@Test
+	public void customTag() {
+		final Section section = new Section("title");
+		TestUtils.assertCustomTagInTClientProcedure(() -> section, TSection.class);
+	}
 
 	public static String getTitle(WebElement sectionElement) {
 		final Optional<WebElement> anyHeaderELement = sectionElement.findElements(By.xpath("./*")).stream()
