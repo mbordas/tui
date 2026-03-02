@@ -82,6 +82,13 @@ public class TTabbedFlow extends TComponent {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return String.join(" | ", m_content.keySet().stream()
+				.map((key) -> key.equals(m_openTabTitle) ? "[" + key + "]" : key)
+				.toList());
+	}
+
 	public static TTabbedFlow parse(JsonMap json, TClient tClient) {
 		final long tuid = JsonConstants.readTUID(json);
 		final TTabbedFlow result = new TTabbedFlow(tuid, tClient);
