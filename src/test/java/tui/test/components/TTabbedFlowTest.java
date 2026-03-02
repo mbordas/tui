@@ -19,6 +19,7 @@ import org.junit.Test;
 import tui.http.TUIBackend;
 import tui.test.TClient;
 import tui.test.TestWithBackend;
+import tui.ui.components.Page;
 import tui.ui.components.Table;
 import tui.ui.components.layout.Panel;
 import tui.ui.components.layout.TabbedFlow;
@@ -26,6 +27,9 @@ import tui.ui.components.layout.VerticalFlow;
 import tui.utils.TestUtils;
 
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class TTabbedFlowTest extends TestWithBackend {
 
@@ -61,6 +65,42 @@ public class TTabbedFlowTest extends TestWithBackend {
 			tClient.getRefreshButton(updatablePage.button().getLabel()).click();
 
 			tClient.getTable(table.getTitle());
+		}
+	}
+
+	@Test
+	public void onlyComponentsOfSelectedTabAreReachable() throws Exception {
+		final Page page = new Page("selectTab", "/index");
+		final TabbedFlow tabbedFlow = page.append(new TabbedFlow());
+		tabbedFlow.createTab("Tab A")
+				.append(new Table("Table A", List.of("A", "B")));
+		tabbedFlow.createTab("Tab B")
+				.append(new Table("Table B", List.of("A", "B")));
+
+		try(final TUIBackend backend = startBackend(page)) {
+			final TClient tClient = new TClient(backend.getPort());
+			tClient.open(page.getSource());
+
+			final TTabbedFlow tTabbedFlow = tClient.finderOfClass(TTabbedFlow.class).getUnique();
+
+			// The default tab selected is the first one: Tab A
+			tClient.getTable("Table A");
+			try {
+				tClient.getTable("Table B"); // Not visible when tab A is selected
+				fail();
+			} catch(Exception e) {
+				assertEquals("No TTable found matching condition(s).", e.getMessage());
+			}
+
+			// Selecting the second tab: Tab B
+			tTabbedFlow.selectTab("Tab B");
+			try {
+				tClient.getTable("Table A");
+				fail();
+			} catch(Exception e) {
+				assertEquals("No TTable found matching condition(s).", e.getMessage());
+			}
+			tClient.getTable("Table B");
 		}
 	}
 

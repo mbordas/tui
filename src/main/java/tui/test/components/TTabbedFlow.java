@@ -22,6 +22,7 @@ import tui.json.JsonMap;
 import tui.json.JsonObject;
 import tui.test.TClient;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,6 +43,22 @@ public class TTabbedFlow extends TComponent {
 		super(tuid, client);
 	}
 
+	public String getSelectedTabTitle() {
+		return m_openTabTitle;
+	}
+
+	public void selectTab(String title) {
+		if(m_content.containsKey(title)) {
+			m_openTabTitle = title;
+		} else {
+			throw new IllegalArgumentException("No tab with title: " + title);
+		}
+	}
+
+	public List<String> getTabTitles() {
+		return new ArrayList<>(m_content.keySet());
+	}
+
 	@Override
 	public TComponent find(long tuid) {
 		for(Collection<TComponent> tabComponents : m_content.values()) {
@@ -56,7 +73,7 @@ public class TTabbedFlow extends TComponent {
 
 	@Override
 	public @NotNull Collection<TComponent> getChildrenComponents() {
-		if(!m_isVisible) {
+		if(!m_isVisible || m_openTabTitle == null /* happens when TabbedFlow has no tab*/) {
 			return List.of();
 		} else {
 			return m_content.get(m_openTabTitle).stream()
