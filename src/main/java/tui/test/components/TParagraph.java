@@ -50,7 +50,7 @@ public class TParagraph extends TRefreshableComponent {
 		}
 
 		@Override
-		public @NotNull Collection<TComponent> getChildrenComponents() {
+		public @NotNull Collection<TComponent> getReachableChildrenComponents() {
 			return List.of();
 		}
 
@@ -100,7 +100,7 @@ public class TParagraph extends TRefreshableComponent {
 	}
 
 	@Override
-	public @NotNull Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
 		return m_content;
 	}
 

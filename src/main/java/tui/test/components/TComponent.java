@@ -36,7 +36,6 @@ public abstract class TComponent {
 	private final Long m_tuid;
 	private String m_customTag;
 	protected final TClient m_client;
-	protected boolean m_isVisible = true;
 
 	/**
 	 * @param tuid   Unique identifier.
@@ -63,33 +62,30 @@ public abstract class TComponent {
 
 	public abstract TComponent find(long tuid);
 
-	public abstract @NotNull Collection<TComponent> getChildrenComponents();
+	/**
+	 * The reachable components are those contained in this component that are visible.
+	 * One reason for which one contained component may not be visible:
+	 * - This component (the parent) is in a state that makes its content hidden. One example is the {@link TModalPanel}.
+	 */
+	public abstract @NotNull Collection<TComponent> getReachableChildrenComponents();
 
 	public Collection<TComponent> getReachableSubComponents() {
 		final Collection<TComponent> result = new ArrayList<>();
-		if(m_isVisible) {
-			for(TComponent childComponent : getChildrenComponents()) {
-				if(childComponent.m_isVisible) {
-					result.add(childComponent);
-					result.addAll(childComponent.getReachableSubComponents());
-				}
-			}
+		for(TComponent childComponent : getReachableChildrenComponents()) {
+			result.add(childComponent);
+			result.addAll(childComponent.getReachableSubComponents());
 		}
 		return result;
 	}
 
 	public Optional<TComponent> findReachableSubComponent(Predicate<TComponent> condition) {
-		if(m_isVisible) {
-			for(TComponent childComponent : getChildrenComponents()) {
-				if(childComponent.m_isVisible) {
-					if(condition.test(childComponent)) {
-						return Optional.of(childComponent);
-					} else {
-						final Optional<TComponent> anyFoundComponent = childComponent.findReachableSubComponent(condition);
-						if(anyFoundComponent.isPresent()) {
-							return anyFoundComponent;
-						}
-					}
+		for(TComponent childComponent : getReachableChildrenComponents()) {
+			if(condition.test(childComponent)) {
+				return Optional.of(childComponent);
+			} else {
+				final Optional<TComponent> anyFoundComponent = childComponent.findReachableSubComponent(condition);
+				if(anyFoundComponent.isPresent()) {
+					return anyFoundComponent;
 				}
 			}
 		}
@@ -122,7 +118,7 @@ public abstract class TComponent {
 	public String branchString() {
 		final StringBuilder result = new StringBuilder(toString());
 		result.append("\n");
-		for(TComponent child : getChildrenComponents()) {
+		for(TComponent child : getReachableChildrenComponents()) {
 			Arrays.stream(child.branchString().split("\n")).forEach((line) -> result.append("  ").append(line).append("\n"));
 		}
 		return result.toString();

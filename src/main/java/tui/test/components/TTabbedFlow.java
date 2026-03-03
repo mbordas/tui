@@ -72,8 +72,8 @@ public class TTabbedFlow extends TComponent {
 	}
 
 	@Override
-	public @NotNull Collection<TComponent> getChildrenComponents() {
-		if(!m_isVisible || m_openTabTitle == null /* happens when TabbedFlow has no tab*/) {
+	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
+		if(m_openTabTitle == null /* happens when TabbedFlow has no tab*/) {
 			return List.of();
 		} else {
 			return m_content.get(m_openTabTitle).stream()
@@ -101,7 +101,7 @@ public class TTabbedFlow extends TComponent {
 				result.m_openTabTitle = tabTitle;
 			}
 			final TVerticalFlow tabFlow = TVerticalFlow.parse(tabEntryJson.getMap("content"), tClient);
-			result.m_content.put(tabTitle, tabFlow.getChildrenComponents());
+			result.m_content.put(tabTitle, tabFlow.getReachableChildrenComponents());
 		}
 		result.readCustomTag(json);
 		return result;

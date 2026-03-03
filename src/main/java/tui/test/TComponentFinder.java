@@ -61,7 +61,7 @@ public class TComponentFinder<C extends TComponent> {
 			}
 
 			// Recursive call on c's children
-			result.addAll(findAll(child, child.getChildrenComponents()));
+			result.addAll(findAll(child, child.getReachableChildrenComponents()));
 		});
 		return result;
 	}
@@ -97,6 +97,6 @@ public class TComponentFinder<C extends TComponent> {
 	}
 
 	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TComponent component) {
-		return new TComponentFinder<>(type, component, component.getChildrenComponents());
+		return new TComponentFinder<>(type, component, component.getReachableChildrenComponents());
 	}
 }

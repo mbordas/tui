@@ -63,7 +63,7 @@ public class TSection extends TComponent {
 	}
 
 	@Override
-	public @NotNull Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
 		return new ArrayList<>(m_content);
 	}
 

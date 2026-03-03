@@ -41,7 +41,7 @@ public class TList extends TComponent {
 	}
 
 	@Override
-	public @NotNull Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
 		return m_content;
 	}
 

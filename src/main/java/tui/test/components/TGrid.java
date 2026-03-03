@@ -41,7 +41,7 @@ public class TGrid extends TComponent {
 	}
 
 	@Override
-	public @NotNull Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
 		final Collection<TComponent> result = new ArrayList<>();
 		for(final TComponent[] rowOfComponents : m_components) {
 			for(TComponent component : rowOfComponents) {

@@ -117,7 +117,7 @@ public class TForm extends TComponent {
 	}
 
 	@Override
-	public @NotNull Collection<TComponent> getChildrenComponents() {
+	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
 		return List.of();
 	}
 

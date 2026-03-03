@@ -15,6 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.test.components;
 
+import org.jetbrains.annotations.NotNull;
 import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
@@ -22,7 +23,9 @@ import tui.json.JsonObject;
 import tui.test.TClient;
 import tui.ui.components.layout.ModalPanel;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 public class TModalPanel extends TPanel {
 
@@ -36,7 +39,6 @@ public class TModalPanel extends TPanel {
 	protected TModalPanel(long tuid, TClient client, String openButtonLabel) {
 		super(tuid, client);
 		m_openButtonLabel = openButtonLabel;
-		m_isVisible = m_opened;
 	}
 
 	public String getOpenButtonLabel() {
@@ -48,7 +50,6 @@ public class TModalPanel extends TPanel {
 			throw new IllegalStateException("ModalPanel is already opened");
 		}
 		m_opened = true;
-		m_isVisible = true;
 	}
 
 	public void close() {
@@ -56,11 +57,19 @@ public class TModalPanel extends TPanel {
 			throw new IllegalStateException("ModalPanel is already closed");
 		}
 		m_opened = false;
-		m_isVisible = true;
 	}
 
 	public boolean isOpened() {
 		return m_opened;
+	}
+
+	@Override
+	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
+		if(isOpened()) {
+			return super.getReachableChildrenComponents();
+		} else {
+			return List.of();
+		}
 	}
 
 	public static TModalPanel parse(JsonMap json, TClient client) {
