@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import tui.html.HTMLFetchErrorMessage;
 import tui.test.components.TFormTest;
 import tui.test.components.TModalFormTest;
@@ -59,8 +60,21 @@ public class Browser implements Closeable {
 	private final String m_host;
 
 	public Browser(int port) {
+		this(port, true);
+	}
+
+	/**
+	 * @param withGUI Set it to false when running on a headless server.
+	 */
+	public Browser(int port, boolean withGUI) {
 		m_host = String.format("http://localhost:%d", port);
-		m_driver = new FirefoxDriver();
+		final FirefoxOptions options = new FirefoxOptions();
+		if(!withGUI) {
+			options.addArguments("--headless");
+			options.addArguments("--disable-gpu");
+		}
+
+		m_driver = new FirefoxDriver(options);
 	}
 
 	public void open(String target) {
