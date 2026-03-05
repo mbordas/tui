@@ -26,6 +26,9 @@ public class NavButton extends UIComponentWithText {
 	public static final String HTML_CLASS = "tui-navbutton";
 
 	public static final String JSON_TYPE = "navbutton";
+	public static final String JSON_ATTRIBUTE_LABEL = "label";
+	public static final String JSON_ATTRIBUTE_TARGET = "target";
+	public static final String JSON_ATTRIBUTE_PARAMETERS = "parameters";
 
 	protected final String m_label;
 	protected final String m_target;
@@ -71,16 +74,16 @@ public class NavButton extends UIComponentWithText {
 	@Override
 	public JsonMap toJsonMap() {
 		final JsonMap result = new JsonMap(JSON_TYPE);
-		result.setAttribute("label", m_label);
-		result.setAttribute("target", m_target);
-		final JsonMap parameters = result.setChild("parameters", new JsonMap(null));
+		result.setAttribute(JSON_ATTRIBUTE_LABEL, m_label);
+		result.setAttribute(JSON_ATTRIBUTE_TARGET, m_target);
+		final JsonMap parameters = result.setChild(JSON_ATTRIBUTE_PARAMETERS, new JsonMap(null));
 		for(Map.Entry<String, String> entry : m_parameters.entrySet()) {
 			parameters.setAttribute(entry.getKey(), entry.getValue());
 		}
 
 		applyCustomStyle(result);
 		applyCustomTag(result);
-		
+
 		return result;
 	}
 }

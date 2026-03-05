@@ -1,4 +1,4 @@
-/* Copyright (c) 2025, Mathieu Bordas
+/* Copyright (c) 2026, Mathieu Bordas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -16,27 +16,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test.components;
 
 import org.jetbrains.annotations.NotNull;
-import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.TClient;
-import tui.ui.components.NavLink;
+import tui.ui.components.NavButton;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class TNavLink extends TComponent {
+public class TNavButton extends TComponent {
 
 	private final String m_label;
 	private final String m_target;
+	private final Map<String, String> m_parameters = new HashMap<>();
 
-	/**
-	 * @param tuid   Unique identifier.
-	 * @param client This client object will help acting on some component, and determining if they are reachable.
-	 */
-	protected TNavLink(long tuid, TClient client, String label, String target) {
-		super(tuid, client);
+	protected TNavButton(TClient client, String label, String target, Map<String, String> parameters) {
+		super(null, client);
 		m_label = label;
 		m_target = target;
+		m_parameters.putAll(parameters);
 	}
 
 	public String getLabel() {
@@ -45,6 +45,10 @@ public class TNavLink extends TComponent {
 
 	public String getTarget() {
 		return m_target;
+	}
+
+	public Map<String, String> getParameters() {
+		return new TreeMap<>(m_parameters);
 	}
 
 	@Override
@@ -57,16 +61,14 @@ public class TNavLink extends TComponent {
 		return List.of();
 	}
 
-	@Override
-	public String toString() {
-		return super.toString(m_label) + " -> " + m_target;
-	}
+	public static TNavButton parse(JsonMap json, TClient tClient) {
+		final String label = json.getAttribute(NavButton.JSON_ATTRIBUTE_LABEL);
+		final String target = json.getAttribute(NavButton.JSON_ATTRIBUTE_TARGET);
+		final JsonMap parametersMap = json.getMap(NavButton.JSON_ATTRIBUTE_PARAMETERS);
+		final Map<String, String> parameters = new HashMap<>();
+		parametersMap.getAttributes().forEach((key, value) -> parameters.put(key, value.toString()));
 
-	public static TNavLink parse(JsonMap json, TClient tClient) {
-		final long tuid = JsonConstants.readTUID(json);
-		final String label = json.getAttribute(NavLink.JSON_ATTRIBUTE_LABEL);
-		final String target = json.getAttribute(NavLink.JSON_ATTRIBUTE_TARGET);
-		final TNavLink result = new TNavLink(tuid, tClient, label, target);
+		final TNavButton result = new TNavButton(tClient, label, target, parameters);
 		result.readCustomTag(json);
 
 		return result;

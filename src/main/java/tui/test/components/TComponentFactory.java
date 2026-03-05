@@ -21,6 +21,7 @@ import tui.json.JsonParser;
 import tui.test.TClient;
 import tui.ui.components.DownloadButton;
 import tui.ui.components.List;
+import tui.ui.components.NavButton;
 import tui.ui.components.NavLink;
 import tui.ui.components.Paragraph;
 import tui.ui.components.RefreshButton;
@@ -47,6 +48,7 @@ public class TComponentFactory {
 			case List.JSON_TYPE -> TList.parse(map, client);
 			case ModalForm.JSON_TYPE -> TModalForm.parse(map, client);
 			case NavLink.JSON_TYPE -> TNavLink.parse(map, client);
+			case NavButton.JSON_TYPE -> TNavButton.parse(map, client);
 			case Panel.JSON_TYPE -> TPanel.parse(map, client);
 			case ModalPanel.JSON_TYPE -> TModalPanel.parse(map, client);
 			case Paragraph.JSON_TYPE -> TParagraph.parse(map, client);
@@ -57,7 +59,6 @@ public class TComponentFactory {
 			case Table.JSON_TYPE -> TTable.parse(map, client);
 			case TablePicker.JSON_TYPE -> TTablePicker.parse(map, client);
 			case TabbedFlow.JSON_TYPE -> TTabbedFlow.parse(map, client);
-			//			case TabbedFlow.TABBED_PANEL_JSON_TYPE -> TTabbedPanel.parse(map, client);
 			case VerticalFlow.JSON_TYPE -> TVerticalFlow.parse(map, client);
 
 			default -> throw new IllegalStateException("Unexpected value: " + map.getType());
