@@ -691,16 +691,17 @@ function updateSection(element, json, idMap) {
         elementForTitle = document.createElement('summary');
         containerNodeForContent.appendChild(elementForTitle);
     }
-    if(json['customStyleHeader'] != null) {
-        var style = '';
-        Object.entries(json['customStyleHeader']).forEach(([key, value]) => {
-            style += key + ':' + value + ';';
-        });
-        elementForTitle.setAttribute('style', style);
-    }
+
     const elementHeader = document.createElement('h' + json['depth']);
     elementForTitle.appendChild(elementHeader);
     elementHeader.textContent = json['title'];
+    if(json['customStyleHeader'] != null) {
+        var style = '';
+        Object.entries(json['customStyleHeader']['style']).forEach(([key, value]) => {
+            style += key + ':' + value + ';';
+        });
+        elementHeader.setAttribute('style', style);
+    }
     if(json['disclosureType'] != 'NONE') {
         elementHeader.style.display = 'inline';
     }

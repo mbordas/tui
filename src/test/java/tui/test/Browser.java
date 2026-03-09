@@ -630,6 +630,12 @@ public class Browser implements Closeable {
 		return result;
 	}
 
+	public String getComputedStyle(WebElement element, String propertyName) {
+		return m_driver.executeScript("return window.getComputedStyle(arguments[0]).getPropertyValue(arguments[1]);",
+						element, propertyName)
+				.toString();
+	}
+
 	public WebElement getByTUID(long tuid) {
 		return m_driver.findElement(By.id(String.valueOf(tuid)));
 	}

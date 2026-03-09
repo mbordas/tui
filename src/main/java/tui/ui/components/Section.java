@@ -96,12 +96,12 @@ public class Section extends UIComponent {
 			containerNodeForContent = result;
 		}
 
-		if(section.m_customStyleHeader != null) {
-			section.m_customStyleHeader.apply(containerNodeForTitle);
-		}
-		final HTMLNode header = containerNodeForTitle.createChild("h" + depth).setText(section.getTitle());
+		final HTMLNode heading = containerNodeForTitle.createChild("h" + depth).setText(section.getTitle());
 		if(section.m_disclosureType != DisclosureType.NONE) {
-			header.setStyleProperty("display", "inline");
+			heading.setStyleProperty("display", "inline");
+		}
+		if(section.m_customStyleHeader != null) {
+			section.m_customStyleHeader.apply(heading);
 		}
 
 		for(UIComponent component : section.getContent()) {

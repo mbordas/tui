@@ -18,10 +18,16 @@ package tui.ui.components;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.test.components.TSectionTest;
 import tui.ui.components.layout.Panel;
+import tui.ui.style.Style;
+import tui.utils.TUIColors;
+import tui.utils.TestUtils;
+
+import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -30,6 +36,41 @@ import static org.junit.Assert.assertNotNull;
 public class SectionTest extends TestWithBackend {
 
 	record Context(Page page, RefreshButton button, String panelSource) {
+	}
+
+	@Test
+	public void headerStyleShouldNotAffectTheSubComponents() throws Exception {
+		final Style style = new Style();
+		style.paragraph().text().setColor(Color.black); // the default color for a paragraph is black
+
+		final TestUtils.UpdatablePage updatablePage = TestUtils.createPageWithUpdatablePanel();
+		final Section section = updatablePage.panel().append(new Section("Section 1"));
+		section.appendParagraph(TestUtils.LOREM_IPSUM);
+		section.customStyleForHeader().setColor(Color.ORANGE); // the customized color for the heading is orange
+
+		try(final TUIBackend backend = startBackend(updatablePage.page());
+				final Browser browser = super.startBrowser()) {
+			backend.setStyle(style);
+			backend.registerWebService(updatablePage.panel().getSource(), (uri, request, response) -> updatablePage.panel().toJsonMap());
+
+			browser.open(updatablePage.page().getSource());
+
+			for(String phase : new String[] { "before refresh", "after refresh" }) {
+
+				// Assert that the heading color is orange (the customized color)
+				final WebElement sectionElement = browser.getSection(section.getTitle());
+				final WebElement headingElement = sectionElement.findElement(By.tagName("h1"));
+				assertEquals(phase, TUIColors.toCSSRGBAsSelenium(Color.ORANGE), browser.getComputedStyle(headingElement, "color"));
+
+				// Assert that the paragraph color is black (the default color)
+				final WebElement paragraphElement = browser.getParagraphsWithText().iterator().next();
+				assertEquals(phase, TUIColors.toCSSRGBAsSelenium(Color.black), browser.getComputedStyle(paragraphElement, "color"));
+
+				browser.clickRefreshButton(updatablePage.button().getLabel()); // reload the section
+			}
+
+			assertEquals(0, backend.getErroneousResponses());
+		}
 	}
 
 	/**
@@ -53,7 +94,7 @@ public class SectionTest extends TestWithBackend {
 	 * We build a page with one panel and refresh it with new content: 2 sections, each with one paragraph.
 	 */
 	@Test
-	public void refresh() throws InterruptedException {
+	public void refresh() throws Exception {
 		final Context context = withDefaultPage();
 
 		registerWebService(context.panelSource, (uri, request, response) -> {
@@ -65,24 +106,24 @@ public class SectionTest extends TestWithBackend {
 			return panel1.toJsonMap();
 		});
 
-		startBackend(context.page);
+		try(final TUIBackend ignored = startBackend(context.page);
+				final Browser browser = super.startBrowser()) {
+			browser.open(context.page.getSource());
 
-		final Browser browser = super.startBrowser();
-		browser.open(context.page.getSource());
+			browser.clickRefreshButton(context.button.getLabel());
 
-		browser.clickRefreshButton(context.button.getLabel());
+			final WebElement section1 = browser.getSection("Section 1 updated");
+			assertNotNull(section1);
+			assertFalse(section1.findElements(By.tagName("p")).isEmpty());
 
-		final WebElement section1 = browser.getSection("Section 1 updated");
-		assertNotNull(section1);
-		assertFalse(section1.findElements(By.tagName("p")).isEmpty());
-
-		final WebElement section2 = browser.getSection("Section 2 updated");
-		assertNotNull(section2);
-		assertFalse(section2.findElements(By.tagName("p")).isEmpty());
+			final WebElement section2 = browser.getSection("Section 2 updated");
+			assertNotNull(section2);
+			assertFalse(section2.findElements(By.tagName("p")).isEmpty());
+		}
 	}
 
 	@Test
-	public void depthOnUpdate() {
+	public void depthOnUpdate() throws Exception {
 		final Context context = withDefaultPage();
 
 		registerWebService(context.panelSource, (uri, request, response) -> {
@@ -96,16 +137,16 @@ public class SectionTest extends TestWithBackend {
 			return panel.toJsonMap();
 		});
 
-		startBackend(context.page);
+		try(final TUIBackend ignored = startBackend(context.page);
+				final Browser browser = super.startBrowser()) {
+			browser.open(context.page.getSource());
 
-		final Browser browser = super.startBrowser();
-		browser.open(context.page.getSource());
+			browser.clickRefreshButton(context.button.getLabel());
 
-		browser.clickRefreshButton(context.button.getLabel());
-
-		assertEquals(1, TSectionTest.getDepth(browser.getSection("Section 1")));
-		assertEquals(1, TSectionTest.getDepth(browser.getSection("Section 2")));
-		assertEquals(2, TSectionTest.getDepth(browser.getSection("Section 2.1")));
+			assertEquals(1, TSectionTest.getDepth(browser.getSection("Section 1")));
+			assertEquals(1, TSectionTest.getDepth(browser.getSection("Section 2")));
+			assertEquals(2, TSectionTest.getDepth(browser.getSection("Section 2.1")));
+		}
 	}
 
 }

@@ -55,6 +55,9 @@ public class TUIBackend implements AutoCloseable {
 	private final Map<String, TUIPageService> m_pageServices = new HashMap<>();
 	private final Map<String, TUIFileService> m_fileServices = new HashMap<>();
 
+	private int m_successfulResponses = 0;
+	private int m_erroneousResponses = 0;
+
 	public TUIBackend() {
 	}
 
@@ -90,10 +93,12 @@ public class TUIBackend implements AutoCloseable {
 						fileService.handle(uri, request, response);
 						response.setStatus(200);
 						request.setHandled(true);
+						m_successfulResponses++;
 					} catch(Throwable t) {
 						LOG.log(Level.SEVERE, t.getMessage(), t);
 						response.setStatus(500);
 						request.setHandled(true);
+						m_erroneousResponses++;
 					}
 				} else if(m_pageServices.containsKey(uri)) {
 					final TUIPageService pageService = m_pageServices.get(uri);
@@ -116,10 +121,12 @@ public class TUIBackend implements AutoCloseable {
 
 						response.setStatus(200);
 						request.setHandled(true);
+						m_successfulResponses++;
 					} catch(Throwable t) {
 						LOG.log(Level.SEVERE, t.getMessage(), t);
 						response.setStatus(500);
 						request.setHandled(true);
+						m_erroneousResponses++;
 					}
 				} else if(m_webServices.containsKey(uri)) {
 					final TUIWebService webService = m_webServices.get(uri);
@@ -130,10 +137,12 @@ public class TUIBackend implements AutoCloseable {
 						response.getWriter().write(json);
 						response.setStatus(200);
 						request.setHandled(true);
+						m_successfulResponses++;
 					} catch(Throwable t) {
 						LOG.log(Level.SEVERE, t.getMessage(), t);
 						response.setStatus(500);
 						request.setHandled(true);
+						m_erroneousResponses++;
 					}
 				} else if(PATH_TO_SCRIPT.equals(uri)) {
 					respondWithTextResource(request, response, "js/tui.js", HTMLConstants.JAVASCRIPT_CONTENT_TYPE);
@@ -142,6 +151,7 @@ public class TUIBackend implements AutoCloseable {
 					response.getWriter().write(m_style.toCSS());
 					response.setStatus(200);
 					request.setHandled(true);
+					m_successfulResponses++;
 				} else if("/favicon.ico".equals(uri)) {
 					respondWithBinaryResource(request, response, "favicon.ico", HTMLConstants.FAVICON_CONTENT_TYPE);
 				} else {
@@ -160,10 +170,12 @@ public class TUIBackend implements AutoCloseable {
 					response.getWriter().write(content);
 					response.setStatus(200);
 					request.setHandled(true);
+					m_successfulResponses++;
 				} catch(IOException e) {
 					e.printStackTrace();
 					response.setStatus(500);
 					request.setHandled(true);
+					m_erroneousResponses++;
 				}
 			}
 
@@ -177,10 +189,12 @@ public class TUIBackend implements AutoCloseable {
 					}
 					response.setStatus(200);
 					request.setHandled(true);
+					m_successfulResponses++;
 				} catch(IOException e) {
 					e.printStackTrace();
 					response.setStatus(500);
 					request.setHandled(true);
+					m_erroneousResponses++;
 				}
 			}
 		});
@@ -200,6 +214,10 @@ public class TUIBackend implements AutoCloseable {
 			}
 		}
 		LOG.info("Web server stopped");
+	}
+
+	public int getErroneousResponses() {
+		return m_erroneousResponses;
 	}
 
 	public void registerWebService(String path, TUIWebService service) {
