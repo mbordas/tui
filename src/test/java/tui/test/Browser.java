@@ -85,6 +85,10 @@ public class Browser implements Closeable {
 		}
 	}
 
+	public String getCurrentURL() {
+		return m_driver.getCurrentUrl();
+	}
+
 	public String getTitle() {
 		return m_driver.getTitle();
 	}
