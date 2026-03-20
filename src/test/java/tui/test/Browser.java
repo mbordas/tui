@@ -17,6 +17,7 @@ package tui.test;
 
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -83,6 +84,10 @@ public class Browser implements Closeable {
 		} else {
 			m_driver.get(m_host + "/" + target);
 		}
+
+		// This JavaScript injection will probably be too late to catch errors thrown during the loading of the page.
+		// But we can't do it before opening the page with 'driver.get()' because this resets the running JavaScript of the current window.
+		instrumentJavascriptErrorsHandling();
 	}
 
 	public String getCurrentURL() {
@@ -558,6 +563,91 @@ public class Browser implements Closeable {
 		final WebElement containerElement = getParent(element);
 		final WebElement errorElement = containerElement.findElement(By.className(HTMLFetchErrorMessage.HTML_CLASS_ERROR_ELEMENT));
 		return errorElement.getText();
+	}
+
+	/**
+	 * Injects JavaScript hook function into {@link FirefoxDriver} that will catch errors and store them into 'windowwindow.__jsErrors'
+	 * and 'window.__consoleErrors'. These errors will be accessible later.
+	 */
+	private void instrumentJavascriptErrorsHandling() {
+		final String script = """
+				(function() {
+					if(window.__HOOK_INSTALLED__) {
+						return;
+					} else {
+						window.__HOOK_INSTALLED__ = true;
+					}
+				
+					window.__jsErrors = [];
+					window.__consoleErrors = [];
+				
+					window.addEventListener('error', function(event) {
+						 window.__jsErrors.push({
+							 type: 'error',
+							 message: event.message || '',
+							 source: event.filename || '',
+							 lineno: event.lineno || 0,
+							 colno: event.colno || 0,
+							 stack: event.error && event.error.stack ? event.error.stack : null
+						 });
+					}, true);
+				
+					window.addEventListener('unhandledrejection', function(event) {
+					window.__jsErrors.push({
+						type: 'unhandledrejection',
+						message: event.reason ? event.reason.toString() : 'promise rejected',
+						stack: event.reason && event.reason.stack ? event.reason.stack : null
+						});
+					}, true);
+				
+					const origConsoleError = console.error;
+					console.error = function(...args) {
+						window.__consoleErrors.push(args.map(a => String(a)).join(' '));
+						origConsoleError.apply(console, args);
+					};
+				})();""";
+		m_driver.executeScript(script);
+	}
+
+	public record ScriptError(String message, String stack) {
+	}
+
+	public List<ScriptError> getScriptErrors() {
+		final JavascriptExecutor jsExecutor = m_driver;
+		final List<java.util.Map<String, Object>> jsErrors = (java.util.List<java.util.Map<String, Object>>) jsExecutor.executeScript(
+				"return window.__jsErrors || [];");
+		final List<String> consoleErrors = (java.util.List<String>) jsExecutor.executeScript("return window.__consoleErrors || [];");
+
+		final List<ScriptError> result = new ArrayList<>();
+		if((jsErrors != null && !jsErrors.isEmpty()) || (consoleErrors != null && !consoleErrors.isEmpty())) {
+			if(jsErrors != null) {
+				for(var jsError : jsErrors) {
+					final Object message = jsError.get("message");
+					final Object stack = jsError.get("stack");
+					result.add(new ScriptError("" + message, "" + stack));
+				}
+			}
+			if(consoleErrors != null) {
+				for(String message : consoleErrors) {
+					result.add(new ScriptError(message, ""));
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public void assertNoScriptErrors() {
+		final List<ScriptError> scriptErrors = getScriptErrors();
+		if(!scriptErrors.isEmpty()) {
+			for(ScriptError scriptError : scriptErrors) {
+				System.err.println("Script error: " + scriptError.message());
+				if(!scriptError.stack().isEmpty()) {
+					System.err.println(scriptError.stack());
+				}
+			}
+			assert false;
+		}
 	}
 
 	// UTILS
