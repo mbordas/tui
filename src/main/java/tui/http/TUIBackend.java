@@ -28,6 +28,7 @@ import tui.ui.style.Style;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -234,6 +235,17 @@ public class TUIBackend implements AutoCloseable {
 
 	public void registerFileService(String path, TUIFileService service) {
 		m_fileServices.put(path, service);
+	}
+
+	public void registerResourceService(String path, byte[] content, String contentType) {
+		m_fileServices.put(path, (uri, request, response) -> {
+			try(InputStream input = new ByteArrayInputStream(content)) {
+				try(OutputStream out = response.getOutputStream()) {
+					input.transferTo(out);
+				}
+			}
+			response.setContentType(contentType);
+		});
 	}
 
 	public void registerFileService(String path, File file, String contentType) {
