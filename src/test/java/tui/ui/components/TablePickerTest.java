@@ -31,17 +31,91 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TablePickerTest extends TestWithBackend {
 
 	public record Item(String id, String name, String content) {
 	}
 
+	/**
+	 * Here we check that a TablePicker is well updated.
+	 * Step 1: the HTML page is loaded, we click on the (unique cell), we assert that the connected paragraph is updated with the cell's value.
+	 * Step 2: clicking on the refresh button updates the TablePicker, now it contains one different (still unique) cell, we click on that cell,
+	 * we assert that the connected paragraph is updated with the cell's value.
+	 */
 	@Test
-	public void onlyTextCellsShouldBeSentAsParameters() {
+	public void tablePickerUpdate() {
+		final AtomicReference<String> cellValue = new AtomicReference<>("Paris");
+
+		final Page page = new Page("tablePickerUpdate", "/index");
+		final TablePicker tablePicker = page.append(buildTablePickerWithOneCell(cellValue.get()));
+
+		final Paragraph paragraph = page.append(new Paragraph("Initial text"));
+		paragraph.setSource("/paragraph");
+
+		final RefreshButton refreshButton = page.append(new RefreshButton("Refresh"));
+		refreshButton.connectListener(tablePicker);
+		tablePicker.connectListener(paragraph);
+
+		try(final BackendAndBrowser backendAndBrowser = startAndBrowse(page)) {
+			backendAndBrowser.backend().registerWebService(tablePicker.getSource(), (uri, request, response) -> {
+				final TablePicker _tablePicker = buildTablePickerWithOneCell(cellValue.get());
+				return _tablePicker.toJsonMap();
+			});
+
+			backendAndBrowser.backend().registerWebService(paragraph.getSource(), (uri, request, response) -> {
+				final RequestReader requestReader = new RequestReader(request);
+				final Paragraph _paragraph = new Paragraph("Selected value: %s",
+						requestReader.getStringParameter("Value"));
+				return _paragraph.toJsonMap();
+			});
+
+			final Browser browser = backendAndBrowser.browser();
+			browser.open(page.getSource());
+
+			// Step 1. HTML page after loading
+
+			clickOnTablePicker(browser, tablePicker.getTitle(), cellValue.get());
+
+			assertTrue(browser.getParagraphsWithText().stream()
+					.anyMatch((_paragraph) -> _paragraph.getText().equals("Selected value: " + cellValue.get())));
+
+			// Step 2. After refreshing the TablePicker with a different cell's value
+
+			cellValue.set("Nice");
+			browser.clickRefreshButton(refreshButton.getLabel());
+			browser.assertNoScriptErrors();
+
+			clickOnTablePicker(browser, tablePicker.getTitle(), cellValue.get());
+
+			assertTrue(browser.getParagraphsWithText().stream()
+					.anyMatch((_paragraph) -> _paragraph.getText().equals("Selected value: " + cellValue.get())));
+
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void clickOnTablePicker(Browser browser, String title, String cellValue) {
+		browser.getTableCellByText(browser.getTable(title),
+						(value) -> value.equals(cellValue))
+				.click();
+	}
+
+	private TablePicker buildTablePickerWithOneCell(String value) {
+		final TablePicker result = new TablePicker("Pick here", List.of("Value"));
+		result.setSource("/result");
+		result.append(Map.of("Value", new Paragraph.Text(value)));
+		return result;
+	}
+
+	@Test
+	public void onlyTextCellsShouldBeSentAsParameters() throws Exception {
 		final Page page = new Page("Home", "/index");
 		final TablePicker tablePicker = page.append(new TablePicker("Table picker", List.of("A", "B")));
 		final Paragraph paragraph = page.append(new Paragraph("nothing is selected"));
@@ -50,20 +124,19 @@ public class TablePickerTest extends TestWithBackend {
 
 		tablePicker.append(Map.of("A", new Paragraph.Text("textA"), "B", new RefreshButton("button")));
 
-		final TUIBackend backend = startBackend(page);
+		try(final TUIBackend backend = startBackend(page);
+				final Browser browser = startBrowser()) {
 
-		final WebServiceSpy webServiceSpy = new WebServiceSpy(paragraph);
-		backend.registerWebService(paragraph.getSource(), webServiceSpy.buildWebService());
+			final WebServiceSpy webServiceSpy = new WebServiceSpy(paragraph);
+			backend.registerWebService(paragraph.getSource(), webServiceSpy.buildWebService());
 
-		final Browser browser = startBrowser();
-		browser.open(page.getSource());
+			browser.open(page.getSource());
 
-		browser.getTableCellByText(browser.getTable(tablePicker.getTitle()),
-						(value) -> value.equals("textA"))
-				.click();
+			clickOnTablePicker(browser, tablePicker.getTitle(), "textA");
 
-		assertEquals("textA", webServiceSpy.getRequestReader().getStringParameter("A"));
-		assertNull(webServiceSpy.getRequestReader().getStringParameter("B"));
+			assertEquals("textA", webServiceSpy.getRequestReader().getStringParameter("A"));
+			assertNull(webServiceSpy.getRequestReader().getStringParameter("B"));
+		}
 	}
 
 	/**
@@ -130,9 +203,7 @@ public class TablePickerTest extends TestWithBackend {
 		browser.getTableNavigationButtonNext(tablePicker.getTitle()).click(); // Going to next page
 		assertEquals("6 - 10 (14)", browser.getTableNavigationLocationText(tablePicker.getTitle()));
 
-		browser.getTableCellByText(browser.getTable(tablePicker.getTitle()),
-						(value) -> value.equals("Item-23"))
-				.click();
+		clickOnTablePicker(browser, tablePicker.getTitle(), "Item-23");
 
 		WebElement paragraphElement = browser.getByTUID(paragraph.getTUID());
 		assertEquals("0023 - Item-23", paragraphElement.getText());
@@ -200,30 +271,6 @@ public class TablePickerTest extends TestWithBackend {
 			final Paragraph result = new Paragraph(anyItem.get().content());
 			return result.toJsonMap();
 		};
-	}
-
-	public static void main(String[] args) throws Exception {
-		final Collection<Item> items = TableTest.buildItems(3);
-
-		final Page page = new Page("Home", "/index");
-		final Panel panel = new Panel();
-		final Paragraph paragraph = panel.append(new Paragraph("Reloadable panel"));
-		paragraph.setSource("/paragraph");
-
-		final TablePicker tablePicker = new TablePicker("Table picker", List.of("Id", "Name"));
-		TableTest.putItemsInTable(items, tablePicker);
-		tablePicker.connectListener(paragraph);
-
-		page.append(tablePicker);
-		page.append(panel);
-
-		final TUIBackend backend = new TUIBackend(8080);
-		backend.registerPage(page);
-		backend.registerWebService(paragraph.getSource(), buildWebServiceParagraphLoad(items));
-		backend.start();
-
-		final Browser browser = new Browser(backend.getPort());
-		browser.open("/index");
 	}
 
 }

@@ -1453,6 +1453,9 @@ function instrumentTables() {
     });
 }
 
+/*
+    This function does not affect Table element that are not of type TablePicker.
+*/
 function instrumentTablePicker(tablePickerElement) {
 
     // Getting optional refresh listeners ids, either from table attributes or in table's container attributes.
@@ -1501,6 +1504,7 @@ function instrumentTablePicker(tablePickerElement) {
 }
 
 /*
+    tableElement may be a child of a container (when is connected to update triggers).
     json may be either 'Table' or 'TableData'
 */
 async function updateTable(tableElement, json, idMap) {
@@ -1562,7 +1566,7 @@ async function updateTable(tableElement, json, idMap) {
     tableElement.getElementsByTagName('tbody')[0].replaceWith(freshBody);
 
     updateParameters(tableElement, json);
-    instrumentTablePicker(tableElement.parentElement);
+    instrumentTablePicker(tableElement);
 }
 
 function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastItemNumber) {
