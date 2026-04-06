@@ -79,8 +79,15 @@ public class LayoutStyleSet extends StyleSet {
 		return this;
 	}
 
-	public LayoutStyleSet setBorderRadius_px(Integer radius_px) {
+	public LayoutStyleSet setBorderRadius_px(int radius_px) {
 		m_borderRadius_px = String.format("%dpx", radius_px);
+		return this;
+	}
+
+	public LayoutStyleSet setBorderRadius_px(int topLeftRadius_px, int topRightRadius_px, int bottomRightRadius_px,
+			int bottomLeftRadius_px) {
+		m_borderRadius_px = String.format("%dpx %dpx %dpx %dpx",
+				topLeftRadius_px, topRightRadius_px, bottomRightRadius_px, bottomLeftRadius_px);
 		return this;
 	}
 
