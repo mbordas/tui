@@ -23,14 +23,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 "use strict";
 
 function onload() {
-    instrumentForms();
-    instrumentModalForms();
-    instrumentModalPanels();
-    instrumentNavButtons();
-    instrumentTables();
-    instrumentRefreshButtons();
-    instrumentSearchForms();
-    instrumentSVGs();
+	instrumentForms();
+	instrumentModalForms();
+	instrumentModalPanels();
+	instrumentNavButtons();
+	instrumentTables();
+	instrumentRefreshButtons();
+	instrumentSearchForms();
+	instrumentSVGs();
 }
 
 /*
@@ -38,140 +38,132 @@ function onload() {
     Optional 'data' is a regular Object which contains attributes as (key, value) strings that will be sent as content (HTTP POST).
 */
 async function refreshComponent(id, data) {
-    const element = document.getElementById(id);
-    if(element == null) {
-        console.error('refreshComponent: element with id=' + id + ' not found.');
-        return;
-    }
-    addFetchData(element, data); // new data are added to existing
-    data = getFetchData(element); // we must get all data
-    const component = document.getElementById(id);
-    const sourcePath = component.getAttribute('tui-source');
-    console.log('refreshing component ' + id + ' with source: ' + sourcePath);
+	const element = document.getElementById(id);
+	if(element == null) {
+		console.error('refreshComponent: element with id=' + id + ' not found.');
+		return;
+	}
+	addFetchData(element, data); // new data are added to existing
+	data = getFetchData(element); // we must get all data
+	const component = document.getElementById(id);
+	const sourcePath = component.getAttribute('tui-source');
+	console.log('refreshing component ' + id + ' with source: ' + sourcePath);
 
-     if(data === undefined) {
-         data = new Map();
-         Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
-            data.set(key, value);
-            console.log(`${key}: ${value}`);
-         });
-     } else {
-         for(let key in SESSION_PARAMS) {
-            data[key] = SESSION_PARAMS[key];
-         }
-    }
+	if(data === undefined) {
+		data = new Map();
+		Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
+			data.set(key, value);
+			console.log(`${key}: ${value}`);
+		});
+	} else {
+		for(let key in SESSION_PARAMS) {
+			data[key] = SESSION_PARAMS[key];
+		}
+	}
 
-    var body;
-    var headers;
+	let body;
+	let headers;
 
-    if(FETCH_TYPE == 'JSON') {
-        if(data instanceof Map) {
-            body = JSON.stringify(Array.from(data.entries()));
-        } else {
-            body = JSON.stringify(Array.from(Object.entries(data)));
-        }
-        headers = { 'Content-Type': 'application/json' };
-    } else if(FETCH_TYPE == 'FORM_DATA') {
-        body = new FormData();
-        for(let key in data) {
-            body.append(key, data[key]);
-        }
-        headers = {};
-    }
+	if(FETCH_TYPE === 'JSON') {
+		if(data instanceof Map) {
+			body = JSON.stringify(Array.from(data.entries()));
+		} else {
+			body = JSON.stringify(Array.from(Object.entries(data)));
+		}
+		headers = {'Content-Type': 'application/json'};
+	} else if(FETCH_TYPE === 'FORM_DATA') {
+		body = new FormData();
+		for(let key in data) {
+			body.append(key, data[key]);
+		}
+		headers = {};
+	}
 
-    element.classList.add('loading');
+	element.classList.add('loading');
 
-    fetch(sourcePath, {
-            method: 'POST',
-            headers: headers,
-            body: body,
-        })
-        .then(response => {
-            if(!response.ok) {
-                throw new Error(`HTTP error, status = ${response.status}`);
-            }
-            hideFetchError(component);
-            return response.json();
-        })
-        .then((json) => {
-            const type = json['type'];
-            if(type == 'paragraph') {
-                updateParagraph(component, json);
-            } else if(type == 'table' || type == 'tablepicker' || type == 'table-data') {
-                updateTable(component, json);
-            } else if(type == 'svg') {
-                updateSVG(component, json);
-            } else if(type == 'grid') {
-                updateGrid(component, json);
-            } else if(type == 'panel') {
-                updatePanel(component, json);
-            } else if(type == 'modalpanel') {
-                updateModalPanel(component, json);
-            } else {
-                console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
-            }
-        })
-        .catch(error => {
-            showFetchError(component, error);
-        })
-        .finally(() => {
-            element.classList.remove('loading');
-        });
+	fetch(sourcePath, {
+		method: 'POST',
+		headers: headers,
+		body: body,
+	})
+		.then(response => {
+			if(!response.ok) {
+				throw new Error(`HTTP error, status = ${response.status}`);
+			}
+			hideFetchError(component);
+			return response.json();
+		})
+		.then((json) => {
+			const type = json['type'];
+			if(type === 'paragraph') {
+				updateParagraph(component, json);
+			} else if(type === 'table' || type === 'tablepicker' || type === 'table-data') {
+				updateTable(component, json);
+			} else if(type === 'svg') {
+				updateSVG(component, json);
+			} else if(type === 'grid') {
+				updateGrid(component, json);
+			} else if(type === 'panel') {
+				updatePanel(component, json);
+			} else if(type === 'modalpanel') {
+				updateModalPanel(component, json);
+			} else {
+				console.error('element with id=' + id + ' could not be refreshed. Type of received json is not supported: ' + type);
+			}
+		})
+		.catch(error => {
+			showFetchError(component, error);
+		})
+		.finally(() => {
+			element.classList.remove('loading');
+		});
 }
 
 /*
     Links parameters map 'data' to the element so that it will be used to complete the future Ajax requests when refreshing the element.
 */
 function addFetchData(element, data) {
-    if(typeof element.fetch_data === 'undefined') {
-        element.fetch_data = data;
-    } else {
-         for(let key in data) {
-            element.fetch_data[key] = data[key];
-        }
-    }
+	if(typeof element.fetch_data === 'undefined') {
+		element.fetch_data = data;
+	} else {
+		for(let key in data) {
+			element.fetch_data[key] = data[key];
+		}
+	}
 }
 
 /*
     Gives the parameters map that are linked to the element. These parameters must be added to any refreshing Ajax request.
 */
 function getFetchData(element) {
-    const result = {};
+	const result = {};
 
-    // 1. Session parameters
-    for(let key in SESSION_PARAMS) {
-        result[key] = SESSION_PARAMS[key];
-    }
+	// 1. Session parameters
+	for(let key in SESSION_PARAMS) {
+		result[key] = SESSION_PARAMS[key];
+	}
 
-    // 2. Parameters from the element itself
-    const parentElement = element.parentElement;
-    if(parentElement != null) {
-        if(parentElement.classList.contains('tui-refreshable-container')) {
-            const parametersDiv = parentElement.querySelector('.fetch-parameters');
-            if(parametersDiv != null) {
-                parametersDiv.querySelectorAll('input').forEach(input => {
-                    result[input.getAttribute('name')] = input.value;
-                });
-            }
-        }
-    }
+	// 2. Parameters from the element itself
+	const parentElement = element.parentElement;
+	if(parentElement != null) {
+		if(parentElement.classList.contains('tui-refreshable-container')) {
+			const parametersDiv = parentElement.querySelector('.fetch-parameters');
+			if(parametersDiv != null) {
+				parametersDiv.querySelectorAll('input').forEach(input => {
+					result[input.getAttribute('name')] = input.value;
+				});
+			}
+		}
+	}
 
-    // 3. Parameters from previous refreshing requests
-    if(typeof element.fetch_data !== 'undefined') {
-        for(let key in element.fetch_data) {
-            result[key] = element.fetch_data[key];
-        }
-    }
+	// 3. Parameters from previous refreshing requests
+	if(typeof element.fetch_data !== 'undefined') {
+		for(let key in element.fetch_data) {
+			result[key] = element.fetch_data[key];
+		}
+	}
 
-    return result;
-}
-
-function setTextAlignClass(element, textAlign) {
-    element.classList.remove('tui-align-left');
-    element.classList.remove('tui-align-center');
-    element.classList.remove('tui-align-right');
-    element.classList.remove('tui-align-stretch');
-    element.classList.add('tui-align-' + textAlign.toLowerCase());
+	return result;
 }
 
 /*
@@ -179,188 +171,188 @@ function setTextAlignClass(element, textAlign) {
     This map should be passed to any element that contains other elements.
 */
 function createComponent(json, idMap) {
-    const type = json['type'];
-    var result;
-    var elementToBeStyled = null; // is overridden when style must be applied on it instead of result
-    if(type == 'panel') {
-        if(json['tui-source'] != null) {
-            const containedElement = createElementWithContainer('div', 'tui-container-panel');
-            updatePanel(containedElement.element, json, idMap);
-            result = containedElement.container;
-        } else {
-            result = document.createElement('div');
-            result.classList.add('tui-panel');
-            updatePanel(result, json, idMap);
-        }
-    } else if(type == 'modalpanel') {
-        if(json['tui-source'] != null) {
-            const containedElement = createElementWithContainer('div', 'tui-container-modalpanel');
-            updateModalPanel(containedElement.element, json, idMap);
-            result = containedElement.container;
-        } else {
-            result = document.createElement('div');
-            result.classList.add('tui-modal-panel');
-            updateModalPanel(result, json, idMap);
-        }
-    } else if(type == 'table') {
-        var tableElement;
-        if(json['tui-source'] != null) {
-            const containedElement = createElementWithContainer('table', 'tui-table-container');
-            result = containedElement.container;
-            tableElement = containedElement.element;
-        } else {
-            result = document.createElement('table');
-            tableElement = result;
-        }
-        tableElement.classList.add('tui-table');
-        tableElement.appendChild(document.createElement('thead'));
-        tableElement.appendChild(document.createElement('tbody'));
-        updateTable(tableElement, json, idMap);
-    } else if(type == 'paragraph') {
-        if(json['tui-source'] != null) {
-            const containedElement = createElementWithContainer('p', 'tui-container-paragraph');
-            updateParagraph(containedElement.element, json, idMap);
-            result = containedElement.container;
-        } else {
-            result = document.createElement('p');
-            updateParagraph(result, json, idMap);
-        }
-    } else if(type == 'grid') {
-        if(json['tui-source'] != null) {
-            const containedElement = createElementWithContainer('div', 'tui-container-grid');
-            updateGrid(containedElement.element, json, idMap);
-            result = containedElement.container;
-        } else {
-            result = document.createElement('div');
-            result.classList.add('tui-grid');
-            updateGrid(result, json, idMap);
-        }
-    } else if(type == 'svg') {
-        if(json['tui-source'] != null) {
-            const svgElement = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
-            const containedElement = createElementWithContainer('svg', 'tui-container-svg', svgElement);
-            result = containedElement.container;
-        } else {
-            result = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
-        }
-    } else if(type == 'section') {
-        result = document.createElement('section');
-        updateSection(result, json, idMap);
-    } else if(type == 'text') {
-        result = document.createElement('span');
-        result.classList.add('tui-text');
-        result.textContent = json['content'];
-    } else if(type == 'list') {
-        if(json['isOrdered' == 'true']) {
-            result = document.createElement('ol');
-        } else {
-            result = document.createElement('ul');
-        }
-        for(var child of json['content']) {
-            const childContainer = document.createElement('li');
-            const childElement = createComponent(child, idMap);
-            childContainer.appendChild(childElement);
-            result.appendChild(childContainer);
-        }
-    } else if(type == 'verticalFlow') {
-        result = document.createElement('div');
-        result.classList.add('tui-vertical-flow');
-        result.classList.add('tui-grid');
-        updateVerticalFlow(result, json, idMap);
-    } else if(type == 'tabbedFlow') {
-        result = document.createElement('div');
-        result.classList.add('tui-tabbedflow');
-        updateTabbedFlow(result, json, idMap);
-    } else if(type == 'verticalScroll') {
-        result = document.createElement('div');
-        result.classList.add('tui-vertical-scroll');
-        updateVerticalScroll(result, json, idMap);
-    } else if(type == 'refreshButton') {
-        result = document.createElement('div');
-        result.classList.add('tui-refresh-button-container');
-        Object.entries(json['parameters']).forEach(([key, value]) => {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'hidden');
-            input.setAttribute('name', key);
-            input.setAttribute('value', value);
-            result.appendChild(input);
-        });
-        const button = document.createElement('button');
-        button.classList.add('tui-refresh-button');
-        button.setAttribute('type', 'button');
-        button.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
-        button.textContent = json['label'];
-        result.appendChild(button);
-        instrumentRefreshButton(button);
-        elementToBeStyled = button;
-    } else if (type == 'navbutton') {
-        result = document.createElement('form');
-        result.classList.add('tui-navbutton');
-        result.setAttribute('method', 'POST');
-        result.setAttribute('action', json['target']);
-        Object.entries(json['parameters']).forEach(([key, value]) => {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'hidden');
-            input.setAttribute('name', key);
-            input.setAttribute('value', value);
-            result.appendChild(input);
-        });
-        const button = document.createElement('button');
-        button.setAttribute('type', 'submit');
-        button.textContent = json['label'];
-        result.appendChild(button);
-        instrumentNavButton(result);
-    } else if (type == 'download_button') {
-        result = document.createElement('button');
-        result.classList.add('tui-download-button');
-        result.textContent = json['label'];
-        result.setAttribute('target', json['target']);
-        result.setAttribute('downloadName', json['downloadName']);
-        Object.entries(json['parameters']).forEach(([key, value]) => {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'hidden');
-            input.setAttribute('name', key);
-            input.setAttribute('value', value);
-            result.appendChild(input);
-        });
-        result.setAttribute('onClick', 'downloadFromButton(this)');
-    } else if(type == 'navlink') {
-        result = document.createElement('a');
-        result.classList.add('tui-navlink');
-        result.setAttribute('href', json['target']);
-        result.textContent = json['label'];
-    } else if(type == 'image') {
-        result = document.createElement('img');
-        result.setAttribute('src', json['source']);
-        result.setAttribute('alt', json['text']);
-    } else if(type == 'form') {
-        result = createForm(json, idMap);
-    } else if(type == 'modalform') {
-        result = createModalForm(json, idMap);
-    } else if(type == 'search_form') {
-        result = createSearchForm(json, idMap);
-    } else {
-        result = null;
-    }
+	const type = json['type'];
+	let result;
+	let elementToBeStyled = null; // is overridden when style must be applied on it instead of result
+	if(type === 'panel') {
+		if(json['tui-source'] != null) {
+			const containedElement = createElementWithContainer('div', 'tui-container-panel');
+			updatePanel(containedElement.element, json, idMap);
+			result = containedElement.container;
+		} else {
+			result = document.createElement('div');
+			result.classList.add('tui-panel');
+			updatePanel(result, json, idMap);
+		}
+	} else if(type === 'modalpanel') {
+		if(json['tui-source'] != null) {
+			const containedElement = createElementWithContainer('div', 'tui-container-modalpanel');
+			updateModalPanel(containedElement.element, json, idMap);
+			result = containedElement.container;
+		} else {
+			result = document.createElement('div');
+			result.classList.add('tui-modal-panel');
+			updateModalPanel(result, json, idMap);
+		}
+	} else if(type === 'table') {
+		let tableElement;
+		if(json['tui-source'] != null) {
+			const containedElement = createElementWithContainer('table', 'tui-table-container');
+			result = containedElement.container;
+			tableElement = containedElement.element;
+		} else {
+			result = document.createElement('table');
+			tableElement = result;
+		}
+		tableElement.classList.add('tui-table');
+		tableElement.appendChild(document.createElement('thead'));
+		tableElement.appendChild(document.createElement('tbody'));
+		updateTable(tableElement, json, idMap);
+	} else if(type === 'paragraph') {
+		if(json['tui-source'] != null) {
+			const containedElement = createElementWithContainer('p', 'tui-container-paragraph');
+			updateParagraph(containedElement.element, json, idMap);
+			result = containedElement.container;
+		} else {
+			result = document.createElement('p');
+			updateParagraph(result, json, idMap);
+		}
+	} else if(type === 'grid') {
+		if(json['tui-source'] != null) {
+			const containedElement = createElementWithContainer('div', 'tui-container-grid');
+			updateGrid(containedElement.element, json, idMap);
+			result = containedElement.container;
+		} else {
+			result = document.createElement('div');
+			result.classList.add('tui-grid');
+			updateGrid(result, json, idMap);
+		}
+	} else if(type === 'svg') {
+		if(json['tui-source'] != null) {
+			const svgElement = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
+			const containedElement = createElementWithContainer('svg', 'tui-container-svg', svgElement);
+			result = containedElement.container;
+		} else {
+			result = updateSVG(document.createElementNS("http://www.w3.org/2000/svg", "svg"), json);
+		}
+	} else if(type === 'section') {
+		result = document.createElement('section');
+		updateSection(result, json, idMap);
+	} else if(type === 'text') {
+		result = document.createElement('span');
+		result.classList.add('tui-text');
+		result.textContent = json['content'];
+	} else if(type === 'list') {
+		if(json['isOrdered' === 'true']) {
+			result = document.createElement('ol');
+		} else {
+			result = document.createElement('ul');
+		}
+		for(var child of json['content']) {
+			const childContainer = document.createElement('li');
+			const childElement = createComponent(child, idMap);
+			childContainer.appendChild(childElement);
+			result.appendChild(childContainer);
+		}
+	} else if(type === 'verticalFlow') {
+		result = document.createElement('div');
+		result.classList.add('tui-vertical-flow');
+		result.classList.add('tui-grid');
+		updateVerticalFlow(result, json, idMap);
+	} else if(type === 'tabbedFlow') {
+		result = document.createElement('div');
+		result.classList.add('tui-tabbedflow');
+		updateTabbedFlow(result, json, idMap);
+	} else if(type === 'verticalScroll') {
+		result = document.createElement('div');
+		result.classList.add('tui-vertical-scroll');
+		updateVerticalScroll(result, json, idMap);
+	} else if(type === 'refreshButton') {
+		result = document.createElement('div');
+		result.classList.add('tui-refresh-button-container');
+		Object.entries(json['parameters']).forEach(([key, value]) => {
+			const input = document.createElement('input');
+			input.setAttribute('type', 'hidden');
+			input.setAttribute('name', key);
+			input.setAttribute('value', value);
+			result.appendChild(input);
+		});
+		const button = document.createElement('button');
+		button.classList.add('tui-refresh-button');
+		button.setAttribute('type', 'button');
+		button.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
+		button.textContent = json['label'];
+		result.appendChild(button);
+		instrumentRefreshButton(button);
+		elementToBeStyled = button;
+	} else if(type === 'navbutton') {
+		result = document.createElement('form');
+		result.classList.add('tui-navbutton');
+		result.setAttribute('method', 'POST');
+		result.setAttribute('action', json['target']);
+		Object.entries(json['parameters']).forEach(([key, value]) => {
+			const input = document.createElement('input');
+			input.setAttribute('type', 'hidden');
+			input.setAttribute('name', key);
+			input.setAttribute('value', value);
+			result.appendChild(input);
+		});
+		const button = document.createElement('button');
+		button.setAttribute('type', 'submit');
+		button.textContent = json['label'];
+		result.appendChild(button);
+		instrumentNavButton(result);
+	} else if(type === 'download_button') {
+		result = document.createElement('button');
+		result.classList.add('tui-download-button');
+		result.textContent = json['label'];
+		result.setAttribute('target', json['target']);
+		result.setAttribute('downloadName', json['downloadName']);
+		Object.entries(json['parameters']).forEach(([key, value]) => {
+			const input = document.createElement('input');
+			input.setAttribute('type', 'hidden');
+			input.setAttribute('name', key);
+			input.setAttribute('value', value);
+			result.appendChild(input);
+		});
+		result.setAttribute('onClick', 'downloadFromButton(this)');
+	} else if(type === 'navlink') {
+		result = document.createElement('a');
+		result.classList.add('tui-navlink');
+		result.setAttribute('href', json['target']);
+		result.textContent = json['label'];
+	} else if(type === 'image') {
+		result = document.createElement('img');
+		result.setAttribute('src', json['source']);
+		result.setAttribute('alt', json['text']);
+	} else if(type === 'form') {
+		result = createForm(json, idMap);
+	} else if(type === 'modalform') {
+		result = createModalForm(json, idMap);
+	} else if(type === 'search_form') {
+		result = createSearchForm(json, idMap);
+	} else {
+		result = null;
+	}
 
-    if(elementToBeStyled == null) {
-        elementToBeStyled = result;
-    }
-    if(elementToBeStyled != null && json['style'] != null) {
-        var style = '';
-        Object.entries(json['style']).forEach(([key, value]) => {
-            style += key + ':' + value + ';';
-        });
-        elementToBeStyled.setAttribute('style', style);
-    }
+	if(elementToBeStyled == null) {
+		elementToBeStyled = result;
+	}
+	if(elementToBeStyled != null && json['style'] != null) {
+		let style = '';
+		Object.entries(json['style']).forEach(([key, value]) => {
+			style += key + ':' + value + ';';
+		});
+		elementToBeStyled.setAttribute('style', style);
+	}
 
-    if(result != null) {
-        if(json['customTag'] != null) {
-            result.setAttribute('data-custom-tag', json['customTag']);
-        }
-    }
+	if(result != null) {
+		if(json['customTag'] != null) {
+			result.setAttribute('data-custom-tag', json['customTag']);
+		}
+	}
 
-    return result;
+	return result;
 }
 
 /*
@@ -368,28 +360,28 @@ function createComponent(json, idMap) {
     @param idMap gives: TUID found in fresh json -> TUID in current page's elements
 */
 function adaptRefreshListeners(json, idMap) {
-    const idsSeparatedByComa = json['refreshListeners'];
-    if(idsSeparatedByComa == null) {
-        console.warn("Attribute 'refreshListeners' in json of type '" + json['type'] + "'.");
-    } else {
-        if(idMap == null) {
-            return idsSeparatedByComa;
-        } else {
-            var result = '';
-            idsSeparatedByComa.split(",").forEach(function(id, i) {
-                if(idMap.has(id)) {
-                    result = result + idMap.get(id) + ',';
-                } else {
-                    result = result + id + ',';
-                }
-            });
-            if(result.endsWith(',')) {
-                return result.slice(0, -1);
-            } else {
-                return result;
-            }
-        }
-    }
+	const idsSeparatedByComa = json['refreshListeners'];
+	if(idsSeparatedByComa == null) {
+		console.warn("Attribute 'refreshListeners' in json of type '" + json['type'] + "'.");
+	} else {
+		if(idMap == null) {
+			return idsSeparatedByComa;
+		} else {
+			let result = '';
+			idsSeparatedByComa.split(",").forEach(function (id) {
+				if(idMap.has(id)) {
+					result = result + idMap.get(id) + ',';
+				} else {
+					result = result + id + ',';
+				}
+			});
+			if(result.endsWith(',')) {
+				return result.slice(0, -1);
+			} else {
+				return result;
+			}
+		}
+	}
 }
 
 /*
@@ -397,24 +389,15 @@ function adaptRefreshListeners(json, idMap) {
     @param containedElement    optional. When given, it is used as the contained element (then parameter 'name' is not used).
 */
 function createElementWithContainer(name, containerClass, containedElement) {
-    const containerElement = document.createElement('div');
-    containerElement.classList.add('tui-refreshable-container');
-    containerElement.classList.add(containerClass);
-    const newElement = containedElement == null? document.createElement(name) : containedElement;
-    containerElement.append(newElement);
+	const containerElement = document.createElement('div');
+	containerElement.classList.add('tui-refreshable-container');
+	containerElement.classList.add(containerClass);
+	const newElement = containedElement == null ? document.createElement(name) : containedElement;
+	containerElement.append(newElement);
 
-    instrumentWithErrorMessage(containerElement);
+	instrumentWithErrorMessage(containerElement);
 
-    return {container: containerElement, element: newElement};
-}
-
-function instrumentWithParameters(container, json) {
-    if(json['parameters'] != null) {
-        const parametersDiv = document.createElement('div');
-        parametersDiv.classList.add('fetch-parameters');
-        container.appendChild(parametersDiv);
-        appendHiddenInputs(parametersDiv, json['parameters']);
-    }
+	return {container: containerElement, element: newElement};
 }
 
 /*
@@ -423,664 +406,661 @@ function instrumentWithParameters(container, json) {
     The parameters' div is a direct child of the container div, and only exists when the component has a source.
 */
 function updateParameters(refreshableElement, json) {
-    if(json['parameters'] != null) {
-        const container = refreshableElement.parentElement;
-        if(container != null) {
-            let parametersDiv = container.querySelector('.fetch-parameters');
-            if(parametersDiv == null) {
-                parametersDiv = document.createElement('div');
-                parametersDiv.classList.add('fetch-parameters');
-                container.appendChild(parametersDiv);
-            } else {
-                parametersDiv.innerHTML = ''; // Resetting parameters
-            }
-            appendHiddenInputs(parametersDiv, json['parameters']);
-        }
-    }
+	if(json['parameters'] != null) {
+		const container = refreshableElement.parentElement;
+		if(container != null) {
+			let parametersDiv = container.querySelector('.fetch-parameters');
+			if(parametersDiv == null) {
+				parametersDiv = document.createElement('div');
+				parametersDiv.classList.add('fetch-parameters');
+				container.appendChild(parametersDiv);
+			} else {
+				parametersDiv.innerHTML = ''; // Resetting parameters
+			}
+			appendHiddenInputs(parametersDiv, json['parameters']);
+		}
+	}
 }
 
 function appendHiddenInputs(parametersDiv, jsonMap) {
-    for(let name in jsonMap) {
-        var value = jsonMap[name];
-        const hiddenInput = document.createElement('input');
-        hiddenInput.setAttribute('type', 'hidden');
-        hiddenInput.setAttribute('name', name);
-        hiddenInput.setAttribute('value', value);
-        parametersDiv.appendChild(hiddenInput);
-    }
+	for(let name in jsonMap) {
+		var value = jsonMap[name];
+		const hiddenInput = document.createElement('input');
+		hiddenInput.setAttribute('type', 'hidden');
+		hiddenInput.setAttribute('name', name);
+		hiddenInput.setAttribute('value', value);
+		parametersDiv.appendChild(hiddenInput);
+	}
 }
 
 function instrumentWithErrorMessage(element) {
-     const errorMessageElement = document.createElement('div');
-     errorMessageElement.setAttribute('class', 'fetch-error-message');
-     element.insertBefore(errorMessageElement,element.firstChild);
+	const errorMessageElement = document.createElement('div');
+	errorMessageElement.setAttribute('class', 'fetch-error-message');
+	element.insertBefore(errorMessageElement, element.firstChild);
 }
 
 function showFetchError(element, error) {
-    const containerElement = element.parentElement;
-    containerElement.classList.add('fetch-error');
-    const errorDiv = containerElement.querySelectorAll('.fetch-error-message')[0];
-    errorDiv.innerText = error.message;
-    errorDiv.style.display = 'block';
+	const containerElement = element.parentElement;
+	containerElement.classList.add('fetch-error');
+	const errorDiv = containerElement.querySelectorAll('.fetch-error-message')[0];
+	errorDiv.innerText = error.message;
+	errorDiv.style.display = 'block';
 }
 
 function hideFetchError(element) {
-    const containerElement = element.parentElement;
-    containerElement.classList.remove('fetch-error');
-    const errorDiv = containerElement.querySelectorAll('.fetch-error-message')[0];
-    errorDiv.innerText = '';
-    errorDiv.style.display = 'none';
+	const containerElement = element.parentElement;
+	containerElement.classList.remove('fetch-error');
+	const errorDiv = containerElement.querySelectorAll('.fetch-error-message')[0];
+	errorDiv.innerText = '';
+	errorDiv.style.display = 'none';
 }
 
 // GRIDS
 
 function updateGrid(gridElement, json, idMap) {
-    const rows = parseInt(json['rows']);
-    const columns = parseInt(json['columns']);
-    gridElement.style.gridTemplateRows = json['rows-width'];
-    gridElement.style.gridTemplateColumns = json['columns-width'];
-    gridElement.innerHTML = '';
+	const rows = parseInt(json['rows']);
+	const columns = parseInt(json['columns']);
+	gridElement.style.gridTemplateRows = json['rows-width'];
+	gridElement.style.gridTemplateColumns = json['columns-width'];
+	gridElement.innerHTML = '';
 
-    for(var row = 0; row < rows; row++) {
-        for(var column = 0; column < columns; column++) {
-            const childName = '' + row + '_' + column;
-            var childElement;
-            if(Object.hasOwn(json, childName)) {
-                childElement = createComponent(json[childName], idMap);
-            } else {
-                childElement = document.createElement('p');
-            }
-            gridElement.appendChild(childElement);
-        }
-    }
+	for(var row = 0; row < rows; row++) {
+		for(var column = 0; column < columns; column++) {
+			const childName = '' + row + '_' + column;
+			var childElement;
+			if(Object.hasOwn(json, childName)) {
+				childElement = createComponent(json[childName], idMap);
+			} else {
+				childElement = document.createElement('p');
+			}
+			gridElement.appendChild(childElement);
+		}
+	}
 
-    updateParameters(gridElement, json);
+	updateParameters(gridElement, json);
 }
 
 // FLOWS
 
 function updateVerticalFlow(flowElement, json, idMap) {
-    flowElement.style.placeItems = 'center';
-    flowElement.style.gridTemplateRows = 'auto';
-    switch(json['width']) {
-        case 'MAX': flowElement.style.gridTemplateColumns = '0% 100% 0%'; break;
-        case 'WIDE': flowElement.style.gridTemplateColumns = 'min-content 1fr min-content'; break;
-        case 'NORMAL': flowElement.style.gridTemplateColumns = '1fr min-content 1fr'; break;
-    }
-    const preParagraph = document.createElement('p');
-    giveMarginReadingProperties(preParagraph, json['width']);
-    flowElement.appendChild(preParagraph);
-    const flowContainer = document.createElement('div');
-    flowElement.appendChild(flowContainer);
-    flowContainer.style.display = 'grid';
-    flowContainer.style.gridTemplateRows = 'auto';
-    for(var child of json['content']) {
-        const childContainer = document.createElement('div');
-        flowContainer.appendChild(childContainer);
-        childContainer.style.textAlign = 'center';
-        const childElement = createComponent(child, idMap);
-        childContainer.appendChild(childElement);
-    }
-    const postParagraph = document.createElement('p');
-    giveMarginReadingProperties(postParagraph, json['width']);
-    flowElement.appendChild(postParagraph);
-}
-
-function giveCenterReadingProperties(centerContainer, width) {
-    if(width == 'NORMAL') {
-        pElement.classList.add('tui-reading-normal-area');
-    }
+	flowElement.style.placeItems = 'center';
+	flowElement.style.gridTemplateRows = 'auto';
+	switch(json['width']) {
+		case 'MAX':
+			flowElement.style.gridTemplateColumns = '0% 100% 0%';
+			break;
+		case 'WIDE':
+			flowElement.style.gridTemplateColumns = 'min-content 1fr min-content';
+			break;
+		case 'NORMAL':
+			flowElement.style.gridTemplateColumns = '1fr min-content 1fr';
+			break;
+	}
+	const preParagraph = document.createElement('p');
+	giveMarginReadingProperties(preParagraph, json['width']);
+	flowElement.appendChild(preParagraph);
+	const flowContainer = document.createElement('div');
+	flowElement.appendChild(flowContainer);
+	flowContainer.style.display = 'grid';
+	flowContainer.style.gridTemplateRows = 'auto';
+	for(var child of json['content']) {
+		const childContainer = document.createElement('div');
+		flowContainer.appendChild(childContainer);
+		childContainer.style.textAlign = 'center';
+		const childElement = createComponent(child, idMap);
+		childContainer.appendChild(childElement);
+	}
+	const postParagraph = document.createElement('p');
+	giveMarginReadingProperties(postParagraph, json['width']);
+	flowElement.appendChild(postParagraph);
 }
 
 function giveMarginReadingProperties(pElement, width) {
-    if(width == 'WIDE') {
-        pElement.classList.add('tui-reading-wide-margin');
-    }
+	if(width === 'WIDE') {
+		pElement.classList.add('tui-reading-wide-margin');
+	}
 }
 
 function updateVerticalScroll(scrollElement, json, idMap) {
-    scrollElement.style.height = '' + json['height_px'] + 'px';
-    for(var child of json['content']) {
-        const childElement = createComponent(child, idMap);
-        scrollElement.appendChild(childElement);
-    }
+	scrollElement.style.height = '' + json['height_px'] + 'px';
+	for(var child of json['content']) {
+		const childElement = createComponent(child, idMap);
+		scrollElement.appendChild(childElement);
+	}
 }
 
 // TABS
 
 function updateTabbedFlow(tabbedFlowElement, json, idMap) {
-    const tabsNav = document.createElement('div');
-    tabbedFlowElement.appendChild(tabsNav);
-    tabsNav.classList.add('tui-tabnav');
+	const tabsNav = document.createElement('div');
+	tabbedFlowElement.appendChild(tabsNav);
+	tabsNav.classList.add('tui-tabnav');
 
-    var index = 1;
-    for(var tab of json['tabs']) {
-        const flowTUID = tab['content']['tuid'];
-        const flow = createComponent(tab['content'], idMap);
-        flow.setAttribute('id', flowTUID);
-        flow.style.width = '100%';
-        flow.classList.add('tui-tab');
-        tabbedFlowElement.appendChild(flow);
+	let index = 1;
+	for(let tab of json['tabs']) {
+		const flowTUID = tab['content']['tuid'];
+		const flow = createComponent(tab['content'], idMap);
+		flow.setAttribute('id', flowTUID);
+		flow.style.width = '100%';
+		flow.classList.add('tui-tab');
+		tabbedFlowElement.appendChild(flow);
 
-        const button = document.createElement('button');
-        button.classList.add('tui-tablink');
-        tabsNav.appendChild(button);
-        if(index == 1) {
-            button.classList.add('tui-tablink-active');
-            flow.style.display = 'block';
-        } else {
-            flow.style.display = 'none';
-        }
-        button.textContent = tab['title'];
-        button.onclick = function() {
-            selectTab(flowTUID, this);
-        };
+		const button = document.createElement('button');
+		button.classList.add('tui-tablink');
+		tabsNav.appendChild(button);
+		if(index === 1) {
+			button.classList.add('tui-tablink-active');
+			flow.style.display = 'block';
+		} else {
+			flow.style.display = 'none';
+		}
+		button.textContent = tab['title'];
+		button.onclick = function () {
+			selectTab(flowTUID, this);
+		};
 
-        index++;
-    }
+		index++;
+	}
 }
 
 function selectTab(tabId, tabLink) {
-    const tabs = tabLink
-        .parentElement // tabnav
-        .parentElement // tabbedFlow element, direct children are: tabsnav and tabs
-        .querySelectorAll('.tui-tab');
-    tabs.forEach(function(tab, i) {
-        tab.style.display = 'none';
-    });
+	const tabs = tabLink
+		.parentElement // tabnav
+		.parentElement // tabbedFlow element, direct children are: tabsnav and tabs
+		.querySelectorAll('.tui-tab');
+	tabs.forEach(function (tab, i) {
+		tab.style.display = 'none';
+	});
 
-    document.getElementById(tabId).style.display = 'block';
+	document.getElementById(tabId).style.display = 'block';
 
-    const tabLinks = document.querySelectorAll('.tui-tablink');
-    tabLinks.forEach(function(link, i) {
-        link.setAttribute('class', 'tui-tablink');
-    });
-    tabLink.setAttribute('class', 'tui-tablink tui-tablink-active');
+	const tabLinks = document.querySelectorAll('.tui-tablink');
+	tabLinks.forEach(function (link) {
+		link.setAttribute('class', 'tui-tablink');
+	});
+	tabLink.setAttribute('class', 'tui-tablink tui-tablink-active');
 }
 
 // PANELS
 
 function updatePanel(panelElement, json, idMap) {
-    panelElement.innerHTML = '';
-    panelElement.className = ''; // clears classList
-    panelElement.classList.add('tui-panel');
-    panelElement.classList.add('tui-panel-' + json['align'].toLowerCase());
+	panelElement.innerHTML = '';
+	panelElement.className = ''; // clears classList
+	panelElement.classList.add('tui-panel');
+	panelElement.classList.add('tui-panel-' + json['align'].toLowerCase());
 
-    const itemSpacingClass =
-        json['align'] == 'VERTICAL_TOP' || json['align'] == 'VERTICAL_CENTER' ?
-        null : 'tui-horizontal-spacing-' + json['spacing'].toLowerCase();
-    if(idMap == null) {
-        idMap = new Map();
-    }
-    idMap.set(json['tuid'].toString(), panelElement.id);
-    for(var child of json['content']) {
-        const element = createComponent(child, idMap);
-        if(element == null) {
-            console.error('Unable to create component from type: ' + child['type']);
-        } else {
-            if(itemSpacingClass != null) {
-                element.classList.add(itemSpacingClass);
-            }
-            panelElement.appendChild(element);
-        }
-    }
+	const itemSpacingClass =
+		json['align'] === 'VERTICAL_TOP' || json['align'] === 'VERTICAL_CENTER' ?
+			null : 'tui-horizontal-spacing-' + json['spacing'].toLowerCase();
+	if(idMap == null) {
+		idMap = new Map();
+	}
+	idMap.set(json['tuid'].toString(), panelElement.id);
+	for(let child of json['content']) {
+		const element = createComponent(child, idMap);
+		if(element == null) {
+			console.error('Unable to create component from type: ' + child['type']);
+		} else {
+			if(itemSpacingClass != null) {
+				element.classList.add(itemSpacingClass);
+			}
+			panelElement.appendChild(element);
+		}
+	}
 
-    updateParameters(panelElement, json);
+	updateParameters(panelElement, json);
 }
 
 function updateModalPanel(panelElement, json) {
-    const button = document.createElement('button');
-    button.classList.add('tui-modal-panel-open-button');
-    button.textContent = json['openButtonLabel'];
-    panelElement.appendChild(button);
+	const button = document.createElement('button');
+	button.classList.add('tui-modal-panel-open-button');
+	button.textContent = json['openButtonLabel'];
+	panelElement.appendChild(button);
 
-    const dialog = document.createElement('dialog');
-    dialog.classList.add('modal');
-    panelElement.appendChild(dialog);
+	const dialog = document.createElement('dialog');
+	dialog.classList.add('modal');
+	panelElement.appendChild(dialog);
 
-    const flow = document.createElement('div');
-    updatePanel(flow, json);
-    dialog.appendChild(flow);
+	const flow = document.createElement('div');
+	updatePanel(flow, json);
+	dialog.appendChild(flow);
 
-    const footer = document.createElement('div');
-    footer.classList.add('tui-modalpanel-footer');
-    footer.classList.add('tui-panel-right'); // Align.RIGHT
-    dialog.appendChild(footer);
+	const footer = document.createElement('div');
+	footer.classList.add('tui-modalpanel-footer');
+	footer.classList.add('tui-panel-right'); // Align.RIGHT
+	dialog.appendChild(footer);
 
-    const closeButton = document.createElement('button');
-    closeButton.classList.add('tui-panel-close-button');
-    closeButton.textContent = 'Close';
-    footer.appendChild(closeButton);
+	const closeButton = document.createElement('button');
+	closeButton.classList.add('tui-panel-close-button');
+	closeButton.textContent = 'Close';
+	footer.appendChild(closeButton);
 
-    instrumentModalPanel(panelElement);
+	instrumentModalPanel(panelElement);
 }
 
 function instrumentModalPanels() {
-    const modalPanelElementss = document.querySelectorAll('.tui-modal-panel');
-    modalPanelElementss.forEach(function(modalPanelElement, i) {
-        instrumentModalPanel(modalPanelElement);
-    });
+	const modalPanelElements = document.querySelectorAll('.tui-modal-panel');
+	modalPanelElements.forEach(function (modalPanelElement) {
+		instrumentModalPanel(modalPanelElement);
+	});
 }
 
 function instrumentModalPanel(modalPanelElement) {
-    const openButton = modalPanelElement.querySelector('button');
+	const openButton = modalPanelElement.querySelector('button');
 
-    const dialog = modalPanelElement.querySelector('dialog');
-    const panel = dialog.querySelector('div');
-    const closeButton = dialog.querySelector('.tui-panel-close-button');
+	const dialog = modalPanelElement.querySelector('dialog');
+	const closeButton = dialog.querySelector('.tui-panel-close-button');
 
-    openButton.addEventListener('click', () => {
-        dialog.showModal();
-    });
-    closeButton.addEventListener('click', () => {
-        dialog.close();
-    });
+	openButton.addEventListener('click', () => {
+		dialog.showModal();
+	});
+	closeButton.addEventListener('click', () => {
+		dialog.close();
+	});
 }
 
 // SECTIONS
 
 function updateSection(element, json, idMap) {
-    var elementForTitle = element;
-    var elementForContent = element;
-    if(json['disclosureType'] != 'NONE') {
-        elementForContent = document.createElement('details');
-        result.appendChild(elementForContent);
-        if(json['disclosureType'] == 'STARTS_OPENED') {
-            elementForContent.setAttribute("open");
-        }
-        elementForTitle = document.createElement('summary');
-        containerNodeForContent.appendChild(elementForTitle);
-    }
+	let elementForTitle = element;
+	let elementForContent = element;
+	if(json['disclosureType'] !== 'NONE') {
+		elementForContent = document.createElement('details');
+		if(json['disclosureType'] === 'STARTS_OPENED') {
+			elementForContent.setAttribute("open");
+		}
+		elementForTitle = document.createElement('summary');
+		containerNodeForContent.appendChild(elementForTitle);
+	}
 
-    const elementHeader = document.createElement('h' + json['depth']);
-    elementForTitle.appendChild(elementHeader);
-    elementHeader.textContent = json['title'];
-    if(json['customStyleHeader'] != null) {
-        var style = '';
-        Object.entries(json['customStyleHeader']['style']).forEach(([key, value]) => {
-            style += key + ':' + value + ';';
-        });
-        elementHeader.setAttribute('style', style);
-    }
-    if(json['disclosureType'] != 'NONE') {
-        elementHeader.style.display = 'inline';
-    }
-    for(var fragment of json['content']) {
-        const component = createComponent(fragment, idMap);
-        element.appendChild(component);
-    }
+	const elementHeader = document.createElement('h' + json['depth']);
+	elementForTitle.appendChild(elementHeader);
+	elementHeader.textContent = json['title'];
+	if(json['customStyleHeader'] != null) {
+		let style = '';
+		Object.entries(json['customStyleHeader']['style']).forEach(([key, value]) => {
+			style += key + ':' + value + ';';
+		});
+		elementHeader.setAttribute('style', style);
+	}
+	if(json['disclosureType'] !== 'NONE') {
+		elementHeader.style.display = 'inline';
+	}
+	for(let fragment of json['content']) {
+		const component = createComponent(fragment, idMap);
+		element.appendChild(component);
+	}
 }
 
 // PARAGRAPHS
 
 function updateParagraph(element, json, idMap) {
-    element.innerHTML = '';
-    element.className = '';
-    element.classList.add('tui-align-' + json['textAlign'].toLowerCase());
-    for(var fragment of json['content']) {
-        const component = createComponent(fragment, idMap);
-        element.appendChild(component);
-    }
+	element.innerHTML = '';
+	element.className = '';
+	element.classList.add('tui-align-' + json['textAlign'].toLowerCase());
+	for(let fragment of json['content']) {
+		const component = createComponent(fragment, idMap);
+		element.appendChild(component);
+	}
 }
 
 // REFRESH BUTTONS
 
 function instrumentRefreshButtons() {
-    const refreshButtons = document.querySelectorAll('.tui-refresh-button');
-    refreshButtons.forEach(function(button, i) {
-       instrumentRefreshButton(button);
-    });
+	const refreshButtons = document.querySelectorAll('.tui-refresh-button');
+	refreshButtons.forEach(function (button) {
+		instrumentRefreshButton(button);
+	});
 }
 
 function instrumentRefreshButton(buttonElement) {
-     buttonElement.addEventListener('click', function() {
-        const data = {};
-        // Button parameters are inside button's container
-        buttonElement.parentElement.querySelectorAll('input').forEach(function(input) {
-            data[input.getAttribute('name')] = input.getAttribute('value');
-        });
-        buttonElement.getAttribute('tui-refresh-listeners').split(",")
-        .forEach(function(id, i) {
-            refreshComponent(id, data);
-        });
-    });
+	buttonElement.addEventListener('click', function () {
+		const data = {};
+		// Button parameters are inside button's container
+		buttonElement.parentElement.querySelectorAll('input').forEach(function (input) {
+			data[input.getAttribute('name')] = input.getAttribute('value');
+		});
+		buttonElement.getAttribute('tui-refresh-listeners').split(",")
+			.forEach(function (id, i) {
+				refreshComponent(id, data);
+			});
+	});
 }
 
 // SEARCH
 
 function createSearchForm(json, idMap) {
-    const formTUID = json['tuid'];
+	const formTUID = json['tuid'];
 
-    var result = document.createElement('search');
-    result.classList.add('tui-search');
-    result.setAttribute('tuid', formTUID);
+	let result = document.createElement('search');
+	result.classList.add('tui-search');
+	result.setAttribute('tuid', formTUID);
 
-    // Title
-    var label = document.createElement('label');
-    label.textContent = json['title'];
-    if(json['hideTitle'] == 'true') {
-        label.style.display = 'none';
-    }
-    result.appendChild(label);
+	// Title
+	let label = document.createElement('label');
+	label.textContent = json['title'];
+	if(json['hideTitle'] === 'true') {
+		label.style.display = 'none';
+	}
+	result.appendChild(label);
 
-    // Fields
-    if(json['formDisplayColumns'] != null) {
-        const nbColumns = parseInt(json['formDisplayColumns']);
-        const tableElement = document.createElement('table');
-        result.appendChild(tableElement);
-        var rowElement = document.createElement('tr');
-        tableElement.appendChild(rowElement);
-        var index = 0;
-        json['inputs'].forEach(function(input) {
-            const cellElement = document.createElement('td');
-            rowElement.appendChild(cellElement);
-            var inputDiv = createSearchFormInput(result, input, formTUID, 'tui-form-input');
-            cellElement.appendChild(inputDiv);
+	// Fields
+	if(json['formDisplayColumns'] != null) {
+		const nbColumns = parseInt(json['formDisplayColumns']);
+		const tableElement = document.createElement('table');
+		result.appendChild(tableElement);
+		let rowElement = document.createElement('tr');
+		tableElement.appendChild(rowElement);
+		let index = 0;
+		json['inputs'].forEach(function (input) {
+			const cellElement = document.createElement('td');
+			rowElement.appendChild(cellElement);
+			var inputDiv = createSearchFormInput(result, input, formTUID, 'tui-form-input');
+			cellElement.appendChild(inputDiv);
 
-            index = index + 1;
-            if(index % nbColumns == 0) {
-                rowElement = document.createElement('tr');
-                tableElement.appendChild(rowElement);
-            }
-        });
-    } else {
-        json['inputs'].forEach(function(input) {
-            createSearchFormInput(result, input, formTUID, 'tui-search-input');
-        });
-    }
+			index = index + 1;
+			if(index % nbColumns === 0) {
+				rowElement = document.createElement('tr');
+				tableElement.appendChild(rowElement);
+			}
+		});
+	} else {
+		json['inputs'].forEach(function (input) {
+			createSearchFormInput(result, input, formTUID, 'tui-search-input');
+		});
+	}
 
-    // Parameters
-    const parameters = json['parameters'];
-    for(let name in parameters) {
-        var value = parameters[name];
-        const parameterElement = document.createElement('input');
-        parameterElement.setAttribute('type', 'hidden');
-        parameterElement.setAttribute('name', name);
-        parameterElement.setAttribute('value', value);
-        result.appendChild(parameterElement);
-    }
+	// Parameters
+	const parameters = json['parameters'];
+	for(let name in parameters) {
+		var value = parameters[name];
+		const parameterElement = document.createElement('input');
+		parameterElement.setAttribute('type', 'hidden');
+		parameterElement.setAttribute('name', name);
+		parameterElement.setAttribute('value', value);
+		result.appendChild(parameterElement);
+	}
 
-    // Submit button
-    var submitButton = document.createElement('button');
-    submitButton.textContent = json['submitLabel'];
-    if(json['hideButton'] == 'true') {
-        submitButton.style.display = 'none';
-    }
-    result.appendChild(submitButton);
+	// Submit button
+	var submitButton = document.createElement('button');
+	submitButton.textContent = json['submitLabel'];
+	if(json['hideButton'] === 'true') {
+		submitButton.style.display = 'none';
+	}
+	result.appendChild(submitButton);
 
-    if(json['refreshListeners'] != null) {
-        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
-    }
+	if(json['refreshListeners'] != null) {
+		result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
+	}
 
-    instrumentSearchForm(result);
+	instrumentSearchForm(result);
 
-    return result;
+	return result;
 }
 
 function createSearchFormInput(searchFormElement, jsonInput, searchFormTUID, cssClass) {
-    var inputDiv = createFormInput(searchFormElement, jsonInput, searchFormTUID);
-    inputDiv.classList.add(cssClass);
-    const labelElement = inputDiv.querySelector('label');
-    labelElement.classList.add('tui-search-input-label');
-    return inputDiv;
+	let inputDiv = createFormInput(searchFormElement, jsonInput, searchFormTUID);
+	inputDiv.classList.add(cssClass);
+	const labelElement = inputDiv.querySelector('label');
+	labelElement.classList.add('tui-search-input-label');
+	return inputDiv;
 }
 
 function instrumentSearchForms() {
-    const searchForms = document.querySelectorAll('.tui-search');
-    searchForms.forEach(function(searchElement, i) {
-        instrumentSearchForm(searchElement);
-    });
+	const searchForms = document.querySelectorAll('.tui-search');
+	searchForms.forEach(function (searchElement, i) {
+		instrumentSearchForm(searchElement);
+	});
 }
 
 function instrumentSearchForm(searchElement) {
-    const button = searchElement.querySelector('button');
-    button.addEventListener('click', function() {
-        const data = {};
-        searchElement.querySelectorAll('input').forEach(function(inputElement) {
-            if(inputElement.type == 'radio') {
-                if(inputElement.checked) {
-                    data[inputElement.name] = inputElement.value;
-                }
-            } else if(inputElement.type == 'checkbox') {
-                if(inputElement.checked) {
-                    data[inputElement.name] = 'on';
-                } else {
-                    data[inputElement.name] = 'off';
-                }
-            } else {
-                if(inputElement.type == 'search' || inputElement.value != '') {
-                    data[inputElement.name] = inputElement.value;
-                }
-            }
-        });
-        searchElement.getAttribute('tui-refresh-listeners').split(",")
-            .forEach(function(id, i) {
-                refreshComponent(id, data);
-            });
-    });
+	const button = searchElement.querySelector('button');
+	button.addEventListener('click', function () {
+		const data = {};
+		searchElement.querySelectorAll('input').forEach(function (inputElement) {
+			if(inputElement.type === 'radio') {
+				if(inputElement.checked) {
+					data[inputElement.name] = inputElement.value;
+				}
+			} else if(inputElement.type === 'checkbox') {
+				if(inputElement.checked) {
+					data[inputElement.name] = 'on';
+				} else {
+					data[inputElement.name] = 'off';
+				}
+			} else {
+				if(inputElement.type === 'search' || inputElement.value !== '') {
+					data[inputElement.name] = inputElement.value;
+				}
+			}
+		});
+		searchElement.getAttribute('tui-refresh-listeners').split(",")
+			.forEach(function (id, i) {
+				refreshComponent(id, data);
+			});
+	});
 
-    searchElement.querySelectorAll("input[type='search']").forEach(function(searchInput, i) {
-        searchInput.addEventListener('keypress', function(event) {
-            if(event.key === 'Enter') {
-                event.preventDefault();
-                button.click();
-            }
-        });
-    });
+	searchElement.querySelectorAll("input[type='search']").forEach(function (searchInput, i) {
+		searchInput.addEventListener('keypress', function (event) {
+			if(event.key === 'Enter') {
+				event.preventDefault();
+				button.click();
+			}
+		});
+	});
 }
 
 // FORMS
 
 function createForm(json, idMap) {
-    var result = createFormBase(json, idMap); // Global attributes
-    result.classList.add('tui-form');
+	let result = createFormBase(json, idMap); // Global attributes
+	result.classList.add('tui-form');
 
-    createFieldSet(result, json, false);
-    instrumentForm(result);
+	createFieldSet(result, json, false);
+	instrumentForm(result);
 
-    return result;
+	return result;
 }
 
 function createModalForm(json, idMap) {
-    var result = document.createElement('div');
-    result.classList.add('tui-modal-form');
+	let result = document.createElement('div');
+	result.classList.add('tui-modal-form');
 
-    // Button open
-    const buttonOpen = document.createElement('button');
-    buttonOpen.classList.add('tui-modal-form-open-button');
-    buttonOpen.textContent = json['openButtonLabel'];
-    result.appendChild(buttonOpen);
+	// Button open
+	const buttonOpen = document.createElement('button');
+	buttonOpen.classList.add('tui-modal-form-open-button');
+	buttonOpen.textContent = json['openButtonLabel'];
+	result.appendChild(buttonOpen);
 
-    // Dialog
-    const dialog = document.createElement('dialog');
-    result.appendChild(dialog);
-    dialog.classList.add('modal');
+	// Dialog
+	const dialog = document.createElement('dialog');
+	result.appendChild(dialog);
+	dialog.classList.add('modal');
 
-    var form = createFormBase(json, idMap); // Global attributes
-    dialog.appendChild(form);
-    createFieldSet(form, json, true);
+	let form = createFormBase(json, idMap); // Global attributes
+	dialog.appendChild(form);
+	createFieldSet(form, json, true);
 
-    instrumentModalForm(result);
+	instrumentModalForm(result);
 
-    return result;
+	return result;
 }
 
 function createFormBase(json, idMap) {
-    var result = document.createElement('form');
-    result.setAttribute('id', json['tuid']);
-    instrumentWithErrorMessage(result);
-    result.setAttribute('action', json['target']);
-    result.setAttribute('method', 'post');
-    result.setAttribute('enctype', 'multipart/form-data');
-    if(json['opensPageSource'] != null) {
-        result.setAttribute('tui-opens-page', json['opensPageSource']);
-    }
-    if(json['refreshListeners'] != null) {
-        result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
-    }
-    return result;
+	let result = document.createElement('form');
+	result.setAttribute('id', json['tuid']);
+	instrumentWithErrorMessage(result);
+	result.setAttribute('action', json['target']);
+	result.setAttribute('method', 'post');
+	result.setAttribute('enctype', 'multipart/form-data');
+	if(json['opensPageSource'] != null) {
+		result.setAttribute('tui-opens-page', json['opensPageSource']);
+	}
+	if(json['refreshListeners'] != null) {
+		result.setAttribute('tui-refresh-listeners', adaptRefreshListeners(json, idMap));
+	}
+	return result;
 }
 
 function createFieldSet(form, json, isModal) {
 
-    const fieldset = document.createElement('fieldset');
-    form.appendChild(fieldset);
-    const legend = document.createElement('legend');
-    legend.textContent = json['title'];
-    fieldset.appendChild(legend);
-    const inputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
-    fieldset.appendChild(inputsDiv);
-    const formTUID = form.getAttribute('tuid');
+	const fieldset = document.createElement('fieldset');
+	form.appendChild(fieldset);
+	const legend = document.createElement('legend');
+	legend.textContent = json['title'];
+	fieldset.appendChild(legend);
+	const inputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
+	fieldset.appendChild(inputsDiv);
+	const formTUID = form.getAttribute('tuid');
 
-    // Fields
-    json['inputs'].forEach(function(input) {
-        const formInput = createFormInput(inputsDiv, input, formTUID);
-        formInput.classList.add('tui-form-input');
-        const errorSpan = document.createElement('span');
-        errorSpan.classList.add('tui-input-error');
-        formInput.appendChild(errorSpan);
-    });
+	// Fields
+	json['inputs'].forEach(function (input) {
+		const formInput = createFormInput(inputsDiv, input, formTUID);
+		formInput.classList.add('tui-form-input');
+		const errorSpan = document.createElement('span');
+		errorSpan.classList.add('tui-input-error');
+		formInput.appendChild(errorSpan);
+	});
 
-    // Hidden parameters
-    for(name in json['parameters']) {
-        const value = json['parameters'][name];
-        createFormHiddenInput(inputsDiv, name, value);
-    };
+	// Hidden parameters
+	for(name in json['parameters']) {
+		const value = json['parameters'][name];
+		createFormHiddenInput(inputsDiv, name, value);
+	}
 
-    // Message
-    const messageDiv = document.createElement('div');
-    messageDiv.setAttribute('id', 'form-message-' + json['tuid']);
-    messageDiv.classList.add('tui-form-message');
-    messageDiv.textContent = ' ';
-    fieldset.appendChild(messageDiv);
+	// Message
+	const messageDiv = document.createElement('div');
+	messageDiv.setAttribute('id', 'form-message-' + json['tuid']);
+	messageDiv.classList.add('tui-form-message');
+	messageDiv.textContent = ' ';
+	fieldset.appendChild(messageDiv);
 
-    // Footer
-    const footerPanelDiv = createElementWithContainer('div', 'tui-container-panel').container;
-    fieldset.appendChild(footerPanelDiv);
-    footerPanelDiv.classList.add('tui-panel');
-    footerPanelDiv.classList.add('tui-panel-right');
-    footerPanelDiv.classList.add('tui-form-footer');
+	// Footer
+	const footerPanelDiv = createElementWithContainer('div', 'tui-container-panel').container;
+	fieldset.appendChild(footerPanelDiv);
+	footerPanelDiv.classList.add('tui-panel');
+	footerPanelDiv.classList.add('tui-panel-right');
+	footerPanelDiv.classList.add('tui-form-footer');
 
-    if(isModal) {
-        // Button close
-        const buttonClose = document.createElement('button');
-        buttonClose.setAttribute('type', 'button');
-        buttonClose.classList.add('tui-form-close-button');
-        buttonClose.textContent = 'Close';
-        footerPanelDiv.appendChild(buttonClose);
-    }
+	if(isModal) {
+		// Button close
+		const buttonClose = document.createElement('button');
+		buttonClose.setAttribute('type', 'button');
+		buttonClose.classList.add('tui-form-close-button');
+		buttonClose.textContent = 'Close';
+		footerPanelDiv.appendChild(buttonClose);
+	}
 
-    // Button reset
-    const buttonReset = document.createElement('button');
-    buttonReset.setAttribute('type', 'reset');
-    buttonReset.classList.add('tui-form-reset-button');
-    buttonReset.textContent = 'Reset';
-    footerPanelDiv.appendChild(buttonReset);
-    // Button submit
-    const buttonSubmit = document.createElement('button');
-    buttonSubmit.setAttribute('type', 'submit');
-    buttonSubmit.textContent = json['submitLabel'];
-    footerPanelDiv.appendChild(buttonSubmit);
+	// Button reset
+	const buttonReset = document.createElement('button');
+	buttonReset.setAttribute('type', 'reset');
+	buttonReset.classList.add('tui-form-reset-button');
+	buttonReset.textContent = 'Reset';
+	footerPanelDiv.appendChild(buttonReset);
+	// Button submit
+	const buttonSubmit = document.createElement('button');
+	buttonSubmit.setAttribute('type', 'submit');
+	buttonSubmit.textContent = json['submitLabel'];
+	footerPanelDiv.appendChild(buttonSubmit);
 }
 
 function instrumentForms() {
-    const forms = document.querySelectorAll('.tui-form');
-    forms.forEach(function(form, i) {
-        instrumentForm(form);
-    });
+	const forms = document.querySelectorAll('.tui-form');
+	forms.forEach(function (form) {
+		instrumentForm(form);
+	});
 }
 
 function instrumentForm(formElement) {
-    instrumentWithErrorMessage(formElement);
+	instrumentWithErrorMessage(formElement);
 
-    const resetButton = formElement.querySelector('.tui-form-reset-button');
-    resetButton.addEventListener('click', () => {
-        formElement.reset();
-        completeFormReset(formElement);
-    });
+	const resetButton = formElement.querySelector('.tui-form-reset-button');
+	resetButton.addEventListener('click', () => {
+		formElement.reset();
+		completeFormReset(formElement);
+	});
 
-    formElement.addEventListener('submit', e => {
-        e.preventDefault();
+	formElement.addEventListener('submit', e => {
+		e.preventDefault();
 
-        const url = formElement.action;
-        hideFetchErrorInElement(formElement);
-        hideSuccessMessage(formElement);
-        startFormPending(formElement);
-        fetch(url, {
-                method: formElement.method,
-                enctype: 'multipart/form-data',
-                body: prepareFormData(formElement)
-            })
-            .then(response => {
-                if(!response.ok) {
-                    throw new Error(`HTTP error, status = ${response.status}`);
-                }
-                hideFetchErrorInElement(formElement);
-                stopFormPending(formElement);
-                return response.json();
-            })
-            .then((json) => {
-                onFormResponse(formElement, json);
-            })
-            .catch(error => {
-                stopFormPending(formElement);
-                showFetchErrorInElement(formElement, error)
-            });
-    })
+		const url = formElement.action;
+		hideFetchErrorInElement(formElement);
+		hideSuccessMessage(formElement);
+		startFormPending(formElement);
+		fetch(url, {
+			method: formElement.method,
+			enctype: 'multipart/form-data',
+			body: prepareFormData(formElement)
+		})
+			.then(response => {
+				if(!response.ok) {
+					throw new Error(`HTTP error, status = ${response.status}`);
+				}
+				hideFetchErrorInElement(formElement);
+				stopFormPending(formElement);
+				return response.json();
+			})
+			.then((json) => {
+				onFormResponse(formElement, json);
+			})
+			.catch(error => {
+				stopFormPending(formElement);
+				showFetchErrorInElement(formElement, error)
+			});
+	})
 }
 
 function instrumentModalForms() {
-    const modalFormsContainers = document.querySelectorAll('.tui-modal-form');
-    modalFormsContainers.forEach(function(formContainer, i) {
-        instrumentModalForm(formContainer);
-    });
+	const modalFormsContainers = document.querySelectorAll('.tui-modal-form');
+	modalFormsContainers.forEach(function (formContainer, i) {
+		instrumentModalForm(formContainer);
+	});
 }
 
 function instrumentModalForm(formContainer) {
-    const openButton = formContainer.querySelector('button');
-    const dialog = formContainer.querySelector('dialog');
-    const form = dialog.querySelector('form');
-    const closeButton = form.querySelector('.tui-form-close-button');
-    const submitButton = form.querySelector('.tui-form-submit-button');
+	const openButton = formContainer.querySelector('button');
+	const dialog = formContainer.querySelector('dialog');
+	const form = dialog.querySelector('form');
+	const closeButton = form.querySelector('.tui-form-close-button');
 
-    openButton.addEventListener('click', () => {
-        dialog.showModal();
-    });
-    closeButton.addEventListener('click', () => {
-        hideSuccessMessage(form);
-        dialog.close();
-    });
-    form.addEventListener('reset', e => {
-        form.reset();
-        completeFormReset(form);
-    });
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const url = form.action;
-        hideFetchErrorInElement(form);
-        hideSuccessMessage(form);
-        startFormPending(form);
-        fetch(url, {
-                method: form.method,
-                enctype: 'multipart/form-data',
-                body: prepareFormData(form)
-            })
-            .then(response => {
-                if(!response.ok) {
-                    throw new Error(`HTTP error, status = ${response.status}`);
-                }
-                hideFetchErrorInElement(form);
-                stopFormPending(form);
-                return response.json();
-            })
-            .then((json) => {
-                onFormResponse(form, json);
-            })
-            .catch(error => {
-                stopFormPending(form);
-                showFetchErrorInElement(form, error);
-            });
-    });
+	openButton.addEventListener('click', () => {
+		dialog.showModal();
+	});
+	closeButton.addEventListener('click', () => {
+		hideSuccessMessage(form);
+		dialog.close();
+	});
+	form.addEventListener('reset', e => {
+		form.reset();
+		completeFormReset(form);
+	});
+	form.addEventListener('submit', e => {
+		e.preventDefault();
+		const url = form.action;
+		hideFetchErrorInElement(form);
+		hideSuccessMessage(form);
+		startFormPending(form);
+		fetch(url, {
+			method: form.method,
+			enctype: 'multipart/form-data',
+			body: prepareFormData(form)
+		})
+			.then(response => {
+				if(!response.ok) {
+					throw new Error(`HTTP error, status = ${response.status}`);
+				}
+				hideFetchErrorInElement(form);
+				stopFormPending(form);
+				return response.json();
+			})
+			.then((json) => {
+				onFormResponse(form, json);
+			})
+			.catch(error => {
+				stopFormPending(form);
+				showFetchErrorInElement(form, error);
+			});
+	});
 }
 
 /*
@@ -1090,367 +1070,370 @@ function instrumentModalForm(formContainer) {
     - Any session parameter is added, but may be overridden by input with same name
 */
 function prepareFormData(formElement) {
-    const data = new FormData();
+	const data = new FormData();
 
-    // Session parameters
-    for(let key in SESSION_PARAMS) {
-        data.append(key, SESSION_PARAMS[key]);
-    }
+	// Session parameters
+	for(let key in SESSION_PARAMS) {
+		data.append(key, SESSION_PARAMS[key]);
+	}
 
-    // Form inputs
-    formElement.querySelectorAll('input').forEach(function(inputElement) {
-        if(inputElement.type == 'file' && inputElement.files[0] != null) {
-            data.append('_file_' + inputElement.name, inputElement.files[0], inputElement.files[0].name);
-        } else if(inputElement.type == 'radio') {
-            if(inputElement.checked) {
-                data.append(inputElement.name, inputElement.value);
-            }
-        } else if(inputElement.type == 'checkbox') {
-            if(inputElement.checked) {
-                data.append(inputElement.name, 'on');
-            } else {
-                data.append(inputElement.name, 'off');
-            }
-        } else {
-            data.append(inputElement.name, inputElement.value);
-        }
-    });
+	// Form inputs
+	formElement.querySelectorAll('input').forEach(function (inputElement) {
+		if(inputElement.type === 'file' && inputElement.files[0] != null) {
+			data.append('_file_' + inputElement.name, inputElement.files[0], inputElement.files[0].name);
+		} else if(inputElement.type === 'radio') {
+			if(inputElement.checked) {
+				data.append(inputElement.name, inputElement.value);
+			}
+		} else if(inputElement.type === 'checkbox') {
+			if(inputElement.checked) {
+				data.append(inputElement.name, 'on');
+			} else {
+				data.append(inputElement.name, 'off');
+			}
+		} else {
+			data.append(inputElement.name, inputElement.value);
+		}
+	});
 
-    // Support for text areas
-    formElement.querySelectorAll('textarea').forEach(function(textareaElement) {
-        data.append(textareaElement.name, textareaElement.value);
-    });
+	// Support for text areas
+	formElement.querySelectorAll('textarea').forEach(function (textareaElement) {
+		data.append(textareaElement.name, textareaElement.value);
+	});
 
-    // Support for select
-    formElement.querySelectorAll('select').forEach(function(selectElement) {
-        data.append(selectElement.name, selectElement.value);
-    });
+	// Support for select
+	formElement.querySelectorAll('select').forEach(function (selectElement) {
+		data.append(selectElement.name, selectElement.value);
+	});
 
-    return data;
+	return data;
 }
 
 function startFormPending(formElement) {
-    const fieldset = formElement.querySelector('fieldset');
-    fieldset.classList.add('form-pending');
-    fieldset.disabled = true;
+	const fieldset = formElement.querySelector('fieldset');
+	fieldset.classList.add('form-pending');
+	fieldset.disabled = true;
 }
 
 function stopFormPending(formElement) {
-    const fieldset = formElement.querySelector('fieldset');
-    fieldset.classList.remove('form-pending');
-    fieldset.disabled = false;
+	const fieldset = formElement.querySelector('fieldset');
+	fieldset.classList.remove('form-pending');
+	fieldset.disabled = false;
 }
 
 function completeFormReset(formElement) {
-    hideSuccessMessage(formElement);
-    hideFetchErrorInElement(formElement);
-    hideInputsErrors(formElement);
+	hideSuccessMessage(formElement);
+	hideFetchErrorInElement(formElement);
+	hideInputsErrors(formElement);
 }
 
 function hideInputsErrors(formElement) {
-    const fields = formElement.querySelectorAll('input');
-    fields.forEach(function (field) {
-        field.removeAttribute('title');
-        field.classList.remove("tui-form-input-invalid");
-        const errorElement = field.parentElement.querySelector('.tui-input-error');
-        if(errorElement != null) { // input elements of type radio option do not have an error element.
-            errorElement.textContent = '';
-        }
-    });
+	const fields = formElement.querySelectorAll('input');
+	fields.forEach(function (field) {
+		field.removeAttribute('title');
+		field.classList.remove("tui-form-input-invalid");
+		const errorElement = field.parentElement.querySelector('.tui-input-error');
+		if(errorElement != null) { // input elements of type radio option do not have an error element.
+			errorElement.textContent = '';
+		}
+	});
 }
 
 function onFormResponse(formElement, json) {
-    hideFetchErrorInElement(formElement);
-    stopFormPending(formElement);
+	hideFetchErrorInElement(formElement);
+	stopFormPending(formElement);
 
-    if(json['status'] == 'ok') {
-        hideInputsErrors(formElement);
+	if(json['status'] === 'ok') {
+		hideInputsErrors(formElement);
 
-        // Show success message
-        const messageElement = formElement.querySelector('#form-message-' + formElement.id);
-        messageElement.classList.remove('tui-form-message-error');
-        messageElement.classList.add('tui-form-message-success');
-        messageElement.textContent = json['message'];
+		// Show success message
+		const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+		messageElement.classList.remove('tui-form-message-error');
+		messageElement.classList.add('tui-form-message-success');
+		messageElement.textContent = json['message'];
 
-        if(formElement.hasAttribute('tui-refresh-listeners')) {
-            formElement.getAttribute('tui-refresh-listeners').split(",")
-                .forEach(function(id, i) {
-                    refreshComponent(id);
-                })
-        }
+		if(formElement.hasAttribute('tui-refresh-listeners')) {
+			formElement.getAttribute('tui-refresh-listeners').split(",")
+				.forEach(function (id, i) {
+					refreshComponent(id);
+				})
+		}
 
-        if(json['formUpdate'] != null) {
-            const formUpdate = json['formUpdate'];
-            if(formUpdate['type'] != 'form') {
-                console.error('Unexpected type: ' + formUpdate['type']);
-            } else {
-                formElement.setAttribute('action', formUpdate['target']); // Updating target
-                formElement.querySelector("button[type='submit']").textContent = formUpdate['submitLabel']; // Updating submit label
+		if(json['formUpdate'] != null) {
+			const formUpdate = json['formUpdate'];
+			if(formUpdate['type'] !== 'form') {
+				console.error('Unexpected type: ' + formUpdate['type']);
+			} else {
+				formElement.setAttribute('action', formUpdate['target']); // Updating target
+				formElement.querySelector("button[type='submit']").textContent = formUpdate['submitLabel']; // Updating submit label
 
-                const fieldset = formElement.querySelector('fieldset');
-                const legend = fieldset.querySelector('legend'); // Updating title
-                legend.textContent = formUpdate['title'];
+				const fieldset = formElement.querySelector('fieldset');
+				const legend = fieldset.querySelector('legend'); // Updating title
+				legend.textContent = formUpdate['title'];
 
-                const formTUID = formElement['id'];
-                const newInputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
-                formUpdate['inputs'].forEach(function(input) {
-                    const formInput = createFormInput(newInputsDiv, input, formTUID);
-                    formInput.classList.add('tui-form-input');
-                    const errorSpan = document.createElement('span');
-                    errorSpan.classList.add('tui-input-error');
-                    formInput.appendChild(errorSpan);
-                });
-                fieldset.querySelector('div').replaceWith(newInputsDiv);
-            }
-        } else if(formElement.getAttribute('tui-opens-page') != null) {
-            const openForm = document.createElement('form');
-            openForm.setAttribute('method', 'POST');
-            openForm.setAttribute('action', formElement.getAttribute('tui-opens-page'));
-            openForm.setAttribute('target', '_self');
-            for(let key in SESSION_PARAMS) {
-                const parameterInput = document.createElement('input');
-                parameterInput.setAttribute('type', 'hidden');
-                parameterInput.setAttribute('name', key);
-                parameterInput.setAttribute('value', SESSION_PARAMS[key]);
-                openForm.appendChild(parameterInput);
-            }
-            if(json['parameters'] != null) {
-                for(let key in json['parameters']) {
-                    const parameterInput = document.createElement('input');
-                    parameterInput.setAttribute('type', 'hidden');
-                    parameterInput.setAttribute('name', key);
-                    parameterInput.setAttribute('value', json['parameters'][key]);
-                    openForm.appendChild(parameterInput);
-                }
-            }
-            formElement.appendChild(openForm);
-            openForm.submit();
-        }
-    } else {
-        hideInputsErrors(formElement);
+				const formTUID = formElement['id'];
+				const newInputsDiv = document.createElement('div'); // Inputs are contained in a div that is child of fieldset
+				formUpdate['inputs'].forEach(function (input) {
+					const formInput = createFormInput(newInputsDiv, input, formTUID);
+					formInput.classList.add('tui-form-input');
+					const errorSpan = document.createElement('span');
+					errorSpan.classList.add('tui-input-error');
+					formInput.appendChild(errorSpan);
+				});
+				fieldset.querySelector('div').replaceWith(newInputsDiv);
+			}
+		} else if(formElement.getAttribute('tui-opens-page') != null) {
+			const openForm = document.createElement('form');
+			openForm.setAttribute('method', 'POST');
+			openForm.setAttribute('action', formElement.getAttribute('tui-opens-page'));
+			openForm.setAttribute('target', '_self');
+			for(let key in SESSION_PARAMS) {
+				const parameterInput = document.createElement('input');
+				parameterInput.setAttribute('type', 'hidden');
+				parameterInput.setAttribute('name', key);
+				parameterInput.setAttribute('value', SESSION_PARAMS[key]);
+				openForm.appendChild(parameterInput);
+			}
+			if(json['parameters'] != null) {
+				for(let key in json['parameters']) {
+					const parameterInput = document.createElement('input');
+					parameterInput.setAttribute('type', 'hidden');
+					parameterInput.setAttribute('name', key);
+					parameterInput.setAttribute('value', json['parameters'][key]);
+					openForm.appendChild(parameterInput);
+				}
+			}
+			formElement.appendChild(openForm);
+			openForm.submit();
+		}
+	} else {
+		hideInputsErrors(formElement);
 
-        // Show error message
-        const messageElement = formElement.querySelector('#form-message-' + formElement.id);
-        messageElement.classList.remove('tui-form-message-success');
-        messageElement.classList.add('tui-form-message-error');
-        messageElement.textContent = json['message'];
+		// Show error message
+		const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+		messageElement.classList.remove('tui-form-message-success');
+		messageElement.classList.add('tui-form-message-error');
+		messageElement.textContent = json['message'];
 
-        Object.keys(json['errors']).forEach(function(key) {
-           const field = formElement.querySelector("[name='" + key + "']");
-           field.classList.add("tui-form-input-invalid");
-           const errorElement = field.parentElement.querySelector('.tui-input-error');
-           errorElement.textContent = json['errors'][key];
-        });
-    }
+		Object.keys(json['errors']).forEach(function (key) {
+			const field = formElement.querySelector("[name='" + key + "']");
+			field.classList.add("tui-form-input-invalid");
+			const errorElement = field.parentElement.querySelector('.tui-input-error');
+			errorElement.textContent = json['errors'][key];
+		});
+	}
 }
 
 function createFormHiddenInput(fieldsetElement, name, value) {
-    const inputDiv = document.createElement('div');
-    fieldsetElement.append(inputDiv);
-    const inputElement = document.createElement('input');
-    inputElement.setAttribute('type', 'hidden');
-    inputElement.setAttribute('name', name);
-    inputElement.setAttribute('value', value);
-    inputDiv.appendChild(inputElement);
+	const inputDiv = document.createElement('div');
+	fieldsetElement.append(inputDiv);
+	const inputElement = document.createElement('input');
+	inputElement.setAttribute('type', 'hidden');
+	inputElement.setAttribute('name', name);
+	inputElement.setAttribute('value', value);
+	inputDiv.appendChild(inputElement);
 }
 
 function createFormInput(fieldsetElement, json, formTUID) {
-    const inputDiv = document.createElement('div');
-    fieldsetElement.append(inputDiv);
-    const inputId = formTUID + '-' + json['name'];
+	const inputDiv = document.createElement('div');
+	fieldsetElement.append(inputDiv);
+	const inputId = formTUID + '-' + json['name'];
 
-    const inputLabel = document.createElement('label');
-    inputDiv.append(inputLabel);
-    inputLabel.setAttribute('for', inputId);
-    inputLabel.textContent = json['label'];
+	const inputLabel = document.createElement('label');
+	inputDiv.append(inputLabel);
+	inputLabel.setAttribute('for', inputId);
+	inputLabel.textContent = json['label'];
 
-    var inputElement = null;
-    if(json['type'] == 'textarea') {
-        inputElement = document.createElement('textarea');
-        if(json['initialValue'] != null) {
-            inputElement.textContent = json['initialValue'];
-        }
-    } else if(json['type'] == 'select') {
-        inputElement = document.createElement('select');
-        inputElement.setAttribute('name', json['name']);
-        Object.entries(json['options']).forEach(([key, value]) => {
-            const optionElement = document.createElement('option');
-            optionElement.textContent = value;
-            optionElement.value = key;
-            inputElement.appendChild(optionElement);
-        });
-    } else {
-        inputElement = document.createElement('input');
-        inputElement.setAttribute('type', json['type']);
-        if(json['initialValue'] != null) {
-            inputElement.setAttribute('value', json['initialValue']);
-        }
+	var inputElement = null;
+	if(json['type'] === 'textarea') {
+		inputElement = document.createElement('textarea');
+		if(json['initialValue'] != null) {
+			inputElement.textContent = json['initialValue'];
+		}
+	} else if(json['type'] === 'select') {
+		inputElement = document.createElement('select');
+		inputElement.setAttribute('name', json['name']);
+		Object.entries(json['options']).forEach(([key, value]) => {
+			const optionElement = document.createElement('option');
+			optionElement.textContent = value;
+			optionElement.value = key;
+			inputElement.appendChild(optionElement);
+		});
+	} else {
+		inputElement = document.createElement('input');
+		inputElement.setAttribute('type', json['type']);
+		if(json['initialValue'] != null) {
+			inputElement.setAttribute('value', json['initialValue']);
+		}
 
-        if(json['type'] == 'checkbox') {
-            inputLabel.classList.add('label-checkbox');
-            if(json['checked'] == 'true') {
-                inputElement.checked = true;
-            }
-        }
-    }
+		if(json['type'] === 'checkbox') {
+			inputLabel.classList.add('label-checkbox');
+			if(json['checked'] === 'true') {
+				inputElement.checked = true;
+			}
+		}
+	}
 
-    inputDiv.append(inputElement);
-    inputElement.setAttribute('id', inputId);
-    inputElement.setAttribute('name', json['name']);
-    if(json['placeholder'] != null) {
-        inputElement.setAttribute('placeholder', json['placeholder']);
-    }
+	inputDiv.append(inputElement);
+	inputElement.setAttribute('id', inputId);
+	inputElement.setAttribute('name', json['name']);
+	if(json['placeholder'] != null) {
+		inputElement.setAttribute('placeholder', json['placeholder']);
+	}
 
-    return inputDiv;
+	return inputDiv;
 }
 
 function hideSuccessMessage(formElement) {
-    const messageElement = formElement.querySelector('#form-message-' + formElement.id);
-    messageElement.textContent = ' ';
+	const messageElement = formElement.querySelector('#form-message-' + formElement.id);
+	messageElement.textContent = ' ';
 }
 
 function showFetchErrorInElement(formElement, error) {
-    console.log(error);
-    formElement.classList.add('fetch-error');
-    const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
-    errorDiv.innerText = error;
-    errorDiv.style.display = 'block';
+	console.log(error);
+	formElement.classList.add('fetch-error');
+	const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
+	errorDiv.innerText = error;
+	errorDiv.style.display = 'block';
 }
 
 function hideFetchErrorInElement(formElement) {
-    formElement.classList.remove('fetch-error');
-    const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
-    errorDiv.innerText = '';
-    errorDiv.style.display = 'none';
+	formElement.classList.remove('fetch-error');
+	const errorDiv = formElement.querySelectorAll('.fetch-error-message')[0];
+	errorDiv.innerText = '';
+	errorDiv.style.display = 'none';
 }
 
 // NAV BUTTONS
 
 function instrumentNavButtons() {
-    const navbuttons = document.querySelectorAll('.tui-navbutton');
-    navbuttons.forEach(function(navbutton, i) {
-        instrumentNavButton(navbutton);
-    });
+	const navbuttons = document.querySelectorAll('.tui-navbutton');
+	navbuttons.forEach(function (navbutton, i) {
+		instrumentNavButton(navbutton);
+	});
 }
 
 function instrumentNavButton(element) {
-     for(let key in SESSION_PARAMS) {
-        const parameterInput = document.createElement('input');
-        parameterInput.setAttribute('type', 'hidden');
-        parameterInput.setAttribute('name', key);
-        parameterInput.setAttribute('value', SESSION_PARAMS[key]);
-        element.appendChild(parameterInput);
-    }
+	for(let key in SESSION_PARAMS) {
+		const parameterInput = document.createElement('input');
+		parameterInput.setAttribute('type', 'hidden');
+		parameterInput.setAttribute('name', key);
+		parameterInput.setAttribute('value', SESSION_PARAMS[key]);
+		element.appendChild(parameterInput);
+	}
 }
 
 // DOWNLOAD BUTTONS
 
+/*
+ This method is called from a callback script inside the download button tag
+ */
 function downloadFromButton(buttonElement) {
-    const url = buttonElement.getAttribute('target');
-    const downloadName = buttonElement.getAttribute('downloadName');
+	const url = buttonElement.getAttribute('target');
+	const downloadName = buttonElement.getAttribute('downloadName');
 
-    const data = {};
-    // Button parameters
-    buttonElement.querySelectorAll('input').forEach(function(input) {
-        data[input.getAttribute('name')] = input.getAttribute('value');
-    });
-    // Session parameters
-    Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
-        data[key] = value;
-    });
+	const data = {};
+	// Button parameters
+	buttonElement.querySelectorAll('input').forEach(function (input) {
+		data[input.getAttribute('name')] = input.getAttribute('value');
+	});
+	// Session parameters
+	Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
+		data[key] = value;
+	});
 
-    // Preparing headers depends on the fetch type
-    var body;
-    var headers;
-    if(FETCH_TYPE == 'JSON') {
-        body = JSON.stringify(Array.from(Object.entries(data)));
-        headers = { 'Content-Type': 'application/json', };
-    } else if(FETCH_TYPE == 'FORM_DATA') {
-        body = new FormData();
-        for(let key in data) {
-            body.append(key, data[key]);
-        }
-        headers = {};
-    }
+	// Preparing headers depends on the fetch type
+	let body;
+	let headers;
+	if(FETCH_TYPE === 'JSON') {
+		body = JSON.stringify(Array.from(Object.entries(data)));
+		headers = {'Content-Type': 'application/json',};
+	} else if(FETCH_TYPE === 'FORM_DATA') {
+		body = new FormData();
+		for(let key in data) {
+			body.append(key, data[key]);
+		}
+		headers = {};
+	}
 
-    fetch(url, {
-        method: 'POST',
-        headers: headers,
-        responseType: 'blob',
-        body: body,
-    })
-    .then(response => {
-        if(!response.ok) {
-            throw new Error(`HTTP error, status = ${response.status}`);
-        }
-        return response.blob()
-        })
-    .then(blob => {
-        const volatileLink = document.createElement('a');
-        volatileLink.href = window.URL.createObjectURL(blob);
-        volatileLink.download = downloadName;
-        document.body.appendChild(volatileLink);
-        volatileLink.click();
-        document.body.removeChild(volatileLink);
-    })
-    .catch(error => {
-        console.error(error);
-    });
+	fetch(url, {
+		method: 'POST',
+		headers: headers,
+		responseType: 'blob',
+		body: body,
+	})
+		.then(response => {
+			if(!response.ok) {
+				throw new Error(`HTTP error, status = ${response.status}`);
+			}
+			return response.blob()
+		})
+		.then(blob => {
+			const volatileLink = document.createElement('a');
+			volatileLink.href = window.URL.createObjectURL(blob);
+			volatileLink.download = downloadName;
+			document.body.appendChild(volatileLink);
+			volatileLink.click();
+			document.body.removeChild(volatileLink);
+		})
+		.catch(error => {
+			console.error(error);
+		});
 }
 
 // TABLES
 
 function instrumentTables() {
-    const tables = document.querySelectorAll('table.tui-table, table.tui-tablepicker');
-    tables.forEach(function(table, i) {
-        if(table.hasAttribute('tui-source')) {
-            const sourcePath = table.getAttribute('tui-source');
+	const tables = document.querySelectorAll('table.tui-table, table.tui-tablepicker');
+	tables.forEach(function (table) {
+		if(table.hasAttribute('tui-source')) {
+			const sourcePath = table.getAttribute('tui-source');
 
-            if(table.hasAttribute('tui-page-size')) {
-                const pageSize = parseInt(table.getAttribute('tui-page-size'));
-                const tableNavigation = document.createElement('div');
-                tableNavigation.classList.add('tui-table-navigation');
+			if(table.hasAttribute('tui-page-size')) {
+				const pageSize = parseInt(table.getAttribute('tui-page-size'));
+				const tableNavigation = document.createElement('div');
+				tableNavigation.classList.add('tui-table-navigation');
 
-                const previousPageButton = document.createElement('button');
-                previousPageButton.type = 'button';
-                previousPageButton.innerHTML = '<';
-                previousPageButton.onclick = function() {
-                    const pageNumber = parseInt(table.getAttribute('tui-page-number'));
-                    const fetchData = getFetchData(table);
-                    fetchData.page_size = pageSize;
-                    fetchData.page_number = Math.max(1, pageNumber - 1);
-                    refreshComponent(table.id, fetchData);
-                };
-                tableNavigation.append(previousPageButton);
+				const previousPageButton = document.createElement('button');
+				previousPageButton.type = 'button';
+				previousPageButton.innerHTML = '<';
+				previousPageButton.onclick = function () {
+					const pageNumber = parseInt(table.getAttribute('tui-page-number'));
+					const fetchData = getFetchData(table);
+					fetchData.page_size = pageSize;
+					fetchData.page_number = Math.max(1, pageNumber - 1);
+					refreshComponent(table.id, fetchData);
+				};
+				tableNavigation.append(previousPageButton);
 
-                const nextPageButton = document.createElement('button');
-                nextPageButton.type = 'button';
-                nextPageButton.innerHTML = '>';
-                nextPageButton.onclick = function() {
-                    const pageNumber = parseInt(table.getAttribute('tui-page-number'));
-                    const lastPageNumber = parseInt(table.getAttribute('tui-last-page-number'));
-                    const fetchData = getFetchData(table);
-                    fetchData.page_size = pageSize;
-                    fetchData.page_number = Math.min(pageNumber + 1, lastPageNumber);
-                    refreshComponent(table.id, fetchData);
-                };
-                tableNavigation.append(nextPageButton);
+				const nextPageButton = document.createElement('button');
+				nextPageButton.type = 'button';
+				nextPageButton.innerHTML = '>';
+				nextPageButton.onclick = function () {
+					const pageNumber = parseInt(table.getAttribute('tui-page-number'));
+					const lastPageNumber = parseInt(table.getAttribute('tui-last-page-number'));
+					const fetchData = getFetchData(table);
+					fetchData.page_size = pageSize;
+					fetchData.page_number = Math.min(pageNumber + 1, lastPageNumber);
+					refreshComponent(table.id, fetchData);
+				};
+				tableNavigation.append(nextPageButton);
 
-                const pageLocationSpan = document.createElement('span');
-                tableNavigation.append(pageLocationSpan);
+				const pageLocationSpan = document.createElement('span');
+				tableNavigation.append(pageLocationSpan);
 
-                const tableContainer = table.parentElement;
-                tableContainer.append(tableNavigation);
+				const tableContainer = table.parentElement;
+				tableContainer.append(tableNavigation);
 
-                const tableSize = parseInt(table.getAttribute('tui-table-size'));
-                const firstItemNumber = parseInt(table.getAttribute('tui-first-item-number'));
-                const lastItemNumber = parseInt(table.getAttribute('tui-last-item-number'));
-                updateTableNavigation(table, tableSize, firstItemNumber, lastItemNumber);
-            }
-        }
+				const tableSize = parseInt(table.getAttribute('tui-table-size'));
+				const firstItemNumber = parseInt(table.getAttribute('tui-first-item-number'));
+				const lastItemNumber = parseInt(table.getAttribute('tui-last-item-number'));
+				updateTableNavigation(table, tableSize, firstItemNumber, lastItemNumber);
+			}
+		}
 
-        instrumentTablePicker(table);
-    });
+		instrumentTablePicker(table);
+	});
 }
 
 /*
@@ -1458,49 +1441,49 @@ function instrumentTables() {
 */
 function instrumentTablePicker(tablePickerElement) {
 
-    // Getting optional refresh listeners ids, either from table attributes or in table's container attributes.
-    var refreshListenersAttribute = null;
-    if(tablePickerElement.hasAttribute('tui-refresh-listeners')) { // table has the attribute
-        refreshListenersAttribute = tablePickerElement.getAttribute('tui-refresh-listeners');
-    } else {
-        var optionalContainerElement = tablePickerElement.parentElement;
-        if(optionalContainerElement) { // table is in a container that has the attribute
-            refreshListenersAttribute = optionalContainerElement.getAttribute('tui-refresh-listeners');
-        }
-    }
+	// Getting optional refresh listeners ids, either from table attributes or in table's container attributes.
+	let refreshListenersAttribute = null;
+	if(tablePickerElement.hasAttribute('tui-refresh-listeners')) { // table has the attribute
+		refreshListenersAttribute = tablePickerElement.getAttribute('tui-refresh-listeners');
+	} else {
+		let optionalContainerElement = tablePickerElement.parentElement;
+		if(optionalContainerElement) { // table is in a container that has the attribute
+			refreshListenersAttribute = optionalContainerElement.getAttribute('tui-refresh-listeners');
+		}
+	}
 
-    if(refreshListenersAttribute != null) {
-        const columns = Array.from(tablePickerElement.querySelectorAll("th")).map(cell => cell.textContent);
+	if(refreshListenersAttribute != null) {
+		const columns = Array.from(tablePickerElement.querySelectorAll("th")).map(cell => cell.textContent);
 
-        for(const row of tablePickerElement.querySelectorAll("tbody tr")) {
-            const values = Array.from(row.querySelectorAll("td"))
-                .map(td => {
-                    if(td.firstElementChild == null) {
-                        return td.textContent;
-                    } else if(td.firstElementChild.tagName.toUpperCase() == 'SPAN') {
-                        return td.firstElementChild.textContent;
-                    } else { // Any other UIComponent
-                        return null;
-                    }
-                });
+		for(const row of tablePickerElement.querySelectorAll("tbody tr")) {
+			const values = Array.from(row.querySelectorAll("td"))
+				.map(td => {
+					if(td.firstElementChild == null) {
+						return td.textContent;
+					} else if(td.firstElementChild.tagName.toUpperCase() === 'SPAN') {
+						return td.firstElementChild.textContent;
+					} else { // Any other UIComponent
+						return null;
+					}
+				});
 
-            const data = {};
-            var colIndex = 0;
-            for(const column of columns) {
-                const value = values[colIndex++];
-                if(value != null) {
-                    data[column] = value;
-                }
-            }
+			const data = {};
+			let colIndex = 0;
+			for(const column of columns) {
+				const value = values[colIndex++];
+				if(value != null) {
+					data[column] = value;
+				}
+			}
 
-            row.addEventListener("click", function () {
-                refreshListenersAttribute.split(",")
-                    .forEach(function(id, i) {
-                        refreshComponent(id, data);
-                    })
-            });
-        }
-    }
+			row.addEventListener("click", function () {
+				refreshListenersAttribute.split(",")
+					.forEach(function (id, i) {
+						refreshComponent(id, data);
+					})
+			});
+		}
+	}
 }
 
 /*
@@ -1508,207 +1491,207 @@ function instrumentTablePicker(tablePickerElement) {
     json may be either 'Table' or 'TableData'
 */
 async function updateTable(tableElement, json, idMap) {
-    var caption = tableElement.getElementsByTagName('caption')[0];
-    if(caption == null) {
-        caption = document.createElement('caption');
-        tableElement.append(caption);
-    }
-    if(json['title'] != null) {
-        caption.textContent = json['title'];
-    }
-    if(json['hiddenTitle'] == 'true') {
-        caption.style.display = 'none';
-    }
+	var caption = tableElement.getElementsByTagName('caption')[0];
+	if(caption == null) {
+		caption = document.createElement('caption');
+		tableElement.append(caption);
+	}
+	if(json['title'] != null) {
+		caption.textContent = json['title'];
+	}
+	if(json['hiddenTitle'] === 'true') {
+		caption.style.display = 'none';
+	}
 
-    const hiddenColumnsIndexes = 'hiddenColumns' in json? json['hiddenColumns'] : [];
+	const hiddenColumnsIndexes = 'hiddenColumns' in json ? json['hiddenColumns'] : [];
 
-    if(json['type'] == 'table') {
-        const freshHead = document.createElement('thead');
-        const headRow = document.createElement('tr');
-        freshHead.append(headRow);
-        for(var c = 0; c < json['thead'].length; c++) {
-            const cell = json['thead'][c];
-            const freshCell = document.createElement("th");
-            if(hiddenColumnsIndexes.includes(c)) {
-                freshCell.classList.add("tui-hidden-column");
-            }
-            headRow.append(freshCell);
-            freshCell.textContent = cell;
-        }
-        if(json['hiddenHead'] == 'true') {
-            headRow.classList.add('tui-hidden-head');
-        }
-        tableElement.getElementsByTagName('thead')[0].replaceWith(freshHead);
-    }
+	if(json['type'] === 'table') {
+		const freshHead = document.createElement('thead');
+		const headRow = document.createElement('tr');
+		freshHead.append(headRow);
+		for(let c = 0; c < json['thead'].length; c++) {
+			const cell = json['thead'][c];
+			const freshCell = document.createElement("th");
+			if(hiddenColumnsIndexes.includes(c)) {
+				freshCell.classList.add("tui-hidden-column");
+			}
+			headRow.append(freshCell);
+			freshCell.textContent = cell;
+		}
+		if(json['hiddenHead'] === 'true') {
+			headRow.classList.add('tui-hidden-head');
+		}
+		tableElement.getElementsByTagName('thead')[0].replaceWith(freshHead);
+	}
 
-    const freshBody = document.createElement('tbody');
-    for(var r = 0; r < json['tbody'].length; r++) {
-        const row = json['tbody'][r];
-        const freshRow = document.createElement("tr");
-        for(var c = 0; c < row.length; c++) {
-            const cell = row[c];
-            const freshCell = document.createElement("td");
-            if(hiddenColumnsIndexes.includes(c)) {
-                freshCell.classList.add("tui-hidden-column");
-            }
-            freshRow.append(freshCell);
-            freshCell.append(createComponent(cell, idMap));
-        }
-        freshBody.append(freshRow);
-    }
+	const freshBody = document.createElement('tbody');
+	for(let r = 0; r < json['tbody'].length; r++) {
+		const row = json['tbody'][r];
+		const freshRow = document.createElement("tr");
+		for(let c = 0; c < row.length; c++) {
+			const cell = row[c];
+			const freshCell = document.createElement("td");
+			if(hiddenColumnsIndexes.includes(c)) {
+				freshCell.classList.add("tui-hidden-column");
+			}
+			freshRow.append(freshCell);
+			freshCell.append(createComponent(cell, idMap));
+		}
+		freshBody.append(freshRow);
+	}
 
-    if('pageNumber' in json) {
-        tableElement.setAttribute('tui-page-number', json['pageNumber']);
-        tableElement.setAttribute('tui-last-page-number', json['lastPageNumber']);
-        updateTableNavigation(tableElement, json['tableSize'], json['firstItemNumber'], json['lastItemNumber']);
-    }
+	if('pageNumber' in json) {
+		tableElement.setAttribute('tui-page-number', json['pageNumber']);
+		tableElement.setAttribute('tui-last-page-number', json['lastPageNumber']);
+		updateTableNavigation(tableElement, json['tableSize'], json['firstItemNumber'], json['lastItemNumber']);
+	}
 
-    tableElement.getElementsByTagName('tbody')[0].replaceWith(freshBody);
+	tableElement.getElementsByTagName('tbody')[0].replaceWith(freshBody);
 
-    updateParameters(tableElement, json);
-    instrumentTablePicker(tableElement);
+	updateParameters(tableElement, json);
+	instrumentTablePicker(tableElement);
 }
 
 function updateTableNavigation(tableElement, tableSize, firstItemNumber, lastItemNumber) {
-    tableElement
-        .parentElement
-        .getElementsByClassName('tui-table-navigation')[0]
-        .getElementsByTagName('span')[0]
-        .innerText = `${firstItemNumber} - ${lastItemNumber} (${tableSize})`;
+	tableElement
+		.parentElement
+		.getElementsByClassName('tui-table-navigation')[0]
+		.getElementsByTagName('span')[0]
+		.innerText = `${firstItemNumber} - ${lastItemNumber} (${tableSize})`;
 }
 
 // SVG
 
 function updateSVG(svgElement, json) {
-    const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    if(svgElement.getAttribute('id') != null) {
-        newElement.setAttribute('id', svgElement.getAttribute('id'));
-    } else if(json['tuid'] != null){
-        newElement.setAttribute('id', json['tuid']);
-    }
+	const newElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	if(svgElement.getAttribute('id') != null) {
+		newElement.setAttribute('id', svgElement.getAttribute('id'));
+	} else if(json['tuid'] != null) {
+		newElement.setAttribute('id', json['tuid']);
+	}
 
-    if(json['tui-source'] != null) {
-        newElement.setAttribute('tui-source', json['tui-source']);
-    } else if(svgElement.getAttribute('tui-source') != null) {
-        newElement.setAttribute('tui-source', svgElement.getAttribute('tui-source'));
-    }
+	if(json['tui-source'] != null) {
+		newElement.setAttribute('tui-source', json['tui-source']);
+	} else if(svgElement.getAttribute('tui-source') != null) {
+		newElement.setAttribute('tui-source', svgElement.getAttribute('tui-source'));
+	}
 
-    copySVGAttributes(json, newElement); // Setting attributes given by backend
+	copySVGAttributes(json, newElement); // Setting attributes given by backend
 
-    const svgContainer = svgElement.parentElement;
-    if(svgContainer != null) {
-        svgContainer.removeChild(svgElement);
-        svgContainer.appendChild(newElement);
-    } else {
-        svgElement.replaceWith(newElement);
-    }
+	const svgContainer = svgElement.parentElement;
+	if(svgContainer != null) {
+		svgContainer.removeChild(svgElement);
+		svgContainer.appendChild(newElement);
+	} else {
+		svgElement.replaceWith(newElement);
+	}
 
-    // Creating SVG components
-    const jsonComponents = Array.from(json['components']);
-    jsonComponents.forEach(function(jsonComponent, i) {
-        const svgComponentElement = createSVGComponent(jsonComponent);
-        newElement.appendChild(svgComponentElement);
-    });
+	// Creating SVG components
+	const jsonComponents = Array.from(json['components']);
+	jsonComponents.forEach(function (jsonComponent, i) {
+		const svgComponentElement = createSVGComponent(jsonComponent);
+		newElement.appendChild(svgComponentElement);
+	});
 
-    const jsonHoveringEntries = Array.from(json['hoveringComponents']);
-    jsonHoveringEntries.forEach(function(jsonZoneMap, i) {
-        const jsonConnectedComponent = jsonZoneMap['connectedComponent'];
-        const connectedComponent = createSVGComponent(jsonConnectedComponent);
-        const connectedComponentTUID = jsonConnectedComponent['id'];
-        connectedComponent.setAttribute('id', connectedComponentTUID);
-        newElement.appendChild(connectedComponent);
+	const jsonHoveringEntries = Array.from(json['hoveringComponents']);
+	jsonHoveringEntries.forEach(function (jsonZoneMap, i) {
+		const jsonConnectedComponent = jsonZoneMap['connectedComponent'];
+		const connectedComponent = createSVGComponent(jsonConnectedComponent);
+		const connectedComponentTUID = jsonConnectedComponent['id'];
+		connectedComponent.setAttribute('id', connectedComponentTUID);
+		newElement.appendChild(connectedComponent);
 
-        const hoveringArea = createSVGComponent(jsonZoneMap['area']);
-        hoveringArea.setAttribute('connectedtuid', connectedComponentTUID);
-        hoveringArea.classList.add('tui-svg-hovering');
-        newElement.appendChild(hoveringArea);
-    });
+		const hoveringArea = createSVGComponent(jsonZoneMap['area']);
+		hoveringArea.setAttribute('connectedtuid', connectedComponentTUID);
+		hoveringArea.classList.add('tui-svg-hovering');
+		newElement.appendChild(hoveringArea);
+	});
 
-    instrumentSVG(newElement);
+	instrumentSVG(newElement);
 
-    updateParameters(newElement, json);
+	updateParameters(newElement, json);
 
-    return newElement;
+	return newElement;
 }
 
 function createSVGComponent(json) {
-    const resultElement = document.createElementNS("http://www.w3.org/2000/svg", json['type']);
-    if(json['type'] == 'g') {
-        const jsonComponents = Array.from(json['components']);
-        jsonComponents.forEach(function(jsonComponent, i) {
-            const svgComponentElement = createSVGComponent(jsonComponent);
-            resultElement.appendChild(svgComponentElement);
-        });
-    }
-    copySVGAttributes(json, resultElement);
-    return resultElement;
+	const resultElement = document.createElementNS("http://www.w3.org/2000/svg", json['type']);
+	if(json['type'] === 'g') {
+		const jsonComponents = Array.from(json['components']);
+		jsonComponents.forEach(function (jsonComponent, i) {
+			const svgComponentElement = createSVGComponent(jsonComponent);
+			resultElement.appendChild(svgComponentElement);
+		});
+	}
+	copySVGAttributes(json, resultElement);
+	return resultElement;
 }
 
 function copySVGAttributes(svgJson, svgElement) {
-    for(let key in svgJson) {
-        if(svgJson.hasOwnProperty(key)) {
-            if(key == 'title') {
-                const title = document.createElementNS("http://www.w3.org/2000/svg", 'title');
-                title.textContent = svgJson[key];
-                svgElement.appendChild(title);
-            } else if(key == 'innerText') {
-                svgElement.textContent = svgJson[key];
-            } else if(key != 'type' && key != 'components') {
-                svgElement.setAttribute(key, svgJson[key]);
-            }
-        }
-    }
+	for(let key in svgJson) {
+		if(svgJson.hasOwnProperty(key)) {
+			if(key === 'title') {
+				const title = document.createElementNS("http://www.w3.org/2000/svg", 'title');
+				title.textContent = svgJson[key];
+				svgElement.appendChild(title);
+			} else if(key === 'innerText') {
+				svgElement.textContent = svgJson[key];
+			} else if(key !== 'type' && key !== 'components') {
+				svgElement.setAttribute(key, svgJson[key]);
+			}
+		}
+	}
 }
 
 function instrumentSVGs() {
-    const svgs = document.querySelectorAll('svg');
-    svgs.forEach(function(svgElement, i) {
-        instrumentSVG(svgElement);
-    });
+	const svgs = document.querySelectorAll('svg');
+	svgs.forEach(function (svgElement) {
+		instrumentSVG(svgElement);
+	});
 }
 
 function instrumentSVG(svgElement) {
-    svgElement.querySelectorAll('.tui-svg-clickable').forEach(function(clickableElement, i) {
-        clickableElement.addEventListener("click", onClickSVGZone);
-    });
+	svgElement.querySelectorAll('.tui-svg-clickable').forEach(function (clickableElement, i) {
+		clickableElement.addEventListener("click", onClickSVGZone);
+	});
 
-    svgElement.querySelectorAll('.tui-svg-hovering').forEach(function(hoveringElement, i) {
-        const connectedElementTUID = hoveringElement.getAttribute('connectedtuid');
-        hoveringElement.onmouseover = () => {
-            document.getElementById(connectedElementTUID).style.display = "inline";
-        };
-        hoveringElement.onmouseout = () => {
-            document.getElementById(connectedElementTUID).style.display = "none";
-        };
-    });
+	svgElement.querySelectorAll('.tui-svg-hovering').forEach(function (hoveringElement, i) {
+		const connectedElementTUID = hoveringElement.getAttribute('connectedtuid');
+		hoveringElement.onmouseover = () => {
+			document.getElementById(connectedElementTUID).style.display = "inline";
+		};
+		hoveringElement.onmouseout = () => {
+			document.getElementById(connectedElementTUID).style.display = "none";
+		};
+	});
 }
 
 function onClickSVGZone(event) {
-    const clickedElement = event.target;
-    const ancestorSGVElement = getAncestorSVG(clickedElement);
-    if(ancestorSGVElement == null) {
-        console.error("No ancestor SVG found for clicked zone: " + clickedElement);
-        return
-    }
+	const clickedElement = event.target;
+	const ancestorSGVElement = getAncestorSVG(clickedElement);
+	if(ancestorSGVElement == null) {
+		console.error("No ancestor SVG found for clicked zone: " + clickedElement);
+		return
+	}
 
-    const parametersAsString = clickedElement.getAttribute("parameters");
-    console.log("parameters: " + parametersAsString);
-    const data = {};
-    const parameters = JSON.parse(parametersAsString);
-    parameters.forEach(parameter => {
-        data[parameter.name] = parameter.value;
-    });
+	const parametersAsString = clickedElement.getAttribute("parameters");
+	console.log("parameters: " + parametersAsString);
+	const data = {};
+	const parameters = JSON.parse(parametersAsString);
+	parameters.forEach(parameter => {
+		data[parameter.name] = parameter.value;
+	});
 
-    ancestorSGVElement.getAttribute('tui-refresh-listeners').split(",")
-        .forEach(function(id, i) {
-            refreshComponent(id, data);
-        });
+	ancestorSGVElement.getAttribute('tui-refresh-listeners').split(",")
+		.forEach(function (id, i) {
+			refreshComponent(id, data);
+		});
 }
 
 function getAncestorSVG(svgComponentElement) {
-    let currentElement = svgComponentElement;
-    while(currentElement && currentElement.nodeName.toLowerCase() !== "svg") {
-        currentElement = currentElement.parentNode;
-    }
-    return currentElement;
+	let currentElement = svgComponentElement;
+	while(currentElement && currentElement.nodeName.toLowerCase() !== "svg") {
+		currentElement = currentElement.parentNode;
+	}
+	return currentElement;
 }
