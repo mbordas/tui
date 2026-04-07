@@ -297,6 +297,19 @@ function createComponent(json, idMap) {
 			input.setAttribute('value', value);
 			result.appendChild(input);
 		});
+		if(json['refreshParameters'] != null) {
+			const refreshParametersDiv = document.createElement('div');
+			result.appendChild(refreshParametersDiv);
+			refreshParametersDiv.style.display = 'none';
+			refreshParametersDiv.classList.add('refresh-parameters');
+			Object.entries(json['refreshParameters']).forEach(([key, value]) => {
+				const input = document.createElement('input');
+				input.setAttribute('type', 'hidden');
+				input.setAttribute('name', key);
+				input.setAttribute('value', value);
+				refreshParametersDiv.appendChild(input);
+			});
+		}
 		const button = document.createElement('button');
 		button.setAttribute('type', 'submit');
 		button.textContent = json['label'];
@@ -424,12 +437,15 @@ function updateParameters(refreshableElement, json) {
 
 function appendHiddenInputs(parametersDiv, jsonMap) {
 	for(let name in jsonMap) {
-		var value = jsonMap[name];
-		const hiddenInput = document.createElement('input');
-		hiddenInput.setAttribute('type', 'hidden');
-		hiddenInput.setAttribute('name', name);
+		let value = jsonMap[name];
+		let hiddenInput = parametersDiv.querySelector('input[name="' + name + '"]');
+		if(hiddenInput == null) {
+			hiddenInput = document.createElement('input');
+			hiddenInput.setAttribute('type', 'hidden');
+			hiddenInput.setAttribute('name', name);
+			parametersDiv.appendChild(hiddenInput);
+		}
 		hiddenInput.setAttribute('value', value);
-		parametersDiv.appendChild(hiddenInput);
 	}
 }
 
@@ -1153,9 +1169,13 @@ function onFormResponse(formElement, json) {
 		messageElement.textContent = json['message'];
 
 		if(formElement.hasAttribute('tui-refresh-listeners')) {
+			const data = {};
+			for(let key in json['parameters']) {
+				data[key] = json['parameters'][key];
+			}
 			formElement.getAttribute('tui-refresh-listeners').split(",")
 				.forEach(function (id, i) {
-					refreshComponent(id);
+					refreshComponent(id, data);
 				})
 		}
 

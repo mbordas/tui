@@ -156,7 +156,18 @@ public class Form extends UIComponent {
 		return result;
 	}
 
+	/**
+	 * Sets a parameter which will be sent to the submission web service
+	 */
+	@Deprecated
 	public Form addParameter(String name, String value) {
+		return setParameter(name, value);
+	}
+
+	/**
+	 * Sets a parameter which will be sent to the submission web service
+	 */
+	public Form setParameter(String name, String value) {
 		m_parameters.put(name, value);
 		return this;
 	}
@@ -164,7 +175,15 @@ public class Form extends UIComponent {
 	/**
 	 * Registered listener will be refreshed each time the form will be successfully submitted.
 	 */
+	@Deprecated
 	public void registerRefreshListener(UIComponent listener) {
+		m_refreshListeners.add(listener);
+	}
+
+	/**
+	 * Registered listener will be refreshed each time the form will be successfully submitted.
+	 */
+	public void connectListener(UIComponent listener) {
 		m_refreshListeners.add(listener);
 	}
 
@@ -298,8 +317,8 @@ public class Form extends UIComponent {
 	}
 
 	/**
-	 * @param parameters Parameters to send back to frontend. It will be used if the form is set to open a page after submission.
-	 *                   These parameters will be ignored when the form does not open page. See {@link #opensPage(String)}.
+	 * @param parameters Parameters to send back to frontend. It will be used if the form is set to open a page after submission or when
+	 *                   the form validation triggers components' refresh.
 	 */
 	public static JsonMap buildSuccessfulSubmissionResponse(Map<String, String> parameters) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)

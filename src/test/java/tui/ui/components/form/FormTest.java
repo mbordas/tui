@@ -19,12 +19,17 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import tui.http.RequestReader;
+import tui.http.TUIWebService;
+import tui.json.JsonObject;
 import tui.test.Browser;
 import tui.test.TestWithBackend;
 import tui.ui.components.Page;
+import tui.ui.components.RefreshButton;
 import tui.ui.components.layout.Panel;
 import tui.utils.TestUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
@@ -41,6 +47,50 @@ public class FormTest extends TestWithBackend {
 
 	public static final String HIDDEN_PARAMETER_NAME = "hiddenParameter";
 	public static final String HIDDEN_PARAMETER_VALUE = "Hidden value";
+
+	@Test
+	public void setRefreshParameter() throws IOException {
+		final Page page = new Page("setRefreshParameter");
+		page.setSource("/index");
+		final Panel panel = page.append(new Panel());
+		panel.setSource("/panel");
+
+		final RefreshButton refreshButton = page.append(new RefreshButton("Refresh with parameter"));
+		refreshButton.setParameter("parameter", "frontend");
+		refreshButton.connectListener(panel);
+
+		final Form form = page.append(new Form("form", "/form"));
+		form.registerRefreshListener(panel);
+
+		final AtomicReference<String> receivedValue = new AtomicReference<>();
+
+		try(final BackendAndBrowser backendAndBrowser = startAndBrowse(page)) {
+			backendAndBrowser.backend().registerWebService(form.getTarget(), new TUIWebService() {
+				@Override
+				public JsonObject handle(String uri, HttpServletRequest request, HttpServletResponse response) throws IOException {
+					return Form.buildSuccessfulSubmissionResponse(Map.of("parameter", "backend"));
+				}
+			});
+
+			backendAndBrowser.backend().registerWebService(panel.getSource(), new TUIWebService() {
+				@Override
+				public JsonObject handle(String uri, HttpServletRequest request, HttpServletResponse response) throws IOException {
+					final RequestReader reader = new RequestReader(request);
+					receivedValue.set(reader.getStringParameter("parameter"));
+					final Panel result = new Panel();
+					result.setSource(panel.getSource());
+					return result.toJsonMap();
+				}
+			});
+
+			backendAndBrowser.browser().clickRefreshButton(refreshButton.getLabel());
+			assertEquals("frontend", receivedValue.get());
+
+			backendAndBrowser.browser().submitForm(form.getTitle());
+			assertEquals("backend", receivedValue.get());
+
+		}
+	}
 
 	@Test
 	public void html() {
