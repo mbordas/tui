@@ -31,7 +31,8 @@ public class TUIDocsTables extends Page {
 
 		final Section chapter = appendSection("Tables");
 
-		chapter.appendParagraph("The Table object displays string data. Any formating must be done before values are put into a Table.");
+		chapter.appendParagraph(
+				"The Table object displays string data or any kind of component. Any formating must be done before values are put into a Table.");
 		chapter.appendParagraph("Example code:");
 		chapter.append(new CodeParagraph("""
 				final List<String> columns = List.of("Person", "Hobby", "Age");

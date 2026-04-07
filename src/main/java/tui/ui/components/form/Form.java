@@ -320,15 +320,23 @@ public class Form extends UIComponent {
 	 * @param parameters Parameters to send back to frontend. It will be used if the form is set to open a page after submission or when
 	 *                   the form validation triggers components' refresh.
 	 */
-	public static JsonMap buildSuccessfulSubmissionResponse(Map<String, String> parameters) {
+	public static JsonMap buildSuccessfulSubmissionResponse(String message, Map<String, String> parameters) {
 		final JsonMap result = new JsonMap(JSON_TYPE_FORM_SUBMISSION_RESPONSE)
 				.setAttribute("status", "ok")
-				.setAttribute(JSON_PARAMETER_SUBMISSION_MESSAGE, "form submitted");
+				.setAttribute(JSON_PARAMETER_SUBMISSION_MESSAGE, message);
 		final JsonMap parametersMap = result.setChild("parameters", new JsonMap(null));
 		for(Map.Entry<String, String> entry : parameters.entrySet()) {
 			parametersMap.setAttribute(entry.getKey(), entry.getValue());
 		}
 		return result;
+	}
+
+	/**
+	 * @param parameters Parameters to send back to frontend. It will be used if the form is set to open a page after submission or when
+	 *                   the form validation triggers components' refresh.
+	 */
+	public static JsonMap buildSuccessfulSubmissionResponse(Map<String, String> parameters) {
+		return buildSuccessfulSubmissionResponse("form submitted", parameters);
 	}
 
 	public static JsonMap buildFormUpdateSubmissionResponse(Form updatedForm) {
