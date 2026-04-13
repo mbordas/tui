@@ -36,13 +36,13 @@ public class TList extends TComponent {
 	}
 
 	@Override
-	public TComponent find(long tuid) {
-		return null;
+	public @NotNull Collection<TComponent> getAllChildrenComponents() {
+		return new ArrayList<>(m_content);
 	}
 
 	@Override
 	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
-		return m_content;
+		return getAllChildrenComponents(); // All children are reachable when list is reachable
 	}
 
 	public static TList parse(JsonMap json, TClient client) {

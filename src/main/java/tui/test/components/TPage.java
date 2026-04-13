@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 public class TPage {
 
@@ -48,7 +46,7 @@ public class TPage {
 		return m_title;
 	}
 
-	public List<TComponent> getChildrenComponents() {
+	public List<TComponent> getAllChildrenComponents() {
 		return m_content;
 	}
 
@@ -61,24 +59,8 @@ public class TPage {
 		return result;
 	}
 
-	public Optional<TComponent> findReachableSubComponent(Predicate<TComponent> condition) {
-		for(TComponent childComponent : m_content) {
-			if(childComponent.isReachable()) {
-				if(condition.test(childComponent)) {
-					return Optional.of(childComponent);
-				} else {
-					final Optional<TComponent> anyFoundComponent = childComponent.findReachableSubComponent(condition);
-					if(anyFoundComponent.isPresent()) {
-						return anyFoundComponent;
-					}
-				}
-			}
-		}
-		return Optional.empty();
-	}
-
 	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
+		return TComponent.findSubComponent(tuid, getAllChildrenComponents());
 	}
 
 	public static TPage parse(JsonMap jsonMap, TClient client) {

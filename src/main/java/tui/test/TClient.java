@@ -90,10 +90,6 @@ public class TClient {
 		return m_currentPage.getTitle();
 	}
 
-	public Collection<TComponent> getChildrenComponents() {
-		return m_currentPage.getChildrenComponents();
-	}
-
 	public Collection<TComponent> getReachableSubComponents() {
 		return m_currentPage.getReachableSubComponents();
 	}
@@ -212,7 +208,7 @@ public class TClient {
 	public String branchString() {
 		final StringBuilder result = new StringBuilder(TPage.class.getSimpleName() + " '" + m_currentPage.getTitle() + "'");
 		result.append("\n");
-		for(TComponent child : m_currentPage.getChildrenComponents()) {
+		for(TComponent child : m_currentPage.getAllChildrenComponents()) {
 			Arrays.stream(child.branchString().split("\n")).forEach((line) -> result.append("  ").append(line).append("\n"));
 		}
 		return result.toString();

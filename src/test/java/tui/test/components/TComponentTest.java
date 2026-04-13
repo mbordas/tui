@@ -23,9 +23,9 @@ import java.util.List;
 public class TComponentTest {
 
 	@Test
-	public void findShouldNotCrashWhenComponentHasNoTUID() {
+	public void findSubComponentShouldNotCrashWhenComponentHasNoTUID() {
 		final TParagraph.TText tText = TParagraph.TText.parse(new Paragraph.Text("text").toJsonMap(), null);
-		TComponent.find(1L, List.of(tText));
+		TComponent.findSubComponent(1L, List.of(tText));
 	}
 
 }

@@ -112,8 +112,8 @@ public class TForm extends TComponent {
 	}
 
 	@Override
-	public TComponent find(long tuid) {
-		return null;
+	public @NotNull Collection<TComponent> getAllChildrenComponents() {
+		return List.of();
 	}
 
 	@Override

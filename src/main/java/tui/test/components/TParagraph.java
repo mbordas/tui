@@ -45,8 +45,8 @@ public class TParagraph extends TRefreshableComponent {
 		}
 
 		@Override
-		public TComponent find(long tuid) {
-			return null;
+		public @NotNull Collection<TComponent> getAllChildrenComponents() {
+			return List.of();
 		}
 
 		@Override
@@ -95,13 +95,13 @@ public class TParagraph extends TRefreshableComponent {
 	}
 
 	@Override
-	public TComponent find(long tuid) {
-		return null;
+	public @NotNull Collection<TComponent> getAllChildrenComponents() {
+		return new ArrayList<>(m_content);
 	}
 
 	@Override
 	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
-		return m_content;
+		return getAllChildrenComponents(); // All children are reachable when paragraph is reachable
 	}
 
 	public static TParagraph parse(JsonMap json, TClient client) {

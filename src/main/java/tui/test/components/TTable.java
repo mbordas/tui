@@ -127,13 +127,17 @@ public class TTable extends TRefreshableComponent {
 	}
 
 	@Override
-	public TComponent find(long tuid) {
-		return null;
+	public @NotNull Collection<TComponent> getAllChildrenComponents() {
+		final List<TComponent> result = new ArrayList<>();
+		for(List<TComponent> row : m_rows) {
+			result.addAll(row);
+		}
+		return result;
 	}
 
 	@Override
 	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
-		return List.of();
+		return getAllChildrenComponents(); // All children are reachable when table is reachable
 	}
 
 	@Override

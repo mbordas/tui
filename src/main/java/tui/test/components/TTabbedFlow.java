@@ -60,15 +60,12 @@ public class TTabbedFlow extends TComponent {
 	}
 
 	@Override
-	public TComponent find(long tuid) {
-		for(Collection<TComponent> tabComponents : m_content.values()) {
-			final TComponent foundComponent = TComponent.find(tuid, tabComponents);
-			if(foundComponent != null) {
-				return foundComponent;
-			}
+	public @NotNull Collection<TComponent> getAllChildrenComponents() {
+		final List<TComponent> result = new ArrayList<>();
+		for(Collection<TComponent> tabContent : m_content.values()) {
+			result.addAll(tabContent);
 		}
-
-		return null;
+		return result;
 	}
 
 	@Override

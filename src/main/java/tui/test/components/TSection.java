@@ -58,13 +58,13 @@ public class TSection extends TComponent {
 	}
 
 	@Override
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, m_content);
+	public @NotNull Collection<TComponent> getAllChildrenComponents() {
+		return new ArrayList<>(m_content);
 	}
 
 	@Override
 	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
-		return new ArrayList<>(m_content);
+		return getAllChildrenComponents(); // All children are reachable when section is reachable
 	}
 
 	@Override

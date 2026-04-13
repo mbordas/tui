@@ -60,7 +60,14 @@ public abstract class TComponent {
 		return m_customTag;
 	}
 
-	public abstract TComponent find(long tuid);
+	/**
+	 * Looks for a subcomponent with the given TUID. All subcomponents are candidates, no matter if they are reachable or not.
+	 */
+	private TComponent findSubComponent(long tuid) {
+		return TComponent.findSubComponent(tuid, getAllChildrenComponents());
+	}
+
+	public abstract @NotNull Collection<TComponent> getAllChildrenComponents();
 
 	/**
 	 * The reachable components are those contained in this component that are visible.
@@ -115,21 +122,34 @@ public abstract class TComponent {
 		return result.toString();
 	}
 
+	/**
+	 * Builds a pretty printed tree representation of reachable components.
+	 */
 	public String branchString() {
 		final StringBuilder result = new StringBuilder(toString());
 		result.append("\n");
-		for(TComponent child : getReachableChildrenComponents()) {
-			Arrays.stream(child.branchString().split("\n")).forEach((line) -> result.append("  ").append(line).append("\n"));
+		final Collection<TComponent> reachableChildrenComponents = getReachableChildrenComponents();
+		for(TComponent child : getAllChildrenComponents()) {
+			if(reachableChildrenComponents.contains(child)) {
+				Arrays.stream(child.branchString().split("\n")).forEach((line) -> result.append("  ").append(line).append("\n"));
+			} else {
+				result.append("  (unreachable) ").append(child.toString()).append("\n");
+			}
 		}
 		return result.toString();
 	}
 
-	protected static TComponent find(long tuid, Collection<? extends TComponent> reachableChildren) {
-		for(TComponent child : reachableChildren) {
+	/**
+	 * Looks for a subcomponent with the given TUID. All subcomponents are candidates, no matter if they are reachable or not.
+	 *
+	 * @param allChildren All direct subcomponents, reachable or not.
+	 */
+	protected static TComponent findSubComponent(long tuid, Collection<? extends TComponent> allChildren) {
+		for(TComponent child : allChildren) {
 			if(child.getTUID() != null && child.getTUID() == tuid) {
 				return child;
 			}
-			final TComponent foundComponent = child.find(tuid);
+			final TComponent foundComponent = child.findSubComponent(tuid);
 			if(foundComponent != null) {
 				return foundComponent;
 			}

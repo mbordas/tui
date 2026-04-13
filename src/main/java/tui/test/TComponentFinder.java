@@ -28,28 +28,28 @@ public class TComponentFinder<C extends TComponent> {
 
 	private final Class<C> m_type;
 	private final TComponent m_root;
-	private final Collection<TComponent> m_children;
+	private final Collection<TComponent> m_allChildren;
 	private Predicate<TComponent> m_parentOfClass = component -> true;
 	private Predicate<TComponent> m_parentCondition = component -> true;
 	private Predicate<C> m_thisCondition = component -> true;
 
-	private TComponentFinder(Class<C> type, TComponent root, Collection<TComponent> children) {
+	private TComponentFinder(Class<C> type, TComponent root, Collection<TComponent> allChildren) {
 		m_type = type;
 		m_root = root;
-		m_children = children;
+		m_allChildren = allChildren;
 	}
 
 	public List<C> findAll() {
-		if(m_children == null) {
+		if(m_allChildren == null) {
 			return List.of();
 		} else {
-			return findAll(m_root, m_children);
+			return findAll(m_root, m_allChildren);
 		}
 	}
 
-	private List<C> findAll(TComponent parent, @NotNull Collection<TComponent> children) {
+	private List<C> findAll(TComponent parent, @NotNull Collection<TComponent> allChildren) {
 		final List<C> result = new ArrayList<>();
-		children.forEach((child) -> {
+		allChildren.forEach((child) -> {
 
 			// Testing child 'c'
 			if((parent == null || (m_parentOfClass.test(parent) && m_parentCondition.test(parent)))
@@ -93,7 +93,7 @@ public class TComponentFinder<C extends TComponent> {
 	}
 
 	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TPage page) {
-		return new TComponentFinder<>(type, null, page.getChildrenComponents());
+		return new TComponentFinder<>(type, null, page.getAllChildrenComponents());
 	}
 
 	public static <T extends TComponent> TComponentFinder<T> ofClass(Class<T> type, TComponent component) {

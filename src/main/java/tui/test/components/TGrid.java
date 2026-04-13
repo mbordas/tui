@@ -36,12 +36,7 @@ public class TGrid extends TComponent {
 	}
 
 	@Override
-	public TComponent find(long tuid) {
-		return TComponent.find(tuid, getReachableChildrenComponents());
-	}
-
-	@Override
-	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
+	public @NotNull Collection<TComponent> getAllChildrenComponents() {
 		final Collection<TComponent> result = new ArrayList<>();
 		for(final TComponent[] rowOfComponents : m_components) {
 			for(TComponent component : rowOfComponents) {
@@ -51,6 +46,11 @@ public class TGrid extends TComponent {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public @NotNull Collection<TComponent> getReachableChildrenComponents() {
+		return getAllChildrenComponents(); // All children are reachable when Grid is reachable
 	}
 
 	public static TGrid parse(JsonMap json, TClient tClient) {
