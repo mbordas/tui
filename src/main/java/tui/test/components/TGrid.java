@@ -37,7 +37,7 @@ public class TGrid extends TComponent {
 
 	@Override
 	public TComponent find(long tuid) {
-		return null;
+		return TComponent.find(tuid, getReachableChildrenComponents());
 	}
 
 	@Override
