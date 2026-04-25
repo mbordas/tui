@@ -47,13 +47,11 @@ async function refreshComponent(id, data) {
 	data = getFetchData(element); // we must get all data
 	const component = document.getElementById(id);
 	const sourcePath = component.getAttribute('tui-source');
-	console.log('refreshing component ' + id + ' with source: ' + sourcePath);
 
 	if(data === undefined) {
 		data = new Map();
 		Object.entries(SESSION_PARAMS).forEach(([key, value]) => {
 			data.set(key, value);
-			console.log(`${key}: ${value}`);
 		});
 	} else {
 		for(let key in SESSION_PARAMS) {
@@ -1695,7 +1693,6 @@ function onClickSVGZone(event) {
 	}
 
 	const parametersAsString = clickedElement.getAttribute("parameters");
-	console.log("parameters: " + parametersAsString);
 	const data = {};
 	const parameters = JSON.parse(parametersAsString);
 	parameters.forEach(parameter => {
