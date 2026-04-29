@@ -1277,6 +1277,9 @@ function createFormInput(fieldsetElement, json, formTUID) {
 			optionElement.value = key;
 			inputElement.appendChild(optionElement);
 		});
+		if(json['initialValue'] != null) {
+			inputElement.value = json['initialValue'];
+		}
 	} else {
 		inputElement = document.createElement('input');
 		inputElement.setAttribute('type', json['type']);

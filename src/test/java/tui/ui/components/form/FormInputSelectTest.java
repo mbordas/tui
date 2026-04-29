@@ -43,6 +43,7 @@ public class FormInputSelectTest extends TestWithBackend {
 		final FormInputSelect select = form.createInputSelect("Label", inputName);
 		select.addOption("opt1", "Option 1");
 		select.addOption("opt2", "Option 2");
+		select.setInitialValue("opt2");
 
 		TestUtils.assertHTMLProcedure(() -> form, (prefix, formElement) -> {
 			final WebElement selectElement = formElement.findElement(By.tagName("select"));
@@ -54,6 +55,7 @@ public class FormInputSelectTest extends TestWithBackend {
 			assertEquals(prefix, 2, options.size());
 			assertEquals(prefix, "opt1", options.get(0).getAttribute("value"));
 			assertEquals(prefix, "opt2", options.get(1).getAttribute("value"));
+			assertEquals(prefix, "opt2", selectElement.getAttribute("value"));
 		});
 	}
 
