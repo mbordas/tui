@@ -39,7 +39,7 @@ public class FormInputSelect extends FormInput {
 
 	public FormInputSelect setInitialValue(String value) {
 		if(!m_options.containsKey(value)) {
-			throw new IllegalArgumentException("Initial value is not a valid option");
+			throw new IllegalArgumentException("Initial value is not a valid option: " + value);
 		}
 		m_initialValue = value;
 		return this;
