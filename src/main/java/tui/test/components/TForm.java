@@ -54,12 +54,14 @@ public class TForm extends TComponent {
 	static class TFormField {
 		String name;
 		String label;
+		String hint;
 		Object enteredValue;
 
-		TFormField(String name, String label, Object enteredValue) {
+		TFormField(String name, String label, Object enteredValue, String hint) {
 			this.name = name;
 			this.label = label;
 			this.enteredValue = enteredValue;
+			this.hint = hint;
 		}
 	}
 
@@ -71,6 +73,15 @@ public class TForm extends TComponent {
 
 	public String getTitle() {
 		return m_title;
+	}
+
+	public String getInputHint(String fieldLabel) {
+		final Optional<TFormField> anyField = m_inputs.stream().filter(
+				(field) -> field.label.equals(fieldLabel)).findAny();
+		if(anyField.isEmpty()) {
+			throw new TestExecutionException("No input found in form '%s' with label: %s", m_title, fieldLabel);
+		}
+		return anyField.get().hint;
 	}
 
 	public void enterInput(String fieldLabel, Object value) {
@@ -152,7 +163,8 @@ public class TForm extends TComponent {
 			JsonMap map = (JsonMap) input;
 			final String name = FormInput.getName(map);
 			final String label = FormInput.getLabel(map);
-			result.m_inputs.add(new TFormField(name, label, null));
+			final String hint = FormInput.getHint(map);
+			result.m_inputs.add(new TFormField(name, label, null, hint));
 		}
 	}
 }

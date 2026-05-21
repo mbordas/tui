@@ -27,6 +27,7 @@ public abstract class FormInput implements Comparable<FormInput> {
 	protected final String m_jsonType;
 	protected final String m_htmlType;
 	protected final String m_label;
+	protected String m_hint = null;
 	protected final String m_name;
 	protected String m_initialValue = null;
 	protected String m_placeHolder = null;
@@ -36,6 +37,17 @@ public abstract class FormInput implements Comparable<FormInput> {
 		m_htmlType = htmlType;
 		m_label = label;
 		m_name = name;
+	}
+
+	/**
+	 * This hint will replace the label in the input's tooltip.
+	 */
+	public void setHint(String hint) {
+		m_hint = hint;
+	}
+
+	String computeHint() {
+		return m_hint != null ? m_hint : m_label;
 	}
 
 	public String getHTMLType() {
@@ -58,6 +70,7 @@ public abstract class FormInput implements Comparable<FormInput> {
 		final HTMLNode result = new HTMLNode("input");
 		result.setAttribute("type", m_htmlType);
 		result.setAttribute("name", m_name);
+		result.setAttribute("title", computeHint());
 		if(m_initialValue != null) {
 			result.setAttribute("value", m_initialValue);
 		}
@@ -71,6 +84,7 @@ public abstract class FormInput implements Comparable<FormInput> {
 		final JsonMap result = new JsonMap(m_jsonType);
 		result.setAttribute("label", m_label);
 		result.setAttribute("name", m_name);
+		result.setAttribute("hint", computeHint());
 		if(m_initialValue != null) {
 			result.setAttribute(JSON_ATTRIBUTE_INITIAL_VALUE, m_initialValue);
 		}
@@ -87,6 +101,10 @@ public abstract class FormInput implements Comparable<FormInput> {
 
 	public static String getLabel(JsonMap map) {
 		return map.getAttribute("label");
+	}
+
+	public static String getHint(JsonMap map) {
+		return map.getAttribute("hint");
 	}
 
 	public static @Nullable String getInitialValue(@NotNull JsonMap map) {

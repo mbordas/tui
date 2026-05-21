@@ -1301,6 +1301,9 @@ function createFormInput(fieldsetElement, json, formTUID) {
 	if(json['placeholder'] != null) {
 		inputElement.setAttribute('placeholder', json['placeholder']);
 	}
+	if(json['hint'] != null) {
+		inputElement.setAttribute('title', json['hint']);
+	}
 
 	return inputDiv;
 }

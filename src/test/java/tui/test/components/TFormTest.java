@@ -28,6 +28,7 @@ import tui.test.TestWithBackend;
 import tui.ui.components.Page;
 import tui.ui.components.form.Form;
 import tui.ui.components.form.FormInputFile;
+import tui.ui.components.form.FormInputNumber;
 import tui.ui.components.form.Search;
 import tui.utils.TestUtils;
 
@@ -45,6 +46,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TFormTest extends TestWithBackend {
+
+	@Test
+	public void fieldHint() throws Exception {
+		final Form form = new Form("title", "/form");
+		final FormInputNumber inputNumber = form.createInputNumber("Number label", "numberName");
+
+		final Page page = new Page("Home", "/index");
+		page.append(form);
+		try(TUIBackend backend = startBackend(page)) {
+			final TClient client = new TClient(backend.getPort());
+
+			client.open(page.getSource());
+			final TForm tForm = client.getForm(form.getTitle());
+
+			assertEquals("Number label", tForm.getInputHint("Number label"));
+		}
+	}
 
 	@Test
 	public void customTag() {

@@ -121,7 +121,8 @@ public class TSearch extends TComponent {
 			final String name = FormInput.getName(inputMap);
 			final String label = FormInput.getLabel(inputMap);
 			final String initialValue = FormInput.getInitialValue(inputMap);
-			result.m_inputs.add(new TForm.TFormField(name, label, initialValue));
+			final String hint = FormInput.getHint(inputMap);
+			result.m_inputs.add(new TForm.TFormField(name, label, initialValue, hint));
 		}
 
 		// Hidden parameters
