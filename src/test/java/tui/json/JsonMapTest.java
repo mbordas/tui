@@ -30,7 +30,7 @@ public class JsonMapTest {
 		map.setAttribute("key", "value");
 
 		//
-		final JsonMap result = JsonParser.parseMap(map.toJson());
+		final JsonMap result = JsonParserNoDependency.parseMap(map.toJson());
 		//
 
 		assertEquals("value", result.getAttribute("key"));

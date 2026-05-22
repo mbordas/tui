@@ -17,7 +17,7 @@ package tui.test.components;
 
 import org.jetbrains.annotations.Nullable;
 import tui.json.JsonMap;
-import tui.json.JsonParser;
+import tui.json.JsonParserNoDependency;
 import tui.test.TClient;
 import tui.test.TestExecutionException;
 import tui.ui.components.UIRefreshableComponent;
@@ -53,7 +53,7 @@ public abstract class TRefreshableComponent extends TComponent {
 		final Map<String, Object> parameters = new HashMap<>(m_parameters);
 		parameters.putAll(m_fetchData);
 		final String response = m_client.callBackend(m_source, parameters, false);
-		final JsonMap map = JsonParser.parseMap(response);
+		final JsonMap map = JsonParserNoDependency.parseMap(response);
 		update(map);
 	}
 

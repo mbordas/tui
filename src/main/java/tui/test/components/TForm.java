@@ -20,7 +20,7 @@ import tui.json.JsonArray;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.json.JsonParser;
+import tui.json.JsonParserNoDependency;
 import tui.json.JsonValue;
 import tui.test.TClient;
 import tui.test.TestExecutionException;
@@ -109,7 +109,7 @@ public class TForm extends TComponent {
 		}
 
 		if(m_opensPageSource != null) {
-			final JsonMap response = JsonParser.parseMap(jsonResponse);
+			final JsonMap response = JsonParserNoDependency.parseMap(jsonResponse);
 
 			final Map<String, String> params = new HashMap<>();
 			params.put("action", m_opensPageSource);

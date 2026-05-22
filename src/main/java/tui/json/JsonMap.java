@@ -66,6 +66,14 @@ public class JsonMap extends JsonObject {
 		return result;
 	}
 
+	public long getLongAttribute(String key) {
+		return Long.parseLong(getAttributeOrNull(key));
+	}
+
+	public boolean getBooleanAttribute(String key) {
+		return Boolean.parseBoolean(getAttributeOrNull(key));
+	}
+
 	public String getAttributeOrNull(String key) {
 		if(!m_children.containsKey(key)) {
 			return null;

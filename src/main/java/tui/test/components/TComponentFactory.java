@@ -17,7 +17,7 @@ package tui.test.components;
 
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.json.JsonParser;
+import tui.json.JsonParserNoDependency;
 import tui.test.TClient;
 import tui.ui.components.DownloadButton;
 import tui.ui.components.List;
@@ -40,7 +40,7 @@ import tui.ui.components.layout.VerticalFlow;
 public class TComponentFactory {
 
 	public static TComponent parse(String json, TClient client) {
-		final JsonMap map = JsonParser.parseMap(json);
+		final JsonMap map = JsonParserNoDependency.parseMap(json);
 		return switch(map.getType()) {
 			case DownloadButton.JSON_TYPE -> TDownloadButton.parse(map, client);
 			case Form.JSON_TYPE -> TForm.parse(map, client);

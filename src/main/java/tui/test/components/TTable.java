@@ -22,7 +22,7 @@ import tui.json.JsonConstants;
 import tui.json.JsonException;
 import tui.json.JsonMap;
 import tui.json.JsonObject;
-import tui.json.JsonParser;
+import tui.json.JsonParserNoDependency;
 import tui.json.JsonString;
 import tui.test.TClient;
 import tui.ui.components.Table;
@@ -199,7 +199,7 @@ public class TTable extends TRefreshableComponent {
 	}
 
 	public static TTable parseJson(String json, TClient client) {
-		final JsonMap map = JsonParser.parseMap(json);
+		final JsonMap map = JsonParserNoDependency.parseMap(json);
 		return parse(map, client);
 	}
 

@@ -16,7 +16,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package tui.test;
 
 import tui.json.JsonMap;
-import tui.json.JsonParser;
+import tui.json.JsonParserNoDependency;
 import tui.test.components.TComponent;
 import tui.test.components.TDownloadButton;
 import tui.test.components.TForm;
@@ -76,7 +76,7 @@ public class TClient {
 		Map<String, Object> completedParameters = new HashMap<>(parameters);
 		completedParameters.put("format", "json");
 		final String json = m_httpClient.callBackend(endPoint, completedParameters, false);
-		final JsonMap jsonMap = JsonParser.parseMap(json);
+		final JsonMap jsonMap = JsonParserNoDependency.parseMap(json);
 		try {
 			m_currentPage = TPage.parse(jsonMap, this);
 		} catch(Exception e) {

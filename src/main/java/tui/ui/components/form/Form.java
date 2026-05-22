@@ -22,7 +22,7 @@ import tui.html.HTMLNode;
 import tui.http.RequestReader;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
-import tui.json.JsonParser;
+import tui.json.JsonParserNoDependency;
 import tui.ui.components.UIComponent;
 import tui.ui.components.layout.Panel;
 
@@ -297,7 +297,7 @@ public class Form extends UIComponent {
 	}
 
 	public static boolean isSuccessfulSubmissionResponse(String json) {
-		final JsonMap jsonMap = JsonParser.parseMap(json);
+		final JsonMap jsonMap = JsonParserNoDependency.parseMap(json);
 		if(!JSON_TYPE_FORM_SUBMISSION_RESPONSE.equals(jsonMap.getType())) {
 			return false;
 		} else if(!"ok".equals(jsonMap.getAttribute("status"))) {

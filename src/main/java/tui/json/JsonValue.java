@@ -15,7 +15,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package tui.json;
 
-public abstract class JsonValue<X extends Object> extends JsonObject {
+public abstract class JsonValue<X> extends JsonObject {
 
 	private final X m_value;
 

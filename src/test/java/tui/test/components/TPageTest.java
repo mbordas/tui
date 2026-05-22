@@ -18,7 +18,7 @@ package tui.test.components;
 import org.apache.http.HttpException;
 import org.junit.Test;
 import tui.json.JsonMap;
-import tui.json.JsonParser;
+import tui.json.JsonParserNoDependency;
 import tui.test.Browser;
 import tui.test.TClient;
 import tui.test.TestWithBackend;
@@ -34,7 +34,7 @@ public class TPageTest extends TestWithBackend {
 		page.appendSection("My section");
 		final String json = page.toJsonMap().toJson();
 
-		JsonMap jsonMap = JsonParser.parseMap(json);
+		JsonMap jsonMap = JsonParserNoDependency.parseMap(json);
 		final TPage result = TPage.parse(jsonMap, null);
 
 		assertEquals("My page", result.getTitle());
