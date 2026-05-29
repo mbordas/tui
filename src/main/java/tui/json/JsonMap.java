@@ -67,7 +67,27 @@ public class JsonMap extends JsonObject {
 	}
 
 	public long getLongAttribute(String key) {
-		return Long.parseLong(getAttributeOrNull(key));
+		final JsonObject attribute = m_children.get(key);
+		if(attribute == null) {
+			throw new NullPointerException();
+		}
+		if(attribute instanceof JsonLong longAttribute) {
+			return longAttribute.getValue();
+		} else {
+			throw new RuntimeException(String.format("Attribute '%s' is not of type Long but %s", key, attribute.getClass().getName()));
+		}
+	}
+
+	public double getDoubleAttribute(String key) {
+		final JsonObject attribute = m_children.get(key);
+		if(attribute == null) {
+			throw new NullPointerException();
+		}
+		if(attribute instanceof JsonDouble doubleAttribute) {
+			return doubleAttribute.getValue();
+		} else {
+			throw new RuntimeException(String.format("Attribute '%s' is not of type Double but %s", key, attribute.getClass().getName()));
+		}
 	}
 
 	public boolean getBooleanAttribute(String key) {
