@@ -157,7 +157,7 @@ public class Axis {
 		final Optional<Integer> maxLabelLength = yLabels.stream()
 				.map(String::length)
 				.max(Integer::compareTo);
-		return maxLabelLength.orElse(0) * 10;
+		return maxLabelLength.orElse(0) * 11;
 	}
 
 	static GridFactor computeGridFactor(long height_px, CoordinateTransformation.Range yValuesRange, double minLabelHeight_px) {
