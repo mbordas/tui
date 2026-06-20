@@ -105,12 +105,23 @@ public class Axis {
 	}
 
 	/**
-	 * Draws Y-axis and returns the y coordinates of the labelled ticks, relative to <code>axisStart</code>.
+	 * Draws Y-axis and returns the y coordinates of the labeled ticks, relative to <code>axisStart</code>. The axis is supposed to be on the
+	 * left of the graph. If you need to draw on the right side of the graph, use
+	 * {@link #drawYAxisWithArrow(SVG, CoordinateTransformation.Range, SVGPoint, long, Color, BiFunction, SVGText.Anchor)}.
 	 *
 	 * @return The y coordinates of each axis label, expressed as pixels relative to <code>axisStart</code>.
 	 */
 	public static Set<Integer> drawYAxisWithArrow(SVG svg, CoordinateTransformation.Range yRange, SVGPoint axisStart,
 			long height_px, Color color, BiFunction<Double, GridFactor, String> formatter) {
+		return drawYAxisWithArrow(svg, yRange, axisStart, height_px, color, formatter, SVGText.Anchor.END);
+	}
+
+	/**
+	 * @param anchor Sets how the labels are positioned relatively to the arrow. Set {@link SVGText.Anchor#START} if you want the text to be
+	 *               at the right of the arrow.
+	 */
+	public static Set<Integer> drawYAxisWithArrow(SVG svg, CoordinateTransformation.Range yRange, SVGPoint axisStart,
+			long height_px, Color color, BiFunction<Double, GridFactor, String> formatter, SVGText.Anchor anchor) {
 		final SVGMarker endMarker = svg.addMarker(UIGraph.buildArrow(color));
 
 		final SVGPath yAxis = new SVGPath(axisStart.x(), axisStart.y()).lineRelative(0, -height_px);
@@ -129,7 +140,13 @@ public class Axis {
 			int y_px = (int) yTransform_px.transform(entry.getKey());
 			result.add(-y_px);
 			svg.add(new SVGPath(axisStart.x() - 4, axisStart.y() - y_px).lineRelative(8, 0).withStrokeColor(color));
-			svg.add(new SVGText(axisStart.x() - 10, axisStart.y() - y_px, entry.getValue(), SVGText.Anchor.END)
+
+			SVGPoint textAnchorPoint = switch(anchor) {
+				case START -> new SVGPoint(axisStart.x() + 10, axisStart.y() - y_px);
+				case MIDDLE -> new SVGPoint(axisStart.x(), axisStart.y() - y_px);
+				case END -> new SVGPoint(axisStart.x() - 10, axisStart.y() - y_px);
+			};
+			svg.add(new SVGText(textAnchorPoint.x(), textAnchorPoint.y(), entry.getValue(), anchor)
 					.withStrokeColor(null)
 					.withFillColor(color));
 		}
