@@ -43,6 +43,10 @@ public class TUIColors {
 		}
 	}
 
+	public static Color lighter(Color color, int percent) {
+		return toHSL(color).lighter(percent).toRGB();
+	}
+
 	/**
 	 * Source: https://www.rapidtables.com/convert/color/hsl-to-rgb.html
 	 */
