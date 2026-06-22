@@ -26,20 +26,29 @@ import java.util.List;
 
 public class LineSerie extends DataSerie {
 
-	private final Collection<UIGraph.Point> m_points = new ArrayList<>();
+	private int m_circleRadius_px = 1;
 
-	public void addPoint(double x, double y, String label) {
-		m_points.add(new UIGraph.Point(x, y, label));
+	public record Point(double x, Double y, String label) {
 	}
 
-	public void addAll(Collection<UIGraph.Point> points) {
+	private final Collection<Point> m_points = new ArrayList<>();
+
+	public void addPoint(double x, Double y, String label) {
+		m_points.add(new Point(x, y, label));
+	}
+
+	public void addAll(Collection<Point> points) {
 		m_points.addAll(points);
+	}
+
+	public void setCircleRadius_px(int radius_px) {
+		m_circleRadius_px = radius_px;
 	}
 
 	@Override
 	public CoordinateTransformation.Range getXRange() {
 		final List<Double> xValues = new ArrayList<>(m_points.stream()
-				.map(UIGraph.Point::x)
+				.map(Point::x)
 				.toList());
 		return CoordinateTransformation.getRange(xValues);
 	}
@@ -47,7 +56,7 @@ public class LineSerie extends DataSerie {
 	@Override
 	public CoordinateTransformation.Range getYRange() {
 		final List<Double> yValues = new ArrayList<>(m_points.stream()
-				.map(UIGraph.Point::y)
+				.map(Point::y)
 				.toList());
 		return CoordinateTransformation.getRange(yValues);
 	}
@@ -55,21 +64,29 @@ public class LineSerie extends DataSerie {
 	@Override
 	public void draw(SVG svg, CoordinateTransformation coordinateTransformation) {
 		SVGPath path = null;
-		for(UIGraph.Point point : m_points) {
-			if(path == null) {
-				path = new SVGPath(coordinateTransformation.getX_px(point.x()), coordinateTransformation.getY_px(point.y()));
-				path.withStrokeColor(m_color);
-				path.withFillOpacity(0.0);
-				svg.add(path);
+		for(Point point : m_points) {
+			if(point.y == null) {
+				path = null;
 			} else {
-				path.lineAbsolute(coordinateTransformation.getX_px(point.x()), coordinateTransformation.getY_px(point.y()));
+				if(path == null) {
+					path = new SVGPath(coordinateTransformation.getX_px(point.x()), coordinateTransformation.getY_px(point.y()));
+					path.withStrokeColor(m_color);
+					path.withFillOpacity(0.0);
+					svg.add(path);
+				} else {
+					path.lineAbsolute(coordinateTransformation.getX_px(point.x()), coordinateTransformation.getY_px(point.y()));
+				}
+
+				if(m_circleRadius_px > 0) {
+					final SVGCircle circle = new SVGCircle(coordinateTransformation.getX_px(point.x()),
+							coordinateTransformation.getY_px(point.y()),
+							m_circleRadius_px);
+					circle.withTitle(point.label());
+					circle.withStrokeColor(m_color);
+					circle.withFillColor(m_color);
+					svg.add(circle);
+				}
 			}
-			final SVGCircle circle = new SVGCircle(coordinateTransformation.getX_px(point.x()), coordinateTransformation.getY_px(point.y()),
-					3);
-			circle.withTitle(point.label());
-			circle.withStrokeColor(m_color);
-			circle.withFillColor(m_color);
-			svg.add(circle);
 		}
 	}
 

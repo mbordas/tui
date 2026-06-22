@@ -22,20 +22,35 @@ import java.awt.*;
 public class StepLineSerieTest {
 
 	public static void main(String[] args) throws Exception {
+		final UIGraph graph = new UIGraph();
 
-		final StepLineSerie serie = new StepLineSerie();
-		serie.setColor(Color.RED);
-		for(int i = 0; i < 15; i++) {
-			final double y = Math.random() * 10.0;
-			if(y < 9.0) {
-				serie.addPoint(i * 1.0, y, String.format("%.2f", y));
-			} else {
-				serie.addPoint(i * 1.0, null, null);
+		{
+			final StepLineSerie serie = new StepLineSerie();
+			serie.setColor(Color.RED);
+			for(int i = 0; i < 15; i++) {
+				final double y = Math.random() * 10.0;
+				if(y < 9.0) {
+					serie.addPoint(i * 1.0, y, String.format("%.2f", y));
+				} else {
+					serie.addPoint(i * 1.0, null, null);
+				}
 			}
+			graph.add(serie);
 		}
 
-		final UIGraph graph = new UIGraph();
-		graph.add(serie);
+		{
+			final LineSerie serie = new LineSerie();
+			serie.setColor(Color.BLUE);
+			for(int i = 0; i < 15; i++) {
+				final double y = Math.random() * 10.0;
+				if(y < 9.0) {
+					serie.addPoint(i * 1.0, y, String.format("%.2f", y));
+				} else {
+					serie.addPoint(i * 1.0, null, null);
+				}
+			}
+			graph.add(serie);
+		}
 
 		TestUtils.quickShow(graph.toSVG(600, 400));
 	}
