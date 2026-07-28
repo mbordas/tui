@@ -79,7 +79,7 @@ public class ParagraphTest {
 						    <input type="hidden" name="param1" value="value1">
 						    <input type="hidden" name="param2" value="value2">
 						  </div>
-						  <p id="%d" tui-source="/source" class="tui-align-left">
+						  <p id="%d" tui-source="/source" tui-refresh-on-resize="false" class="tui-align-left">
 						    <span class="tui-text">This is a paragraph with parameter</span>
 						  </p>
 						</div>

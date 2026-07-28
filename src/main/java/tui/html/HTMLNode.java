@@ -93,6 +93,11 @@ public class HTMLNode {
 		return this;
 	}
 
+	public HTMLNode setAttribute(String name, boolean value) {
+		m_attributes.put(name, String.valueOf(value));
+		return this;
+	}
+
 	public HTMLNode setAttribute(String name, int value) {
 		m_attributes.put(name, String.valueOf(value));
 		return this;

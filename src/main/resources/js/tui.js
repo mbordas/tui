@@ -43,6 +43,7 @@ async function refreshComponent(id, data) {
 		console.error('refreshComponent: element with id=' + id + ' not found.');
 		return;
 	}
+
 	addFetchData(element, data); // new data are added to existing
 	data = getFetchData(element); // we must get all data
 	const component = document.getElementById(id);
@@ -92,6 +93,7 @@ async function refreshComponent(id, data) {
 			return response.json();
 		})
 		.then((json) => {
+			let newId = json['tuid'];
 			const type = json['type'];
 			if(type === 'paragraph') {
 				updateParagraph(component, json);
@@ -1688,6 +1690,42 @@ function instrumentSVG(svgElement) {
 			document.getElementById(connectedElementTUID).style.display = "none";
 		};
 	});
+
+	if(svgElement.getAttribute('tui-refresh-on-resize') === 'true') {
+		instrumentRefreshOnResize(svgElement);
+	}
+}
+
+// In this Map we store the timeout of all elements that need to be refreshed because they are resized.
+const RESIZE_TIMEOUT_BY_ID = new Map();
+const RESIZE_STABILIZATION_DURATION_s = 1000; // Component will be refreshed only when resizing is stabilized after this duration
+
+function instrumentRefreshOnResize(svgElement) {
+	let containerElement = svgElement.parentElement;
+	containerElement.style.height = '' + svgElement.viewBox.baseVal.height + 'px';
+	const elementId = svgElement.getAttribute('id');
+
+	const observer = new ResizeObserver(entries => {
+
+		if(entries[0].contentRect != null) {
+			const width = entries[0].contentRect.width; // Container width
+			const logicalWidth = svgElement.viewBox.baseVal.width; // SVG width
+			// Very small resizing occur when the SVG is reloaded by the browser, even when the new SVG has a constant size.
+			// If we don't ignore them, we may run into an infinite loop.
+			if(Math.abs(width - logicalWidth) > 2) {
+				clearTimeout(RESIZE_TIMEOUT_BY_ID.get(elementId));
+
+				const timeout = setTimeout(() => {
+					refreshComponent(elementId, {"_width_px": width});
+					observer.disconnect();
+				}, RESIZE_STABILIZATION_DURATION_s);
+
+				RESIZE_TIMEOUT_BY_ID.set(elementId, timeout);
+			}
+		}
+	});
+
+	observer.observe(containerElement);
 }
 
 function onClickSVGZone(event) {

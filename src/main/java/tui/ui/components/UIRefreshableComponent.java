@@ -17,12 +17,14 @@ import java.util.Map;
 public abstract class UIRefreshableComponent extends UIComponent {
 
 	public static final String ATTRIBUTE_SOURCE = "tui-source";
+	public static final String ATTRIBUTE_REFRESH_ON_RESIZE = "tui-refresh-on-resize";
 	public static final String JSON_ATTRIBUTE_PARAMETERS = "parameters";
 	public static final String HTML_CLASS_PARAMETERS_DIV = "fetch-parameters";
 	public static final String HTML_CONTAINER_CLASS = "tui-refreshable-container";
 
 	protected String m_source;
 	protected final Map<String, String> m_parameters = new HashMap<>();
+	protected boolean m_refreshOnWidthResize = false;
 
 	public String getSource() {
 		return m_source;
@@ -45,6 +47,18 @@ public abstract class UIRefreshableComponent extends UIComponent {
 			throw new IllegalStateException("Can't add parameter to a component without source.");
 		}
 		m_parameters.put(key, value);
+	}
+
+	/**
+	 * When enabled, the refresh web service will be called automatically by the browser each time this component's width will change.
+	 * The request will contain the new width as a double value called '_width_px'.
+	 * Currently only implemented for {@link tui.ui.components.svg.SVG}.
+	 */
+	public void refreshOnWidthResize(boolean enable) {
+		if(m_source == null) {
+			throw new IllegalStateException("Can't configure refresh-on-width-resize on a component without source.");
+		}
+		m_refreshOnWidthResize = enable;
 	}
 
 	public record ContainedElement(HTMLNode container, HTMLNode element) {
@@ -82,6 +96,7 @@ public abstract class UIRefreshableComponent extends UIComponent {
 			if(hasSource()) {
 				element.setAttribute("id", HTMLConstants.toId(getTUID()));
 				element.setAttribute(ATTRIBUTE_SOURCE, getSource());
+				element.setAttribute(ATTRIBUTE_REFRESH_ON_RESIZE, m_refreshOnWidthResize);
 			}
 
 			applyCustomTag(element);

@@ -125,6 +125,24 @@ public class RequestReader {
 		}
 	}
 
+	public double getDoubleParameter(String key) {
+		final String stringValue = getStringParameter(key);
+		if(stringValue == null) {
+			throw new NullPointerException(String.format("expected parameter '%s' not found in request", key));
+		} else {
+			return Double.parseDouble(stringValue);
+		}
+	}
+
+	public double getDoubleParameter(String key, double defaultValue) {
+		final String stringValue = getStringParameter(key);
+		if(stringValue == null) {
+			return defaultValue;
+		} else {
+			return Double.parseDouble(stringValue);
+		}
+	}
+
 	public Date getDateParameter(String key, Locale locale) throws ParseException {
 		final String stringValue = getStringParameter(key);
 		if(stringValue == null) {

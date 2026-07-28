@@ -611,6 +611,10 @@ public class Style {
 					SVG
 				*/
 				
+				.tui-container-svg {
+					width: 100%;
+				}
+				
 				.tui-svg-clickable {
 					cursor: pointer;
 					fill: transparent;

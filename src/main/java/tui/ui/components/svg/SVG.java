@@ -217,12 +217,23 @@ public class SVG extends UIRefreshableComponent {
 		if(hasSource()) {
 			result.setAttribute(HTMLConstants.ATTRIBUTE_ID, HTMLConstants.toId(getTUID()));
 			result.setAttribute(ATTRIBUTE_SOURCE, getSource());
+			result.setAttribute(ATTRIBUTE_REFRESH_ON_RESIZE, m_refreshOnWidthResize);
 		}
-		result.setAttribute("width", m_width_px);
-		result.setAttribute("height", m_height_px);
-		if(m_viewBox != null) {
-			result.setAttribute("viewBox", String.format("%d %d %d %d", m_viewBox.x, m_viewBox.y, m_viewBox.width, m_viewBox.height));
+
+		if(m_refreshOnWidthResize) {
+			// When the refresh-on-width-resize is enabled, the size of the SVG has to be defined by its viewbox and not by
+			// direct width and height values.
+			if(m_viewBox != null) {
+				result.setAttribute("viewBox", String.format("%d %d %d %d", m_viewBox.x, m_viewBox.y, m_viewBox.width, m_viewBox.height));
+			} else {
+				result.setAttribute("viewBox", String.format("0 0 %d %d", m_width_px, m_height_px));
+			}
+			result.setAttribute("preserveAspectRatio", "none");
+		} else {
+			result.setAttribute("width", m_width_px);
+			result.setAttribute("height", m_height_px);
 		}
+
 		final JsonArray components = result.createArray(JSON_KEY_SUBCOMPONENTS);
 		if(!m_markers.isEmpty() || !m_patterns.isEmpty()) {
 			components.add(createDefs(m_markers, m_patterns));
@@ -241,7 +252,7 @@ public class SVG extends UIRefreshableComponent {
 
 		applyCustomStyle(result);
 		applyCustomTag(result);
-		
+
 		return result;
 	}
 
