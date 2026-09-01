@@ -43,19 +43,19 @@ public class GridTest extends TestWithBackend {
 		final String expectedJson = String.format(
 				"""
 						{
-						  "type": "grid",
+						  "tui_type": "grid",
 						  "tuid": %d,
 						  "rows": 2,
 						  "columns": 3,
 						  "rows-width": "auto auto ",
 						  "columns-width": "1fr 1fr 1fr ",
 						  "0_0": {
-						    "type": "paragraph",
+						    "tui_type": "paragraph",
 						    "tuid": %d,
 						    "textAlign": "LEFT",
 						    "content": [
 						      {
-						        "type": "text",
+						        "tui_type": "text",
 						        "content": "paragraph text"
 						}
 						    ]

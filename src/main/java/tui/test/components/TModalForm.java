@@ -18,9 +18,7 @@ package tui.test.components;
 import tui.json.JsonConstants;
 import tui.json.JsonMap;
 import tui.test.TClient;
-import tui.ui.components.form.Form;
 import tui.ui.components.form.ModalForm;
-import tui.utils.TUIUtils;
 
 public class TModalForm extends TForm {
 
@@ -79,14 +77,7 @@ public class TModalForm extends TForm {
 
 		parseInputs(json, result);
 
-		if(json.hasAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)) {
-			result.m_refreshListeners.addAll(
-					TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
-		}
-
-		if(json.hasAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE)) {
-			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);
-		}
+		parseAttributes(json, result);
 
 		result.m_openButtonLabel = json.getAttribute(ModalForm.JSON_OPEN_BUTTON_LABEL);
 		result.readCustomTag(json);

@@ -33,6 +33,8 @@ function onload() {
 	instrumentSVGs();
 }
 
+const JSON_KEY_TYPE = 'tui_type'; // See Java class JsonObject.KEY_TYPE
+
 /*
     Calls the backend web service defined as 'source' in the component's attributes.
     Optional 'data' is a regular Object which contains attributes as (key, value) strings that will be sent as content (HTTP POST).
@@ -94,7 +96,7 @@ async function refreshComponent(id, data) {
 		})
 		.then((json) => {
 			let newId = json['tuid'];
-			const type = json['type'];
+			const type = json[JSON_KEY_TYPE];
 			if(type === 'paragraph') {
 				updateParagraph(component, json);
 			} else if(type === 'table' || type === 'tablepicker' || type === 'table-data') {
@@ -171,7 +173,7 @@ function getFetchData(element) {
     This map should be passed to any element that contains other elements.
 */
 function createComponent(json, idMap) {
-	const type = json['type'];
+	const type = json[JSON_KEY_TYPE];
 	let result;
 	let elementToBeStyled = null; // is overridden when style must be applied on it instead of result
 	if(type === 'panel') {
@@ -375,7 +377,7 @@ function createComponent(json, idMap) {
 function adaptRefreshListeners(json, idMap) {
 	const idsSeparatedByComa = json['refreshListeners'];
 	if(idsSeparatedByComa == null) {
-		console.warn("Attribute 'refreshListeners' in json of type '" + json['type'] + "'.");
+		console.warn("Attribute 'refreshListeners' in json of type '" + json[JSON_KEY_TYPE] + "'.");
 	} else {
 		if(idMap == null) {
 			return idsSeparatedByComa;
@@ -615,7 +617,7 @@ function updatePanel(panelElement, json, idMap) {
 	for(let child of json['content']) {
 		const element = createComponent(child, idMap);
 		if(element == null) {
-			console.error('Unable to create component from type: ' + child['type']);
+			console.error('Unable to create component from type: ' + child[JSON_KEY_TYPE]);
 		} else {
 			if(itemSpacingClass != null) {
 				element.classList.add(itemSpacingClass);
@@ -1181,8 +1183,8 @@ function onFormResponse(formElement, json) {
 
 		if(json['formUpdate'] != null) {
 			const formUpdate = json['formUpdate'];
-			if(formUpdate['type'] !== 'form') {
-				console.error('Unexpected type: ' + formUpdate['type']);
+			if(formUpdate[JSON_KEY_TYPE] !== 'form') {
+				console.error('Unexpected type: ' + formUpdate[JSON_KEY_TYPE]);
 			} else {
 				formElement.setAttribute('action', formUpdate['target']); // Updating target
 				formElement.querySelector("button[type='submit']").textContent = formUpdate['submitLabel']; // Updating submit label
@@ -1265,12 +1267,12 @@ function createFormInput(fieldsetElement, json, formTUID) {
 	inputLabel.textContent = json['label'];
 
 	var inputElement = null;
-	if(json['type'] === 'textarea') {
+	if(json[JSON_KEY_TYPE] === 'textarea') {
 		inputElement = document.createElement('textarea');
 		if(json['initialValue'] != null) {
 			inputElement.textContent = json['initialValue'];
 		}
-	} else if(json['type'] === 'select') {
+	} else if(json[JSON_KEY_TYPE] === 'select') {
 		inputElement = document.createElement('select');
 		inputElement.setAttribute('name', json['name']);
 		Object.entries(json['options']).forEach(([key, value]) => {
@@ -1284,12 +1286,12 @@ function createFormInput(fieldsetElement, json, formTUID) {
 		}
 	} else {
 		inputElement = document.createElement('input');
-		inputElement.setAttribute('type', json['type']);
+		inputElement.setAttribute('type', json[JSON_KEY_TYPE]);
 		if(json['initialValue'] != null) {
 			inputElement.setAttribute('value', json['initialValue']);
 		}
 
-		if(json['type'] === 'checkbox') {
+		if(json[JSON_KEY_TYPE] === 'checkbox') {
 			inputLabel.classList.add('label-checkbox');
 			if(json['checked'] === 'true') {
 				inputElement.checked = true;
@@ -1531,7 +1533,7 @@ async function updateTable(tableElement, json, idMap) {
 
 	const hiddenColumnsIndexes = 'hiddenColumns' in json ? json['hiddenColumns'] : [];
 
-	if(json['type'] === 'table') {
+	if(json[JSON_KEY_TYPE] === 'table') {
 		const freshHead = document.createElement('thead');
 		const headRow = document.createElement('tr');
 		freshHead.append(headRow);
@@ -1641,7 +1643,7 @@ function updateSVG(svgElement, json) {
 }
 
 function createSVGComponent(json) {
-	const resultElement = document.createElementNS("http://www.w3.org/2000/svg", json['type']);
+	const resultElement = document.createElementNS("http://www.w3.org/2000/svg", json[JSON_KEY_TYPE]);
 	if(json['type'] === 'g') {
 		const jsonComponents = Array.from(json['components']);
 		jsonComponents.forEach(function (jsonComponent, i) {
@@ -1662,7 +1664,7 @@ function copySVGAttributes(svgJson, svgElement) {
 				svgElement.appendChild(title);
 			} else if(key === 'innerText') {
 				svgElement.textContent = svgJson[key];
-			} else if(key !== 'type' && key !== 'components') {
+			} else if(key !== JSON_KEY_TYPE && key !== 'components') {
 				svgElement.setAttribute(key, svgJson[key]);
 			}
 		}

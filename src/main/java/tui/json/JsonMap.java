@@ -195,7 +195,7 @@ public class JsonMap extends JsonObject {
 		endOfTag(result);
 		if(m_type != null) {
 			prettyPrintTab(result, 1)
-					.append(String.format("\"type\": \"%s\",", m_type));
+					.append(String.format("\"" + JsonObject.KEY_TYPE + "\": \"%s\",", m_type));
 			endOfTag(result);
 		}
 

@@ -55,10 +55,10 @@ public class JsonParserNoDependency {
 			}
 		}
 
-		final String type = map.getAttributeOrNull("type");
+		final String type = map.getAttributeOrNull(JsonObject.KEY_TYPE);
 		if(type != null) {
 			map.setType(type);
-			map.removeAttribute("type");
+			map.removeAttribute(JsonObject.KEY_TYPE);
 		}
 
 		return map;

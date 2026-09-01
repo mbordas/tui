@@ -75,6 +75,14 @@ public class TDownloadButton extends TComponent {
 		return List.of();
 	}
 
+	public static String getLabel(TComponent component) {
+		if(component instanceof TDownloadButton downloadButton) {
+			return downloadButton.getLabel();
+		} else {
+			throw new IllegalArgumentException("Unexpected type: " + component.getClass().getCanonicalName());
+		}
+	}
+
 	public static TDownloadButton parse(JsonMap json, TClient client) {
 		final long tuid = JsonConstants.readTUID(json);
 		final String label = json.getAttribute(DownloadButton.JSON_ATTRIBUTE_LABEL);

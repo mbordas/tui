@@ -59,6 +59,14 @@ public class TParagraph extends TRefreshableComponent {
 			return other instanceof TText && m_content.equals(((TText) other).m_content);
 		}
 
+		public static String getText(@NotNull TComponent component) {
+			if(component instanceof TText text) {
+				return text.getText();
+			} else {
+				throw new IllegalArgumentException("Unexpected type: " + component.getClass().getCanonicalName());
+			}
+		}
+
 		public static TText parse(JsonMap json, TClient client) {
 			final TText result = new TText(client);
 			result.m_content = json.getAttribute(Paragraph.Text.JSON_ATTRIBUTE_CONTENT);

@@ -56,7 +56,7 @@ public class JsonMapTest {
 		}
 
 		assertEquals(
-				"{\"type\": \"type\",\"name\": \"root map\",\"sub map\": {\"name\": \"mySubMapName\",\"array of parameters in sub map\": [{\"key\": \"key1\",\"value\": \"value1\"},{\"key\": \"key2\",\"value\": \"value2\"}]}}",
+				"{\"tui_type\": \"type\",\"name\": \"root map\",\"sub map\": {\"name\": \"mySubMapName\",\"array of parameters in sub map\": [{\"key\": \"key1\",\"value\": \"value1\"},{\"key\": \"key2\",\"value\": \"value2\"}]}}",
 				rootMap.toJson());
 	}
 

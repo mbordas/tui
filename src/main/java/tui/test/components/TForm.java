@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,6 +51,7 @@ public class TForm extends TComponent {
 	protected final List<TFormField> m_inputs = new ArrayList<>();
 	protected final Set<Long> m_refreshListeners = new TreeSet<>();
 	protected String m_opensPageSource = null;
+	protected final Map<String, String> m_parameters = new TreeMap<>();
 
 	static class TFormField {
 		String name;
@@ -84,6 +86,15 @@ public class TForm extends TComponent {
 		return anyField.get().hint;
 	}
 
+	public Object getInputValue(String fieldLabel) {
+		final Optional<TFormField> anyField = m_inputs.stream().filter(
+				(field) -> field.label.equals(fieldLabel)).findAny();
+		if(anyField.isEmpty()) {
+			throw new TestExecutionException("No input found in form '%s' with label: %s", m_title, fieldLabel);
+		}
+		return anyField.get().enteredValue;
+	}
+
 	public void enterInput(String fieldLabel, Object value) {
 		final Optional<TFormField> anyField = m_inputs.stream().filter(
 				(field) -> field.label.equals(fieldLabel)).findAny();
@@ -99,8 +110,11 @@ public class TForm extends TComponent {
 	public void submit() {
 		final Map<String, Object> parameters = new HashMap<>();
 		m_inputs.forEach((field) -> parameters.put(field.name, field.enteredValue));
+		parameters.putAll(m_parameters);
+
 		final String jsonResponse = m_client.callBackend(m_target, parameters, true);
 		if(!Form.isSuccessfulSubmissionResponse(jsonResponse)) {
+			LOG.log(Level.WARNING, String.format("Backend response: %s", jsonResponse));
 			throw new TestExecutionException("Unexpected web service response");
 		}
 
@@ -140,6 +154,14 @@ public class TForm extends TComponent {
 
 		parseInputs(json, result);
 
+		parseAttributes(json, result);
+
+		result.readCustomTag(json);
+
+		return result;
+	}
+
+	static void parseAttributes(JsonMap json, TForm result) {
 		if(json.hasAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)) {
 			result.m_refreshListeners.addAll(
 					TUIUtils.parseTUIDsSeparatedByComa(json.getAttribute(JsonConstants.ATTRIBUTE_REFRESH_LISTENERS)));
@@ -149,9 +171,12 @@ public class TForm extends TComponent {
 			result.m_opensPageSource = json.getAttribute(Form.JSON_ATTRIBUTE_OPENS_PAGE_SOURCE);
 		}
 
-		result.readCustomTag(json);
-
-		return result;
+		if(json.hasAttribute(Form.JSON_ATTRIBUTE_PARAMETERS)) {
+			final JsonMap parametersMap = json.getMap(Form.JSON_ATTRIBUTE_PARAMETERS);
+			for(Map.Entry<String, JsonValue<?>> parameterEntry : parametersMap.getAttributes().entrySet()) {
+				result.m_parameters.put(parameterEntry.getKey(), parameterEntry.getValue().toString());
+			}
+		}
 	}
 
 	protected static void parseInputs(JsonMap json, TForm result) {
@@ -164,7 +189,8 @@ public class TForm extends TComponent {
 			final String name = FormInput.getName(map);
 			final String label = FormInput.getLabel(map);
 			final String hint = FormInput.getHint(map);
-			result.m_inputs.add(new TFormField(name, label, null, hint));
+			final String initialValue = FormInput.getInitialValue(map);
+			result.m_inputs.add(new TFormField(name, label, initialValue, hint));
 		}
 	}
 }
