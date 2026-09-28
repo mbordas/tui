@@ -62,16 +62,19 @@ public class Table extends UIRefreshableComponent {
 		return m_title;
 	}
 
-	public void hideColumn(String column) {
+	public Table hideColumn(String column) {
 		m_hiddenColumns.add(column);
+		return this;
 	}
 
-	public void hideHead() {
+	public Table hideHead() {
 		m_hiddenHead = true;
+		return this;
 	}
 
-	public void hideTitle() {
+	public Table hideTitle() {
 		m_hiddenTitle = true;
+		return this;
 	}
 
 	public void setSource(String path) {
