@@ -18,6 +18,8 @@ public abstract class UIRefreshableComponent extends UIComponent {
 
 	public static final String ATTRIBUTE_SOURCE = "tui-source";
 	public static final String ATTRIBUTE_REFRESH_ON_RESIZE = "tui-refresh-on-resize";
+	public static final String PARAMETER_WIDTH_ON_RESIZE = "_width_px";
+
 	public static final String JSON_ATTRIBUTE_PARAMETERS = "parameters";
 	public static final String HTML_CLASS_PARAMETERS_DIV = "fetch-parameters";
 	public static final String HTML_CONTAINER_CLASS = "tui-refreshable-container";

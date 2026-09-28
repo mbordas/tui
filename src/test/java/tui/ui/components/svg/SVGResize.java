@@ -21,6 +21,7 @@ import tui.http.TUIBackend;
 import tui.test.Browser;
 import tui.ui.components.Page;
 import tui.ui.components.Paragraph;
+import tui.ui.components.UIRefreshableComponent;
 import tui.ui.components.layout.Layouts;
 import tui.ui.components.svg.graph.Axis;
 
@@ -49,7 +50,7 @@ public class SVGResize {
 
 			backend.registerWebService(PATH_SVG, (uri, request, response) -> {
 				final RequestReader reader = new RequestReader(request);
-				int width_px = (int) reader.getDoubleParameter("_width_px", 50);
+				int width_px = (int) reader.getDoubleParameter(UIRefreshableComponent.PARAMETER_WIDTH_ON_RESIZE, 50);
 				System.out.printf("%d x %d%n", width_px, 50);
 				final SVG svg = buildSVG(width_px, 100);
 
