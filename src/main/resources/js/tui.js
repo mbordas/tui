@@ -1644,7 +1644,7 @@ function updateSVG(svgElement, json) {
 
 function createSVGComponent(json) {
 	const resultElement = document.createElementNS("http://www.w3.org/2000/svg", json[JSON_KEY_TYPE]);
-	if(json['type'] === 'g') {
+	if(json[JSON_KEY_TYPE] === 'g') {
 		const jsonComponents = Array.from(json['components']);
 		jsonComponents.forEach(function (jsonComponent, i) {
 			const svgComponentElement = createSVGComponent(jsonComponent);
